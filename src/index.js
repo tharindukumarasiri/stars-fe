@@ -1,8 +1,55 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
+import React, { useState } from "react";
+import ReactDOM from "react-dom";
+import BuyerHome from './Views/buyerHome';
+import Search from './Views/search'
+import Tabs from "./common/tabComponent/tabs";
+import SearchResults from "./Views/searchResults";
+import { TabContext } from './utils/contextStore';
+import { NAVIGATION_PAGES } from './utils/enums';
+import './assets/css/base.scss'
+
+function App() {
+    const [activeTab, setActiveTab] = useState(NAVIGATION_PAGES.BUYER);
+    const [openTabs, setOpenTabs] = useState([NAVIGATION_PAGES.BUYER]);
+
+    const changeActiveTab = (tab) => {
+        if (openTabs.indexOf(tab) < 0) {
+            const newOpenTabs = Array.from(openTabs)
+            newOpenTabs.push(tab);
+            setOpenTabs(newOpenTabs);
+        }
+        setActiveTab(tab);
+    };
+
+    const closeTab = (tab) => {
+        const index = openTabs.indexOf(tab)
+        if (index > -1 && openTabs.length > 1) {
+            const newOpenTabs = Array.from(openTabs)
+            newOpenTabs.splice(index, 1)
+            setOpenTabs(newOpenTabs)
+        }
+    }
+
+    return (
+        <TabContext.Provider value={{ activeTab: activeTab, changeActiveTab: changeActiveTab, closeTab: closeTab, openTabs: openTabs }}>
+            <Tabs>
+                <div label={NAVIGATION_PAGES.BUYER}>
+                    <div className="page-container">
+                        <BuyerHome />
+                    </div>
+                </div>
+                <div label={NAVIGATION_PAGES.SEARCH}>
+                    <Search />
+                </div>
+                <div label={NAVIGATION_PAGES.SEARCHRESULTS}>
+                    <div className="page-container">
+                        <SearchResults />
+                    </div>
+                </div>
+            </Tabs>
+        </TabContext.Provider >
+    )
+}
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -10,8 +57,3 @@ root.render(
     <App />
   </React.StrictMode>
 );
-
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();

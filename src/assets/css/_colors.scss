@@ -1,0 +1,29 @@
+﻿$base-color: #0592D9; // Blue
+$dark-blue: darken( $base-color, 20% );
+$light-dark-blue: desaturate( $base-color, 10% );
+$base-gray: #666;
+$gery20: lighten( $base-gray, 50% );
+$gery-light: lighten( $base-gray, 58% );
+$light-grey: #9e9e9e;
+$super-light-grey: #e0e0e0;
+$blue-purple: #746AB2 ;
+$red: #ff0000;
+$white: #fff;
+$vialot: #B572CD ;
+$vialot-lite: desaturate($vialot, 20% );
+$green: #4cff00;
+$green-dark: darken( $green, 20% );
+$green-lite: desaturate($green, 20% );
+$tab-content: lighten( $base-color, 45% );
+//
+
+.bg-grey {background-color: $base-gray;}
+.bg-gery20 {background-color: $gery20;}
+.bg-red {background-color: $red;}
+.bg-vialot {background-color: $vialot;}
+.bg-green-lite {background-color: $green-lite}
+.bg-green-dark {background-color: $green-dark}
+.bg-blue {background-color: $base-color}
+.bg-blue-purple {background-color: $blue-purple}
+.bg-dark-blue {background-color: $dark-blue}
+.bg-light-dark-blue {background-color: $light-dark-blue}

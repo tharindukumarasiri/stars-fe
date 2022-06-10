@@ -1,0 +1,377 @@
+﻿@import 'inputs.scss';
+@import 'grid.scss';
+@import 'variables.scss';
+
+@import 'tab-stripes.scss';
+@import 'elements.scss';
+@import 'utilities.scss' ;
+@import 'pagination.scss';
+@import 'model.scss';
+//@import 'buttons.scss'  ***;
+
+
+@import 'fields.scss';
+@import 'colors.scss';
+@import 'padding-margin.scss';
+@import 'developer.scss';
+
+
+
+*:before,
+*:after {
+    box-sizing: border-box;
+}
+
+html {
+    font-size: 100%;
+    line-height: 1.5;
+    -webkit-text-size-adjust: 100%;
+    -moz-text-size-adjust: 100%;
+    -ms-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    font-family: 'Poppins', sans-serif;
+}
+body {
+    font-family: $bod-font;
+    font-size: 0.8em;
+}
+.body-content {
+    background-color: $gery-light !important;
+}
+
+.s-row {
+    float: left;
+    width: 100%;
+}
+
+.a-row {
+    float: left;
+}
+
+.n-float {
+    clear:left
+}
+
+
+.page-container {
+    background-color: $white;
+    margin: 3px;
+    padding: 15px;
+    display: grid;
+    min-height: 500px;
+
+    .title-txt {
+        color: $base-color;
+        font-size: 1.2em;
+        padding: 7px;
+        font-weight: 700;
+        text-align: center;
+        width: 100%;
+        border-bottom: 2px solid $super-light-grey;
+        height: 46px;
+    }
+
+    .search-results-container {
+        overflow-y: scroll;
+        position: absolute;
+        top: 75px;
+        background-color: $white;
+        display: grid;
+        height: calc(88% - 105px);
+    }
+}
+
+.gray-container {
+    background-color: $gery20;
+    width: 100%;
+    min-height: 200px;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    padding-left: 15px;
+    padding-right: 15px;
+    margin-top: 10px;
+    display:inline-block;
+}
+
+.flag-icon {
+    max-width: 10px;
+    max-height: 15px;
+}
+
+.flag-image {
+    max-width: 30px;
+    max-height: 20px;
+}
+
+.dropdown-list {
+    color: $base-gray;
+    font-family: $bod-font;
+
+    option {
+        color: black;
+    }
+
+    .disable-option {
+        color: $base-gray;
+    }
+}
+
+.selected-item {
+    margin-top: 5px;
+    background-color: $white;
+    border-style: solid;
+    border-width: 1px;
+    border-color: $base-gray;
+    width:100%;
+    padding:5px;
+}
+
+.primary-btn {
+    float: right;
+    background-color: $light-dark-blue;
+    border-color: transparent;
+    color: $white;
+    margin-top: 10px;
+    right: 10px;
+    cursor: pointer;
+    transition: $animation-1s;
+    &:hover {
+        background-color: $dark-blue;
+    }
+}
+
+.close-btn {
+    color: $light-dark-blue;
+    font-size: 0.8em;
+    cursor: pointer;
+    transition: $animation-1s;
+
+    &:hover {
+        color: $red
+    }
+}
+
+.icon-more {
+    position: relative;
+    display: block;
+    width: 50px;
+    height: 50px;
+    font-size:2em;
+    color:$base-color;
+
+    &:hover {
+        color: $green;
+    }
+}
+
+.search-btn {
+    position: absolute;
+    right: 4px;
+    padding-top: 6px;
+    font-size: 2em;
+    cursor: pointer;
+    transition: all 1s;
+    color: $base-color;
+
+    &:hover {
+        color: $green-lite
+    }
+}
+
+.logo-thumb {
+    width: 44px;
+    height: 44px;
+    display:block;
+}
+
+.row-underline {
+    height: 2px;
+    background-color: black;
+    float: right;
+    width: 90%;
+}
+
+.tile {
+    position: relative;
+    width: 100%;
+    min-height: 170px;
+    display: block;
+    margin-bottom: 2%;
+    cursor: pointer;
+
+    &:hover {
+        background-color: $vialot-lite
+    }
+
+    .dots {
+        position: absolute;
+        top: -8px;
+        right: 20px;
+        font-size: 2em;
+        color: $white;
+        width: 34px;
+    }
+
+    .icon-text {
+        position: absolute;
+        left: 14px;
+        bottom: 14px;
+
+        i {
+            font-size: 4em;
+            color: $white;
+            line-height: initial;
+        }
+    }
+
+    h3 {
+        font-size: 1.5em;
+        text-transform: uppercase;
+        color: $white;
+        font-weight: 400;
+        margin: 0;
+    }
+
+    .icon-more {
+        font-size: 1.4em;
+        color: $white;
+
+        &:hover {
+            color: $green
+        }
+    }
+}
+
+
+.compo-tile {
+    position: relative;
+    max-width: 200px;
+    height: 200px;
+    display: block;
+
+    .top {
+        background-color: $blue-purple;
+        height: 60%;
+        width: 100%;
+    }
+
+    .bottom {
+        background-color: black;
+        height: 40%;
+        width: 100%;
+        text-align: center;
+    }
+
+    .icon-text {
+        position: relative;
+        width: 100%;
+        top: 10px;
+        text-align: center;
+
+        i {
+            font-size: 4em;
+            color: $white;
+            line-height: initial;
+        }
+    }
+
+    h3{ font-size: 1.5em;
+    text-transform: uppercase;
+    color: $white;
+    font-weight: 400;
+    margin-top: -4px;
+}
+
+    img {
+        position: relative;
+        max-width: 138px;
+        top: 10px;
+        text-align: center;
+    }
+}
+
+
+    .component-container {
+        width: 100%;
+        display: block;
+        position: relative;
+        min-height: calc(100vh - 50px);
+        background-color: #f3f3f3;
+    }
+
+
+input, select, textarea{
+    padding:14px;
+    border:1px solid $light-grey;
+    width:100%;
+}
+
+.search-bar {
+    position: relative;
+    width: 100%;
+    background-color: $super-light-grey;
+
+    input {
+        min-width: 100%;
+    }
+}
+.search-result-row {
+    margin-top: 15px;
+    width: 100%;
+    display: inline-block;
+    padding-bottom:10px;
+    border-bottom: 2px solid $super-light-grey;
+
+    img {
+        max-width: 80px
+    }
+}
+
+
+
+.check-box {
+    width: 20px;
+    height: 20px;
+    margin-top: 20px;
+}
+
+.line-seperator {
+    height: 2px;
+    float: right;
+}
+
+.save-button {
+    position: absolute; 
+    right: 20px;
+    bottom: 50px;
+}
+
+.hint-text {
+    position: absolute;
+    right: 20px;
+    bottom: 20px;
+}
+
+.muli-select-container {
+    width: 300px;
+}
+
+.multi-select-dropdown-container {
+    position: absolute;
+    width:  300px;
+    height: 200px;
+    background-color: $white;
+    overflow-y: scroll;
+}
+
+.input-hint-text {
+    position: absolute;
+    padding-left: 10px;
+}
+
+.input-container {
+    position: relative;
+}
+
+.fl{float:left}
+.fr{float:right}

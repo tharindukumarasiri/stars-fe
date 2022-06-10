@@ -1,0 +1,86 @@
+﻿@import 'colors.scss';
+
+
+.text-center {
+    text-align: center
+}
+.text-left{
+    text-align: left
+}
+.text-right {
+    text-align: right
+}
+ul {
+    list-style: disc;
+}
+
+ul,
+ol {
+    margin: 0 0 28px 18px;
+
+    li {
+        line-height: 30px;
+    }
+}
+
+ol ol,
+ul ul {
+    margin: 35px;
+}
+
+ul li > ul,
+ol li > ol,
+ul li > ol,
+ol li > ul {
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+
+// positions
+.pos-r{position:relative}
+.pos-a{position:absolute}
+.pos-f{position:fixed}
+
+//
+.flex-center-middle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    div{text-align:center}
+}
+
+
+//Heights
+.min-h-50{min-height:50px}
+
+
+
+.loading {
+    display: flex;
+    justify-content: center;
+
+    div {
+        width: 1rem;
+        height: 1rem;
+        margin: 2rem 0.3rem;
+        background: $base-color;
+        border-radius: 50%;
+        animation: 0.9s bounce infinite alternate;
+
+        &:nth-child(2) {
+            animation-delay: 0.3s;
+        }
+
+        &:nth-child(3) {
+            animation-delay: 0.6s;
+        }
+    }
+}
+
+@keyframes bounce {
+    to {
+        opacity: 0.3;
+        transform: translate3d(0, -1rem, 0);
+    }
+}

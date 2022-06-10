@@ -1,0 +1,185 @@
+﻿/* 12 Col Grid Sstem
+<div class="g-container" >
+<div class="g-row" >
+<div class="g-col-1" > 1/12</div >
+<div class="g-col-1" > 1/12</div >
+<div class="g-col-1" > 1/12</div >
+<div class="g-col-1" > 1/12</div >
+<div class="g-col-1" > 1/12</div >
+<div class="g-col-1" > 1/12</div >
+<div class="g-col-1" > 1/12</div >
+<div class="g-col-1" > 1/12</div >
+<div class="g-col-1" > 1/12</div >
+<div class="g-col-1" > 1/12</div >
+<div class="g-col-1" > 1/12</div >
+<div class="g-col-1" > 1/12</div >
+</div >
+
+<div class="g-row" >
+<div class="g-col-2" > 2/12</div >
+<div class="g-col-2" > 2/12</div >
+<div class="g-col-2" > 2/12</div >
+<div class="g-col-2" > 2/12</div >
+<div class="g-col-2" > 2/12</div >
+<div class="g-col-2" > 2/12</div >
+</div >
+
+<div class="g-row" >
+<div class="g-col-3" > 3/12</div >
+<div class="g-col-3" > 3/12</div >
+<div class="g-col-3" > 3/12</div >
+<div class="g-col-3" > 3/12</div >
+</div >
+
+<div class="g-row" >
+<div class="g-col-4" > 4/12</div >
+<div class="g-col-4" > 4/12</div >
+<div class="g-col-4" > 4/12</div >
+</div >
+
+<div class="g-row" >
+<div class="g-col-6" > 6/12</div >
+<div class="g-col-6" > 6/12</div >
+</div >
+
+<div class="g-row" >
+<div class="g-col-5" > 5/12</div >
+<div class="g-col-7" > 7/12</div >
+</div >
+
+<div class="g-row" >
+<div class="g-col-4" > 4/12</div >
+<div class="g-col-8" > 8/12</div >
+</div >
+
+<div class="g-row" >
+<div class="g-col-3" > 3/12</div >
+<div class="g-col-9" > 9/12</div >
+</div >
+
+<div class="g-row" >
+<div class="g-col-2" > 2/12</div >
+<div class="g-col-10" > 10/12</div >
+</div >
+
+<div class="g-row" >
+<div class="g-col-1" > 1/12</div >
+<div class="g-col-11" > 11/12</div >
+</div >
+
+<div class="g-row" >
+<div class="g-col-12" > 12/12</div >
+</div >
+</div >*/
+
+
+
+.component-container {
+    width: 100%;
+}
+
+.g-row {
+    width: 100%;
+    /* display: flex;
+  flex-wrap: wrap; */
+    display: block;
+    float: left;
+}
+
+/* content */
+.g-row .g-col-1, .g-row .g-col-2, .g-row .g-col-3, .g-row .g-col-4, .g-row .g-col-5, .g-row .g-col-6, .g-row .g-col-7, .g-row .g-col-8, .g-row .g-col-9, .g-row .g-col-10, .g-row .g-col-11, .g-row .g-col-12 {
+    padding: 0.3%;
+    /*border: 1px solid white; */
+    transition: background-color 1s;
+    float: left;
+}
+/*
+.g-row div:nth-child(2n):hover {
+    background-color: #42A5F5;
+}
+    
+ .g-row div:nth-child(2n+1):hover {
+  background-color: #66BB6A;
+} */
+
+/* 1/12 */
+.g-col-1 {
+    width: 8.33%;
+}
+
+/* 2/12 */
+.g-col-2 {
+    width: 16.66%;
+}
+
+/* 3/12 */
+.g-col-3 {
+    width: 25%;
+}
+
+/* 4/12 */
+.g-col-4 {
+    width: 33.33%
+}
+
+/* 5/12 */
+.g-col-5 {
+    width: 41.66%;
+}
+
+/* 6/12 */
+.g-col-6 {
+    width: 50%;
+}
+
+/* 7/12 */
+.g-col-7 {
+    width: 58.33%;
+}
+
+/* 8/12 */
+.g-col-8 {
+    width: 66.66%;
+}
+
+/* 9/12 */
+.g-col-9 {
+    width: 75%;
+}
+
+/* 10/12 */
+.g-col-10 {
+    width: 83.33%;
+}
+
+/* 11/12 */
+.g-col-11 {
+    width: 91.66%;
+}
+
+/* 12/12 */
+.g-col-12 {
+    width: 100%;
+}
+
+/* viewport <= 1000px */
+@media screen and (max-width: 1000px) {
+    * {
+        font-size: 1em;
+    }
+    .g-col-1, .g-col-2, .g-col-3, .g-col-4{width:100%}
+}
+
+/* viewport <= 630px */
+@media screen and (max-width: 767px) {
+    .g-row div {
+        width: 100%;
+    }
+}
+
+/* viewport <= 500px */
+@media screen and (max-width: 500px) {
+    * {
+        font-size: 1em;
+    }
+}
