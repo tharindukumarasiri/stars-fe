@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import ReactDOM from "react-dom";
+import ReactDOM from "react-dom/client";
 import BuyerHome from './Views/buyerHome';
 import Search from './Views/search'
 import Tabs from "./common/tabComponent/tabs";

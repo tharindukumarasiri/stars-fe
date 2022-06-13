@@ -1,0 +1,235 @@
+@import 'colors.scss';
+$spacing-xxs: 0.5rem;
+$spacing-s: 1rem;
+$spacing-xl: 2rem;
+
+/* COMMUN POUR CHECKBOX ET RADIO */
+
+
+    .margin-bottom-xxs {
+        margin-bottom: $spacing-xxs;
+        float: left;
+        margin-right: 2em;
+    }
+    label, input {
+        line-height: 14px;
+        margin: 0;
+        vertical-align: middle;
+    }
+    /* on masque ce que le navigateur affiche par défaut */
+    input[type="checkbox"], input[type="radio"] {
+        width: 26px;
+        height: 26px;
+    }
+    /* affiche le focus à la navigation clavier */
+    // input[type="radio"]:focus-visible
+    // /* permet de switcher entre les boutons radio */
+    // , input[type="checkbox"]:focus-visible~label:before, /* permet de switcher entre les checkbox */
+    // {
+    //     outline: 2px dashed $light-grey;
+    //     outline-offset: 1px;
+    // }
+    /* cas particulier de la checkbox où l'input est "invisible"*/
+    input[type="checkbox"].rca-legacy:focus-visible {
+        outline: none;
+    }
+    /* keyframe */
+    @keyframes checkboxAndRadioEffect {
+        1% {
+            clip-path: circle(20% at center);
+        }
+        25% {
+            clip-path: circle(50% at center);
+        }
+        50% {
+            clip-path: circle(100% at center);
+        }
+        75% {
+            clip-path: circle(50% at center);
+        }
+        100% {
+            clip-path: circle(0% at center);
+        }
+    }
+    /* _extend-checkbox-radio */
+    input[type="radio"] {
+        &:after {
+            transform: translate(0px, 0px);
+        }
+    }
+input[type="checkbox"], input[type="radio"] {
+    &:after {
+        content: "";
+        display: block;
+        width: 50px;
+        height: 50px;
+        position: absolute;
+        border-radius: 50%;
+        opacity: 0.3;
+        position: absolute;
+        top: 20px;
+    }
+
+    &:focus {
+        &:after {
+            background-color: $base-color;
+            clip-path: circle(0% at center);
+            animation: background-color 0.2s, checkboxAndRadioEffect 0.2s;
+            -webkit-animation: background-color 0.2s, checkboxAndRadioEffect 0.2s;
+        }
+    }
+
+    &[disabled] {
+        &:after {
+            display: none;
+        }
+    }
+}
+input[type="checkbox"] {
+    &:hover {
+        &:after {
+            background-color: $super-light-grey;
+            position: relative;
+            top: -24px;
+        }
+    }
+}
+input[type="radio"] {
+    &:hover {
+        &:after {
+            background-color: $super-light-grey;
+            position: absolute;
+            top: 26px;
+        }
+    }
+}
+    /* INPUT TYPE RADIO */
+    input[type="radio"] {
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background-color: #fff;
+        border: 2px solid $super-light-grey;
+        display: inline-flex;
+        align-items: center;
+        align-content: center;
+        justify-content: center;
+        cursor: pointer;
+
+        + label {
+            padding-left: $spacing-xxs;
+            position: relative;
+            margin: 0;
+        }
+
+        &:checked {
+            border-color: $base-color;
+
+            &:before {
+                content: "";
+                background-color: $base-color;
+                width: 10px;
+                height: 10px;
+                border-radius: 50%;
+                display: block;
+                transform: translate(0px, 0px);
+            }
+        }
+
+        &[disabled] {
+            border-color: $light-grey;
+
+            &:before {
+                background-color: $light-grey;
+            }
+
+            &:hover {
+                cursor: not-allowed;
+
+                &:before, &:after {
+                    cursor: not-allowed;
+                }
+            }
+        }
+    }
+
+    input[type="radio"]:disabled + label {
+        cursor: not-allowed;
+    }
+
+    input[type="radio"]:focus + label::before, input[type="radio"]:checked:focus + label::before {
+        border: 1px solid $base-color;
+    }
+    /* INPUT TYPE CHECKBOX */
+    input[type="checkbox"] {
+        &:after {
+            transform: translate(-12px, 12px);
+        }
+
+        &:not(:checked) {
+            &:before {
+                background-color: transparent;
+            }
+        }
+
+        + label {
+            padding-left: $spacing-xl;
+            margin: 0;
+            position: absolute;
+            //background
+            &:before {
+                background-color: transparent;
+                content: "";
+                display: block;
+                position: absolute;
+                left: 0;
+                width: 20px;
+                height: 20px;
+                border: 2px solid $super-light-grey;
+                border-radius: 3px;
+            }
+            //check
+            &:after {
+                content: "";
+                position: absolute;
+                left: 0;
+                top: 0;
+                font-size: 24px;
+                text-align: center;
+                display: none;
+                width: 22px;
+                height: 22px;
+                line-height: 22px;
+                z-index: 1;
+            }
+        }
+
+        &:checked {
+            + label {
+                //background
+                &:before {
+                    border-color: $base-color;
+                    background-color: $base-color;
+                }
+                //check
+                &:after {
+                    display: block;
+                    content: "×"; //icône "done"
+                    color: #fff;
+                }
+            }
+        }
+
+        &[disabled] {
+            + label {
+                &:hover {
+                    cursor: not-allowed;
+                }
+
+                &:before {
+                    background-color: $super-light-grey;
+                    border-color: $super-light-grey;
+                }
+            }
+        }
+    }
