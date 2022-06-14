@@ -73,6 +73,11 @@ body {
         height: 46px;
     }
 
+    .sub-title-txt {
+        color: $base-color;
+        font-size: 16px;
+    }
+
     .search-results-container {
         overflow-y: scroll;
         position: absolute;
@@ -86,7 +91,6 @@ body {
 .gray-container {
     background-color: $gery20;
     width: 100%;
-    min-height: 200px;
     padding-top: 20px;
     padding-bottom: 20px;
     padding-left: 15px;
@@ -310,13 +314,9 @@ input, select, textarea{
 
 .search-bar {
     position: relative;
-    width: 100%;
-    background-color: $super-light-grey;
 
-    input {
-        min-width: 100%;
-    }
 }
+
 .search-result-row {
     margin-top: 15px;
     width: 100%;
@@ -334,7 +334,6 @@ input, select, textarea{
 .check-box {
     width: 20px;
     height: 20px;
-    margin-top: 20px;
 }
 
 .line-seperator {
