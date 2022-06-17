@@ -1,8 +1,8 @@
 import config from './config.json'
 import http from './httpService'
 
-export async function searchOrganization(name) {
-    const { data } = await http.post(config.ORGANIZATIONS, name);
+export async function searchOrganization(params) {
+    const { data } = await http.post(config.ORGANIZATIONS, params);
     return data;
 }
 
@@ -11,12 +11,27 @@ export async function getCountries() {
     return data;
 }
 
-export async function getRegions() {
-    const { data } = await http.get(config.REGIONS);
+export async function getRegions(name) {
+    const { data } = await http.post(config.REGIONS, name, {headers: {'Content-Type': 'application/json'}});
     return data;
 }
 
-export async function getMunicipalities() {
-    const { data } = await http.get(config.MUNICIPALITIES);
+export async function getMunicipalities(name) {
+    const { data } = await http.post(config.MUNICIPALITIES, name, {headers: {'Content-Type': 'application/json'}});
+    return data;
+}
+
+export async function getCities(name) {
+    const { data } = await http.post(config.MUNICIPALITIES, name, {headers: {'Content-Type': 'application/json'}});
+    return data;
+}
+
+export async function getCpvCodes(params) {
+    const { data } = await http.post(config.CPV_CODES, params);
+    return data;
+}
+
+export async function getNacCodes(params) {
+    const { data } = await http.post(config.NAC_CODES, params);
     return data;
 }

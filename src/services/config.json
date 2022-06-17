@@ -3,6 +3,7 @@
     "ORGANIZATIONS": "https://sdcsearchapi.azurewebsites.net/organizations",
     "COUNTRIES": "https://sdcsearchapi.azurewebsites.net/countries",
     "REGIONS": "https://sdcsearchapi.azurewebsites.net/regions",
-    "MUNICIPALITIES": "https://sdcsearchapi.azurewebsites.net/municipalities"
-    
+    "MUNICIPALITIES": "https://sdcsearchapi.azurewebsites.net/municipalities",
+    "CPV_CODES": "https://sdcsearchapi.azurewebsites.net/cpv",
+    "NAC_CODES": "https://sdcsearchapi.azurewebsites.net/nace"
 }

@@ -6,33 +6,121 @@ import Model from "../common/model";
 import Pagination from "../common/pagination";
 import { TabContext } from "../utils/contextStore";
 import { NAVIGATION_PAGES } from "../utils/enums";
-import { getCountries, getRegions, getMunicipalities, searchOrganization } from "../services/organizationsService";
+import { arrayToUpper } from "../utils"
+import { getCountries, getRegions, getMunicipalities, searchOrganization, getCities, getCpvCodes, getNacCodes } from "../services/organizationsService";
 
 const pageSize = 10;
 
 export default function Search() {
     const [searchForm, setSerachForm] = useState({ Market: true, ProductGroups: false, Profession: false });
     const [searchText, setSerachText] = useState("");
-    const [selectedMarketCriteria, setSelectedMarketCriteria] = useState({ selectedCountries: [], selectedRegions: [], selectedCities: [], selectedMunicipalities: [] });
+    const [organizations, setOrganizations] = useState([]);
+
+    // Data from back-end
     const [countries, setCountries] = useState([{ "name": "Norway", "alpha3Code": "NOR" }]);
     const [regions, setRegions] = useState([]);
-    const [cities, setCities] = useState([{ "name": "OSLO", "code": "OSL" }, { "name": "SANDEFJORD", "code": "STC" }, { "name": "ANDEBU", "code": "AND" }, { "name": "STOKKE", "code": "STO" }, { "name": "MELSOMVIK", "code": "MEL" }]);
-    const [municipalities, setMunicipalities] = useState([{ "name": "OSLO", "code": "OSL" }, { "name": "SANDEFJORD", "code": "STC" }]);
-    const [organizations, setOrganizations] = useState([]);
+    const [cities, setCities] = useState([]);
+    const [municipalities, setMunicipalities] = useState([]);
+    const [productGroupesData, setProductGroupesData] = useState({ segmant: [], family: [], unspClass: [], comClass: [], division: [], cpvGroup: [], cpvClass: [], category: [], subCategory: [] })
+    const [professionData, setProfessionData] = useState({ section: [], divition: [], profGroup: [], profClass: [] })
+
+    // Drop Down selected eliments data
+    const [selectedMarketCriteria, setSelectedMarketCriteria] = useState({ selectedCountries: [], selectedRegions: [], selectedCities: [], selectedMunicipalities: [] });
+    const [selectedProductGroupesCriteria, setSelectedProductGroupesCriteria] = useState({ segmant: [], family: [], unspClass: [], comClass: [], division: [], cpvGroup: [], cpvClass: [], category: [], subCategory: [] })
+    const [selectedProfessionCriteria, setSelectedProfessionCriteria] = useState({ section: [], divition: [], profGroup: [], profClass: [] })
+
     const [pageCount, setPageCount] = useState(0);
     const [actPage, setActPage] = useState(1)
     const [loading, setLoading] = useState(false)
-    const [multiSelectOpen, setMultiSelectOpen] = useState({ unspGroup: false, cpvGroup: false })
-    const [selectedProductGroupesCriteria, setSelectedProductGroupesCriteria] = useState({ segmant: [], family: [], unspClass: [], comClass: [], division: [], unspGroup: [], cpvClass: [], category: [], subCategory: [] })
-    const [selectedProfessionCriteria, setSelectedProfessionCriteria] = useState({ section: [], divition: [], profGroup: [], profClass: [] })
+
+    const [multiSelectOpen, setMultiSelectOpen] = useState({ profGroup: false, cpvGroup: false })
     const [showModel, setShowModel] = useState(false);
+
     const { changeActiveTab } = useContext(TabContext)
 
     useEffect(() => {
+        const cpvDivisionReq = {
+            "level": 1,
+            "code": ""
+        }
+        const nacSectionReq = {
+            "level": "1",
+            "parent": ""
+        }
         // getCountries().then(result => { setCountries(result) });
-        getRegions().then(result => { setRegions(result) });
-        // getMunicipalities().then(result => { setMunicipalities(result) });
+        getCpvCodes(cpvDivisionReq).then(result => { setProductGroupesData({ ...productGroupesData, division: result }) });
+        getNacCodes(nacSectionReq).then(result => { setProfessionData({ ...professionData, section: result }) });
     }, []);
+
+    //API calls
+    const getRegionsData = (countryName) => {
+        getRegions(countryName).then(result => { setRegions(result) });
+    }
+
+    const getMunicipalitiesData = (regionName) => {
+        getMunicipalities(regionName).then(result => { setMunicipalities(result) });
+    }
+
+    const getCityData = (MunicipalityName) => {
+        getCities(MunicipalityName).then(result => { setCities(result) });
+    }
+
+    const getcpvCodesData = (desscription, level) => {
+        const getCpvName = (lvl) => {
+            switch (lvl) {
+                case 1:
+                    return 'division';
+                case 2:
+                    return 'cpvGroup';
+                case 3:
+                    return 'cpvClass';
+                case 4:
+                    return 'category';
+                case 5:
+                    return 'subCategory';
+                default:
+                    break;
+            }
+        }
+
+        const cpvData = productGroupesData[getCpvName(level - 1)].filter(item => item.desscription === desscription)
+
+        const data = {
+            "level": level,
+            "code": cpvData[0].code
+        }
+        getCpvCodes(data).then(result => {
+            setProductGroupesData({ ...productGroupesData, [getCpvName(level)]: result })
+        });
+    }
+
+    const getProfessionData = (desscription, level) => {
+        const getProfName = (lvl) => {
+            switch (lvl) {
+                case 1:
+                    return 'section';
+                case 2:
+                    return 'divition';
+                case 3:
+                    return 'profGroup';
+                case 4:
+                    return 'profClass';
+                default:
+                    break;
+            }
+        }
+
+        const profData = professionData[getProfName(level - 1)].filter(item => item.desscription === desscription)
+
+        const data = {
+            "level": level.toString(),
+            "parent": profData[0].code
+        }
+        console.log(data)
+        getNacCodes(data).then(result => {
+            setProfessionData({ ...professionData, [getProfName(level)]: result })
+        });
+    }
 
     const onChangeSearch = (e) => {
         setSerachForm(prev => ({ ...prev, [e.target.value]: !searchForm[e.target.value] }));
@@ -62,9 +150,7 @@ export default function Search() {
 
     const onSaveResults = (e) => {
         e.preventDefault();
-        if (searchText !== '') {
-            setShowModel(true);
-        }
+        setShowModel(true);
     }
 
     const onCloseModel = () => {
@@ -85,10 +171,16 @@ export default function Search() {
         )
     }
 
-    const handleDropdownSelect = (e, selectedList, setSelectedState, criteriaName, multiSelect) => {
+    const handleDropdownSelect = (e, selectedList, setSelectedState, criteriaName, apiCalls, codelevel, multiSelect) => {
         e.preventDefault();
         const index = selectedList[criteriaName].indexOf(e.target.value)
         if (index < 0) {
+            if (codelevel > 0) {
+                apiCalls(e.target.value, codelevel);
+
+            } else {
+                apiCalls(e.target.value);
+            }
             const newSelectedCriteria = [...selectedList[criteriaName]];
             newSelectedCriteria.push(e.target.value);
             setSelectedState({ ...selectedList, [criteriaName]: newSelectedCriteria });
@@ -99,76 +191,77 @@ export default function Search() {
         }
     }
 
-    const getDropdown = ({ placeholder, dataList, criteriaName, selectedList, setSelectedState, keyName, multiSelect = false } = {}) => {
-        return (
-            <>
-                {getDropdownBar(placeholder, dataList, keyName, selectedList, setSelectedState, criteriaName, multiSelect)}
-                {getDropdownSelection(criteriaName, selectedList, setSelectedState)}
-            </>
-        )
-    }
+    const getDropdown = ({ placeholder, dataList, dataName = 'name', criteriaName, selectedList, setSelectedState, keyName, apiCalls = () => { }, codelevel = 0, multiSelect = false } = {}) => {
 
-    const getDropdownBar = (placeholder, dataList, keyName, selectedList, setSelectedState, criteriaName, multiSelect) => {
-        const multiOnclick = () => {
-            setMultiSelectOpen({ ...multiSelectOpen, [criteriaName]: !multiSelectOpen[criteriaName] });
+        const getDropdownBar = () => {
+            const multiOnclick = () => {
+                setMultiSelectOpen({ ...multiSelectOpen, [criteriaName]: !multiSelectOpen[criteriaName] });
+            }
+
+            if (!multiSelect) {
+                return (
+                    <select className="dropdown-list" onChange={(e) => handleDropdownSelect(e, selectedList, setSelectedState, criteriaName, apiCalls, codelevel, false)} value={"0"}>
+                        <option value="0" disabled defaultValue="selected" hidden={true} className="disable-option" >{placeholder}</option>
+                        {
+                            dataList.map(item => {
+                                return <option value={item[dataName]} key={item[keyName]}>{item[dataName]}</option>
+                            })
+                        }
+                    </select>
+                )
+            } else {
+                return (
+                    <div className="muli-select-container">
+                        <select className="dropdown-list" value={"0"} onClick={() => multiOnclick()} onChange={() => { }} >
+                            <option value="0" disabled defaultValue="selected" hidden={true} className="disable-option" >{placeholder}</option>
+                        </select>
+                        {multiSelectOpen[criteriaName] &&
+                            <div className="multi-select-dropdown-container">
+                                {
+                                    dataList.map(item => {
+                                        return (
+                                            <div className="g-col-12" key={item[keyName]}>
+                                                <input type="checkbox" className="check-box p-r-10" value={item.name} key={item[keyName]} checked={selectedList[criteriaName].indexOf(item.name) > -1} onChange={(e) => handleDropdownSelect(e, selectedList, setSelectedState, criteriaName, apiCalls, codelevel, true)} />
+                                                {item.name}
+                                            </div>
+                                        )
+                                    })
+                                }
+                            </div>
+                        }
+                    </div>
+                )
+            }
         }
 
-        if (!multiSelect) {
+        const getDropdownSelection = () => {
             return (
-                <select className="dropdown-list" onChange={(e) => handleDropdownSelect(e, selectedList, setSelectedState, criteriaName, false)} value={"0"}>
-                    <option value="0" disabled defaultValue="selected" hidden={true} className="disable-option" >{placeholder}</option>
-                    {
-                        dataList.map(item => {
-                            return <option value={item.name} key={item[keyName]}>{item.name}</option>
-                        })
-                    }
-                </select>
-            )
-        } else {
-            return (
-                <div className="muli-select-container">
-                    <select className="dropdown-list" value={"0"} onClick={() => multiOnclick()} onChange={() => { }} >
-                        <option value="0" disabled defaultValue="selected" hidden={true} className="disable-option" >{placeholder}</option>
-                    </select>
-                    {multiSelectOpen[criteriaName] &&
-                        <div className="multi-select-dropdown-container">
-                            {
-                                dataList.map(item => {
-                                    return (
-                                        <div className="g-col-12" key={item[keyName]}>
-                                            <input type="checkbox" className="check-box p-r-10" value={item.name} key={item[keyName]} checked={selectedList[criteriaName].indexOf(item.name) > -1} onChange={(e) => handleDropdownSelect(e, selectedList, setSelectedState, criteriaName, true)} />
-                                            {item.name}
-                                        </div>
-                                    )
-                                })
-                            }
+                <>
+                    {selectedList[criteriaName]?.length == 0 &&
+                        <div className="selected-item" key={'all'}>
+                            <i className="close-btn icon-close-small-x m-t-5" onClick={() => { }} > </i>
+                            All
                         </div>
                     }
-                </div>
+                    {
+                        selectedList[criteriaName]?.map(item => {
+                            return (
+                                <div className="selected-item" key={item}>
+                                    <i className="close-btn icon-close-small-x m-t-5" onClick={() => setSelectedState({ ...selectedList, [criteriaName]: onCloseBtnClick(item, selectedList[criteriaName]) })} > </i>
+                                    {item}
+                                </div>
+                            )
+                        })
+                    }
+                </>
             )
         }
-    }
 
-    const getDropdownSelection = (criteriaName, selectedList, setSelectedState) => {
         return (
-            <>
-                {selectedList[criteriaName]?.length == 0 &&
-                    <div className="selected-item" key={'all'}>
-                        <i className="close-btn icon-close-small-x m-t-5" onClick={() => { }} > </i>
-                        All
-                    </div>
-                }
-                {
-                    selectedList[criteriaName]?.map(item => {
-                        return (
-                            <div className="selected-item" key={item}>
-                                <i className="close-btn icon-close-small-x m-t-5" onClick={() => setSelectedState({ ...selectedList, [criteriaName]: onCloseBtnClick(item, selectedList[criteriaName]) })} > </i>
-                                {item}
-                            </div>
-                        )
-                    })
-                }
-            </>
+            <div className={dataList.length == 0 ? "disable-div" : ''}>
+                {getDropdownBar()}
+                {getDropdownSelection()}
+            </div>
         )
     }
 
@@ -177,8 +270,8 @@ export default function Search() {
             "name": searchText,
             "countries": selectedMarketCriteria.selectedCountries,
             "regions": selectedMarketCriteria.selectedRegions,
-            "cities": selectedMarketCriteria.selectedCities,
-            "municipalities": selectedMarketCriteria.selectedMunicipalities,
+            "cities": arrayToUpper(selectedMarketCriteria.selectedCities),
+            "municipalities": arrayToUpper(selectedMarketCriteria.selectedMunicipalities),
             "pageSize": pageSize,
             "pageNo": pageNumber,
         })
@@ -215,13 +308,13 @@ export default function Search() {
                 <div className="text-left sub-title-txt">Market Information</div>
                 <div className="g-row">
                     <div className="g-col-3">
-                        {getDropdown({ placeholder: 'Country', dataList: countries, selectedList: selectedMarketCriteria, setSelectedState: setSelectedMarketCriteria, criteriaName: "selectedCountries", keyName: "alpha3Code" })}
+                        {getDropdown({ placeholder: 'Country', dataList: countries, selectedList: selectedMarketCriteria, setSelectedState: setSelectedMarketCriteria, criteriaName: "selectedCountries", apiCalls: getRegionsData, keyName: "alpha3Code" })}
                     </div>
                     <div className="g-col-3">
-                        {getDropdown({ placeholder: 'Region', dataList: regions, selectedList: selectedMarketCriteria, setSelectedState: setSelectedMarketCriteria, criteriaName: "selectedRegions", keyName: "code" })}
+                        {getDropdown({ placeholder: 'Region', dataList: regions, selectedList: selectedMarketCriteria, setSelectedState: setSelectedMarketCriteria, criteriaName: "selectedRegions", apiCalls: getMunicipalitiesData, keyName: "code" })}
                     </div>
                     <div className="g-col-3">
-                        {getDropdown({ placeholder: 'Municipality', dataList: municipalities, selectedList: selectedMarketCriteria, setSelectedState: setSelectedMarketCriteria, criteriaName: "selectedMunicipalities", keyName: "code" })}
+                        {getDropdown({ placeholder: 'Municipality', dataList: municipalities, selectedList: selectedMarketCriteria, setSelectedState: setSelectedMarketCriteria, criteriaName: "selectedMunicipalities", apiCalls: getCityData, keyName: "code" })}
                     </div>
                     <div className="g-col-3">
                         {getDropdown({ placeholder: 'City', dataList: cities, selectedList: selectedMarketCriteria, setSelectedState: setSelectedMarketCriteria, criteriaName: "selectedCities", keyName: "code" })}
@@ -240,10 +333,10 @@ export default function Search() {
                     <div className="m-t-5">UNSPSC Codes</div>
                     <div className="g-row">
                         <div className="g-col-3">
-                            {getDropdown({ placeholder: 'Segmant', dataList: [], selectedList: selectedProductGroupesCriteria, setSelectedState: setSelectedProductGroupesCriteria, criteriaName: "segmant", keyName: "" })}
+                            {getDropdown({ placeholder: 'Segmant', dataList: productGroupesData.segmant, selectedList: selectedProductGroupesCriteria, setSelectedState: setSelectedProductGroupesCriteria, criteriaName: "segmant", keyName: "" })}
                         </div>
                         <div className="g-col-3">
-                            {getDropdown({ placeholder: 'Family', dataList: [], selectedList: selectedProductGroupesCriteria, setSelectedState: setSelectedProductGroupesCriteria, criteriaName: "family", keyName: "" })}
+                            {getDropdown({ placeholder: 'Family', dataList: productGroupesData.family, selectedList: selectedProductGroupesCriteria, setSelectedState: setSelectedProductGroupesCriteria, criteriaName: "family", keyName: "" })}
                         </div>
                         <div className="g-col-3">
                             {getDropdown({ placeholder: 'Class', dataList: [], selectedList: selectedProductGroupesCriteria, setSelectedState: setSelectedProductGroupesCriteria, criteriaName: "unspClass", keyName: "" })}
@@ -255,19 +348,19 @@ export default function Search() {
                     <div className="fl m-t-15">CPV Codes</div>
                     <div className="g-row">
                         <div className="g-col-2">
-                            {getDropdown({ placeholder: 'Division', dataList: [], selectedList: selectedProductGroupesCriteria, setSelectedState: setSelectedProductGroupesCriteria, criteriaName: "division", keyName: "" })}
+                            {getDropdown({ placeholder: 'Division', dataList: productGroupesData.division, dataName: 'desscription', selectedList: selectedProductGroupesCriteria, setSelectedState: setSelectedProductGroupesCriteria, criteriaName: "division", apiCalls: getcpvCodesData, codelevel: 2, keyName: "code" })}
                         </div>
                         <div className="g-col-2">
-                            {getDropdown({ placeholder: 'Group', dataList: [], selectedList: selectedProductGroupesCriteria, setSelectedState: setSelectedProductGroupesCriteria, criteriaName: "unspGroup", keyName: "", multiSelect: true })}
+                            {getDropdown({ placeholder: 'Group', dataList: productGroupesData.cpvGroup, dataName: 'desscription', selectedList: selectedProductGroupesCriteria, setSelectedState: setSelectedProductGroupesCriteria, criteriaName: "cpvGroup", apiCalls: getcpvCodesData, codelevel: 3, keyName: "code" })}
                         </div>
                         <div className="g-col-2">
-                            {getDropdown({ placeholder: 'Class', dataList: [], selectedList: selectedProductGroupesCriteria, setSelectedState: setSelectedProductGroupesCriteria, criteriaName: "cpvClass", keyName: "" })}
+                            {getDropdown({ placeholder: 'Class', dataList: productGroupesData.cpvClass, dataName: 'desscription', selectedList: selectedProductGroupesCriteria, setSelectedState: setSelectedProductGroupesCriteria, criteriaName: "cpvClass", apiCalls: getcpvCodesData, codelevel: 4, keyName: "code" })}
                         </div>
                         <div className="g-col-2">
-                            {getDropdown({ placeholder: 'Category', dataList: [], selectedList: selectedProductGroupesCriteria, setSelectedState: setSelectedProductGroupesCriteria, criteriaName: "category", keyName: "" })}
+                            {getDropdown({ placeholder: 'Category', dataList: productGroupesData.category, dataName: 'desscription', selectedList: selectedProductGroupesCriteria, setSelectedState: setSelectedProductGroupesCriteria, criteriaName: "category", apiCalls: getcpvCodesData, codelevel: 5, keyName: "code" })}
                         </div>
                         <div className="g-col-3">
-                            {getDropdown({ placeholder: 'Sub Category', dataList: [], selectedList: selectedProductGroupesCriteria, setSelectedState: setSelectedProductGroupesCriteria, criteriaName: "subCategory", keyName: "" })}
+                            {getDropdown({ placeholder: 'Sub Category', dataList: productGroupesData.subCategory, dataName: 'desscription', selectedList: selectedProductGroupesCriteria, setSelectedState: setSelectedProductGroupesCriteria, criteriaName: "subCategory", keyName: "code" })}
                         </div>
                     </div>
                 </div>
@@ -282,16 +375,16 @@ export default function Search() {
                 <div className="sub-title-txt">Profession (NACE Codes)</div>
                 <div className="g-row">
                     <div className="g-col-3">
-                        {getDropdown({ placeholder: 'Section', dataList: [], selectedList: selectedProfessionCriteria, setSelectedState: setSelectedProfessionCriteria, criteriaName: "section", keyName: "" })}
+                        {getDropdown({ placeholder: 'Section', dataList: professionData.section, dataName: 'desscription', selectedList: selectedProfessionCriteria, setSelectedState: setSelectedProfessionCriteria, criteriaName: "section", apiCalls: getProfessionData, codelevel: 2, keyName: "code" })}
                     </div>
                     <div className="g-col-3">
-                        {getDropdown({ placeholder: 'Division', dataList: [], selectedList: selectedProfessionCriteria, setSelectedState: setSelectedProfessionCriteria, criteriaName: "divition", keyName: "" })}
+                        {getDropdown({ placeholder: 'Division', dataList: professionData.divition, dataName: 'desscription', selectedList: selectedProfessionCriteria, setSelectedState: setSelectedProfessionCriteria, criteriaName: "divition", apiCalls: getProfessionData, codelevel: 3, keyName: "code" })}
                     </div>
                     <div className="g-col-3">
-                        {getDropdown({ placeholder: 'Group', dataList: [], selectedList: selectedProfessionCriteria, setSelectedState: setSelectedProfessionCriteria, criteriaName: "profGroup", keyName: "", multiSelect: true })}
+                        {getDropdown({ placeholder: 'Group', dataList: professionData.profGroup, dataName: 'desscription', selectedList: selectedProfessionCriteria, setSelectedState: setSelectedProfessionCriteria, criteriaName: "profGroup", apiCalls: getProfessionData, codelevel: 4, keyName: "code" })}
                     </div>
                     <div className="g-col-3">
-                        {getDropdown({ placeholder: 'Class', dataList: [], selectedList: selectedProfessionCriteria, setSelectedState: setSelectedProfessionCriteria, criteriaName: "profClass", keyName: "" })}
+                        {getDropdown({ placeholder: 'Class', dataList: professionData.profClass, dataName: 'desscription', selectedList: selectedProfessionCriteria, setSelectedState: setSelectedProfessionCriteria, criteriaName: "profClass", keyName: "code" })}
                     </div>
                 </div>
             </div>

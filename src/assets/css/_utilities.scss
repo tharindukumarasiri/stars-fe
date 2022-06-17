@@ -59,7 +59,7 @@ ol li > ul {
 .loading {
     display: flex;
     justify-content: center;
-
+    z-index: 999;
     div {
         width: 1rem;
         height: 1rem;
