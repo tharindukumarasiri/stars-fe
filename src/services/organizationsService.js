@@ -12,17 +12,22 @@ export async function getCountries() {
 }
 
 export async function getRegions(name) {
-    const { data } = await http.post(config.REGIONS, name, {headers: {'Content-Type': 'application/json'}});
+    const { data } = await http.post(config.REGIONS, name, { headers: { 'Content-Type': 'application/json' } });
     return data;
 }
 
 export async function getMunicipalities(name) {
-    const { data } = await http.post(config.MUNICIPALITIES, name, {headers: {'Content-Type': 'application/json'}});
+    const { data } = await http.post(config.MUNICIPALITIES, name, { headers: { 'Content-Type': 'application/json' } });
     return data;
 }
 
 export async function getCities(name) {
-    const { data } = await http.post(config.MUNICIPALITIES, name, {headers: {'Content-Type': 'application/json'}});
+    const { data } = await http.post(config.MUNICIPALITIES, name, { headers: { 'Content-Type': 'application/json' } });
+    return data;
+}
+
+export async function getUnspscCodes(params) {
+    const { data } = await http.post(config.UNSPSC_CODES, params);
     return data;
 }
 

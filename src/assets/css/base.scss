@@ -6,7 +6,7 @@
 
 @import 'tab-stripes.scss';
 @import 'elements.scss';
-@import 'utilities.scss' ;
+@import 'utilities.scss';
 @import 'pagination.scss';
 @import 'model.scss';
 //@import 'buttons.scss'  ***;
@@ -33,12 +33,14 @@ html {
     text-size-adjust: 100%;
     font-family: 'Poppins', sans-serif;
 }
+
 body {
     font-family: $bod-font;
     font-size: 0.8em;
 }
+
 .body-content {
-    background-color: $gery-light !important;
+    background-color: $gery-light  !important;
 }
 
 .s-row {
@@ -51,7 +53,7 @@ body {
 }
 
 .n-float {
-    clear:left
+    clear: left
 }
 
 
@@ -96,7 +98,7 @@ body {
     padding-left: 15px;
     padding-right: 15px;
     margin-top: 10px;
-    display:inline-block;
+    display: inline-block;
 }
 
 .flag-icon {
@@ -128,8 +130,8 @@ body {
     border-style: solid;
     border-width: 1px;
     border-color: $base-gray;
-    width:100%;
-    padding:5px;
+    width: 100%;
+    padding: 5px;
 }
 
 .primary-btn {
@@ -141,6 +143,7 @@ body {
     right: 10px;
     cursor: pointer;
     transition: $animation-1s;
+
     &:hover {
         background-color: $dark-blue;
     }
@@ -162,8 +165,8 @@ body {
     display: block;
     width: 50px;
     height: 50px;
-    font-size:2em;
-    color:$base-color;
+    font-size: 2em;
+    color: $base-color;
 
     &:hover {
         color: $green;
@@ -187,7 +190,7 @@ body {
 .logo-thumb {
     width: 44px;
     height: 44px;
-    display:block;
+    display: block;
 }
 
 .row-underline {
@@ -281,12 +284,13 @@ body {
         }
     }
 
-    h3{ font-size: 1.5em;
-    text-transform: uppercase;
-    color: $white;
-    font-weight: 400;
-    margin-top: -4px;
-}
+    h3 {
+        font-size: 1.5em;
+        text-transform: uppercase;
+        color: $white;
+        font-weight: 400;
+        margin-top: -4px;
+    }
 
     img {
         position: relative;
@@ -297,19 +301,21 @@ body {
 }
 
 
-    .component-container {
-        width: 100%;
-        display: block;
-        position: relative;
-        min-height: calc(100vh - 50px);
-        background-color: #f3f3f3;
-    }
+.component-container {
+    width: 100%;
+    display: block;
+    position: relative;
+    min-height: calc(100vh - 50px);
+    background-color: #f3f3f3;
+}
 
 
-input, select, textarea{
-    padding:14px;
-    border:1px solid $light-grey;
-    width:100%;
+input,
+select,
+textarea {
+    padding: 14px;
+    border: 1px solid $light-grey;
+    width: 100%;
 }
 
 .search-bar {
@@ -321,7 +327,7 @@ input, select, textarea{
     margin-top: 15px;
     width: 100%;
     display: inline-block;
-    padding-bottom:10px;
+    padding-bottom: 10px;
     border-bottom: 2px solid $super-light-grey;
 
     img {
@@ -342,7 +348,7 @@ input, select, textarea{
 }
 
 .save-button {
-    position: absolute; 
+    position: absolute;
     right: 20px;
     bottom: 50px;
 }
@@ -359,7 +365,7 @@ input, select, textarea{
 
 .multi-select-dropdown-container {
     position: absolute;
-    width:  300px;
+    width: 300px;
     height: 200px;
     background-color: $white;
     overflow-y: scroll;
@@ -374,5 +380,14 @@ input, select, textarea{
     position: relative;
 }
 
-.fl{float:left}
-.fr{float:right}
+.hover-hand {
+    cursor: pointer;
+}
+
+.fl {
+    float: left
+}
+
+.fr {
+    float: right
+}

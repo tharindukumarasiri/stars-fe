@@ -6,63 +6,108 @@ import Model from "../common/model";
 import Pagination from "../common/pagination";
 import { TabContext } from "../utils/contextStore";
 import { NAVIGATION_PAGES } from "../utils/enums";
-import { arrayToUpper } from "../utils"
-import { getCountries, getRegions, getMunicipalities, searchOrganization, getCities, getCpvCodes, getNacCodes } from "../services/organizationsService";
+import { getCountries, getRegions, getMunicipalities, searchOrganization, getCities, getUnspscCodes, getCpvCodes, getNacCodes } from "../services/organizationsService";
+import Dropdown from "../common/dropdown"
 
 const pageSize = 10;
+const levelOneReq = {
+    "level": 1,
+    "code": ""
+}
+const nacSectionReq = {
+    "level": "1",
+    "parent": ""
+}
 
 export default function Search() {
-    const [searchForm, setSerachForm] = useState({ Market: true, ProductGroups: false, Profession: false });
+    const [openCriteria, setOpenCriteria] = useState({ Market: true, ProductGroups: false, Profession: false });
     const [searchText, setSerachText] = useState("");
     const [organizations, setOrganizations] = useState([]);
 
     // Data from back-end
-    const [countries, setCountries] = useState([{ "name": "Norway", "alpha3Code": "NOR" }]);
-    const [regions, setRegions] = useState([]);
-    const [cities, setCities] = useState([]);
-    const [municipalities, setMunicipalities] = useState([]);
-    const [productGroupesData, setProductGroupesData] = useState({ segmant: [], family: [], unspClass: [], comClass: [], division: [], cpvGroup: [], cpvClass: [], category: [], subCategory: [] })
+    const [marketInformationData, setMarketInformationData] = useState({ countries: [{ "name": "Norway", "alpha3Code": "NOR" }], regions: [], cities: [], municipalities: [] });
+    const [unspscData, setUnspscData] = useState({ segmant: [], family: [], unspClass: [], comClass: [] })
+    const [cpvData, setCpvData] = useState({ division: [], cpvGroup: [], cpvClass: [], category: [], subCategory: [] })
     const [professionData, setProfessionData] = useState({ section: [], divition: [], profGroup: [], profClass: [] })
 
     // Drop Down selected eliments data
     const [selectedMarketCriteria, setSelectedMarketCriteria] = useState({ selectedCountries: [], selectedRegions: [], selectedCities: [], selectedMunicipalities: [] });
     const [selectedProductGroupesCriteria, setSelectedProductGroupesCriteria] = useState({ segmant: [], family: [], unspClass: [], comClass: [], division: [], cpvGroup: [], cpvClass: [], category: [], subCategory: [] })
+    const [selectedUnspscCodes, setSelectedUnspscCodes] = useState([]);
+    const [selectedCpvCodes, setSelectedCpvCodes] = useState([]);
     const [selectedProfessionCriteria, setSelectedProfessionCriteria] = useState({ section: [], divition: [], profGroup: [], profClass: [] })
+    const [selectedNaceCodes, setSelectedNaceCodes] = useState([]);
 
     const [pageCount, setPageCount] = useState(0);
     const [actPage, setActPage] = useState(1)
     const [loading, setLoading] = useState(false)
 
-    const [multiSelectOpen, setMultiSelectOpen] = useState({ profGroup: false, cpvGroup: false })
     const [showModel, setShowModel] = useState(false);
 
     const { changeActiveTab } = useContext(TabContext)
 
     useEffect(() => {
-        const cpvDivisionReq = {
-            "level": 1,
-            "code": ""
-        }
-        const nacSectionReq = {
-            "level": "1",
-            "parent": ""
-        }
-        // getCountries().then(result => { setCountries(result) });
-        getCpvCodes(cpvDivisionReq).then(result => { setProductGroupesData({ ...productGroupesData, division: result }) });
+        // getCountries().then(result => { setMarketInformationData({...marketInformationData, countries: result}) });
+        getUnspscCodes(levelOneReq).then(result => { setUnspscData({ ...unspscData, segmant: result }) });
+        getCpvCodes(levelOneReq).then(result => { setCpvData({ ...cpvData, division: result }) })
         getNacCodes(nacSectionReq).then(result => { setProfessionData({ ...professionData, section: result }) });
     }, []);
 
     //API calls
     const getRegionsData = (countryName) => {
-        getRegions(countryName).then(result => { setRegions(result) });
+        getRegions(countryName).then(result => { setMarketInformationData({ ...marketInformationData, regions: result }) });
     }
 
     const getMunicipalitiesData = (regionName) => {
-        getMunicipalities(regionName).then(result => { setMunicipalities(result) });
+        getMunicipalities(regionName).then(result => { setMarketInformationData({ ...marketInformationData, municipalities: result }) });
     }
 
     const getCityData = (MunicipalityName) => {
-        getCities(MunicipalityName).then(result => { setCities(result) });
+        getCities(MunicipalityName).then(result => { setMarketInformationData({ ...marketInformationData, cities: result }) });
+    }
+
+    const getUnspscCodesData = (title, level) => {
+
+        const getUnspscName = (lvl) => {
+            switch (lvl) {
+                case 1:
+                    return 'segmant';
+                case 2:
+                    return 'family';
+                case 3:
+                    return 'unspClass';
+                case 4:
+                    return 'comClass';
+                default:
+                    break;
+            }
+        }
+
+        const getUnspscTitleHeaders = (level) => {
+            switch (level) {
+                case 1:
+                    return ['segmentTitle', 'segmentCode'];
+                case 2:
+                    return ['familyTitle', 'familyCode'];
+                case 3:
+                    return ['classTitle', 'classCode'];
+                case 4:
+                    return ['commodityTitle', 'commodityCode'];
+                default:
+                    break;
+            }
+        }
+
+        const selectedUnspscData = unspscData[getUnspscName(level - 1)].filter(item => item[getUnspscTitleHeaders(level - 1)[0]] === title)
+
+        const data = {
+            "level": level,
+            "code": selectedUnspscData[0][getUnspscTitleHeaders(level - 1)[1]]
+        }
+
+        getUnspscCodes(data).then(result => {
+            setUnspscData({ ...unspscData, [getUnspscName(level)]: result })
+        });
     }
 
     const getcpvCodesData = (desscription, level) => {
@@ -83,14 +128,15 @@ export default function Search() {
             }
         }
 
-        const cpvData = productGroupesData[getCpvName(level - 1)].filter(item => item.desscription === desscription)
+        const selectedCpvData = cpvData[getCpvName(level - 1)].filter(item => item.desscription === desscription)
 
         const data = {
             "level": level,
-            "code": cpvData[0].code
+            "code": selectedCpvData[0].code
         }
+
         getCpvCodes(data).then(result => {
-            setProductGroupesData({ ...productGroupesData, [getCpvName(level)]: result })
+            setCpvData({ ...cpvData, [getCpvName(level)]: result })
         });
     }
 
@@ -116,25 +162,15 @@ export default function Search() {
             "level": level.toString(),
             "parent": profData[0].code
         }
-        console.log(data)
+
         getNacCodes(data).then(result => {
             setProfessionData({ ...professionData, [getProfName(level)]: result })
         });
     }
 
-    const onChangeSearch = (e) => {
-        setSerachForm(prev => ({ ...prev, [e.target.value]: !searchForm[e.target.value] }));
-    }
-
     const handleSearch = (e) => {
         e.preventDefault();
         setSerachText(e.target.value);
-    }
-
-    const onCloseBtnClick = (country, selectedList) => {
-        const newSelectedList = [...selectedList];
-        newSelectedList.splice(selectedList.indexOf(country), 1)
-        return newSelectedList;
     }
 
     const onShowResults = (e) => {
@@ -157,121 +193,16 @@ export default function Search() {
         setShowModel(false);
     }
 
-    const getSerachByItem = (title, value, toolTip, widthSize) => {
-        const gridClass = "sub-title-txt g-col-" + widthSize
-        return (
-            <div className={gridClass}>
-                <input className="check-box" type="checkbox" value={value} name="searchBy" checked={searchForm[value]} onChange={onChangeSearch} />
-                {title}
-                <span className="tooltip-toggle fr" aria-label={toolTip}>
-                    <i className="icon-eye color-black" />
-                </span>
-
-            </div>
-        )
-    }
-
-    const handleDropdownSelect = (e, selectedList, setSelectedState, criteriaName, apiCalls, codelevel, multiSelect) => {
-        e.preventDefault();
-        const index = selectedList[criteriaName].indexOf(e.target.value)
-        if (index < 0) {
-            if (codelevel > 0) {
-                apiCalls(e.target.value, codelevel);
-
-            } else {
-                apiCalls(e.target.value);
-            }
-            const newSelectedCriteria = [...selectedList[criteriaName]];
-            newSelectedCriteria.push(e.target.value);
-            setSelectedState({ ...selectedList, [criteriaName]: newSelectedCriteria });
-        } else if (multiSelect) {
-            const newSelectedCriteria = [...selectedList[criteriaName]];
-            newSelectedCriteria.splice(index, 1);
-            setSelectedState({ ...selectedList, [criteriaName]: newSelectedCriteria });
-        }
-    }
-
-    const getDropdown = ({ placeholder, dataList, dataName = 'name', criteriaName, selectedList, setSelectedState, keyName, apiCalls = () => { }, codelevel = 0, multiSelect = false } = {}) => {
-
-        const getDropdownBar = () => {
-            const multiOnclick = () => {
-                setMultiSelectOpen({ ...multiSelectOpen, [criteriaName]: !multiSelectOpen[criteriaName] });
-            }
-
-            if (!multiSelect) {
-                return (
-                    <select className="dropdown-list" onChange={(e) => handleDropdownSelect(e, selectedList, setSelectedState, criteriaName, apiCalls, codelevel, false)} value={"0"}>
-                        <option value="0" disabled defaultValue="selected" hidden={true} className="disable-option" >{placeholder}</option>
-                        {
-                            dataList.map(item => {
-                                return <option value={item[dataName]} key={item[keyName]}>{item[dataName]}</option>
-                            })
-                        }
-                    </select>
-                )
-            } else {
-                return (
-                    <div className="muli-select-container">
-                        <select className="dropdown-list" value={"0"} onClick={() => multiOnclick()} onChange={() => { }} >
-                            <option value="0" disabled defaultValue="selected" hidden={true} className="disable-option" >{placeholder}</option>
-                        </select>
-                        {multiSelectOpen[criteriaName] &&
-                            <div className="multi-select-dropdown-container">
-                                {
-                                    dataList.map(item => {
-                                        return (
-                                            <div className="g-col-12" key={item[keyName]}>
-                                                <input type="checkbox" className="check-box p-r-10" value={item.name} key={item[keyName]} checked={selectedList[criteriaName].indexOf(item.name) > -1} onChange={(e) => handleDropdownSelect(e, selectedList, setSelectedState, criteriaName, apiCalls, codelevel, true)} />
-                                                {item.name}
-                                            </div>
-                                        )
-                                    })
-                                }
-                            </div>
-                        }
-                    </div>
-                )
-            }
-        }
-
-        const getDropdownSelection = () => {
-            return (
-                <>
-                    {selectedList[criteriaName]?.length == 0 &&
-                        <div className="selected-item" key={'all'}>
-                            <i className="close-btn icon-close-small-x m-t-5" onClick={() => { }} > </i>
-                            All
-                        </div>
-                    }
-                    {
-                        selectedList[criteriaName]?.map(item => {
-                            return (
-                                <div className="selected-item" key={item}>
-                                    <i className="close-btn icon-close-small-x m-t-5" onClick={() => setSelectedState({ ...selectedList, [criteriaName]: onCloseBtnClick(item, selectedList[criteriaName]) })} > </i>
-                                    {item}
-                                </div>
-                            )
-                        })
-                    }
-                </>
-            )
-        }
-
-        return (
-            <div className={dataList.length == 0 ? "disable-div" : ''}>
-                {getDropdownBar()}
-                {getDropdownSelection()}
-            </div>
-        )
-    }
-
     const getSearchRequest = (pageNumber) => {
         return ({
             "name": searchText,
             "countries": selectedMarketCriteria.selectedCountries,
             "regions": selectedMarketCriteria.selectedRegions,
-            "cities": arrayToUpper(selectedMarketCriteria.selectedCities),
-            "municipalities": arrayToUpper(selectedMarketCriteria.selectedMunicipalities),
+            "cities": selectedMarketCriteria.selectedCities,
+            "municipalities": selectedMarketCriteria.selectedMunicipalities,
+            "cpvs": selectedCpvCodes,
+            "naces": selectedNaceCodes,
+            "unspscs": selectedUnspscCodes,
             "pageSize": pageSize,
             "pageNo": pageNumber,
         })
@@ -301,92 +232,115 @@ export default function Search() {
         });
     }
 
-    const getMarketCriteria = () => {
-        const containerStyle = searchForm.Market ? "gray-container" : "gray-container disable-div"
+    const getCriteriaHeader = (header, tooltip, onClickHeader) => {
         return (
-            <div className={containerStyle}>
-                <div className="text-left sub-title-txt">Market Information</div>
-                <div className="g-row">
-                    <div className="g-col-3">
-                        {getDropdown({ placeholder: 'Country', dataList: countries, selectedList: selectedMarketCriteria, setSelectedState: setSelectedMarketCriteria, criteriaName: "selectedCountries", apiCalls: getRegionsData, keyName: "alpha3Code" })}
+            <div className="text-left sub-title-txt hover-hand" onClick={() => onClickHeader()}>
+                {header}
+                <span className="tooltip-toggle" aria-label={tooltip}>
+                    <i className="icon-eye color-black" />
+                </span>
+                <i className="icon-minus fr" />
+            </div>
+
+        )
+    }
+
+    const toggleOpenCriteria = (criteriaName) => {
+        setOpenCriteria({ ...openCriteria, [criteriaName]: !openCriteria[criteriaName] })
+    }
+
+    const getMarketCriteria = () => {
+        return (
+            <div className="gray-container">
+                {getCriteriaHeader("Market Information", "xxx", () => toggleOpenCriteria('Market'))}
+                {openCriteria.Market &&
+                    <div className="g-row">
+                        <div className="g-col-3">
+                            {Dropdown({ placeholder: 'Country', dataList: marketInformationData.countries, selectedList: selectedMarketCriteria, setSelectedState: setSelectedMarketCriteria, criteriaName: "selectedCountries", apiCalls: getRegionsData, keyName: "alpha3Code" })}
+                        </div>
+                        <div className="g-col-3">
+                            {Dropdown({ placeholder: 'Region', dataList: marketInformationData.regions, selectedList: selectedMarketCriteria, setSelectedState: setSelectedMarketCriteria, criteriaName: "selectedRegions", apiCalls: getMunicipalitiesData, keyName: "code" })}
+                        </div>
+                        <div className="g-col-3">
+                            {Dropdown({ placeholder: 'Municipality', dataList: marketInformationData.municipalities, selectedList: selectedMarketCriteria, setSelectedState: setSelectedMarketCriteria, criteriaName: "selectedMunicipalities", apiCalls: getCityData, keyName: "code" })}
+                        </div>
+                        <div className="g-col-3">
+                            {Dropdown({ placeholder: 'City', dataList: marketInformationData.cities, selectedList: selectedMarketCriteria, setSelectedState: setSelectedMarketCriteria, criteriaName: "selectedCities", keyName: "code" })}
+                        </div>
                     </div>
-                    <div className="g-col-3">
-                        {getDropdown({ placeholder: 'Region', dataList: regions, selectedList: selectedMarketCriteria, setSelectedState: setSelectedMarketCriteria, criteriaName: "selectedRegions", apiCalls: getMunicipalitiesData, keyName: "code" })}
-                    </div>
-                    <div className="g-col-3">
-                        {getDropdown({ placeholder: 'Municipality', dataList: municipalities, selectedList: selectedMarketCriteria, setSelectedState: setSelectedMarketCriteria, criteriaName: "selectedMunicipalities", apiCalls: getCityData, keyName: "code" })}
-                    </div>
-                    <div className="g-col-3">
-                        {getDropdown({ placeholder: 'City', dataList: cities, selectedList: selectedMarketCriteria, setSelectedState: setSelectedMarketCriteria, criteriaName: "selectedCities", keyName: "code" })}
-                    </div>
-                </div>
+                }
             </div>
         )
     }
 
     const getProductGroupsCriteria = () => {
-        const containerStyle = searchForm.ProductGroups ? "gray-container" : "gray-container disable-div"
         return (
             <div className="g-col-12">
-                <div className={containerStyle}>
-                    <div className="text-left sub-title-txt">Product Groups (UNSPSC/ CPV Codes)</div>
-                    <div className="m-t-5">UNSPSC Codes</div>
-                    <div className="g-row">
-                        <div className="g-col-3">
-                            {getDropdown({ placeholder: 'Segmant', dataList: productGroupesData.segmant, selectedList: selectedProductGroupesCriteria, setSelectedState: setSelectedProductGroupesCriteria, criteriaName: "segmant", keyName: "" })}
-                        </div>
-                        <div className="g-col-3">
-                            {getDropdown({ placeholder: 'Family', dataList: productGroupesData.family, selectedList: selectedProductGroupesCriteria, setSelectedState: setSelectedProductGroupesCriteria, criteriaName: "family", keyName: "" })}
-                        </div>
-                        <div className="g-col-3">
-                            {getDropdown({ placeholder: 'Class', dataList: [], selectedList: selectedProductGroupesCriteria, setSelectedState: setSelectedProductGroupesCriteria, criteriaName: "unspClass", keyName: "" })}
-                        </div>
-                        <div className="g-col-3">
-                            {getDropdown({ placeholder: 'Commodity Class', dataList: [], selectedList: selectedProductGroupesCriteria, setSelectedState: setSelectedProductGroupesCriteria, criteriaName: "comClass", keyName: "" })}
-                        </div>
-                    </div>
-                    <div className="fl m-t-15">CPV Codes</div>
-                    <div className="g-row">
-                        <div className="g-col-2">
-                            {getDropdown({ placeholder: 'Division', dataList: productGroupesData.division, dataName: 'desscription', selectedList: selectedProductGroupesCriteria, setSelectedState: setSelectedProductGroupesCriteria, criteriaName: "division", apiCalls: getcpvCodesData, codelevel: 2, keyName: "code" })}
-                        </div>
-                        <div className="g-col-2">
-                            {getDropdown({ placeholder: 'Group', dataList: productGroupesData.cpvGroup, dataName: 'desscription', selectedList: selectedProductGroupesCriteria, setSelectedState: setSelectedProductGroupesCriteria, criteriaName: "cpvGroup", apiCalls: getcpvCodesData, codelevel: 3, keyName: "code" })}
-                        </div>
-                        <div className="g-col-2">
-                            {getDropdown({ placeholder: 'Class', dataList: productGroupesData.cpvClass, dataName: 'desscription', selectedList: selectedProductGroupesCriteria, setSelectedState: setSelectedProductGroupesCriteria, criteriaName: "cpvClass", apiCalls: getcpvCodesData, codelevel: 4, keyName: "code" })}
-                        </div>
-                        <div className="g-col-2">
-                            {getDropdown({ placeholder: 'Category', dataList: productGroupesData.category, dataName: 'desscription', selectedList: selectedProductGroupesCriteria, setSelectedState: setSelectedProductGroupesCriteria, criteriaName: "category", apiCalls: getcpvCodesData, codelevel: 5, keyName: "code" })}
-                        </div>
-                        <div className="g-col-3">
-                            {getDropdown({ placeholder: 'Sub Category', dataList: productGroupesData.subCategory, dataName: 'desscription', selectedList: selectedProductGroupesCriteria, setSelectedState: setSelectedProductGroupesCriteria, criteriaName: "subCategory", keyName: "code" })}
-                        </div>
-                    </div>
+                <div className="gray-container">
+                    {getCriteriaHeader("Product Groups (UNSPSC/ CPV Codes)", "xxx", () => toggleOpenCriteria('ProductGroups'))}
+                    {openCriteria.ProductGroups &&
+                        <>
+                            <div className="m-t-5">UNSPSC Codes</div>
+                            <div className="g-row">
+                                <div className="g-col-3">
+                                    {Dropdown({ placeholder: 'Segmant', dataList: unspscData.segmant, dataName: 'segmentTitle', selectedList: selectedProductGroupesCriteria, setSelectedState: setSelectedProductGroupesCriteria, selectedCodeList: selectedUnspscCodes, setSelectedCodeList: setSelectedUnspscCodes, criteriaName: "segmant", apiCalls: getUnspscCodesData, codelevel: 2, keyName: "segmentCode" })}
+                                </div>
+                                <div className="g-col-3">
+                                    {Dropdown({ placeholder: 'Family', dataList: unspscData.family, dataName: 'familyTitle', selectedList: selectedProductGroupesCriteria, setSelectedState: setSelectedProductGroupesCriteria, selectedCodeList: selectedUnspscCodes, setSelectedCodeList: setSelectedUnspscCodes, criteriaName: "family", apiCalls: getUnspscCodesData, codelevel: 3, keyName: "familyCode" })}
+                                </div>
+                                <div className="g-col-3">
+                                    {Dropdown({ placeholder: 'Class', dataList: unspscData.unspClass, dataName: 'classTitle', selectedList: selectedProductGroupesCriteria, setSelectedState: setSelectedProductGroupesCriteria, selectedCodeList: selectedUnspscCodes, setSelectedCodeList: setSelectedUnspscCodes, criteriaName: "unspClass", apiCalls: getUnspscCodesData, codelevel: 4, keyName: "classCode" })}
+                                </div>
+                                <div className="g-col-3">
+                                    {Dropdown({ placeholder: 'Commodity Class', dataList: unspscData.comClass, dataName: 'commodityTitle', selectedList: selectedProductGroupesCriteria, setSelectedState: setSelectedProductGroupesCriteria, selectedCodeList: selectedUnspscCodes, setSelectedCodeList: setSelectedUnspscCodes, criteriaName: "comClass", keyName: "commodityCode" })}
+                                </div>
+                            </div>
+                            <div className="fl m-t-15">CPV Codes</div>
+                            <div className="g-row">
+                                <div className="g-col-2">
+                                    {Dropdown({ placeholder: 'Division', dataList: cpvData.division, dataName: 'desscription', selectedList: selectedProductGroupesCriteria, setSelectedState: setSelectedProductGroupesCriteria, selectedCodeList: selectedCpvCodes, setSelectedCodeList: setSelectedCpvCodes, criteriaName: "division", apiCalls: getcpvCodesData, codelevel: 2, keyName: "code" })}
+                                </div>
+                                <div className="g-col-2">
+                                    {Dropdown({ placeholder: 'Group', dataList: cpvData.cpvGroup, dataName: 'desscription', selectedList: selectedProductGroupesCriteria, setSelectedState: setSelectedProductGroupesCriteria, selectedCodeList: selectedCpvCodes, setSelectedCodeList: setSelectedCpvCodes, criteriaName: "cpvGroup", apiCalls: getcpvCodesData, codelevel: 3, keyName: "code" })}
+                                </div>
+                                <div className="g-col-2">
+                                    {Dropdown({ placeholder: 'Class', dataList: cpvData.cpvClass, dataName: 'desscription', selectedList: selectedProductGroupesCriteria, setSelectedState: setSelectedProductGroupesCriteria, selectedCodeList: selectedCpvCodes, setSelectedCodeList: setSelectedCpvCodes, criteriaName: "cpvClass", apiCalls: getcpvCodesData, codelevel: 4, keyName: "code" })}
+                                </div>
+                                <div className="g-col-2">
+                                    {Dropdown({ placeholder: 'Category', dataList: cpvData.category, dataName: 'desscription', selectedList: selectedProductGroupesCriteria, setSelectedState: setSelectedProductGroupesCriteria, selectedCodeList: selectedCpvCodes, setSelectedCodeList: setSelectedCpvCodes, criteriaName: "category", apiCalls: getcpvCodesData, codelevel: 5, keyName: "code" })}
+                                </div>
+                                <div className="g-col-3">
+                                    {Dropdown({ placeholder: 'Sub Category', dataList: cpvData.subCategory, dataName: 'desscription', selectedList: selectedProductGroupesCriteria, setSelectedState: setSelectedProductGroupesCriteria, selectedCodeList: selectedCpvCodes, setSelectedCodeList: setSelectedCpvCodes, criteriaName: "subCategory", keyName: "code" })}
+                                </div>
+                            </div>
+                        </>
+                    }
                 </div>
             </div>
         )
     }
 
     const getProfessionCriteria = () => {
-        const containerStyle = searchForm.Profession ? "gray-container" : "gray-container disable-div"
         return (
-            <div className={containerStyle}>
-                <div className="sub-title-txt">Profession (NACE Codes)</div>
-                <div className="g-row">
-                    <div className="g-col-3">
-                        {getDropdown({ placeholder: 'Section', dataList: professionData.section, dataName: 'desscription', selectedList: selectedProfessionCriteria, setSelectedState: setSelectedProfessionCriteria, criteriaName: "section", apiCalls: getProfessionData, codelevel: 2, keyName: "code" })}
+            <div className="gray-container">
+                {getCriteriaHeader("Profession (NACE Codes)", "xxx", () => toggleOpenCriteria('Profession'))}
+                {openCriteria.Profession &&
+                    <div className="g-row">
+                        <div className="g-col-3">
+                            {Dropdown({ placeholder: 'Section', dataList: professionData.section, dataName: 'desscription', selectedList: selectedProfessionCriteria, setSelectedState: setSelectedProfessionCriteria, selectedCodeList: selectedNaceCodes, setSelectedCodeList: setSelectedNaceCodes, criteriaName: "section", apiCalls: getProfessionData, codelevel: 2, keyName: "code" })}
+                        </div>
+                        <div className="g-col-3">
+                            {Dropdown({ placeholder: 'Division', dataList: professionData.divition, dataName: 'desscription', selectedList: selectedProfessionCriteria, setSelectedState: setSelectedProfessionCriteria, selectedCodeList: selectedNaceCodes, setSelectedCodeList: setSelectedNaceCodes, criteriaName: "divition", apiCalls: getProfessionData, codelevel: 3, keyName: "code" })}
+                        </div>
+                        <div className="g-col-3">
+                            {Dropdown({ placeholder: 'Group', dataList: professionData.profGroup, dataName: 'desscription', selectedList: selectedProfessionCriteria, setSelectedState: setSelectedProfessionCriteria, selectedCodeList: selectedNaceCodes, setSelectedCodeList: setSelectedNaceCodes, criteriaName: "profGroup", apiCalls: getProfessionData, codelevel: 4, keyName: "code" })}
+                        </div>
+                        <div className="g-col-3">
+                            {Dropdown({ placeholder: 'Class', dataList: professionData.profClass, dataName: 'desscription', selectedList: selectedProfessionCriteria, setSelectedState: setSelectedProfessionCriteria, selectedCodeList: selectedNaceCodes, setSelectedCodeList: setSelectedNaceCodes, criteriaName: "profClass", keyName: "code" })}
+                        </div>
                     </div>
-                    <div className="g-col-3">
-                        {getDropdown({ placeholder: 'Division', dataList: professionData.divition, dataName: 'desscription', selectedList: selectedProfessionCriteria, setSelectedState: setSelectedProfessionCriteria, criteriaName: "divition", apiCalls: getProfessionData, codelevel: 3, keyName: "code" })}
-                    </div>
-                    <div className="g-col-3">
-                        {getDropdown({ placeholder: 'Group', dataList: professionData.profGroup, dataName: 'desscription', selectedList: selectedProfessionCriteria, setSelectedState: setSelectedProfessionCriteria, criteriaName: "profGroup", apiCalls: getProfessionData, codelevel: 4, keyName: "code" })}
-                    </div>
-                    <div className="g-col-3">
-                        {getDropdown({ placeholder: 'Class', dataList: professionData.profClass, dataName: 'desscription', selectedList: selectedProfessionCriteria, setSelectedState: setSelectedProfessionCriteria, criteriaName: "profClass", keyName: "code" })}
-                    </div>
-                </div>
+
+                }
             </div>
         )
     }
@@ -395,24 +349,19 @@ export default function Search() {
         <>
             <div className="g-col-6">
                 <div className="page-container m-r-0">
-                    <div className="g-row flex-center-middle">
-                        <div className="search-bar g-col-10 m-r-10">
-                            <i className="search-btn icon-search" onClick={onShowResults}></i>
-                            <input type="text" onChange={handleSearch} value={searchText} placeholder="Search by Location, Product or Service" />
+                    <form onSubmit={onShowResults}>
+                        <div className="g-row flex-center-middle m-b-15">
+                            <div className="search-bar g-col-10 m-r-10">
+                                <i className="search-btn icon-search" onClick={onShowResults}></i>
+                                <input type="text" onChange={handleSearch} value={searchText} placeholder="Search by Location, Product or Service" />
+                            </div>
+                            <div className="g-col-2 g-row hover-hand">
+                                <span className="fl g-col-6 m-r-10">English </span>
+                                <span className="fl g-col-3"><img src={gb_flag} className="flag-image a-row m-r-5" /></span>
+                                <i className="g-col-1 icon-arrow-down fl" />
+                            </div>
                         </div>
-                        <div className="g-col-2 g-row">
-                            <span className="fl g-col-6 m-r-10">English </span>
-                            <span className="fl g-col-3"><img src={gb_flag} className="flag-image a-row m-r-5" /></span>
-                            <i className="g-col-1 icon-arrow-down fl" />
-                        </div>
-                    </div>
-                    <h4>Narrow down your search by...</h4>
-                    <div className="g-row">
-                        {getSerachByItem('Market', 'Market', "xxxxx", '2')}
-                        {getSerachByItem('Product Groups (UNSPSC/ CPV Codes)', 'ProductGroups', "xxxxx", '6')}
-                        {getSerachByItem('Profession (NACE Codes)', 'Profession', "xxxxx", '4')}
-                    </div>
-                    <form className="n-float" >
+                        <h4>Narrow down your search by...</h4>
                         {getMarketCriteria()}
                         {getProductGroupsCriteria()}
                         {getProfessionCriteria()}
