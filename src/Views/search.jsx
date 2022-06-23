@@ -8,6 +8,7 @@ import { TabContext } from "../utils/contextStore";
 import { NAVIGATION_PAGES } from "../utils/enums";
 import { getCountries, getRegions, getMunicipalities, searchOrganization, getCities, getUnspscCodes, getCpvCodes, getNacCodes } from "../services/organizationsService";
 import Dropdown from "../common/dropdown"
+import { arrayToUpper } from './../utils/index';
 
 const pageSize = 10;
 const levelOneReq = {
@@ -198,7 +199,7 @@ export default function Search() {
             "name": searchText,
             "countries": selectedMarketCriteria.selectedCountries,
             "regions": selectedMarketCriteria.selectedRegions,
-            "cities": selectedMarketCriteria.selectedCities,
+            "cities": arrayToUpper(selectedMarketCriteria.selectedCities),
             "municipalities": selectedMarketCriteria.selectedMunicipalities,
             "cpvs": selectedCpvCodes,
             "naces": selectedNaceCodes,
