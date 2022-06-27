@@ -22,7 +22,7 @@ export async function getMunicipalities(name) {
 }
 
 export async function getCities(name) {
-    const { data } = await http.post(config.MUNICIPALITIES, name, { headers: { 'Content-Type': 'application/json' } });
+    const { data } = await http.post(config.CITIES, name, { headers: { 'Content-Type': 'application/json' } });
     return data;
 }
 
