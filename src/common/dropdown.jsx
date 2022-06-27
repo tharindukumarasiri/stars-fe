@@ -86,7 +86,13 @@ const Dropdown = ({ placeholder, dataList, dataName = 'name', criteriaName, sele
             if (selectedCodeList) {
                 const newSelectedCodes = [...selectedCodeList];
                 const selectedData = dataList.find((item) => item[dataName] === e.target.value)
-                newSelectedCodes.push(selectedData[keyName]);
+
+                if (codelevel === 2) {
+                    newSelectedCodes.push(selectedData[keyName]);
+                } else {
+                    newSelectedCodes.splice(newSelectedCodes.length - 1, 1, selectedData[keyName]);
+                }
+
                 setSelectedCodeList(newSelectedCodes)
             }
         } else if (multiSelect) {
