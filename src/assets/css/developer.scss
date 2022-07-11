@@ -1,10 +1,48 @@
 ﻿// Developer CSS goes here...******************************************
 
-.color-black{
+.color-black {
     color: black;
 }
 
 .disable-div {
     opacity: 0.5;
-    pointer-events: none; 
+    pointer-events: none;
+}
+
+.results-box {
+    background-color: $white;
+    padding: 10px;
+}
+
+.results-group {
+    border: 1px solid $gery20;
+    margin-bottom: 10px;
+    padding: 5px;
+}
+
+.selected-group {
+    border: 1px solid black;
+}
+
+.result-item {
+    min-height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 5px;
+    padding-left: 5px;
+}
+
+.datapicker-input {
+    padding: 14px;
+    border: 1px solid $light-grey;
+    width: 100%;
+    background-color: $white;
+}
+
+.datapicker-icon {
+    position: absolute;
+    right: 6px;
+    top: 12px;
+    font-size: large;
 }

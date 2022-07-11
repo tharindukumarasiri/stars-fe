@@ -40,7 +40,7 @@ body {
 }
 
 .body-content {
-    background-color: $gery-light  !important;
+    background-color: $gery-light !important;
 }
 
 .s-row {
@@ -87,6 +87,7 @@ body {
         background-color: $white;
         display: grid;
         height: calc(88% - 105px);
+        width: 48%;
     }
 }
 
@@ -132,6 +133,8 @@ body {
     border-color: $base-gray;
     width: 100%;
     padding: 5px;
+    height: 45px;
+    overflow: hidden;
 }
 
 .primary-btn {
@@ -326,7 +329,8 @@ textarea {
 .search-result-row {
     margin-top: 15px;
     width: 100%;
-    display: inline-block;
+    display: flex;
+    align-items: center;
     padding-bottom: 10px;
     border-bottom: 2px solid $super-light-grey;
 
@@ -373,7 +377,10 @@ textarea {
 
 .input-hint-text {
     position: absolute;
+    font-size: 12px;
     padding-left: 10px;
+    top: 0;
+    left: 0
 }
 
 .input-container {

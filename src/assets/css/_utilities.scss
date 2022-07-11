@@ -59,6 +59,9 @@ ol li > ul {
 .loading {
     display: flex;
     justify-content: center;
+    position: fixed;
+    top: 50%;
+    right: 20%;
     z-index: 999;
     div {
         width: 1rem;

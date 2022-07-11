@@ -1,0 +1,73 @@
+@import 'colors.scss';
+
+
+.toggle-switch {
+    position: relative;
+    width: 40px;
+}
+
+.checkbox {
+    display: none;
+}
+
+.label {
+    display: block;
+    overflow: hidden;
+    cursor: pointer;
+    border: 1 solid rgb(236, 8, 8) !important;
+
+    border-radius: 20px;
+    background-color: $white;
+    width: 40px;
+
+}
+
+.label:before,
+.label:after {
+    display: none !important;
+}
+
+.inner:before,
+.inner:after {
+    float: left;
+    width: 50%;
+    height: 22px;
+    padding: 0;
+    color: $base-color;
+}
+
+.inner:before {
+    content: "YES";
+    // padding-left: 20px;
+    background-color: $white;
+    color: $white;
+}
+
+.inner:after {
+    content: "NO";
+    // padding-right: 10px;
+    background-color: $white;
+    color: $white;
+    text-align: right;
+}
+
+.switch {
+    display: block;
+    width: 22px;
+    background: $base-color;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 18px;
+    border-radius: 20px;
+    transition: all 0.3s ease-in 0s;
+}
+
+
+.checkbox:checked+.label .inner {
+    margin-left: 0;
+}
+
+.checkbox:checked+.label .switch {
+    right: 0px;
+}
