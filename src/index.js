@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import ReactDOM from "react-dom/client";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import BuyerHome from './Views/buyerHome';
 import Search from './Views/search'
 import Tabs from "./common/tabComponent/tabs";
@@ -9,6 +10,23 @@ import { NAVIGATION_PAGES } from './utils/enums';
 import './assets/css/base.scss'
 
 function App() {
+    return (
+        <Routes>
+            <Route path='/search' element={<BuyerRole />} />
+        </Routes>
+    )
+}
+
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(
+    <React.StrictMode>
+        <BrowserRouter>
+            <App />
+        </BrowserRouter>
+    </React.StrictMode>
+);
+
+const BuyerRole = () => {
     const [activeTab, setActiveTab] = useState(NAVIGATION_PAGES.BUYER);
     const [openTabs, setOpenTabs] = useState([NAVIGATION_PAGES.BUYER]);
 
@@ -50,10 +68,3 @@ function App() {
         </TabContext.Provider >
     )
 }
-
-const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>
-);
