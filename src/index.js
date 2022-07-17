@@ -12,7 +12,7 @@ import './assets/css/base.scss'
 function App() {
     return (
         <Routes>
-            <Route path='/search' element={<BuyerRole />} />
+            <Route path='/buyer' element={<BuyerRole />} />
         </Routes>
     )
 }
