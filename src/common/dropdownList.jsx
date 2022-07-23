@@ -1,4 +1,5 @@
 import React from "react";
+import "./dropdownList.scss"
 
 const DropdownList = ({ placeholder, dataList, dataName = 'name', criteriaName, selectedList, setSelectedState, selectedCodeList = false, setSelectedCodeList, keyName, apiCalls = () => { }, codelevel = 0 } = {}) => {
     const getDropdownBar = () => {

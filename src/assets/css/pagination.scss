@@ -43,8 +43,8 @@
     }
 
     &_i:hover {
-        color: $base-color;
-        border: 2px solid $base-color;
+        color: $blue-color;
+        border: 2px solid $blue-color;
     }
 
     &:not([actpage="1"]) &_i:nth-child(1) {
@@ -83,8 +83,8 @@
 
         // active
         .cdp_i:nth-child(#{$i + 1}) {
-            color: $base-color;
-            border: 2px solid $base-color;
+            color: $blue-color;
+            border: 2px solid $blue-color;
             display: inline-block;
 
             +.cdp_i:last-child {

@@ -1,0 +1,48 @@
+@import 'assets/css/colors.scss';
+
+.compo-tile {
+    position: relative;
+    max-width: 200px;
+    height: 200px;
+    display: block;
+
+    .top {
+        height: 60%;
+        width: 100%;
+    }
+
+    .bottom {
+        background-color: black;
+        height: 40%;
+        width: 100%;
+        text-align: center;
+    }
+
+    .icon-text {
+        position: relative;
+        width: 100%;
+        top: 10px;
+        text-align: center;
+
+        i {
+            font-size: 4em;
+            color: $white;
+            line-height: initial;
+        }
+    }
+
+    h3 {
+        font-size: 1.5em;
+        text-transform: uppercase;
+        color: $white;
+        font-weight: 400;
+        margin-top: -4px;
+    }
+
+    img {
+        position: relative;
+        max-width: 138px;
+        top: 10px;
+        text-align: center;
+    }
+}

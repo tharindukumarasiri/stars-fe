@@ -4,12 +4,15 @@
 .text-center {
     text-align: center
 }
-.text-left{
+
+.text-left {
     text-align: left
 }
+
 .text-right {
     text-align: right
 }
+
 ul {
     list-style: disc;
 }
@@ -28,31 +31,44 @@ ul ul {
     margin: 35px;
 }
 
-ul li > ul,
-ol li > ol,
-ul li > ol,
-ol li > ul {
+ul li>ul,
+ol li>ol,
+ul li>ol,
+ol li>ul {
     margin-top: 0;
     margin-bottom: 0;
 }
 
 
 // positions
-.pos-r{position:relative}
-.pos-a{position:absolute}
-.pos-f{position:fixed}
+.pos-r {
+    position: relative
+}
+
+.pos-a {
+    position: absolute
+}
+
+.pos-f {
+    position: fixed
+}
 
 //
 .flex-center-middle {
     display: flex;
     align-items: center;
     justify-content: center;
-    div{text-align:center}
+
+    div {
+        text-align: center
+    }
 }
 
 
 //Heights
-.min-h-50{min-height:50px}
+.min-h-50 {
+    min-height: 50px
+}
 
 
 
@@ -63,11 +79,12 @@ ol li > ul {
     top: 50%;
     right: 20%;
     z-index: 999;
+
     div {
         width: 1rem;
         height: 1rem;
         margin: 2rem 0.3rem;
-        background: $base-color;
+        background: $blue-color;
         border-radius: 50%;
         animation: 0.9s bounce infinite alternate;
 

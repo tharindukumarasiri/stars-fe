@@ -9,11 +9,13 @@ export default function Tabs(props) {
     <div className="tabs">
       <ol className="tab-list" style={{ marginLeft: 0 }}>
         {props.children.map((child) => {
-          const { label } = child.props;
-          if (openTabs.indexOf(label) > -1)
+          const { label, id } = child.props;
+
+          if (openTabs.indexOf(id) > -1)
             return (
               <Tab
-                key={label}
+                key={id}
+                id={id}
                 label={label}
               />
             );
@@ -21,7 +23,7 @@ export default function Tabs(props) {
       </ol>
       <div className="tab-content g-row">
         {props.children.map((child) => {
-          if (child.props.label !== activeTab) return undefined;
+          if (child.props.id !== activeTab) return null;
           return child.props.children;
         })}
       </div>

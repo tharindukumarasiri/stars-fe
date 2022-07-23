@@ -1,11 +1,12 @@
 {
-    
     "ORGANIZATIONS": "https://sdcsearchapi.azurewebsites.net/organizations",
+    "GET_ORGANIZATIONS": "https://sdcsearchapi.azurewebsites.net/getOrganization",
     "COUNTRIES": "https://sdcsearchapi.azurewebsites.net/countries",
     "REGIONS": "https://sdcsearchapi.azurewebsites.net/regions",
     "MUNICIPALITIES": "https://sdcsearchapi.azurewebsites.net/municipalities",
     "CITIES": "https://sdcsearchapi.azurewebsites.net/cities",
     "CPV_CODES": "https://sdcsearchapi.azurewebsites.net/cpv",
     "NAC_CODES": "https://sdcsearchapi.azurewebsites.net/nace",
-    "UNSPSC_CODES": "https://sdcsearchapi.azurewebsites.net/unspsc"
+    "UNSPSC_CODES": "https://sdcsearchapi.azurewebsites.net/unspsc",
+    "UPDATE_UNSPSC": "https://sdcsearchapi.azurewebsites.net/updateUnspsc/"
 }

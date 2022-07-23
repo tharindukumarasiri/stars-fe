@@ -4,45 +4,115 @@
     color: black;
 }
 
+.hover-hand {
+    cursor: pointer;
+}
+
 .disable-div {
     opacity: 0.5;
     pointer-events: none;
 }
 
-.results-box {
+.page-container {
     background-color: $white;
-    padding: 10px;
+    margin: 3px;
+    padding: 15px;
+    display: grid;
+    min-height: 500px;
+
+    .title-txt {
+        color: $blue-color;
+        font-size: 1.2em;
+        padding: 7px;
+        font-weight: 700;
+        text-align: center;
+        width: 100%;
+        border-bottom: 2px solid $super-light-grey;
+        height: 46px;
+    }
+
+    .sub-title-txt {
+        color: $blue-color;
+        font-size: 16px;
+    }
+
+    .search-results-container {
+        overflow-y: scroll;
+        position: absolute;
+        top: 75px;
+        background-color: $white;
+        display: grid;
+        height: calc(88% - 105px);
+        width: 48%;
+    }
 }
 
-.results-group {
-    border: 1px solid $gery20;
-    margin-bottom: 10px;
-    padding: 5px;
+.primary-btn {
+    float: right;
+    background-color: $light-dark-blue;
+    border-color: transparent;
+    color: $white;
+    margin-top: 10px;
+    right: 10px;
+    cursor: pointer;
+    transition: $animation-1s;
+
+    &:hover {
+        background-color: $dark-blue;
+    }
 }
 
-.selected-group {
-    border: 1px solid black;
+.close-btn {
+    color: $light-dark-blue;
+    font-size: 0.8em;
+    cursor: pointer;
+    transition: $animation-1s;
+
+    &:hover {
+        color: $red
+    }
 }
 
-.result-item {
-    min-height: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 5px;
-    padding-left: 5px;
+.dropdown-list {
+    color: $base-gray;
+    font-family: $bod-font;
+
+    option {
+        color: black;
+    }
+
+    .disable-option {
+        color: $base-gray;
+    }
 }
 
-.datapicker-input {
-    padding: 14px;
-    border: 1px solid $light-grey;
-    width: 100%;
-    background-color: $white;
+
+.icon-more {
+    position: relative;
+    display: block;
+    width: 50px;
+    height: 50px;
+    font-size: 2em;
+    color: $blue-color;
+
+    &:hover {
+        color: $green;
+    }
 }
 
-.datapicker-icon {
+.check-box {
+    width: 20px;
+    height: 20px;
+}
+
+.input-hint-text {
     position: absolute;
-    right: 6px;
-    top: 12px;
-    font-size: large;
+    font-size: 12px;
+    padding-left: 10px;
+    top: 0;
+    left: 0
+}
+
+.input-container {
+    position: relative;
 }

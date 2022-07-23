@@ -1,0 +1,60 @@
+@import 'assets/css/colors.scss';
+
+.tile {
+    position: relative;
+    width: 100%;
+    min-height: 170px;
+    display: block;
+    margin-bottom: 2%;
+    cursor: pointer;
+
+    &:hover {
+        background-color: $vialot-lite
+    }
+
+    .dots {
+        position: absolute;
+        top: -8px;
+        right: 20px;
+        font-size: 2em;
+        color: $white;
+        width: 34px;
+    }
+
+    .icon-text {
+        position: absolute;
+        left: 14px;
+        bottom: 14px;
+
+        i {
+            font-size: 4em;
+            color: $white;
+            line-height: initial;
+        }
+    }
+
+    h3 {
+        font-size: 1.5em;
+        text-transform: uppercase;
+        color: $white;
+        font-weight: 400;
+        margin: 0;
+    }
+
+    h1 {
+        font-size: 3em;
+        font-weight: 900;
+        text-transform: uppercase;
+        color: $white;
+        margin-bottom: 0;
+    }
+
+    .icon-more {
+        font-size: 1.4em;
+        color: $white;
+
+        &:hover {
+            color: $green
+        }
+    }
+}

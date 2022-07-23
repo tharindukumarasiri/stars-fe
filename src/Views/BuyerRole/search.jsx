@@ -1,33 +1,26 @@
-import React, { useState, useEffect, useContext, forwardRef } from "react";
-import gb_flag from "../assets/images/gb_flag.png"
-import logo_thumb from "../assets/images/logo_thumb.png"
-import rating from "../assets/images/rating.png"
-import Model from "../common/model";
-import Pagination from "../common/pagination";
-import { TabContext } from "../utils/contextStore";
-import { NAVIGATION_PAGES } from "../utils/enums";
-import { getCountries, getRegions, getMunicipalities, searchOrganization, getCities, getUnspscCodes, getCpvCodes, getNacCodes } from "../services/organizationsService";
-import DropdownList from "../common/dropdownList"
-import Dropdown from "../common/dropdown";
-import { arrayToUpper } from './../utils/index';
+import React, { useState, useEffect, useContext } from "react";
+import { levelOneReq, nacSectionReq } from "utils/constants";
+import gb_flag from "assets/images/gb_flag.png"
+import logo_thumb from "assets/images/logo_thumb.png"
+import rating from "assets/images/rating.png"
+import Model from "common/model";
+import Pagination from "common/pagination";
+import { TabContext } from "utils/contextStore";
+import { NAVIGATION_PAGES } from "utils/enums";
+import { getCountries, getRegions, getMunicipalities, searchOrganization, getCities, getUnspscCodes, getCpvCodes, getNacCodes } from "services/organizationsService";
+import DropdownList from "common/dropdownList"
+import Dropdown from "common/dropdown";
+import { arrayToUpper } from 'utils/index';
 import SearchSelectedValues from "./Components/searchSelectedValues";
-import DatePickerInput from "../common/datePickerInput";
-import ToggleSwitch from "../common/toggleSwitch";
+import DatePickerInput from "common/datePickerInput";
+import ToggleSwitch from "common/toggleSwitch";
 
 const pageSize = 10;
-const levelOneReq = {
-    "level": 1,
-    "code": ""
-}
-const nacSectionReq = {
-    "level": "1",
-    "parent": ""
-}
 
 let noSearchResults = false;
 
 export default function Search() {
-    const [openCriteria, setOpenCriteria] = useState({ Grouping: false, CompanyInfo: false, Market: false, ProductGroups: false, Profession: false, Peppol: false });
+    const [openCriteria, setOpenCriteria] = useState({ Grouping: false, CompanyInfo: false, Market: false, ProductGroups: false, Profession: false, CreditTerms: false, Peppol: false });
     const [searchText, setSerachText] = useState("");
     const [organizations, setOrganizations] = useState([]);
 
@@ -46,7 +39,6 @@ export default function Search() {
     const [selectedCPVRows, setSelectedCPVRows] = useState({ cuurentRow: 0, preLevel: 0 });
     const [selectedNACValues, setSelectedNACValues] = useState([[[]]]);
     const [selectedNACRows, setSelectedNACRows] = useState({ cuurentRow: 0, preLevel: 0 });
-
 
     const [pageCount, setPageCount] = useState(0);
     const [actPage, setActPage] = useState(1)
@@ -287,14 +279,15 @@ export default function Search() {
         });
     }
 
-    const getCriteriaHeader = (header, tooltip, onClickHeader) => {
+    const getCriteriaHeader = (header, tooltip, onClickHeader, expanded) => {
+        const expandIcon = expanded ? 'icon-minus fr' : 'icon-minus-1 fr'
         return (
             <div className="text-left sub-title-txt hover-hand" onClick={() => onClickHeader()}>
                 {header}
                 <span className="tooltip-toggle" aria-label={tooltip}>
-                    <i className="icon-eye color-black" />
+                    <i className="icon-question color-black m-l-5" />
                 </span>
-                <i className="icon-minus fr" />
+                <i className={expandIcon} />
             </div>
 
         )
@@ -307,7 +300,7 @@ export default function Search() {
     const getGroupingCriteria = () => {
         return (
             <div className="gray-container">
-                {getCriteriaHeader("Grouping and Totals", "xxx", () => toggleOpenCriteria('Grouping'))}
+                {getCriteriaHeader("Grouping and Totals", "xxx", () => toggleOpenCriteria('Grouping'), openCriteria.Grouping)}
                 {openCriteria.Grouping &&
                     <>
                         <div className="g-row">
@@ -334,7 +327,7 @@ export default function Search() {
     const getCompanyInfoCriteria = () => {
         return (
             <div className="gray-container">
-                {getCriteriaHeader("Company Info.", "xxx", () => toggleOpenCriteria('CompanyInfo'))}
+                {getCriteriaHeader("Company Info.", "xxx", () => toggleOpenCriteria('CompanyInfo'), openCriteria.CompanyInfo)}
                 {openCriteria.CompanyInfo &&
                     <>
                         <div className="g-row">
@@ -434,7 +427,7 @@ export default function Search() {
     const getMarketCriteria = () => {
         return (
             <div className="gray-container">
-                {getCriteriaHeader("Market Information", "xxx", () => toggleOpenCriteria('Market'))}
+                {getCriteriaHeader("Market Information", "xxx", () => toggleOpenCriteria('Market'), openCriteria.Market)}
                 {openCriteria.Market &&
                     <div className="g-row">
                         <div className="g-col-3">
@@ -459,7 +452,7 @@ export default function Search() {
         return (
             <div className="g-col-12">
                 <div className="gray-container">
-                    {getCriteriaHeader("Product Groups (UNSPSC/ CPV Codes)", "xxx", () => toggleOpenCriteria('ProductGroups'))}
+                    {getCriteriaHeader("Product Groups (UNSPSC/ CPV Codes)", "xxx", () => toggleOpenCriteria('ProductGroups'), openCriteria.ProductGroups)}
                     {openCriteria.ProductGroups &&
                         <>
                             <div className="m-t-5">UNSPSC Codes</div>
@@ -507,7 +500,7 @@ export default function Search() {
     const getProfessionCriteria = () => {
         return (
             <div className="gray-container">
-                {getCriteriaHeader("Profession (NACE Codes)", "xxx", () => toggleOpenCriteria('Profession'))}
+                {getCriteriaHeader("Profession (NACE Codes)", "xxx", () => toggleOpenCriteria('Profession'), openCriteria.Profession)}
                 {openCriteria.Profession &&
                     <div>
                         <div className="g-row m-b-10">
@@ -525,6 +518,21 @@ export default function Search() {
                             </div>
                         </div>
                         <SearchSelectedValues selectedValues={selectedNACValues} setSelectedValues={setSelectedNACValues} selectedRows={selectedNACRows} setSelectedRows={setSelectedNACRows} apiCalls={getProfessionData} />
+                    </div>
+                }
+            </div>
+        )
+    }
+
+    const getCreditTermsCriteria = () => {
+        return (
+            <div className="gray-container">
+                {getCriteriaHeader("Credit Terms", "xxx", () => toggleOpenCriteria('CreditTerms'), openCriteria.CreditTerms)}
+                {openCriteria.CreditTerms &&
+                    <div>
+                        <div className="g-row m-b-10">
+                            Credit Terms
+                        </div>
                     </div>
                 }
             </div>
@@ -550,7 +558,7 @@ export default function Search() {
     const getPeppolCriteria = () => {
         return (
             <div className="gray-container">
-                {getCriteriaHeader("Peppol Documents", "xxx", () => toggleOpenCriteria('Peppol'))}
+                {getCriteriaHeader("Peppol Documents", "xxx", () => toggleOpenCriteria('Peppol'), openCriteria.Peppol)}
                 {openCriteria.Peppol &&
                     <div>
                         <div className="p-y-30">Peppol Documents Post award</div>
@@ -585,14 +593,15 @@ export default function Search() {
                             </div>
                         </div>
                         <h4>Narrow down your search by...</h4>
-                        {getGroupingCriteria()}
-                        {getCompanyInfoCriteria()}
                         {getMarketCriteria()}
                         {getProductGroupsCriteria()}
                         {getProfessionCriteria()}
+                        {getCreditTermsCriteria()}
+                        {getGroupingCriteria()}
+                        {getCompanyInfoCriteria()}
                         {getPeppolCriteria()}
                         <button className="primary-btn m-l-10" onClick={onShowResults} >Show Result</button>
-                        <button className="primary-btn" onClick={() => { changeActiveTab(NAVIGATION_PAGES.SEARCHRESULTS) }} >View History</button>
+                        <button className="primary-btn" onClick={() => { changeActiveTab(NAVIGATION_PAGES.BUYER_SEARCHRESULTS) }} >View History</button>
                     </form>
                 </div>
             </div>

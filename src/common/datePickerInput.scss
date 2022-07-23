@@ -1,0 +1,15 @@
+@import 'assets/css/colors.scss';
+
+.datapicker-input {
+    padding: 14px;
+    border: 1px solid $grey-light;
+    width: 100%;
+    background-color: $white;
+}
+
+.datapicker-icon {
+    position: absolute;
+    right: 6px;
+    top: 12px;
+    font-size: large;
+}

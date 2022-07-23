@@ -1,32 +1,231 @@
-﻿$base-color: #0592D9; // Blue
-$dark-blue: darken( $base-color, 20% );
-$light-dark-blue: desaturate( $base-color, 10% );
+﻿$theme: #0592d9;
+$theme-dark: darken($theme, 20%);
+$theme-light-dark: desaturate($theme, 10%);
+$theme-light: lighten($theme, 50%);
+$tab-content: lighten($theme, 45%);
+
+//blue
+$blue-color: #0592d9;
+$dark-blue: darken($blue-color, 20%);
+$darker-blue: darken($blue-color, 30%);
+$light-dark-blue: desaturate($blue-color, 10%);
+$light-blue: lighten($blue-color, 40%);
+$lighter-blue: lighten($blue-color, 45%);
+$lighter2-blue: lighten($blue-color, 50%);
+$lighter3-blue: lighten($blue-color, 53%);
+$blue-purple: #746ab2;
+$blue-purple-dark: darken($blue-purple, 10%);
+$bluish-green: #0aa699;
+$bluish-green-dark: darken($bluish-green, 10%);
+//Grey
 $base-gray: #666;
-$gery20: lighten( $base-gray, 50% );
-$gery-light: lighten( $base-gray, 58% );
-$light-grey: #9e9e9e;
-$super-light-grey: #e0e0e0;
-$blue-purple: #746AB2 ;
-$red: #ff0000;
-$white: #fff;
-$vialot: #B572CD ;
-$vialot-lite: desaturate($vialot, 20% );
-$green: #4cff00;
-$green-dark: darken( $green, 20% );
-$green-lite: desaturate($green, 20% );
-$tab-content: lighten( $base-color, 45% );
+$grey-dark: darken($base-gray, 10%);
+$grey-light: lighten($base-gray, 30%);
+$lighter-grey: lighten($base-gray, 55%);
+$super-light-grey: lighten($base-gray, 58%);
 //
 
-.bg-grey {background-color: $base-gray;}
-.bg-light-grey {background-color: $light-grey;}
-.bg-super-light-grey {background-color: $super-light-grey;}
-.bg-gery20 {background-color: $gery20;}
-.bg-gery-light {background-color: $gery-light;}
-.bg-red {background-color: $red;}
-.bg-vialot {background-color: $vialot;}
-.bg-green-lite {background-color: $green-lite}
-.bg-green-dark {background-color: $green-dark}
-.bg-blue {background-color: $base-color}
-.bg-blue-purple {background-color: $blue-purple}
-.bg-dark-blue {background-color: $dark-blue}
-.bg-light-dark-blue {background-color: $light-dark-blue}
+$red: #ff0000;
+$red-light: lighten($red, 30%);
+$red-dark: darken($red, 10%);
+$orange: #ff9900;
+$orange-dark: darken($orange, 0%);
+$white: #fff;
+$vialot: #b572cd;
+$vialot-lite: desaturate($vialot, 20%);
+$green: #2bb201;
+$green-dark: darken($green, 20%);
+$green-lite: lighten($green, 5%);
+//
+$white: #fff;
+
+//Blues
+.blue {
+    color: $blue-color;
+}
+
+.blue-dark {
+    color: $dark-blue;
+}
+
+.blue-darker {
+    color: $darker-blue;
+}
+
+.blue-light {
+    color: $light-blue;
+}
+
+.blue-lighter {
+    color: $lighter-blue;
+}
+
+.blue-lighter2 {
+    color: $lighter2-blue;
+}
+
+.bg-blue {
+    background-color: $blue-color;
+}
+
+.bg-dark-blue {
+    background-color: $dark-blue;
+}
+
+.bg-darker-blue {
+    background-color: $darker-blue !important;
+}
+
+.bg-light-dark-blue {
+    background-color: $light-dark-blue;
+}
+
+.bg-blue-light {
+    background-color: $light-blue !important;
+}
+
+.bg-blue-lighter {
+    background-color: $lighter-blue !important;
+}
+
+.bg-blue-lighter2 {
+    background-color: $lighter2-blue !important;
+}
+
+.bg-blue-lighter3 {
+    background-color: $lighter3-blue !important;
+}
+
+//Greys///
+.grey {
+    color: $base-gray;
+}
+
+.grey-light {
+    color: $grey-light;
+}
+
+.grey-dark {
+    color: $grey-dark !important;
+}
+
+.bg-grey {
+    background-color: $base-gray;
+}
+
+.bg-grey-light {
+    background-color: $grey-light;
+}
+
+.bg-grey-lighter {
+    background-color: $lighter-grey;
+}
+
+.bg-grey-dark {
+    background-color: $grey-dark;
+}
+
+//greens
+.green {
+    color: $green;
+}
+
+.green-lite {
+    color: $green-lite;
+}
+
+.green-dark {
+    color: $green-dark;
+}
+
+.bg-green {
+    background-color: $green;
+}
+
+.bg-green-lite {
+    background-color: $green-lite !important;
+}
+
+.bg-green-dark {
+    background-color: $green-dark;
+}
+
+//Reds
+.red {
+    color: $red;
+}
+
+.bg-red {
+    background-color: $red;
+}
+
+.red-light {
+    color: $red-light;
+}
+
+.bg-red-light {
+    background-color: $red-light;
+}
+
+.red-dark {
+    color: $red-dark;
+}
+
+.bg-red-dark {
+    background-color: $red-dark;
+}
+
+//Orange
+.orange {
+    color: $orange;
+}
+
+.bg-orange {
+    background-color: $orange;
+}
+
+.orange-dark {
+    color: $orange-dark;
+}
+
+.bg-orange-dark {
+    background-color: $orange-dark;
+}
+
+//Purples
+.vialot {
+    color: $vialot;
+}
+
+.bg-vialot {
+    background-color: $vialot;
+}
+
+//
+.bluish-green {
+    color: $bluish-green;
+}
+
+.bg-bluish-green {
+    background-color: $bluish-green;
+}
+
+.bluish-green-dark {
+    color: $bluish-green;
+}
+
+.bg-bluish-green-dark {
+    background-color: $bluish-green-dark;
+}
+
+.blue-purple {
+    background-color: $blue-purple;
+}
+
+.bg-blue-purple {
+    background-color: $blue-purple;
+}
+
+.bg-blue-purple-dark {
+    background-color: $blue-purple-dark;
+}

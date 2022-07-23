@@ -1,0 +1,101 @@
+@import 'assets/css/colors.scss';
+
+.gray-container {
+    background-color: $lighter-grey;
+    width: 100%;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    padding-left: 15px;
+    padding-right: 15px;
+    margin-top: 10px;
+    display: inline-block;
+}
+
+.result-item {
+    min-height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 5px;
+    padding-left: 5px;
+}
+
+.results-box {
+    background-color: $white;
+    padding: 10px;
+}
+
+.results-group {
+    border: 1px solid $lighter-grey;
+    margin-bottom: 10px;
+    padding: 5px;
+}
+
+.selected-group {
+    border: 1px solid black;
+}
+
+.flag-icon {
+    max-width: 10px;
+    max-height: 15px;
+}
+
+.flag-image {
+    max-width: 30px;
+    max-height: 20px;
+}
+
+.logo-thumb {
+    width: 44px;
+    height: 44px;
+    display: block;
+}
+
+.search-btn {
+    position: absolute;
+    right: 4px;
+    padding-top: 6px;
+    font-size: 2em;
+    cursor: pointer;
+    transition: all 1s;
+    color: $blue-color;
+
+    &:hover {
+        color: $green-lite
+    }
+}
+
+.search-bar {
+    position: relative;
+
+}
+
+.search-result-row {
+    margin-top: 15px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    padding-bottom: 10px;
+    border-bottom: 2px solid $super-light-grey;
+
+    img {
+        max-width: 80px
+    }
+}
+
+.line-seperator {
+    height: 2px;
+    float: right;
+}
+
+.save-button {
+    position: absolute;
+    right: 20px;
+    bottom: 50px;
+}
+
+.hint-text {
+    position: absolute;
+    right: 20px;
+    bottom: 20px;
+}

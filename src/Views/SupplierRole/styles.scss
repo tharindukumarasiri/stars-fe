@@ -1,0 +1,47 @@
+@import 'assets/css/colors.scss';
+
+.expandable {
+    border-top: 1px solid $tab-content;
+}
+
+.color-guide-container {
+    border-right: 5px solid white;
+}
+
+.result-item {
+    min-height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1px;
+    padding-left: 5px;
+}
+
+.header-icon {
+    color: $blue-color;
+    font-size: 2.5em;
+}
+
+.toggle-icon {
+    color: $blue-color;
+    font-size: 1em;
+    margin-right: 4px;
+}
+
+.close-icon {
+    color: $blue-color;
+    font-size: 1.5em;
+}
+
+.directional-img {
+    width: 140px;
+    height: 140px;
+}
+
+.selected-codes {
+    margin-bottom: 25px;
+}
+
+.center-loading {
+    left: 20%;
+}

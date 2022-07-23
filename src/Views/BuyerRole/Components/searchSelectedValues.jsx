@@ -8,9 +8,9 @@ const SearchSelectedValues = ({ selectedValues, setSelectedValues, selectedRows,
             case 4:
                 return "bg-super-light-grey";
             case 5:
-                return "bg-gery-light";
+                return "bg-grey-lighter";
             case 6:
-                return "bg-gery-light";
+                return "bg-grey-lighter";
             default:
                 break;
         }
@@ -20,7 +20,10 @@ const SearchSelectedValues = ({ selectedValues, setSelectedValues, selectedRows,
         if (typeof value.value === 'string') {
             return (
                 <div className="result-item">
-                    <div>{value.value}</div>
+                    <div className="body-text">
+                        <div className="body-text-bold fl m-r-10">{value.code}</div>
+                        {value.value}
+                    </div>
                     <i className="icon-close-small-x hover-hand m-r-5" onClick={() => onClose(value.code)} > </i>
                 </div>
             )
@@ -34,7 +37,10 @@ const SearchSelectedValues = ({ selectedValues, setSelectedValues, selectedRows,
                             if (index !== 0)
                                 return (
                                     <div style={{ marginLeft: 20 * index }} className={resultStyle} key={index}>
-                                        <div className="g-col-11">{val.value}</div>
+                                        <div className="g-col-11 body-text">
+                                            <div className="body-text-bold fl m-r-10">{val.code}</div>
+                                            {val.value}
+                                        </div>
                                         <i className="icon-close-small-x hover-hand m-r-5" onClick={() => onClose(val.code)} > </i>
                                     </div>
                                 )

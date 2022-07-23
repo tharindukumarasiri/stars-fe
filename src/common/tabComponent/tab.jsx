@@ -2,23 +2,23 @@ import React, { useContext } from "react";
 import { TabContext } from "../../utils/contextStore";
 
 export default function Tab(props) {
-  const { activeTab, changeActiveTab, closeTab, openTabs  } = useContext(TabContext)
+  const { activeTab, changeActiveTab, closeTab, openTabs } = useContext(TabContext)
 
   const onClick = () => {
-    changeActiveTab(props.label);
+    changeActiveTab(props.id);
   };
 
   const onCloseBtnClick = (e) => {
-    if(activeTab == props.label){
+    if (activeTab === props.id) {
       changeActiveTab(openTabs[0])
     }
     e.stopPropagation();
-    closeTab(props.label);
+    closeTab(props.id);
   }
 
   let className = "tab-list-item";
 
-  if (activeTab === props.label) {
+  if (activeTab === props.id) {
     className += " tab-list-active";
   }
 
