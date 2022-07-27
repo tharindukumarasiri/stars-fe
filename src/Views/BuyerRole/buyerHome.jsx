@@ -1,9 +1,8 @@
 import React, { useContext } from "react";
-import starLogo from "assets/images/starLogo.png"
-import { TabContext } from "utils/contextStore";
-import { NAVIGATION_PAGES } from "utils/enums";
-import NavigationCard from "common/navigationCard";
-import TitleCard from "common/titleCard";
+import { TabContext } from "../../utils/contextStore";
+import { NAVIGATION_PAGES } from "../../utils/enums";
+import NavigationCard from "../../common/navigationCard";
+import TitleCard from "../../common/titleCard";
 
 export default function BuyerHome() {
     const { changeActiveTab } = useContext(TabContext)

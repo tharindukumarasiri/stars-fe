@@ -1,10 +1,10 @@
 import React from "react";
-import flag_none from "assets/images/flag-none.png"
-import flag_pink from "assets/images/flag-pink.png"
-import flag_green from "assets/images/flag-green.png"
-import flag_ligh_blue from "assets/images/flag-light-blue.png"
-import flag_blue from "assets/images/flag-blue.png"
-import flag_red from "assets/images/flag-red.png"
+import flag_none from "../assets/images/flag-none.png"
+import flag_pink from "../assets/images/flag-pink.png"
+import flag_green from "../assets/images/flag-green.png"
+import flag_ligh_blue from "../assets/images/flag-light-blue.png"
+import flag_blue from "../assets/images/flag-blue.png"
+import flag_red from "../assets/images/flag-red.png"
 
 const Model = ({ visible, onCloseModel, searchCriteria }) => {
 

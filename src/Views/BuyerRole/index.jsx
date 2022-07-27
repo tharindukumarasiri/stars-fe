@@ -2,10 +2,10 @@ import React, { useState } from 'react';
 import "./styles.scss"
 import BuyerHome from './buyerHome';
 import Search from './search'
-import Tabs from "common/tabComponent";
+import Tabs from "../../common/tabComponent";
 import SearchResults from "./searchResults";
-import { TabContext } from 'utils/contextStore';
-import { NAVIGATION_PAGES } from 'utils/enums';
+import { TabContext } from '../../utils/contextStore';
+import { NAVIGATION_PAGES } from '../../utils/enums';
 
 const BuyerRole = () => {
     const [activeTab, setActiveTab] = useState(NAVIGATION_PAGES.BUYER_HOME);

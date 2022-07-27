@@ -1,19 +1,19 @@
 import React, { useState, useEffect, useContext } from "react";
-import { levelOneReq, nacSectionReq } from "utils/constants";
-import gb_flag from "assets/images/gb_flag.png"
-import logo_thumb from "assets/images/logo_thumb.png"
-import rating from "assets/images/rating.png"
-import Model from "common/model";
-import Pagination from "common/pagination";
-import { TabContext } from "utils/contextStore";
-import { NAVIGATION_PAGES } from "utils/enums";
-import { getCountries, getRegions, getMunicipalities, searchOrganization, getCities, getUnspscCodes, getCpvCodes, getNacCodes } from "services/organizationsService";
-import DropdownList from "common/dropdownList"
-import Dropdown from "common/dropdown";
-import { arrayToUpper } from 'utils/index';
+import { levelOneReq, nacSectionReq } from "../../utils/constants";
+import gb_flag from "../../assets/images/gb_flag.png"
+import logo_thumb from "../../assets/images/logo_thumb.png"
+import rating from "../../assets/images/rating.png"
+import Model from "../../common/model";
+import Pagination from "../../common/pagination";
+import { TabContext } from "../../utils/contextStore";
+import { NAVIGATION_PAGES } from "../../utils/enums";
+import { getCountries, getRegions, getMunicipalities, searchOrganization, getCities, getUnspscCodes, getCpvCodes, getNacCodes } from "../../services/organizationsService";
+import DropdownList from "../../common/dropdownList"
+import Dropdown from "../../common/dropdown";
+import { arrayToUpper } from '../../utils/index';
 import SearchSelectedValues from "./Components/searchSelectedValues";
-import DatePickerInput from "common/datePickerInput";
-import ToggleSwitch from "common/toggleSwitch";
+import DatePickerInput from "../../common/datePickerInput";
+import ToggleSwitch from "../../common/toggleSwitch";
 
 const pageSize = 10;
 
@@ -85,26 +85,11 @@ export default function Search() {
             }
         }
 
-        const getUnspscTitleHeaders = (level) => {
-            switch (level) {
-                case 1:
-                    return ['segmentTitle', 'segmentCode'];
-                case 2:
-                    return ['familyTitle', 'familyCode'];
-                case 3:
-                    return ['classTitle', 'classCode'];
-                case 4:
-                    return ['commodityTitle', 'commodityCode'];
-                default:
-                    break;
-            }
-        }
-
-        const selectedUnspscData = unspscData[getUnspscName(level - 1)].filter(item => item[getUnspscTitleHeaders(level - 1)[0]] === title)
+        const selectedUnspscData = unspscData[getUnspscName(level - 1)].filter(item => item.title === title)
 
         const data = {
             "level": level,
-            "code": selectedUnspscData[0][getUnspscTitleHeaders(level - 1)[1]]
+            "code": selectedUnspscData[0].code
         }
 
         getUnspscCodes(data).then(result => {
@@ -458,16 +443,16 @@ export default function Search() {
                             <div className="m-t-5">UNSPSC Codes</div>
                             <div className="g-row">
                                 <div className="g-col-3">
-                                    {Dropdown({ placeholder: 'Segmant', dataList: unspscData.segmant, dataName: 'segmentTitle', selectedList: selectedUNSPValues, setSelectedState: setSelectedUNSPValues, selectedRows: selectedUNSPRows, setSelectedRows: setSelectedUNSPRows, apiCalls: getUnspscCodesData, codelevel: 1, keyName: "segmentCode" })}
+                                    {Dropdown({ placeholder: 'Segmant', dataList: unspscData.segmant, dataName: 'title', selectedList: selectedUNSPValues, setSelectedState: setSelectedUNSPValues, selectedRows: selectedUNSPRows, setSelectedRows: setSelectedUNSPRows, apiCalls: getUnspscCodesData, codelevel: 1, keyName: "code" })}
                                 </div>
                                 <div className="g-col-3">
-                                    {Dropdown({ placeholder: 'Family', dataList: unspscData.family, dataName: 'familyTitle', selectedList: selectedUNSPValues, setSelectedState: setSelectedUNSPValues, selectedRows: selectedUNSPRows, setSelectedRows: setSelectedUNSPRows, apiCalls: getUnspscCodesData, codelevel: 2, keyName: "familyCode" })}
+                                    {Dropdown({ placeholder: 'Family', dataList: unspscData.family, dataName: 'title', selectedList: selectedUNSPValues, setSelectedState: setSelectedUNSPValues, selectedRows: selectedUNSPRows, setSelectedRows: setSelectedUNSPRows, apiCalls: getUnspscCodesData, codelevel: 2, keyName: "code" })}
                                 </div>
                                 <div className="g-col-3">
-                                    {Dropdown({ placeholder: 'Class', dataList: unspscData.unspClass, dataName: 'classTitle', selectedList: selectedUNSPValues, setSelectedState: setSelectedUNSPValues, selectedRows: selectedUNSPRows, setSelectedRows: setSelectedUNSPRows, apiCalls: getUnspscCodesData, codelevel: 3, keyName: "classCode" })}
+                                    {Dropdown({ placeholder: 'Class', dataList: unspscData.unspClass, dataName: 'title', selectedList: selectedUNSPValues, setSelectedState: setSelectedUNSPValues, selectedRows: selectedUNSPRows, setSelectedRows: setSelectedUNSPRows, apiCalls: getUnspscCodesData, codelevel: 3, keyName: "code" })}
                                 </div>
                                 <div className="g-col-3">
-                                    {Dropdown({ placeholder: 'Commodity Class', dataList: unspscData.comClass, dataName: 'commodityTitle', selectedList: selectedUNSPValues, setSelectedState: setSelectedUNSPValues, selectedRows: selectedUNSPRows, setSelectedRows: setSelectedUNSPRows, codelevel: 4, keyName: "commodityCode" })}
+                                    {Dropdown({ placeholder: 'Commodity Class', dataList: unspscData.comClass, dataName: 'title', selectedList: selectedUNSPValues, setSelectedState: setSelectedUNSPValues, selectedRows: selectedUNSPRows, setSelectedRows: setSelectedUNSPRows, codelevel: 4, keyName: "code" })}
                                 </div>
                             </div>
                             <SearchSelectedValues selectedValues={selectedUNSPValues} setSelectedValues={setSelectedUNSPValues} selectedRows={selectedUNSPRows} setSelectedRows={setSelectedUNSPRows} apiCalls={getUnspscCodesData} />

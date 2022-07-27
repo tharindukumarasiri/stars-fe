@@ -1,5 +1,5 @@
-
-import starLogo from "assets/images/starLogo.png"
+import React from "react"
+import starLogo from "../assets/images/starLogo.png"
 import "./titleCard.scss"
 
 const TitleCard = ({ title, topIcon = '', topBgColor = "bg-blue-purple", bottomLogo = starLogo } = {}) => {

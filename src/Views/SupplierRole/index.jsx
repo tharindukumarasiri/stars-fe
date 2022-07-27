@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import SupplierHome from './supplierHome';
-import Tabs from "common/tabComponent";
-import { TabContext } from 'utils/contextStore';
+import Tabs from "../../common/tabComponent";
+import { TabContext } from '../../utils/contextStore';
 import "./styles.scss"
-import { NAVIGATION_PAGES } from 'utils/enums';
+import { NAVIGATION_PAGES } from '../../utils/enums';
 import Summary from './summary';
 import Unspsc from './unspsc';
 

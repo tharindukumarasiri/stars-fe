@@ -1,11 +1,11 @@
 import React, { useContext, useEffect, useState } from "react";
-import { TabContext } from "utils/contextStore";
-import gb_flag from "assets/images/gb_flag.png";
+import { TabContext } from "../../utils/contextStore";
+import gb_flag from "../../assets/images/gb_flag.png";
 import CriteriaColorGuideTab from "./Components/criteriaColorGuideTab";
 import UserSelectedFields from "./Components/userSelectedFields";
-import { levelOneReq } from "utils/constants";
-import { getOrganization, getUnspscCodes, updateUnspscCodes } from "services/organizationsService";
-import directional_sign from "assets/images/directional-sign.png"
+import { levelOneReq } from "../../utils/constants";
+import { getOrganization, getUnspscCodes, updateUnspscCodes } from "../../services/organizationsService";
+import directional_sign from "../../assets/images/directional-sign.png"
 
 const Unspsc = () => {
     const { organizationData, setOrganizationData } = useContext(TabContext);
@@ -285,7 +285,7 @@ const Unspsc = () => {
         <>
             <div className="g-row m-l-10">
                 <i className="icon-cubes-1 header-icon m-t-10 m-r-15 fl" />
-                <h3>(United Nations Standard Products and Services Code )</h3>
+                <h3 className="m-t-20">(United Nations Standard Products and Services Code )</h3>
             </div>
             <div className="page-container">
                 {loading &&

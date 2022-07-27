@@ -1,10 +1,10 @@
 import React, { useEffect, useState, useContext } from "react";
-import { TabContext } from "utils/contextStore";
-import { NAVIGATION_PAGES } from "utils/enums";
+import { TabContext } from "../../utils/contextStore";
+import { NAVIGATION_PAGES } from "../../utils/enums";
 import CriteriaColorGuideTab from "./Components/criteriaColorGuideTab";
 import Expandable from "./Components/expandable";
-import NavigationCard from "common/navigationCard";
-import { getOrganization } from "services/organizationsService";
+import NavigationCard from "../../common/navigationCard";
+import { getOrganization } from "../../services/organizationsService";
 import UserSelectedFields from "./Components/userSelectedFields";
 
 const Summary = () => {
@@ -52,7 +52,7 @@ const Summary = () => {
         <>
             <div className="g-row m-l-10">
                 <i className="icon-summary header-icon m-t-10 m-r-15 fl" />
-                <h3>SUMMARY</h3>
+                <h3 className="m-t-20">SUMMARY</h3>
             </div>
             <div className="page-container">
                 <div className="g-row">

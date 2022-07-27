@@ -1,4 +1,4 @@
-@import 'assets/css/colors.scss';
+@import '../../assets/css/colors.scss';
 
 .expandable {
     border-top: 1px solid $tab-content;
@@ -34,8 +34,8 @@
 }
 
 .directional-img {
-    width: 140px;
-    height: 140px;
+    width: 125px;
+    height: 161px;
 }
 
 .selected-codes {

@@ -4,13 +4,13 @@ const SearchSelectedValues = ({ selectedValues, setSelectedValues, selectedRows,
     const getBgColor = (value, index) => {
         switch (value[0] + index) {
             case 3:
-                return "bg-light-grey";
+                return "bg-grey-light";
             case 4:
-                return "bg-super-light-grey";
+                return "bg-grey-lighter";
             case 5:
-                return "bg-grey-lighter";
+                return "bg-super-light-grey";
             case 6:
-                return "bg-grey-lighter";
+                return "bg-super-light-grey";
             default:
                 break;
         }
