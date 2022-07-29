@@ -6,6 +6,8 @@ import "./styles.scss"
 import { NAVIGATION_PAGES } from '../../utils/enums';
 import Summary from './summary';
 import Unspsc from './unspsc';
+import Cpv from './cpv';
+import Nace from './nace';
 
 const SupplireRole = () => {
     const [activeTab, setActiveTab] = useState(NAVIGATION_PAGES.SUPPLIER_HOME);
@@ -43,6 +45,12 @@ const SupplireRole = () => {
                 </div>
                 <div label={"UNSPSC"} id={NAVIGATION_PAGES.SUPPLIER_UNSPSC}>
                     <Unspsc />
+                </div>
+                <div label={"CPV"} id={NAVIGATION_PAGES.SUPPLIER_CPV}>
+                    <Cpv />
+                </div>
+                <div label={"NACE"} id={NAVIGATION_PAGES.SUPPLIER_NACE}>
+                    <Nace />
                 </div>
             </Tabs>
         </TabContext.Provider >

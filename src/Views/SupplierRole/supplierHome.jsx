@@ -24,10 +24,10 @@ const SupplierHome = () => {
             <div className="g-row">
                 <NavigationCard name={"SUMMARY"} cardColour={"bg-bluish-green-dark"} imageName={'icon-summary'} onClick={() => onClickCard(NAVIGATION_PAGES.SUPPLIER_SUMMARY)} />
                 <NavigationCard name={"UNSPSC"} cardColour={"bg-blue-purple"} imageName={'icon-unspsc'} onClick={() => onClickCard(NAVIGATION_PAGES.SUPPLIER_UNSPSC)} />
-                <NavigationCard name={"CPV"} cardColour={"bg-blue"} imageName={'icon-cpv'} />
+                <NavigationCard name={"CPV"} cardColour={"bg-blue"} imageName={'icon-cpv'} onClick={() => onClickCard(NAVIGATION_PAGES.SUPPLIER_CPV)} />
             </div>
             <div className="g-row">
-                <NavigationCard name={"NACE"} cardColour={"bg-vialot"} imageName={'icon-nace'} />
+                <NavigationCard name={"NACE"} cardColour={"bg-vialot"} imageName={'icon-nace'} onClick={() => onClickCard(NAVIGATION_PAGES.SUPPLIER_NACE)} />
                 <NavigationCard name={"MARKETS"} cardColour={"bg-green-lite"} imageName={'icon-nuts'} />
             </div>
         </>

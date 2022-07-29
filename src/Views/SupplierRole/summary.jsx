@@ -57,8 +57,8 @@ const Summary = () => {
             <div className="page-container">
                 <div className="g-row">
                     <NavigationCard name={"UNSPSC CODES"} cardColour={"bg-blue-purple"} value={organizationData.unspscs?.length} onClick={() => onClickCard(NAVIGATION_PAGES.SUPPLIER_UNSPSC)} />
-                    <NavigationCard name={"CPV CODES"} cardColour={"bg-blue"} value={organizationData.cpvs?.length} />
-                    <NavigationCard name={"NACE CODES"} cardColour={"bg-vialot"} value={organizationData.naces?.length} />
+                    <NavigationCard name={"CPV CODES"} cardColour={"bg-blue"} value={organizationData.cpvs?.length} onClick={() => onClickCard(NAVIGATION_PAGES.SUPPLIER_CPV)} />
+                    <NavigationCard name={"NACE CODES"} cardColour={"bg-vialot"} value={organizationData.naces?.length} onClick={() => onClickCard(NAVIGATION_PAGES.SUPPLIER_NACE)} />
                     <NavigationCard name={"MARKETS"} cardColour={"bg-green-lite"} />
                 </div>
                 <Expandable title={"UNSPSC (United Nations Standard Products and Services Code )"} expandedItem={expandedItem} setExpandedItem={setExpandedItem} label='UNSPSC' >

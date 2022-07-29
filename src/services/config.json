@@ -6,7 +6,12 @@
     "MUNICIPALITIES": "https://sdcsearchapi.azurewebsites.net/municipalities",
     "CITIES": "https://sdcsearchapi.azurewebsites.net/cities",
     "CPV_CODES": "https://sdcsearchapi.azurewebsites.net/cpv",
+    "SEARCH_CPV_CODES": "https://sdcsearchapi.azurewebsites.net/findCpv",
+    "UPDATE_CPV": "https://sdcsearchapi.azurewebsites.net/updateCpv/",
     "NAC_CODES": "https://sdcsearchapi.azurewebsites.net/nace",
+    "UPDATE_NACE": "https://sdcsearchapi.azurewebsites.net/updateNace/",
+    "SEARCH_NACE_CODES": "https://sdcsearchapi.azurewebsites.net/findNace",
     "UNSPSC_CODES": "https://sdcsearchapi.azurewebsites.net/unspsc",
-    "UPDATE_UNSPSC": "https://sdcsearchapi.azurewebsites.net/updateUnspsc/"
+    "UPDATE_UNSPSC": "https://sdcsearchapi.azurewebsites.net/updateUnspsc/",
+    "SEARCH_UNSPSC_CODES": "https://sdcsearchapi.azurewebsites.net/findUnspsc"
 }
