@@ -169,7 +169,7 @@ const Cpv = () => {
 
         if (indexOfCode < 0) {
             const data = {
-                "level": 4,
+                "level": 5,
                 "code": code
             }
 
@@ -406,16 +406,35 @@ const Cpv = () => {
                         <h3 className="text-center">Your selected CPV Codes</h3>
                         <YourCpvData />
                     </div>
-                    <div className="g-col-2">
-                        <h3 className="text-center">How to update your CPV Codes?</h3>
+                    <div className="g-col-2 text-center">
+                        <h3>How to update your CPV Codes?</h3>
                         <div className="flex-center-middle"><img src={directional_sign} alt='img' className="directional-img" /></div>
-                        <div className="body-text text-center m-t-20">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna wirl aliqua. Up exlaborum incididunt quis nostrud exercitatn.</div>
-                        <div className="body-text text-center m-t-20">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna wirl aliqua. Up exlaborum incididunt quis nostrud exercitatn.</div>
+
+                        <div className="static-content-container">
+                            <div className="body-text-bold  m-t-20">What are CPV Codes?</div>
+                            <div className="body-text m-t-20">Common Procurement Vocabulary (CPV) codes are a framework of classification for public procurement that makes use of a standardized vocabulary. With the aid of CPV codes, procurement staff may consistently classify their contract notices and make it simpler for suppliers and contracting authorities to locate notices. The vocabulary is built on a tree structure comprising codes up to 9 digits which is a 8 digit code with a verification digit that are linked to terminology that defines the kind of goods or services that the contract is for.</div>
+                            <div className="body-text"><strong>XX</strong>000000-Y : The first two digits for <strong>divisions</strong></div>
+                            <div className="body-text"><strong>XXX</strong>00000-Y : The first three digits for <strong>groups</strong></div>
+                            <div className="body-text"><strong>XXXX</strong>0000-Y : The first four digits for <strong>classes</strong></div>
+                            <div className="body-text"><strong>XXXXX</strong>000-Y : The first five digits for <strong>categories</strong></div>
+                            <div className="body-text m-b-20">XXXXX<strong>000</strong>-Y : Last three digits for <strong>sub categories</strong></div>
+
+                            <div className="body-text-bold  m-t-20 ">Why update CPV Codes?</div>
+                            <div className="body-text">Your company will be listed on the "Star Search Engine," which is also a global standard.
+                                Benefit from the ability to be notified whenever new tenders are updated in TED & Doffin.</div>
+
+                            <div className="body-text-bold  m-t-20 ">How to update CPV Codes?</div>
+                            <div className="body-text">1. The CPV Codes displays according to the hierarchy in selected language (Default language would be logged in language)</div>
+                            <div className="body-text">2. Using "+," make the codes expanded to discover your precise business domain, and "-," make them unfold.</div>
+                            <div className="body-text">3. Check all the boxes to choose the codes that apply to your business domain.</div>
+                            <div className="body-text">4. You may uncheck/remove the unintended codes.</div>
+                            <div className="body-text">5. To save your work, choose "Update”. The CPV Codes will be saved in selected Language.(Do a new update if you want to include a different language.)</div>
+                        </div>
                     </div>
                 </div>
 
             </div>
-            <button className="primary-btn m-a-10" onClick={onUpdate} >Update</button>
+            <button className="primary-btn update-btn" onClick={onUpdate} >Update</button>
         </>
     )
 }

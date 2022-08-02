@@ -40,7 +40,7 @@ const Dropdown = ({ placeholder, dataList, dataName = 'name', selectedList, setS
                 <option value="0" disabled defaultValue="selected" hidden={true} className="disable-option" >{placeholder}</option>
                 {
                     dataList.map((item, index) => {
-                        return <option value={item[keyName]} key={index}>{item[dataName]}</option>
+                        return <option value={item[keyName]} key={index}>{item.code} {item[dataName]}</option>
                     })
                 }
             </select>

@@ -45,3 +45,16 @@
 .center-loading {
     left: 20%;
 }
+
+.static-content-container {
+    overflow-y: scroll;
+    position: absolute;
+    display: grid;
+    height: calc(80% - 105px);
+}
+
+.update-btn {
+    position: fixed;
+    right: 50px;
+    bottom: 20px;
+}

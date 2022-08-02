@@ -183,7 +183,7 @@ const Nace = () => {
             setOrganizationData(newOrganizationData)
         }
     }
-    console.log(organizationData)
+
     const onDelete = (code) => {
         const index = organizationData.naces.findIndex(data => data.code === code)
 
@@ -351,16 +351,33 @@ const Nace = () => {
                         <h3 className="text-center">Your selected NACE Codes</h3>
                         <YourNaceData />
                     </div>
-                    <div className="g-col-2">
-                        <h3 className="text-center">How to update your NACE Codes?</h3>
+                    <div className="g-col-2 text-center">
+                        <h3>How to update your NACE Codes?</h3>
                         <div className="flex-center-middle"><img src={directional_sign} alt='img' className="directional-img" /></div>
-                        <div className="body-text text-center m-t-20">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna wirl aliqua. Up exlaborum incididunt quis nostrud exercitatn.</div>
-                        <div className="body-text text-center m-t-20">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna wirl aliqua. Up exlaborum incididunt quis nostrud exercitatn.</div>
+
+                        <div className="static-content-container">
+                            <div className="body-text-bold  m-t-20">What are NACE Codes?</div>
+                            <div className="body-text m-t-20">The comprehensive classification system for goods and economic activities is referred to as NACE, or Nomenclature of Economic Activities. They divide up the variety of economic activities so that one can relate a statistical unit to the activity a certain NACE code denotes. NACE employs four levels of hierarchy.</div>
+                            <div className="body-text"><strong>A to U</strong> : alphabetical letters identify the <strong>sections</strong></div>
+                            <div className="body-text"><strong>01 to 99</strong> : three-digit numerical codes identify the <strong>divisions</strong></div>
+                            <div className="body-text"><strong>01.1 to 99.0</strong> : three-digit numerical codes identify the <strong>groups</strong></div>
+                            <div className="body-text m-b-20"><strong>01.11 to 99.00</strong> : three-digit numerical codes identify the <strong>classes</strong></div>
+
+                            <div className="body-text-bold  m-t-20 ">Why update NACE Codes?</div>
+                            <div className="body-text">Your company will be listed on the "Star Search Engine," which is also a global standard.</div>
+
+                            <div className="body-text-bold  m-t-20 ">How to update NACE Codes?</div>
+                            <div className="body-text">1. The NACE Codes displays according to the hierarchy in selected language (Default language would be logged in language)</div>
+                            <div className="body-text">2. Using "+," make the codes expanded to discover your precise business domain, and "-," make them unfold.</div>
+                            <div className="body-text">3. Check all the boxes to choose the codes that apply to your business domain.</div>
+                            <div className="body-text">4. You may uncheck/remove the unintended codes.</div>
+                            <div className="body-text">5. To save your work, choose "Update”. The NACE Codes will be saved in selected Language.(Do a new update if you want to include a different language.)</div>
+                        </div>
                     </div>
                 </div>
 
             </div>
-            <button className="primary-btn m-a-10" onClick={onUpdate} >Update</button>
+            <button className="primary-btn update-btn" onClick={onUpdate} >Update</button>
         </>
     )
 }

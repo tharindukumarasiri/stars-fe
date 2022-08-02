@@ -355,16 +355,32 @@ const Unspsc = () => {
                         <h3 className="text-center">Your selected UNSPSC Codes</h3>
                         <YourUnspscData />
                     </div>
-                    <div className="g-col-2">
-                        <h3 className="text-center">How to update your UNSPSC Codes?</h3>
+                    <div className="g-col-2 text-center">
+                        <h3>How to update your UNSPSC Codes?</h3>
                         <div className="flex-center-middle"><img src={directional_sign} alt='img' className="directional-img" /></div>
-                        <div className="body-text text-center m-t-20">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna wirl aliqua. Up exlaborum incididunt quis nostrud exercitatn.</div>
-                        <div className="body-text text-center m-t-20">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna wirl aliqua. Up exlaborum incididunt quis nostrud exercitatn.</div>
+
+                        <div className="static-content-container">
+                            <div className="body-text-bold  m-t-20">What are UNSPSC Codes?</div>
+                            <div className="body-text m-t-20">The United Nations Standard Products and Services Code (UNSPSC) is a taxonomy of products and services was created to cater to the many demands of organizations and corporations engaged in the global trade, analysis, and regulation of goods and services. It is an eight-digit number that represents a four-level structure.</div>
+                            <div className="body-text"><strong>XX</strong>000000 the first two digits for <strong>Segment</strong></div>
+                            <div className="body-text">XX<strong>XX</strong>0000 second two digits for <strong>Family</strong></div>
+                            <div className="body-text">XXXX<strong>XX</strong>00 third two digits for <strong>Class</strong></div>
+                            <div className="body-text m-b-20">XXXXXXXX<strong>XX</strong>last two digits for <strong>Commodity</strong></div>
+
+                            <div className="body-text-bold  m-t-20 ">Why update UNSPSC Codes</div>
+                            <div className="body-text">Your company will be listed on the "Star Search Engine," which is also a global standard.</div>
+
+                            <div className="body-text-bold  m-t-20 ">How to update UNSPSC Codes?</div>
+                            <div className="body-text">1. The UNSPSC Codes displays according to the hierarchy in selected language (Default language would be logged in language)</div>
+                            <div className="body-text">2. Using "+," make the codes expanded to discover your precise business domain, and "-," make them unfold.</div>
+                            <div className="body-text">3. Check all the boxes to choose the codes that apply to your business domain.</div>
+                            <div className="body-text">4. You may uncheck/remove the unintended codes.</div>
+                            <div className="body-text">5. To save your work, choose "Update”. The UNSPSC Codes will be saved in selected Language.(Do a new update if you want to include a different language.)</div>
+                        </div>
                     </div>
                 </div>
-
             </div>
-            <button className="primary-btn m-a-10" onClick={onUpdate} >Update</button>
+            <button className="primary-btn update-btn" onClick={onUpdate} >Update</button>
         </>
     )
 }
