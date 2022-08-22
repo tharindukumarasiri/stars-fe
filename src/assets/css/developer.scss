@@ -105,14 +105,70 @@
     height: 20px;
 }
 
-.input-hint-text {
+.input-hint-text-visible {
     position: absolute;
     font-size: 12px;
     padding-left: 10px;
+    transition: all .2s ease-out;
     top: 0;
-    left: 0
+    left: 0;
 }
+
+.input-hint-text-hidden {
+    position: absolute;
+    transition: all .2s ease-in;
+    top: 15px;
+    left: 15px;
+    opacity: 0;
+    z-index: -1;
+}
+
 
 .input-container {
     position: relative;
+}
+
+.ant-modal-title {
+    color: $blue-color;
+    text-align: center;
+}
+
+.ant-modal-footer {
+    text-align: center;
+}
+
+.custom-tab-container {
+    margin: 3px;
+    padding: 15px;
+    display: grid;
+    min-height: 500px;
+
+    .ant-tabs {
+        background-color: $white;
+    }
+
+    .ant-tabs>.ant-tabs-nav .ant-tabs-nav-wrap {
+        background-color: $tab-content;
+    }
+
+    .ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn {
+        color: $blue-color;
+    }
+
+    .ant-tabs-card>.ant-tabs-nav .ant-tabs-tab {
+        background-color: #81B1CA;
+        border-color: #81B1CA;
+    }
+
+    .ant-tabs-card.ant-tabs-top>.ant-tabs-nav .ant-tabs-tab-active {
+        background-color: $white;
+        border-color: $white;
+
+    }
+
+    .ant-badge-status-text {
+        font-weight: 400;
+        font-size: 14px;
+        color: $base-gray;
+    }
 }

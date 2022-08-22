@@ -6,17 +6,23 @@ import Tabs from "../../common/tabComponent";
 import SearchResults from "./searchResults";
 import { TabContext } from '../../utils/contextStore';
 import { NAVIGATION_PAGES } from '../../utils/enums';
+import Projects from './projects';
+import ProjectDetails from './projectDetails';
+import SectionSearch from './sectionSearch'
 
 const BuyerRole = () => {
     const [activeTab, setActiveTab] = useState(NAVIGATION_PAGES.BUYER_HOME);
     const [openTabs, setOpenTabs] = useState([NAVIGATION_PAGES.BUYER_HOME]);
+    const [params, setParams] = useState({})
 
-    const changeActiveTab = (tab) => {
+    const changeActiveTab = (tab, params = null) => {
         if (openTabs.indexOf(tab) < 0) {
             const newOpenTabs = Array.from(openTabs)
             newOpenTabs.push(tab);
             setOpenTabs(newOpenTabs);
         }
+        if (params)
+            setParams(pre => ({ ...pre, [tab]: params }))
         setActiveTab(tab);
     };
 
@@ -44,6 +50,17 @@ const BuyerRole = () => {
                     <div className="page-container">
                         <SearchResults />
                     </div>
+                </div>
+                <div label={"PROJECTS"} id={NAVIGATION_PAGES.BUYER_PROJECTS}>
+                    <div className="page-container">
+                        <Projects />
+                    </div>
+                </div>
+                <div label={`PROJECT: ${params[NAVIGATION_PAGES.BUYER_PROJECT_DETAILS]?.name}`} id={NAVIGATION_PAGES.BUYER_PROJECT_DETAILS}>
+                    <ProjectDetails params={params[NAVIGATION_PAGES.BUYER_PROJECT_DETAILS]} />
+                </div>
+                <div label={`${params[NAVIGATION_PAGES.BUYER_PROJECT_SEARCH]?.projectName} > SECTION: ${params[NAVIGATION_PAGES.BUYER_PROJECT_SEARCH]?.sectionName}`} id={NAVIGATION_PAGES.BUYER_PROJECT_SEARCH}>
+                    <SectionSearch params={params[NAVIGATION_PAGES.BUYER_PROJECT_SEARCH]} />
                 </div>
             </Tabs>
         </TabContext.Provider >

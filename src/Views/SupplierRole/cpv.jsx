@@ -1,4 +1,5 @@
 import React, { useContext, useEffect, useMemo, useState } from "react";
+import { message } from 'antd';
 import { TabContext } from "../../utils/contextStore";
 import gb_flag from "../../assets/images/gb_flag.png";
 import CriteriaColorGuideTab from "./Components/criteriaColorGuideTab";
@@ -8,13 +9,13 @@ import { getOrganization, getCpvCodes, updateCpvCodes, searchCpvCodes } from "..
 import directional_sign from "../../assets/images/directional-sign.png"
 
 const Cpv = () => {
-    const { organizationData, setOrganizationData } = useContext(TabContext);
-    const [cpvData, setCpvData] = useState({ division: [], cpvGroup: [], cpvClass: [], category: [], subCategory: [] })
-    const [expanded, setExpanded] = useState({ division: [], cpvGroup: [], cpvClass: [], category: [] })
-    const [loading, setLoading] = useState(false)
-    const [searchText, setSearchText] = useState('')
-    const [searchResult, setSearchResult] = useState('')
-    const [showingSearchedCodes, setShowingSearchedCodes] = useState(false)
+    const { organizationData, setOrganizationData, haveUnsavedDataRef, setHaveUnsavedDataRef } = useContext(TabContext);
+    const [cpvData, setCpvData] = useState({ division: [], cpvGroup: [], cpvClass: [], category: [], subCategory: [] });
+    const [expanded, setExpanded] = useState({ division: [], cpvGroup: [], cpvClass: [], category: [] });
+    const [loading, setLoading] = useState(false);
+    const [searchText, setSearchText] = useState('');
+    const [searchResult, setSearchResult] = useState('');
+    const [showingSearchedCodes, setShowingSearchedCodes] = useState(false);
 
     useEffect(() => {
         getCpvCodes(levelOneReq).then(result => {
@@ -28,6 +29,17 @@ const Cpv = () => {
                 setOrganizationData(result)
             });
         }
+
+        const unloadCallback = (event) => {
+            if (haveUnsavedDataRef.current) {
+                event.preventDefault();
+                event.returnValue = "";
+                return "";
+            }
+        };
+
+        window.addEventListener("beforeunload", unloadCallback);
+        return () => window.removeEventListener("beforeunload", unloadCallback);
 
     }, []);
 
@@ -197,6 +209,7 @@ const Cpv = () => {
 
     const handleChekBox = ({ mostChild, parents } = {}) => {
         const index = organizationData.cpvs?.findIndex(data => data.code === mostChild.code)
+        setHaveUnsavedDataRef(true);
 
         if (index < 0 || !index) {
             const newOrganizationData = { ...organizationData }
@@ -224,7 +237,8 @@ const Cpv = () => {
 
         newCpvs.splice(index, 1);
         newOrganizationData.cpvs = newCpvs
-        setOrganizationData(newOrganizationData)
+        setHaveUnsavedDataRef(true);
+        setOrganizationData(newOrganizationData);
     }
 
     const onUpdate = () => {
@@ -232,12 +246,15 @@ const Cpv = () => {
         window.scrollTo(0, 0);
         updateCpvCodes(927379759, organizationData.cpvs).then(result => {
             setLoading(false);
-            if (result !== 'Ok') {
-                alert("Update failed please try again");
+            setHaveUnsavedDataRef(false);
+            if (result === 'Ok') {
+                message.success('Update successful');
+            } else {
+                message.error('Update failed please try again');
             }
         }).catch(() => {
             setLoading(false);
-            alert("Update failed please try again");
+            message.error('Update failed please try again');
         })
     }
 

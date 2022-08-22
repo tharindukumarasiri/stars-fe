@@ -1,4 +1,5 @@
 import React, { useContext, useEffect, useMemo, useState } from "react";
+import { message } from 'antd';
 import { TabContext } from "../../utils/contextStore";
 import gb_flag from "../../assets/images/gb_flag.png";
 import CriteriaColorGuideTab from "./Components/criteriaColorGuideTab";
@@ -8,7 +9,7 @@ import { getOrganization, getNacCodes, updateNaceCodes, searchNaceCodes } from "
 import directional_sign from "../../assets/images/directional-sign.png"
 
 const Nace = () => {
-    const { organizationData, setOrganizationData } = useContext(TabContext);
+    const { organizationData, setOrganizationData, haveUnsavedDataRef, setHaveUnsavedDataRef } = useContext(TabContext);
     const [naceData, setNaceData] = useState({ section: [], divition: [], group: [], class: [] })
     const [expanded, setExpanded] = useState({ section: [], divition: [], group: [] })
     const [loading, setLoading] = useState(false)
@@ -28,6 +29,17 @@ const Nace = () => {
                 setOrganizationData(result)
             });
         }
+
+        const unloadCallback = (event) => {
+            if (haveUnsavedDataRef.current) {
+                event.preventDefault();
+                event.returnValue = "";
+                return "";
+            }
+        };
+
+        window.addEventListener("beforeunload", unloadCallback);
+        return () => window.removeEventListener("beforeunload", unloadCallback);
 
     }, []);
 
@@ -167,6 +179,7 @@ const Nace = () => {
 
     const handleChekBox = ({ mostChild, parents } = {}) => {
         const index = organizationData.naces?.findIndex(data => data.code === mostChild.code)
+        setHaveUnsavedDataRef(true);
 
         if (index < 0 || !index) {
             const newOrganizationData = { ...organizationData }
@@ -192,7 +205,9 @@ const Nace = () => {
 
         newNaces.splice(index, 1);
         newOrganizationData.naces = newNaces
-        setOrganizationData(newOrganizationData)
+        setOrganizationData(newOrganizationData);
+        setHaveUnsavedDataRef(true);
+        setOrganizationData(newOrganizationData);
     }
 
     const onUpdate = () => {
@@ -200,12 +215,15 @@ const Nace = () => {
         window.scrollTo(0, 0);
         updateNaceCodes(927379759, organizationData.naces).then(result => {
             setLoading(false);
-            if (result !== 'Ok') {
-                alert("Update failed please try again");
+            setHaveUnsavedDataRef(false);
+            if (result === 'Ok') {
+                message.success('Update successful');
+            } else {
+                message.error('Update failed please try again');
             }
         }).catch(() => {
             setLoading(false);
-            alert("Update failed please try again");
+            message.error('Update failed please try again');
         })
     }
 

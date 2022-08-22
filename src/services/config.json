@@ -13,5 +13,17 @@
     "SEARCH_NACE_CODES": "https://sdcsearchapi.azurewebsites.net/findNace",
     "UNSPSC_CODES": "https://sdcsearchapi.azurewebsites.net/unspsc",
     "UPDATE_UNSPSC": "https://sdcsearchapi.azurewebsites.net/updateUnspsc/",
-    "SEARCH_UNSPSC_CODES": "https://sdcsearchapi.azurewebsites.net/findUnspsc"
+    "SEARCH_UNSPSC_CODES": "https://sdcsearchapi.azurewebsites.net/findUnspsc",
+
+    "OPERATIONS": "https://sdcprojectapi.azurewebsites.net/operations",
+    "ADD_OPERATION": "https://sdcprojectapi.azurewebsites.net/addNewOperation",
+    "EDIT_OPERATION": "https://sdcprojectapi.azurewebsites.net/updateOperation?opId=",
+    "DELETE_OPERATION": "https://sdcprojectapi.azurewebsites.net/deleteOperation?opId=",
+
+    "SECTIONS": "https://sdcprojectapi.azurewebsites.net/getSections?opId=",
+    "ADD_SECTION": "https://sdcprojectapi.azurewebsites.net/addSection?opId=",
+    "EDIT_SECTION": "https://sdcprojectapi.azurewebsites.net/updateSections?opId=",
+
+    "MEMBERS": "https://sdcprojectapi.azurewebsites.net/getMembers?opId=",
+    "ADD_MEMBER": "https://sdcprojectapi.azurewebsites.net/addMember?opId="
 }

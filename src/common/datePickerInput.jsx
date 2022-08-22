@@ -3,28 +3,22 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import "./datePickerInput.scss"
 
-const DatePickerInput = ({ selected, setDate, placeholder, dataName } = {}) => {
+const DatePickerInput = ({ value, onChange, placeholder } = {}) => {
 
     const InputView = forwardRef(({ value, onClick, placeholder }, ref) => (
-        <div className="datapicker-input" onClick={onClick} ref={ref}>
-            {value &&
-                <div className="input-hint-text">{placeholder}</div>
-            }
+        <div className="datapicker-input m-b-10" onClick={onClick} ref={ref}>
+            <div className={value ? "input-hint-text-visible" : "input-hint-text-hidden"}>{placeholder}</div>
             <div >
                 {value ? value : placeholder}
-                <i className="icon-inventory datapicker-icon"></i>
+                <i className="icon-calander datapicker-icon"></i>
             </div>
         </div>
     ));
 
-    const onChange = (date) => {
-        setDate({ ...selected, [dataName]: date })
-    }
-
     return (
         <DatePicker
-            selected={selected[dataName]}
-            onChange={(date) => onChange(date)}
+            selected={value}
+            onChange={date => onChange(date)}
             customInput={<InputView />}
             placeholderText={placeholder}
         />

@@ -1,5 +1,6 @@
 @import '../../assets/css/colors.scss';
 
+// Start Search Page Styles ---*>
 .gray-container {
     background-color: $lighter-grey;
     width: 100%;
@@ -99,3 +100,66 @@
     right: 20px;
     bottom: 20px;
 }
+
+.search-result-pagination-container {
+    position: absolute;
+    bottom: 70px;
+}
+
+// End Search Page Styles ---*>
+
+// Start Projects Page Styles ---*>
+.table-icon {
+    font-size: 22px;
+    margin-right: 8px;
+    cursor: pointer;
+}
+
+.grid-view-icon {
+    font-size: 22px;
+    margin-top: -40px;
+    margin-right: 40px;
+    color: $blue-color;
+}
+
+.list-view-icon {
+    font-size: 22px;
+    margin-top: -40px;
+    color: $orange;
+}
+
+.detail-edit-icon {
+    font-size: 22px;
+    margin-right: 8px;
+    cursor: pointer;
+    color: $blue-color;
+    position: absolute;
+    right: 30px;
+}
+
+.border-blue {
+    border-radius: 5px;
+    border-style: solid;
+    border-width: 1px;
+}
+
+.serch-table-icon {
+    font-size: 15px;
+}
+
+.section-search-results-container {
+    overflow-y: scroll;
+    position: absolute;
+    top: 210px;
+    background-color: $white;
+    display: grid;
+    height: calc(78% - 105px);
+    width: 47%;
+}
+
+.member-section-dropdown {
+    max-height: 200px;
+    overflow-y: scroll;
+}
+
+// End Projects Page Styles ---*>

@@ -1,15 +1,15 @@
 import React, { useState, useEffect, useContext } from "react";
+import { message, Pagination } from 'antd';
 import { levelOneReq, nacSectionReq } from "../../utils/constants";
 import gb_flag from "../../assets/images/gb_flag.png"
 import logo_thumb from "../../assets/images/logo_thumb.png"
 import rating from "../../assets/images/rating.png"
 import Model from "../../common/model";
-import Pagination from "../../common/pagination";
 import { TabContext } from "../../utils/contextStore";
 import { NAVIGATION_PAGES } from "../../utils/enums";
 import { getCountries, getRegions, getMunicipalities, searchOrganization, getCities, getUnspscCodes, getCpvCodes, getNacCodes } from "../../services/organizationsService";
-import DropdownList from "../../common/dropdownList"
-import Dropdown from "../../common/dropdown";
+import DropdownList from "./Components/dropdownList"
+import Dropdown from "./Components/dropdown";
 import { arrayToUpper } from '../../utils/index';
 import SearchSelectedValues from "./Components/searchSelectedValues";
 import DatePickerInput from "../../common/datePickerInput";
@@ -19,7 +19,7 @@ const pageSize = 10;
 
 let noSearchResults = false;
 
-export default function Search() {
+export default function Search(props) {
     const [openCriteria, setOpenCriteria] = useState({ Grouping: false, CompanyInfo: false, Market: false, ProductGroups: false, Profession: false, CreditTerms: false, Peppol: false });
     const [searchText, setSerachText] = useState("");
     const [organizations, setOrganizations] = useState([]);
@@ -177,8 +177,8 @@ export default function Search() {
         window.scrollTo(0, 0)
         const searchReq = getSearchRequest(1);
         const allSelectedCriteria = searchReq.countries.concat(searchReq.regions, searchReq.cities, searchReq.municipalities, searchReq.cpvs, searchReq.naces, searchReq.unspscs)
-        if (allSelectedCriteria.length === 0) {
-            alert("Please select criterias to search");
+        if (allSelectedCriteria.length === 0 && searchText === '') {
+            message.warning('Please select criterias to search');
         } else {
             noSearchResults = false;
             setLoading(true);
@@ -264,6 +264,10 @@ export default function Search() {
         });
     }
 
+    const changeCompanyInfoData = (data, dataName) => {
+        setSelectedCompanyInfo({ ...selectedCompanyInfo, [dataName]: data })
+    }
+
     const getCriteriaHeader = (header, tooltip, onClickHeader, expanded) => {
         const expandIcon = expanded ? 'icon-minus fr' : 'icon-minus-1 fr'
         return (
@@ -320,7 +324,7 @@ export default function Search() {
                                 <div className="g-row">
                                     <div className="g-col-5 m-t-15">Registration date</div>
                                     <div className="g-col-7">
-                                        <DatePickerInput placeholder={'From Date'} selected={selectedCompanyInfo} setDate={setSelectedCompanyInfo} dataName={'registrationFromDate'} />
+                                        <DatePickerInput placeholder={'From Date'} value={selectedCompanyInfo.registrationFromDate} onChange={(date) => changeCompanyInfoData(date, 'registrationFromDate')} />
                                     </div>
                                 </div>
                             </div>
@@ -328,7 +332,7 @@ export default function Search() {
                                 <div className="g-row">
                                     <div className="g-col-5"></div>
                                     <div className="g-col-7">
-                                        <DatePickerInput placeholder={'To Date'} selected={selectedCompanyInfo} setDate={setSelectedCompanyInfo} dataName={'registrationToDate'} />
+                                        <DatePickerInput placeholder={'To Date'} value={selectedCompanyInfo.registrationToDate} onChange={(date) => changeCompanyInfoData(date, 'registrationToDate')} />
                                     </div>
                                 </div>
                             </div>
@@ -339,7 +343,7 @@ export default function Search() {
                                 <div className="g-row">
                                     <div className="g-col-5 m-t-5">Date of incorporation</div>
                                     <div className="g-col-7">
-                                        <DatePickerInput placeholder={'From Date'} selected={selectedCompanyInfo} setDate={setSelectedCompanyInfo} dataName={'incorpFromDate'} />
+                                        <DatePickerInput placeholder={'From Date'} value={selectedCompanyInfo.incorpFromDate} onChange={(date) => changeCompanyInfoData(date, 'incorpFromDate')} />
                                     </div>
                                 </div>
                             </div>
@@ -347,7 +351,7 @@ export default function Search() {
                                 <div className="g-row">
                                     <div className="g-col-5"></div>
                                     <div className="g-col-7">
-                                        <DatePickerInput placeholder={'To Date'} selected={selectedCompanyInfo} setDate={setSelectedCompanyInfo} dataName={'incorpToDate'} />
+                                        <DatePickerInput placeholder={'To Date'} value={selectedCompanyInfo.incorpToDate} onChange={(date) => changeCompanyInfoData(date, 'incorpToDate')} />
                                     </div>
                                 </div>
                             </div>
@@ -605,7 +609,7 @@ export default function Search() {
                     }
                     {organizations.length > 0 &&
                         <>
-                            <div className="search-results-container">
+                            <div className={props?.searchResultsStyles || 'search-results-container'}>
                                 {organizations.map(organization => {
                                     return (
                                         <div key={organization.id} className="search-result-row g-row">
@@ -623,7 +627,9 @@ export default function Search() {
                                     )
                                 })}
                             </div>
-                            <Pagination pageNumber={actPage} pageCount={pageCount} onChangePage={(pageNum) => { onChangePage(pageNum) }} />
+                            <div className="search-result-pagination-container">
+                                <Pagination size="small" current={actPage} onChange={(pageNum) => { onChangePage(pageNum) }} total={pageCount} showSizeChanger={false} />
+                            </div>
                         </>
                     }
                     <button className="primary-btn save-button" onClick={onSaveResults} >Save</button>

@@ -25,7 +25,7 @@ export default function BuyerHome() {
             </div>
             <div className="g-row">
                 <NavigationCard name={"SEARCH ENGINE"} cardColour={"bg-vialot"} imageName={'icon-search-module'} onClick={() => onClickCard(NAVIGATION_PAGES.BUYER_SEARCH)} />
-                <NavigationCard name={"PROJECTS"} cardColour={"bg-green-lite"} imageName={'icon-projects'} />
+                <NavigationCard name={"PROJECTS"} cardColour={"bg-green-lite"} imageName={'icon-projects'} onClick={() => onClickCard(NAVIGATION_PAGES.BUYER_PROJECTS)} />
                 <NavigationCard name={"OPERATIONS MANAGEMENT"} cardColour={"bg-green-dark"} imageName={'icon-op-manage'} />
             </div>
             <div className="g-row">

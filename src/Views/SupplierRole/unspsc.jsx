@@ -1,4 +1,5 @@
 import React, { useContext, useEffect, useMemo, useState } from "react";
+import { message } from 'antd';
 import { TabContext } from "../../utils/contextStore";
 import gb_flag from "../../assets/images/gb_flag.png";
 import CriteriaColorGuideTab from "./Components/criteriaColorGuideTab";
@@ -8,7 +9,7 @@ import { getOrganization, getUnspscCodes, updateUnspscCodes, searchUnspscCodes }
 import directional_sign from "../../assets/images/directional-sign.png"
 
 const Unspsc = () => {
-    const { organizationData, setOrganizationData } = useContext(TabContext);
+    const { organizationData, setOrganizationData, haveUnsavedDataRef, setHaveUnsavedDataRef } = useContext(TabContext);
     const [unspscData, setUnspscData] = useState({ segmant: [], family: [], class: [], commodity: [] })
     const [expanded, setExpanded] = useState({ segmant: [], family: [], class: [] })
     const [loading, setLoading] = useState(false)
@@ -28,6 +29,17 @@ const Unspsc = () => {
                 setOrganizationData(result)
             });
         }
+
+        const unloadCallback = (event) => {
+            if (haveUnsavedDataRef.current) {
+                event.preventDefault();
+                event.returnValue = "";
+                return "";
+            }
+        };
+
+        window.addEventListener("beforeunload", unloadCallback);
+        return () => window.removeEventListener("beforeunload", unloadCallback);
 
     }, []);
 
@@ -166,6 +178,7 @@ const Unspsc = () => {
 
     const handleChekBox = ({ mostChild, parents } = {}) => {
         const index = organizationData.unspscs?.findIndex(data => data.code === mostChild.code)
+        setHaveUnsavedDataRef(true);
 
         if (index < 0 || !index) {
             const newOrganizationData = { ...organizationData }
@@ -192,7 +205,9 @@ const Unspsc = () => {
 
         newUnspscs.splice(index, 1);
         newOrganizationData.unspscs = newUnspscs
-        setOrganizationData(newOrganizationData)
+        setOrganizationData(newOrganizationData);
+        setHaveUnsavedDataRef(true);
+        setOrganizationData(newOrganizationData);
     }
 
     const onUpdate = () => {
@@ -200,12 +215,15 @@ const Unspsc = () => {
         window.scrollTo(0, 0);
         updateUnspscCodes(927379759, organizationData.unspscs).then(result => {
             setLoading(false);
-            if (result !== 'Ok') {
-                alert("Update failed please try again");
+            setHaveUnsavedDataRef(false);
+            if (result === 'Ok') {
+                message.success('Update successful');
+            } else {
+                message.error('Update failed please try again');
             }
         }).catch(error => {
             setLoading(false);
-            alert("Update failed please try again");
+            message.error('Update failed please try again');
         })
     }
 

@@ -1,10 +1,11 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import { BrowserRouter, Routes, Route, Link, NavLink } from "react-router-dom";
-import 'assets/css/base.scss'
+import { BrowserRouter, Routes, Route, NavLink } from "react-router-dom";
+import 'antd/dist/antd.css';
+import 'assets/css/base.scss';
 
 import BuyerRole from "./Views/BuyerRole";
-import SupplireRole from "./Views/SupplierRole"
+import SupplireRole from "./Views/SupplierRole";
 
 const NavBar = () => {
     return (

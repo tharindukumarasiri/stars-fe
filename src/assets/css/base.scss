@@ -6,7 +6,6 @@
 @import 'tab-stripes.scss';
 @import 'elements.scss';
 @import 'utilities.scss';
-@import 'pagination.scss';
 @import 'model.scss';
 //@import 'buttons.scss'  ***;
 
@@ -39,6 +38,7 @@ body {
 }
 
 input,
+input[type="text"],
 select,
 textarea {
     padding: 14px;
