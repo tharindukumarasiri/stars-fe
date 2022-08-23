@@ -12,8 +12,7 @@
     "UPDATE_NACE": "https://sdcsearchapi.azurewebsites.net/updateNace/",
     "SEARCH_NACE_CODES": "https://sdcsearchapi.azurewebsites.net/findNace",
     "UNSPSC_CODES": "https://sdcsearchapi.azurewebsites.net/unspsc",
-    "UPDATE_UNSPSC": "https://sdcsearchapi.azurewebsites.net/updateUnspsc/",
-    "SEARCH_UNSPSC_CODES": "https://sdcsearchapi.azurewebsites.net/findUnspsc",
+    "UPDATE_UNSPSC": "https://sdcsearchapi.azurewebsites.net/updateUnspsc/",    
 
     "OPERATIONS": "https://sdcprojectapi.azurewebsites.net/operations",
     "ADD_OPERATION": "https://sdcprojectapi.azurewebsites.net/addNewOperation",
@@ -25,5 +24,12 @@
     "EDIT_SECTION": "https://sdcprojectapi.azurewebsites.net/updateSections?opId=",
 
     "MEMBERS": "https://sdcprojectapi.azurewebsites.net/getMembers?opId=",
-    "ADD_MEMBER": "https://sdcprojectapi.azurewebsites.net/addMember?opId="
+    "ADD_MEMBER": "https://sdcprojectapi.azurewebsites.net/addMember?opId=",
+    "SEARCH_UNSPSC_CODES": "https://sdcsearchapi.azurewebsites.net/findUnspsc",
+
+    "LOCAL_API": "http://localhost:49374",
+    "GET_USER": "/actionapi/bridge/getuser",
+    "GET_USER_PERSON": "/actionapi/bridge/getperson",
+    "GET_SELECTED_COMPANY": "/sessionbridge/getselectedcompany",
+    "GET_COMPANY_USERS": "/actionapi/users/GetCompanyUsers"
 }

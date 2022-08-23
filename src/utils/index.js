@@ -20,3 +20,9 @@ export const getDateDiff = (date1, date2) => {
 
     return moment(formattedDate1).diff(moment(formattedDate2), 'days');
 };
+
+
+export const getAuthHeader = () => {
+    const token = localStorage.getItem('auth_token');
+    return { headers: { 'Authorization': `Bearer ${token}` } };
+};

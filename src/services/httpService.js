@@ -12,7 +12,7 @@ axios.interceptors.response.use(null, error => {
     return Promise.reject(error);
 });
 
-axios.defaults.headers.common['tenant-id'] = `t01_000001`;
+axios.defaults.headers.common['tenant-id'] = localStorage.getItem('database_name');
 
 export default {
     get: axios.get,

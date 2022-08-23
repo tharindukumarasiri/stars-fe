@@ -1,12 +1,12 @@
 import React, { useState, useMemo, useContext, useEffect } from "react";
 import { Tabs, Badge, Tooltip, Table, Modal, message } from 'antd';
-import { formatDate } from "utils";
+import { formatDate } from "../../utils";
 import Dropdown from "../../common/dropdown";
 import DropdownMultiSelect from "../../common/dropdownMultiSelect";
 import Input from "../../common/input"
 import DatePickerInput from "../../common/datePickerInput"
 import NavigationCard from "../../common/navigationCard"
-import EmptyTableView from "Views/SupplierRole/Components/emptyTableView";
+import EmptyTableView from "../../Views/SupplierRole/Components/emptyTableView";
 import { sectionTableHeaders, membersTableHeaders } from "../../utils/constants";
 import { addNewSection, getAllMembers, addNewMember, editProject, getSections, editSection } from "../../services/operationsService"
 import { TabContext } from "../../utils/contextStore";

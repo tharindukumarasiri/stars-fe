@@ -9,7 +9,7 @@ import { projectScreenTableHeaders } from "../../utils/constants"
 import NavigationCard from "../../common/navigationCard"
 import { NAVIGATION_PAGES } from "../../utils/enums";
 import { TabContext } from "../../utils/contextStore";
-import EmptyTableView from "Views/SupplierRole/Components/emptyTableView";
+import EmptyTableView from "../../Views/SupplierRole/Components/emptyTableView";
 const { confirm } = Modal;
 
 const Projects = () => {
