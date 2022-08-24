@@ -159,7 +159,7 @@ export const membersTableHeaders = [
     {
         title: '',
         render: (_) => (
-            <img src={logo_thumb} className="logo-thumb" />
+            <img src={logo_thumb} className="logo-thumb" alt="img" />
         )
     },
     {
@@ -207,4 +207,168 @@ export const membersTableHeaders = [
             <Badge status={status === 'active' || status === 'Open' ? "success" : "default"} text={status === 'active' || status === 'Open' ? "Open" : "Close"} />
         )
     },
+];
+
+export const searchResultsTableHeaders = [
+    {
+        title: 'Search ID',
+        dataIndex: 'id',
+    },
+    {
+        title: 'Date',
+        dataIndex: 'createdDate',
+        render: (_, { createdDate }) => (
+            formatDate(createdDate)
+        )
+    },
+    {
+        title: <div className="g-row">
+            <div className="g-col-4">Search Criteria</div>
+            <div className="g-col-4">Criteria Codes</div>
+            <div className="g-col-4">Criteria Name</div>
+        </div>,
+        dataIndex: 'searchFilter',
+        render: (_, { searchFilter }) => (
+            <>
+                {
+                    searchFilter.countries.length > 0 &&
+                    <div className="g-row m-b-5 table-separate">
+                        <div className="blue g-col-4" >Country</div>
+                        <div className="g-col-8">
+                            {searchFilter.countries.map((country, index) => {
+                                return (
+                                    <div key={index}>
+                                        <div className="blue g-col-6" >XXX</div>
+                                        <div className="blue g-col-6" >{country}</div>
+                                    </div>
+                                )
+                            })}
+                        </div>
+                    </div>
+                }
+                {
+                    searchFilter.regions.length > 0 &&
+                    <div className="g-row m-b-5 table-separate">
+                        <div className="blue g-col-4" >Region</div>
+                        <div className="g-col-8">
+                            {searchFilter.regions.map((region, index) => {
+                                return (
+                                    <div key={index}>
+                                        <div className="blue g-col-6" >XXX</div>
+                                        <div className="blue g-col-6" >{region}</div>
+                                    </div>
+                                )
+                            })}
+                        </div>
+                    </div>
+                }
+                {
+                    searchFilter.cities.length > 0 &&
+                    <div className="g-row m-b-5 table-separate">
+                        <div className="blue g-col-4" >City</div>
+                        <div className="g-col-8">
+                            {searchFilter.cities.map((city, index) => {
+                                return (
+                                    <div key={index}>
+                                        <div className="blue g-col-6" >XXX</div>
+                                        <div className="blue g-col-6" >{city}</div>
+                                    </div>
+                                )
+                            })}
+                        </div>
+                    </div>
+                }
+                {
+                    searchFilter.municipalities.length > 0 &&
+                    <div className="g-row m-b-5 table-separate">
+                        <div className="blue g-col-4" >Municipality</div>
+                        <div className="g-col-8">
+                            {searchFilter.municipalities.map((municipality, index) => {
+                                return (
+                                    <div key={index}>
+                                        <div className="blue g-col-6" >XXX</div>
+                                        <div className="blue g-col-6" >{municipality}</div>
+                                    </div>
+                                )
+                            })}
+                        </div>
+                    </div>
+                }
+                {
+                    searchFilter.cpvs.length > 0 &&
+                    <div className="g-row m-b-5 table-separate">
+                        <div className="blue g-col-4" >CPV</div>
+                        <div className="g-col-8">
+                            {searchFilter.cpvs.map((cpv, index) => {
+                                return (
+                                    <div key={index}>
+                                        <div className="blue g-col-6" >{cpv}</div>
+                                        <div className="blue g-col-6" >XXX</div>
+                                    </div>
+                                )
+                            })}
+                        </div>
+                    </div>
+                }
+                {
+                    searchFilter.naces.length > 0 &&
+                    <div className="g-row m-b-5 table-separate">
+                        <div className="blue g-col-4" >NACE</div>
+                        <div className="g-col-8">
+                            {searchFilter.naces.map((nace, index) => {
+                                return (
+                                    <div key={index}>
+                                        <div className="blue g-col-6" >{nace}</div>
+                                        <div className="blue g-col-6" >XXX</div>
+                                    </div>
+                                )
+                            })}
+                        </div>
+                    </div>
+                }
+                {
+                    searchFilter.unspscs.length > 0 &&
+                    <div className="g-row m-b-5 table-separate">
+                        <div className="blue g-col-4" >UNSPSC</div>
+                        <div className="g-col-8">
+                            {searchFilter.unspscs.map((unspsc, index) => {
+                                return (
+                                    <div key={index}>
+                                        <div className="blue g-col-6" >{unspsc}</div>
+                                        <div className="blue g-col-6" >XXX</div>
+                                    </div>
+                                )
+                            })}
+                        </div>
+                    </div>
+                }
+            </>
+        )
+    },
+    {
+        title: '#',
+        dataIndex: 'results',
+        render: (_, { results }) => (
+            results.length
+        ),
+    },
+    // {
+    //     title: 'Companies',
+    //     dataIndex: 'results',
+    //     render: (_, { results }) => (
+    //         <>
+    //             {results.map((result, index) => {
+    //                 if (index < 5)
+    //                     return (
+    //                         <>
+    //                             {result.organizationName} <br />
+    //                         </>
+    //                     )
+    //             })}
+    //             {results.length > 5 &&
+    //                 <i className="icon-more blue m-l-20 p-l-20"></i>
+    //             }
+    //         </>
+    //     ),
+    // },
 ];

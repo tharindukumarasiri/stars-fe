@@ -20,7 +20,7 @@ const DropdownList = ({ placeholder, dataList, dataName = 'name', criteriaName, 
             <>
                 {selectedList[criteriaName]?.length == 0 &&
                     <div className="selected-item" key={'all'}>
-                        <i className="close-btn icon-close-small-x m-t-5" onClick={() => { }} > </i>
+                        <i className="close-btn icon-close-small-x m-t-5" > </i>
                         All
                     </div>
                 }

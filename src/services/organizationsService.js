@@ -11,6 +11,16 @@ export async function getOrganization(id = '"927379759"') {
     return data;
 }
 
+export async function getSearchResults() {
+    const { data } = await http.get(config.GET_SEARCH_RESULT);
+    return data;
+}
+
+export async function addNewSearchResult(params) {
+    const { data } = await http.post(config.ADD_SEARCH_RESULT, params);
+    return data;
+}
+
 //Countries
 export async function getCountries() {
     const { data } = await http.get(config.COUNTRIES);

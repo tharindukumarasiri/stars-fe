@@ -7,7 +7,7 @@ import rating from "../../assets/images/rating.png"
 import Model from "../../common/model";
 import { TabContext } from "../../utils/contextStore";
 import { NAVIGATION_PAGES } from "../../utils/enums";
-import { getCountries, getRegions, getMunicipalities, searchOrganization, getCities, getUnspscCodes, getCpvCodes, getNacCodes } from "../../services/organizationsService";
+import { getCountries, getRegions, getMunicipalities, searchOrganization, getCities, getUnspscCodes, getCpvCodes, getNacCodes, addNewSearchResult, getSearchResults } from "../../services/organizationsService";
 import DropdownList from "./Components/dropdownList"
 import Dropdown from "./Components/dropdown";
 import { arrayToUpper } from '../../utils/index';
@@ -29,7 +29,6 @@ export default function Search(props) {
     const [unspscData, setUnspscData] = useState({ segmant: [], family: [], unspClass: [], comClass: [] })
     const [cpvData, setCpvData] = useState({ division: [], cpvGroup: [], cpvClass: [], category: [], subCategory: [] })
     const [professionData, setProfessionData] = useState({ section: [], divition: [], profGroup: [], profClass: [] })
-
     // Drop Down selected eliments data
     const [selectedCompanyInfo, setSelectedCompanyInfo] = useState({ registrationFromDate: '', registrationToDate: '', incorpFromDate: '', incorpToDate: '' })
     const [selectedMarketCriteria, setSelectedMarketCriteria] = useState({ selectedCountries: [], selectedRegions: [], selectedCities: [], selectedMunicipalities: [] });
@@ -44,6 +43,8 @@ export default function Search(props) {
     const [actPage, setActPage] = useState(1)
     const [loading, setLoading] = useState(false)
 
+    const [selectedResults, setSelectedResults] = useState([])
+
     const [showModel, setShowModel] = useState(false);
 
     const { changeActiveTab } = useContext(TabContext)
@@ -54,6 +55,18 @@ export default function Search(props) {
         getCpvCodes(levelOneReq).then(result => { setCpvData({ ...cpvData, division: result }) })
         getNacCodes(nacSectionReq).then(result => { setProfessionData({ ...professionData, section: result }) });
     }, []);
+
+    useEffect(() => {
+        if (props.searchResult.id) {
+            const searchFilter = props.searchResult.searchFilter
+
+            setOrganizations(props.searchResult.results);
+            setSerachText(searchFilter.name);
+            setSelectedMarketCriteria({ selectedCountries: searchFilter.countries, selectedRegions: searchFilter.regions, selectedCities: searchFilter.cities, selectedMunicipalities: searchFilter.municipalities })
+
+            toggleOpenCriteria('Market', (searchFilter.countries.length > 0 || searchFilter.regions.length > 0 || searchFilter.cities.length > 0 || searchFilter.municipalities.length > 0));
+        }
+    }, [props.searchResult]);
 
     //API calls
     const getRegionsData = (countryName) => {
@@ -196,7 +209,35 @@ export default function Search(props) {
 
     const onSaveResults = (e) => {
         e.preventDefault();
-        setShowModel(true);
+        if (props?.sectionSearch) {
+            const saveResultData = {
+                "operationId": props.projectId,
+                "sectionId": props.sectionId,
+                "createdDate": new Date(),
+                "searchFilter": {
+                    "name": searchText,
+                    "countries": selectedMarketCriteria.selectedCountries,
+                    "regions": selectedMarketCriteria.selectedRegions,
+                    "cities": arrayToUpper(selectedMarketCriteria.selectedCities),
+                    "municipalities": selectedMarketCriteria.selectedMunicipalities,
+                    "cpvs": getFilterdCodes(selectedCPVValues),
+                    "naces": getFilterdCodes(selectedNACValues),
+                    "unspscs": getFilterdCodes(selectedUNSPValues),
+                },
+                "results": selectedResults,
+            }
+
+            addNewSearchResult(saveResultData).then(() => {
+                message.success('Save results successful');
+                getSearchResults().then(data => {
+                    props.setSearchResults(data)
+                })
+            }).catch(() => {
+                message.error('Save results failed please try again');
+            })
+        } else {
+            setShowModel(true);
+        }
     }
 
     const onCloseModel = () => {
@@ -268,6 +309,21 @@ export default function Search(props) {
         setSelectedCompanyInfo({ ...selectedCompanyInfo, [dataName]: data })
     }
 
+    const onCheckBox = (e) => {
+        const resultSet = JSON.parse(e.target.value)
+        const newResultSet = selectedResults.map(a => { return { ...a } })
+
+        const index = selectedResults.findIndex(result => { return result.id === resultSet.id });
+
+        if (index < 0) {
+            newResultSet.push(resultSet);
+            setSelectedResults(newResultSet);
+        } else {
+            newResultSet.splice(index, 1);
+            setSelectedResults(newResultSet);
+        }
+    }
+
     const getCriteriaHeader = (header, tooltip, onClickHeader, expanded) => {
         const expandIcon = expanded ? 'icon-minus fr' : 'icon-minus-1 fr'
         return (
@@ -282,8 +338,8 @@ export default function Search(props) {
         )
     }
 
-    const toggleOpenCriteria = (criteriaName) => {
-        setOpenCriteria({ ...openCriteria, [criteriaName]: !openCriteria[criteriaName] })
+    const toggleOpenCriteria = (criteriaName, state = null) => {
+        setOpenCriteria({ ...openCriteria, [criteriaName]: state || !openCriteria[criteriaName] })
     }
 
     const getGroupingCriteria = () => {
@@ -609,7 +665,7 @@ export default function Search(props) {
                     }
                     {organizations.length > 0 &&
                         <>
-                            <div className={props?.searchResultsStyles || 'search-results-container'}>
+                            <div className={props?.sectionSearch ? 'section-search-results-container' : 'search-results-container'}>
                                 {organizations.map(organization => {
                                     return (
                                         <div key={organization.id} className="search-result-row g-row">
@@ -622,7 +678,7 @@ export default function Search(props) {
                                             <div className="g-col-2"> <div className="m-l-20">Ratings</div>
                                                 <img src={rating} /></div>
                                             <div className="g-col-1"><i className="icon-more m-t-20"  ><span className=" tooltip-toggle" aria-label="More..."></span></i></div>
-                                            <div className="g-col-1"> <input type="checkbox" value={organization.id} className="check-box" /></div>
+                                            <div className="g-col-1"> <input type="checkbox" value={JSON.stringify(organization)} className="check-box" onChange={onCheckBox} /></div>
                                         </div>
                                     )
                                 })}

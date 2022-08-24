@@ -1,7 +1,6 @@
 import React from "react";
 
 const DropdownMultiSelect = ({ placeholder, dataList, dataName = 'name', keyName = 'id', selectedList, setSelectedState, criteriaName, containerStyle = '' } = {}) => {
-    console.log(dataList)
     const getDropdownBar = () => {
         return (
             <select className="dropdown-list" onChange={handleDropdownSelect} value={"0"}>

@@ -168,7 +168,7 @@ const SectionView = (props) => {
     };
 
     const onClickSection = (section) => {
-        changeActiveTab(NAVIGATION_PAGES.BUYER_PROJECT_SEARCH, { projectId: props.projectId, projectName: props.projectName, sectionId: section.id, sectionName: section.name })
+        changeActiveTab(NAVIGATION_PAGES.BUYER_PROJECT_SEARCH, { proId: props.id, projectId: props.projectId, projectName: props.projectName, sectionId: section.id, sectionName: section.name })
     }
 
     const onNewElementChange = (e, elementName) => {
