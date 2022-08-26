@@ -3,7 +3,7 @@ import { TabContext } from "../../utils/contextStore";
 import { NAVIGATION_PAGES } from "../../utils/enums";
 import NavigationCard from "../../common/navigationCard";
 import TitleCard from "../../common/titleCard";
-import { FetchCurrentCompany } from "hooks";
+import { FetchCurrentCompany } from "../../hooks";
 
 export default function BuyerHome() {
     const { changeActiveTab } = useContext(TabContext);
@@ -12,7 +12,7 @@ export default function BuyerHome() {
     const onClickCard = (navigate = "") => {
         changeActiveTab(navigate);
     };
-
+console.log(selectedCompany)
     return (
         <>
             <div className="g-row m-b-20">

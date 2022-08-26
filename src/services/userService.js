@@ -29,3 +29,9 @@ export async function getCompanyUsers(params) {
     const { data } = await http.get(url, { params }, getAuthHeader());
     return data;
 }
+
+export async function getCompanyMembers() {   
+    const url = config.LOCAL_API + config.GET_COMPANY_MEMBERS;    
+    const { data } = await http.get(url, getAuthHeader());
+    return data;
+}
