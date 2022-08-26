@@ -7,9 +7,24 @@ import rating from "../../assets/images/rating.png"
 import Model from "../../common/model";
 import { TabContext } from "../../utils/contextStore";
 import { NAVIGATION_PAGES } from "../../utils/enums";
-import { getCountries, getRegions, getMunicipalities, searchOrganization, getCities, getUnspscCodes, getCpvCodes, getNacCodes, addNewSearchResult, getSearchResults } from "../../services/organizationsService";
+import {
+    getCountries,
+    getRegions,
+    getMunicipalities,
+    searchOrganization,
+    getCities,
+    getUnspscCodes,
+    getCpvCodes,
+    getNacCodes,
+    addNewSearchResult,
+    getSearchResults,
+    searchOrganizationByCPV,
+    searchOrganizationByNACE,
+    searchOrganizationByUNSPSC,
+} from "../../services/organizationsService";
 import DropdownList from "./Components/dropdownList"
 import Dropdown from "./Components/dropdown";
+import DropdownSelect from "../../common/dropdown"
 import { arrayToUpper } from '../../utils/index';
 import SearchSelectedValues from "./Components/searchSelectedValues";
 import DatePickerInput from "../../common/datePickerInput";
@@ -38,6 +53,7 @@ export default function Search(props) {
     const [selectedCPVRows, setSelectedCPVRows] = useState({ cuurentRow: 0, preLevel: 0 });
     const [selectedNACValues, setSelectedNACValues] = useState([[[]]]);
     const [selectedNACRows, setSelectedNACRows] = useState({ cuurentRow: 0, preLevel: 0 });
+    const [selectedGrouping, setSelectedGrouping] = useState({ resultType: '', accumulation: '', sorting: '' })
 
     const [pageCount, setPageCount] = useState(0);
     const [actPage, setActPage] = useState(1)
@@ -57,10 +73,15 @@ export default function Search(props) {
     }, []);
 
     useEffect(() => {
-        if (props.searchResult.id) {
+        if (props.searchResult?.id) {
             const searchFilter = props.searchResult.searchFilter
+            const newOrganizations = []
 
-            setOrganizations(props.searchResult.results);
+            props.searchResult.results.map((result) => {
+                newOrganizations.push(JSON.parse(result.info))
+            })
+
+            setOrganizations(newOrganizations);
             setSerachText(searchFilter.name);
             setSelectedMarketCriteria({ selectedCountries: searchFilter.countries, selectedRegions: searchFilter.regions, selectedCities: searchFilter.cities, selectedMunicipalities: searchFilter.municipalities })
 
@@ -185,6 +206,10 @@ export default function Search(props) {
         setSerachText(e.target.value);
     }
 
+    const getSearchApiByType = () => {
+
+    }
+
     const onShowResults = (e) => {
         e.preventDefault();
         window.scrollTo(0, 0)
@@ -196,14 +221,52 @@ export default function Search(props) {
             noSearchResults = false;
             setLoading(true);
             setActPage(1);
-            searchOrganization(searchReq).then(result => {
-                setLoading(false);
-                setOrganizations(result.organizations);
-                setPageCount(Math.ceil(result.total / pageSize));
-            }).catch(error => {
-                noSearchResults = true;
-                setLoading(false);
-            });
+            switch (selectedGrouping.accumulation) {
+                case '':
+                case 'None':
+                    searchOrganization(searchReq).then(result => {
+                        setLoading(false);
+                        setOrganizations(result.organizations);
+                        setPageCount(Math.ceil(result.total / pageSize));
+                    }).catch(error => {
+                        noSearchResults = true;
+                        setLoading(false);
+                    });
+                    break;
+                case 'CPV Code':
+                    searchOrganizationByCPV(searchReq).then(result => {
+                        console.log(result)
+                        setLoading(false);
+                        setOrganizations(result.organizations);
+                        setPageCount(Math.ceil(result.total / pageSize));
+                    }).catch(error => {
+                        noSearchResults = true;
+                        setLoading(false);
+                    });
+                    break;
+                case 'NACE Code':
+                    searchOrganizationByNACE(searchReq).then(result => {
+                        setLoading(false);
+                        setOrganizations(result.organizations);
+                        setPageCount(Math.ceil(result.total / pageSize));
+                    }).catch(error => {
+                        noSearchResults = true;
+                        setLoading(false);
+                    });
+                    break;
+                case 'UNSPSC Code':
+                    searchOrganizationByUNSPSC(searchReq).then(result => {
+                        setLoading(false);
+                        setOrganizations(result.organizations);
+                        setPageCount(Math.ceil(result.total / pageSize));
+                    }).catch(error => {
+                        noSearchResults = true;
+                        setLoading(false);
+                    });
+                    break;
+                default:
+                    break;
+            }
         }
     }
 
@@ -311,12 +374,18 @@ export default function Search(props) {
 
     const onCheckBox = (e) => {
         const resultSet = JSON.parse(e.target.value)
+        const modResultSet = {
+            id: resultSet.id,
+            organizationId: resultSet.organizationId,
+            organizationName: resultSet.organizationName,
+            info: JSON.stringify(resultSet)
+        }
         const newResultSet = selectedResults.map(a => { return { ...a } })
 
         const index = selectedResults.findIndex(result => { return result.id === resultSet.id });
 
         if (index < 0) {
-            newResultSet.push(resultSet);
+            newResultSet.push(modResultSet);
             setSelectedResults(newResultSet);
         } else {
             newResultSet.splice(index, 1);
@@ -342,6 +411,16 @@ export default function Search(props) {
         setOpenCriteria({ ...openCriteria, [criteriaName]: state || !openCriteria[criteriaName] })
     }
 
+    const onChangeResultListType = (e) => {
+        e.preventDefault();
+        setSelectedGrouping({ ...selectedGrouping, resultType: e.target.value })
+    }
+
+    const onChangeAccumulation = (e) => {
+        e.preventDefault();
+        setSelectedGrouping({ ...selectedGrouping, accumulation: e.target.value })
+    }
+
     const getGroupingCriteria = () => {
         return (
             <div className="gray-container">
@@ -350,10 +429,10 @@ export default function Search(props) {
                     <>
                         <div className="g-row">
                             <div className="g-col-6">
-                                {DropdownList({ placeholder: 'Results List Type', dataList: [], selectedList: [], setSelectedState: {}, criteriaName: "", keyName: "" })}
+                                <DropdownSelect values={['Company', 'No of accumulated']} placeholder="Results List Type" selected={selectedGrouping.resultType} onChange={onChangeResultListType} />
                             </div>
                             <div className="g-col-6">
-                                {DropdownList({ placeholder: 'Accumulation', dataList: [], selectedList: [], setSelectedState: {}, criteriaName: "", keyName: "" })}
+                                <DropdownSelect values={['None', 'CPV Code', 'NACE Code', 'UNSPSC Code']} placeholder="Accumulation" selected={selectedGrouping.accumulation} onChange={onChangeAccumulation} />
                             </div>
                         </div>
                         <div className="g-row">
@@ -569,21 +648,6 @@ export default function Search(props) {
         )
     }
 
-    const getCreditTermsCriteria = () => {
-        return (
-            <div className="gray-container">
-                {getCriteriaHeader("Credit Terms", "xxx", () => toggleOpenCriteria('CreditTerms'), openCriteria.CreditTerms)}
-                {openCriteria.CreditTerms &&
-                    <div>
-                        <div className="g-row m-b-10">
-                            Credit Terms
-                        </div>
-                    </div>
-                }
-            </div>
-        )
-    }
-
     const getPeppolRow = (leftText, rightText) => {
         return (
             <div className="g-row m-b-20">
@@ -638,12 +702,11 @@ export default function Search(props) {
                             </div>
                         </div>
                         <h4>Narrow down your search by...</h4>
+                        {getGroupingCriteria()}
+                        {getCompanyInfoCriteria()}
                         {getMarketCriteria()}
                         {getProductGroupsCriteria()}
                         {getProfessionCriteria()}
-                        {getCreditTermsCriteria()}
-                        {getGroupingCriteria()}
-                        {getCompanyInfoCriteria()}
                         {getPeppolCriteria()}
                         <button className="primary-btn m-l-10" onClick={onShowResults} >Show Result</button>
                         <button className="primary-btn" onClick={() => { changeActiveTab(NAVIGATION_PAGES.BUYER_SEARCHRESULTS) }} >View History</button>
@@ -663,14 +726,14 @@ export default function Search(props) {
                     {noSearchResults &&
                         <div className="sub-title-txt text-center" >No Results</div>
                     }
-                    {organizations.length > 0 &&
+                    {organizations?.length > 0 &&
                         <>
                             <div className={props?.sectionSearch ? 'section-search-results-container' : 'search-results-container'}>
                                 {organizations.map(organization => {
                                     return (
-                                        <div key={organization.id} className="search-result-row g-row">
+                                        <div key={organization?.id} className="search-result-row g-row">
                                             <div className="g-col-1"><img src={logo_thumb} className="logo-thumb" /></div>
-                                            <div className="g-col-3">{organization.organizationName}</div>
+                                            <div className="g-col-3">{organization?.organizationName}</div>
                                             <div className="g-col-2"><div>{organization?.businessAddr?.businessCountry ? organization.businessAddr.businessCountry : "No Country"}</div>
                                                 <div>{organization?.businessAddr?.city ? organization.businessAddr.city : "No City"}</div></div>
                                             <div className="g-col-2"> <div>{organization?.secCode?.code ? organization.secCode.code : "No Sec Code"}</div>

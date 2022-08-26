@@ -6,6 +6,19 @@ export async function searchOrganization(params) {
     const { data } = await http.post(config.ORGANIZATIONS, params);
     return data;
 }
+export async function searchOrganizationByCPV(params) {
+    const { data } = await http.post(config.ORGANIZATIONS_BY_CPV, params);
+    return data;
+}
+export async function searchOrganizationByNACE(params) {
+    const { data } = await http.post(config.ORGANIZATIONS_BY_NACE, params);
+    return data;
+}
+export async function searchOrganizationByUNSPSC(params) {
+    const { data } = await http.post(config.ORGANIZATIONS_BY_UNSPSC, params);
+    return data;
+}
+
 export async function getOrganization(id = '"927379759"') {
     const { data } = await http.post(config.GET_ORGANIZATIONS, id, { headers: { 'Content-Type': 'application/json', } });
     return data;
@@ -15,7 +28,10 @@ export async function getSearchResults() {
     const { data } = await http.get(config.GET_SEARCH_RESULT);
     return data;
 }
-
+export async function getSearchResultsByProjAndSec(proId, secId) {
+    const { data } = await http.get(`${config.GET_SEARCH_RESULT_BY_PROID_SECID}${proId}&secId=${secId}`);
+    return data;
+}
 export async function addNewSearchResult(params) {
     const { data } = await http.post(config.ADD_SEARCH_RESULT, params);
     return data;
