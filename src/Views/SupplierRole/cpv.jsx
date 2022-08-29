@@ -26,12 +26,6 @@ const Cpv = () => {
             })
         });
 
-        if (JSON.stringify(organizationData) === '{}') {
-            getOrganization(`"${selectedCompany.companyRegistrationId}"`).then(result => {
-                setOrganizationData(result)
-            });
-        }
-
         const unloadCallback = (event) => {
             if (haveUnsavedDataRef.current) {
                 event.preventDefault();
@@ -44,6 +38,14 @@ const Cpv = () => {
         return () => window.removeEventListener("beforeunload", unloadCallback);
 
     }, []);
+
+    useEffect(() => {
+        if (selectedCompany.companyRegistrationId && JSON.stringify(organizationData) === '{}') {
+            getOrganization(`"${selectedCompany.companyRegistrationId}"`).then(result => {
+                setOrganizationData(result)
+            });
+        }
+    }, [selectedCompany])
 
     const getIndent = (level = 1) => {
         return {

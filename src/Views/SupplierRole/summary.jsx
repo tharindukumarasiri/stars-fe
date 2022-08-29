@@ -18,10 +18,12 @@ const Summary = () => {
     }
 
     useEffect(() => {
-        getOrganization(`"${selectedCompany.companyRegistrationId}"`).then(result => {
-            setOrganizationData(result)
-        });
-    }, []);
+        if (selectedCompany.companyRegistrationId) {
+            getOrganization(`"${selectedCompany.companyRegistrationId}"`).then(result => {
+                setOrganizationData(result)
+            });
+        }
+    }, [selectedCompany])
 
     const UnspscData = () => {
         return (
