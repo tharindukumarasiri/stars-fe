@@ -360,7 +360,6 @@ const MembersView = (props) => {
 
     const getUsers = async () => {
         const response = await getCompanyMembers();
-        console.log(response);
         setCompanyUsers(response || []);
         const options = response ? response.map((user) => {
             return {
@@ -496,7 +495,6 @@ const MembersView = (props) => {
     };
 
     const onUserChange = (data) => {
-        console.log(data);
         setText(data);
     };
 

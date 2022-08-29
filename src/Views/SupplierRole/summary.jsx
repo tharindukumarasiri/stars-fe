@@ -6,17 +6,19 @@ import Expandable from "./Components/expandable";
 import NavigationCard from "../../common/navigationCard";
 import { getOrganization } from "../../services/organizationsService";
 import UserSelectedFields from "./Components/userSelectedFields";
+import { FetchCurrentCompany } from "../../hooks/index";
 
 const Summary = () => {
     const [expandedItem, setExpandedItem] = useState('');
     const { changeActiveTab, organizationData, setOrganizationData } = useContext(TabContext);
+    const [selectedCompany] = FetchCurrentCompany()
 
     const onClickCard = (navigate = '') => {
         changeActiveTab(navigate)
     }
 
     useEffect(() => {
-        getOrganization().then(result => {
+        getOrganization(`"${selectedCompany.companyRegistrationId}"`).then(result => {
             setOrganizationData(result)
         });
     }, []);

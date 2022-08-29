@@ -17,7 +17,7 @@ import {
     getCpvCodes,
     getNacCodes,
     addNewSearchResult,
-    getSearchResults,
+    getSearchResultsByProjAndSec,
     searchOrganizationByCPV,
     searchOrganizationByNACE,
     searchOrganizationByUNSPSC,
@@ -38,6 +38,7 @@ export default function Search(props) {
     const [openCriteria, setOpenCriteria] = useState({ Grouping: false, CompanyInfo: false, Market: false, ProductGroups: false, Profession: false, CreditTerms: false, Peppol: false });
     const [searchText, setSerachText] = useState("");
     const [organizations, setOrganizations] = useState([]);
+    const [grouping, setGrouping] = useState({})
 
     // Data from back-end
     const [marketInformationData, setMarketInformationData] = useState({ countries: [{ "name": "Norway", "alpha3Code": "NOR" }], regions: [], cities: [], municipalities: [] });
@@ -206,9 +207,18 @@ export default function Search(props) {
         setSerachText(e.target.value);
     }
 
+    const convertStringObject = (object) => {
+        const newObject = {}
+        Object.entries(object).forEach(([key, value]) => {
+            newObject[key] = JSON.parse(value)
+        })
+        return newObject;
+    }
+
     const onShowResults = (e) => {
         e.preventDefault();
         setOrganizations([]);
+        setGrouping({});
         window.scrollTo(0, 0)
         const searchReq = getSearchRequest(1);
         const allSelectedCriteria = searchReq.countries.concat(searchReq.regions, searchReq.cities, searchReq.municipalities, searchReq.cpvs, searchReq.naces, searchReq.unspscs)
@@ -232,8 +242,8 @@ export default function Search(props) {
                     break;
                 case 'CPV Code':
                     searchOrganizationByCPV(searchReq).then(result => {
-                        console.log(result)
                         setLoading(false);
+                        setGrouping(convertStringObject(result.grouping));
                         setOrganizations(result.organizations);
                         setPageCount(Math.ceil(result.total / pageSize));
                     }).catch(error => {
@@ -244,6 +254,7 @@ export default function Search(props) {
                 case 'NACE Code':
                     searchOrganizationByNACE(searchReq).then(result => {
                         setLoading(false);
+                        setGrouping(convertStringObject(result.grouping));
                         setOrganizations(result.organizations);
                         setPageCount(Math.ceil(result.total / pageSize));
                     }).catch(error => {
@@ -254,6 +265,7 @@ export default function Search(props) {
                 case 'UNSPSC Code':
                     searchOrganizationByUNSPSC(searchReq).then(result => {
                         setLoading(false);
+                        setGrouping(convertStringObject(result.grouping));
                         setOrganizations(result.organizations);
                         setPageCount(Math.ceil(result.total / pageSize));
                     }).catch(error => {
@@ -294,7 +306,7 @@ export default function Search(props) {
 
                 addNewSearchResult(saveResultData).then(() => {
                     message.success('Save results successful');
-                    getSearchResults().then(data => {
+                    getSearchResultsByProjAndSec(props.projectId, props.sectionId).then(data => {
                         props.setSearchResults(data)
                     })
                 }).catch(() => {
@@ -417,7 +429,11 @@ export default function Search(props) {
 
     const onChangeResultListType = (e) => {
         e.preventDefault();
-        setSelectedGrouping({ ...selectedGrouping, resultType: e.target.value })
+        if (e.target.value === 'Company') {
+            setSelectedGrouping({ ...selectedGrouping, resultType: e.target.value, accumulation: 'None' })
+        } else {
+            setSelectedGrouping({ ...selectedGrouping, resultType: e.target.value })
+        }
     }
 
     const onChangeAccumulation = (e) => {
@@ -436,7 +452,12 @@ export default function Search(props) {
                                 <DropdownSelect values={['Company', 'No of accumulated']} placeholder="Results List Type" selected={selectedGrouping.resultType} onChange={onChangeResultListType} />
                             </div>
                             <div className="g-col-6">
-                                <DropdownSelect values={['None', 'CPV Code', 'NACE Code', 'UNSPSC Code']} placeholder="Accumulation" selected={selectedGrouping.accumulation} onChange={onChangeAccumulation} />
+                                <DropdownSelect
+                                    values={['None', 'CPV Code', 'NACE Code', 'UNSPSC Code']}
+                                    placeholder="Accumulation"
+                                    selected={selectedGrouping.accumulation}
+                                    onChange={onChangeAccumulation}
+                                    disabled={selectedGrouping.resultType !== 'No of accumulated'} />
                             </div>
                         </div>
                         <div className="g-row">
@@ -729,6 +750,40 @@ export default function Search(props) {
                     }
                     {noSearchResults &&
                         <div className="sub-title-txt text-center" >No Results</div>
+                    }
+                    {Object.values(grouping).length !== 0 &&
+                        <div className={props?.sectionSearch ? 'section-search-results-container' : 'search-results-container'}>
+                            <div className="g-row">
+                                <div className="g-col-4">Search Criteria</div>
+                                <div className="g-col-2">Criteria Codes</div>
+                                <div className="g-col-3">Criteria Name</div>
+                                <div className="g-col-2">Companies</div>
+
+                            </div>
+                            {Object.entries(grouping).map(([key, value]) => {
+                                return (
+                                    <div className="search-result-row g-row" key={key}>
+                                        <div className="g-col-4 body-text-bold blue">{key}</div>
+                                        <div className="g-col-8" >
+                                            {
+                                                value.map((group, index) => {
+                                                    return (
+                                                        <div key={index}>
+                                                            <div className="g-col-4 body-text blue">{group._id}</div>
+                                                            <div className="g-col-4 body-text blue">XXX</div>
+                                                            <div className="g-col-4 body-text blue">{group.count}</div>
+                                                        </div>
+                                                    )
+                                                })
+                                            }
+                                        </div>
+                                    </div>
+                                )
+
+                            })
+
+                            }
+                        </div>
                     }
                     {organizations?.length > 0 &&
                         <>

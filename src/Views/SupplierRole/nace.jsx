@@ -6,7 +6,8 @@ import CriteriaColorGuideTab from "./Components/criteriaColorGuideTab";
 import UserSelectedFields from "./Components/userSelectedFields";
 import { nacSectionReq } from "../../utils/constants";
 import { getOrganization, getNacCodes, updateNaceCodes, searchNaceCodes } from "../../services/organizationsService";
-import directional_sign from "../../assets/images/directional-sign.png"
+import directional_sign from "../../assets/images/directional-sign.png";
+import { FetchCurrentCompany } from "../../hooks/index";
 
 const Nace = () => {
     const { organizationData, setOrganizationData, haveUnsavedDataRef, setHaveUnsavedDataRef } = useContext(TabContext);
@@ -16,6 +17,7 @@ const Nace = () => {
     const [searchText, setSearchText] = useState('')
     const [searchResult, setSearchResult] = useState('')
     const [showingSearchedCodes, setShowingSearchedCodes] = useState(false)
+    const [selectedCompany] = FetchCurrentCompany()
 
     useEffect(() => {
         getNacCodes(nacSectionReq).then(result => {
@@ -25,7 +27,7 @@ const Nace = () => {
         });
 
         if (JSON.stringify(organizationData) === '{}') {
-            getOrganization().then(result => {
+            getOrganization(`"${selectedCompany.companyRegistrationId}"`).then(result => {
                 setOrganizationData(result)
             });
         }
@@ -213,7 +215,7 @@ const Nace = () => {
     const onUpdate = () => {
         setLoading(true);
         window.scrollTo(0, 0);
-        updateNaceCodes(927379759, organizationData.naces).then(result => {
+        updateNaceCodes(selectedCompany.companyRegistrationId, organizationData.naces).then(result => {
             setLoading(false);
             setHaveUnsavedDataRef(false);
             if (result === 'Ok') {

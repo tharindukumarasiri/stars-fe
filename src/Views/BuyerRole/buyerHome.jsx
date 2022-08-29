@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext } from "react";
+import React, { useContext } from "react";
 import { TabContext } from "../../utils/contextStore";
 import { NAVIGATION_PAGES } from "../../utils/enums";
 import NavigationCard from "../../common/navigationCard";
@@ -12,12 +12,11 @@ export default function BuyerHome() {
     const onClickCard = (navigate = "") => {
         changeActiveTab(navigate);
     };
-console.log(selectedCompany)
+
     return (
         <>
             <div className="g-row m-b-20">
                 <TitleCard title={"Buyer"} topIcon={"icon-buyer"} />
-
                 <div className="g-col-9 p-l-20">
                     <h4> {selectedCompany ? selectedCompany.name : ""} </h4>
                     <h4>Buyer Role Space</h4>

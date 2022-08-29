@@ -7,6 +7,7 @@ import UserSelectedFields from "./Components/userSelectedFields";
 import { levelOneReq } from "../../utils/constants";
 import { getOrganization, getUnspscCodes, updateUnspscCodes, searchUnspscCodes } from "../../services/organizationsService";
 import directional_sign from "../../assets/images/directional-sign.png"
+import { FetchCurrentCompany } from "../../hooks/index";
 
 const Unspsc = () => {
     const { organizationData, setOrganizationData, haveUnsavedDataRef, setHaveUnsavedDataRef } = useContext(TabContext);
@@ -16,6 +17,7 @@ const Unspsc = () => {
     const [searchText, setSearchText] = useState('')
     const [searchResult, setSearchResult] = useState('')
     const [showingSearchedCodes, setShowingSearchedCodes] = useState(false)
+    const [selectedCompany] = FetchCurrentCompany()
 
     useEffect(() => {
         getUnspscCodes(levelOneReq).then(result => {
@@ -25,7 +27,7 @@ const Unspsc = () => {
         });
 
         if (JSON.stringify(organizationData) === '{}') {
-            getOrganization().then(result => {
+            getOrganization(`"${selectedCompany.companyRegistrationId}"`).then(result => {
                 setOrganizationData(result)
             });
         }
@@ -213,7 +215,7 @@ const Unspsc = () => {
     const onUpdate = () => {
         setLoading(true);
         window.scrollTo(0, 0);
-        updateUnspscCodes(927379759, organizationData.unspscs).then(result => {
+        updateUnspscCodes(selectedCompany.companyRegistrationId, organizationData.unspscs).then(result => {
             setLoading(false);
             setHaveUnsavedDataRef(false);
             if (result === 'Ok') {

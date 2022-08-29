@@ -19,7 +19,7 @@ export async function searchOrganizationByUNSPSC(params) {
     return data;
 }
 
-export async function getOrganization(id = '"927379759"') {
+export async function getOrganization(id) {
     const { data } = await http.post(config.GET_ORGANIZATIONS, id, { headers: { 'Content-Type': 'application/json', } });
     return data;
 }
@@ -66,7 +66,7 @@ export async function getUnspscCodes(params) {
     const { data } = await http.post(config.UNSPSC_CODES, params);
     return data;
 }
-export async function updateUnspscCodes(id = 927379759, params) {
+export async function updateUnspscCodes(id, params) {
     const { data } = await http.post(`${config.UPDATE_UNSPSC}${id}`, params);
     return data;
 }
@@ -80,7 +80,7 @@ export async function getCpvCodes(params) {
     const { data } = await http.post(config.CPV_CODES, params);
     return data;
 }
-export async function updateCpvCodes(id = 927379759, params) {
+export async function updateCpvCodes(id, params) {
     const { data } = await http.post(`${config.UPDATE_CPV}${id}`, params);
     return data;
 }
@@ -94,7 +94,7 @@ export async function getNacCodes(params) {
     const { data } = await http.post(config.NAC_CODES, params);
     return data;
 }
-export async function updateNaceCodes(id = 927379759, params) {
+export async function updateNaceCodes(id, params) {
     const { data } = await http.post(`${config.UPDATE_NACE}${id}`, params);
     return data;
 }

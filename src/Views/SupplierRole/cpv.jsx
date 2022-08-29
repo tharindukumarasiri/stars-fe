@@ -6,7 +6,8 @@ import CriteriaColorGuideTab from "./Components/criteriaColorGuideTab";
 import UserSelectedFields from "./Components/userSelectedFields";
 import { levelOneReq } from "../../utils/constants";
 import { getOrganization, getCpvCodes, updateCpvCodes, searchCpvCodes } from "../../services/organizationsService";
-import directional_sign from "../../assets/images/directional-sign.png"
+import directional_sign from "../../assets/images/directional-sign.png";
+import { FetchCurrentCompany } from "../../hooks/index"
 
 const Cpv = () => {
     const { organizationData, setOrganizationData, haveUnsavedDataRef, setHaveUnsavedDataRef } = useContext(TabContext);
@@ -16,6 +17,7 @@ const Cpv = () => {
     const [searchText, setSearchText] = useState('');
     const [searchResult, setSearchResult] = useState('');
     const [showingSearchedCodes, setShowingSearchedCodes] = useState(false);
+    const [selectedCompany] = FetchCurrentCompany()
 
     useEffect(() => {
         getCpvCodes(levelOneReq).then(result => {
@@ -25,7 +27,7 @@ const Cpv = () => {
         });
 
         if (JSON.stringify(organizationData) === '{}') {
-            getOrganization().then(result => {
+            getOrganization(`"${selectedCompany.companyRegistrationId}"`).then(result => {
                 setOrganizationData(result)
             });
         }
@@ -244,7 +246,7 @@ const Cpv = () => {
     const onUpdate = () => {
         setLoading(true);
         window.scrollTo(0, 0);
-        updateCpvCodes(927379759, organizationData.cpvs).then(result => {
+        updateCpvCodes(selectedCompany.companyRegistrationId, organizationData.cpvs).then(result => {
             setLoading(false);
             setHaveUnsavedDataRef(false);
             if (result === 'Ok') {

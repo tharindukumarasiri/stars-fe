@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { getSelectedCompany, getCompanyUsers } from "../services/userService";
 
 export const FetchCurrentCompany = () => {
-    const [selectedCompany, setSelectedCompany] = useState(null);
+    const [selectedCompany, setSelectedCompany] = useState({ name: '', companyRegistrationId: '' });
 
     useEffect(() => {
         getUserDetails();

@@ -22,7 +22,6 @@ const SectionSearch = ({ params }) => {
 
     useEffect(() => {
         getSearchResultsByProjAndSec(params.proId, params.sectionId).then(data => {
-            console.log(data)
             setSearchResults(data)
         })
     }, []);

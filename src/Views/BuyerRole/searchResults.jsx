@@ -2,7 +2,7 @@ import React, { useEffect, useState, useMemo } from "react";
 import { Table } from 'antd';
 import { searchResultsTableHeaders } from '../../utils/constants'
 import NavigationCard from '../../common/navigationCard'
-import { getSearchResults, getSearchResultsByProjAndSec } from '../../services/organizationsService'
+import { getSearchResultsByProjAndSec } from '../../services/organizationsService'
 
 const SearchResults = (props) => {
     const [tableView, setTableView] = useState(true);
