@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Tabs } from 'antd';
 import Search from "./search";
 import SearchResults from "./searchResults";
+import { getSearchResultsByProjAndSec } from "../../services/organizationsService"
 
 const { TabPane } = Tabs;
 
@@ -19,10 +20,17 @@ const SectionSearch = ({ params }) => {
         setActiveTab(key);
     }
 
+    useEffect(() => {
+        getSearchResultsByProjAndSec(params.proId, params.sectionId).then(data => {
+            console.log(data)
+            setSearchResults(data)
+        })
+    }, []);
+
     return (
         <>
             <div className="g-row m-t-20 m-b-20 m-l-20">
-                <div className="g-col-3 fl body-text">Project ID: <strong>{params.proId}</strong></div>
+                <div className="g-col-3 fl body-text">Project ID: <strong>{params.projectId}</strong></div>
                 <div className="g-col-3 fl body-text">Section ID: <strong>{params.sectionId}</strong></div>
                 <div className="g-col-3 fl body-text">Name: <strong>{params.projectName}</strong></div>
             </div>

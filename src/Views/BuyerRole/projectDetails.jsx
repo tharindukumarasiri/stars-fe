@@ -41,7 +41,7 @@ const ProjectDetails = ({ params }) => {
             .catch(() => {
                 message.error("Change status faild please try again");
             });
-    };    
+    };
 
     return (
         <>
@@ -222,6 +222,7 @@ const SectionView = (props) => {
 
     const onClickSection = (section) => {
         changeActiveTab(NAVIGATION_PAGES.BUYER_PROJECT_SEARCH, {
+            proId: props.id,
             projectId: props.projectId,
             projectName: props.projectName,
             sectionId: section.id,
@@ -350,14 +351,14 @@ const MembersView = (props) => {
     const [modalVisible, setModalVisible] = useState(false);
     const [editMemberData, setEditMemberData] = useState({ name: "", email: "", sections: [], assigned: "", responsible: "", status: "" });
     const [addMemberData, setAddMemberData] = useState({ name: "", sections: [], responsible: "" });
-    const [editdata, setEditdata] = useState(false);    
+    const [editdata, setEditdata] = useState(false);
 
     const [companyUsers, setCompanyUsers] = useState([]);
     const [selectedUser, setSelectedUser] = useState(null);
     const [filterdUsers, setFilteredUsers] = useState([]);
     const [text, setText] = useState('');
 
-    const getUsers = async () => {        
+    const getUsers = async () => {
         const response = await getCompanyMembers();
         console.log(response);
         setCompanyUsers(response || []);
@@ -368,7 +369,7 @@ const MembersView = (props) => {
                 value: user.Name
             };
         }) : [];
-        
+
         setFilteredUsers(options);
     };
 
@@ -429,7 +430,7 @@ const MembersView = (props) => {
         toggleModal();
     };
 
-    const handleOk = () => {       
+    const handleOk = () => {
         if (editdata) {
             //TODO edit api call
         } else {
@@ -443,7 +444,7 @@ const MembersView = (props) => {
                         .then((result) => {
                             setMembersData(result);
                             setSelectedUser({})
-                            setAddMemberData({ sections: [], responsible: "", fromDate: "", toDate: "", name:'' });
+                            setAddMemberData({ sections: [], responsible: "", fromDate: "", toDate: "", name: '' });
                             message.success("Add member successful");
                         })
                         .catch(() => {
@@ -497,19 +498,19 @@ const MembersView = (props) => {
     const onUserChange = (data) => {
         console.log(data);
         setText(data);
-      };
+    };
 
     const onUserSearch = (searchText) => {
         let filtered = [];
-        companyUsers.forEach((user) => {  
-            if(!searchText){
-                filtered.push( {
+        companyUsers.forEach((user) => {
+            if (!searchText) {
+                filtered.push({
                     key: user.PartyId,
                     label: user.Name,
                     value: user.Name
                 });
-            }          
-            if(searchText && user.Name.toLowerCase().search(searchText.toLowerCase()) >= 0 ){
+            }
+            if (searchText && user.Name.toLowerCase().search(searchText.toLowerCase()) >= 0) {
                 filtered.push({
                     key: user.PartyId,
                     label: user.Name,
@@ -620,14 +621,14 @@ const MembersView = (props) => {
                         <>
                             <div className="g-col-6">
                                 {/* <Input placeholder="Search User" value={addMemberData.name || ''} endImage='icon-search' onChange={(e) => onAddMemberChange(e, 'name')} /> */}
-                                <AutoComplete 
+                                <AutoComplete
                                     value={text}
-                                    options={filterdUsers} 
-                                    onSelect={onUserSelect} 
+                                    options={filterdUsers}
+                                    onSelect={onUserSelect}
                                     onSearch={onUserSearch}
                                     onChange={onUserChange}
                                     style={{ width: '100%' }}
-                                    className='mb-2'                                 
+                                    className='mb-2'
                                     placeholder="Search User" />
                                 <DropdownMultiSelect
                                     placeholder="Section/s"

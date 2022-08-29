@@ -206,12 +206,9 @@ export default function Search(props) {
         setSerachText(e.target.value);
     }
 
-    const getSearchApiByType = () => {
-
-    }
-
     const onShowResults = (e) => {
         e.preventDefault();
+        setOrganizations([]);
         window.scrollTo(0, 0)
         const searchReq = getSearchRequest(1);
         const allSelectedCriteria = searchReq.countries.concat(searchReq.regions, searchReq.cities, searchReq.municipalities, searchReq.cpvs, searchReq.naces, searchReq.unspscs)
@@ -272,35 +269,42 @@ export default function Search(props) {
 
     const onSaveResults = (e) => {
         e.preventDefault();
-        if (props?.sectionSearch) {
-            const saveResultData = {
-                "operationId": props.projectId,
-                "sectionId": props.sectionId,
-                "createdDate": new Date(),
-                "searchFilter": {
-                    "name": searchText,
-                    "countries": selectedMarketCriteria.selectedCountries,
-                    "regions": selectedMarketCriteria.selectedRegions,
-                    "cities": arrayToUpper(selectedMarketCriteria.selectedCities),
-                    "municipalities": selectedMarketCriteria.selectedMunicipalities,
-                    "cpvs": getFilterdCodes(selectedCPVValues),
-                    "naces": getFilterdCodes(selectedNACValues),
-                    "unspscs": getFilterdCodes(selectedUNSPValues),
-                },
-                "results": selectedResults,
-            }
-
-            addNewSearchResult(saveResultData).then(() => {
-                message.success('Save results successful');
-                getSearchResults().then(data => {
-                    props.setSearchResults(data)
-                })
-            }).catch(() => {
-                message.error('Save results failed please try again');
-            })
+        const searchReq = getSearchRequest(1);
+        const allSelectedCriteria = searchReq.countries.concat(searchReq.regions, searchReq.cities, searchReq.municipalities, searchReq.cpvs, searchReq.naces, searchReq.unspscs)
+        if (allSelectedCriteria.length === 0 && searchText === '') {
+            message.warning('Please select criterias to save');
         } else {
-            setShowModel(true);
+            if (props?.sectionSearch) {
+                const saveResultData = {
+                    "operationId": props.projectId,
+                    "sectionId": props.sectionId,
+                    "createdDate": new Date(),
+                    "searchFilter": {
+                        "name": searchText,
+                        "countries": selectedMarketCriteria.selectedCountries,
+                        "regions": selectedMarketCriteria.selectedRegions,
+                        "cities": arrayToUpper(selectedMarketCriteria.selectedCities),
+                        "municipalities": selectedMarketCriteria.selectedMunicipalities,
+                        "cpvs": getFilterdCodes(selectedCPVValues),
+                        "naces": getFilterdCodes(selectedNACValues),
+                        "unspscs": getFilterdCodes(selectedUNSPValues),
+                    },
+                    "results": selectedResults,
+                }
+
+                addNewSearchResult(saveResultData).then(() => {
+                    message.success('Save results successful');
+                    getSearchResults().then(data => {
+                        props.setSearchResults(data)
+                    })
+                }).catch(() => {
+                    message.error('Save results failed please try again');
+                })
+            } else {
+                setShowModel(true);
+            }
         }
+
     }
 
     const onCloseModel = () => {
