@@ -3,7 +3,6 @@ import { message, Pagination } from 'antd';
 import { levelOneReq, nacSectionReq } from "../../utils/constants";
 import gb_flag from "../../assets/images/gb_flag.png"
 import logo_thumb from "../../assets/images/logo_thumb.png"
-import rating from "../../assets/images/rating.png"
 import Model from "../../common/model";
 import { TabContext } from "../../utils/contextStore";
 import { NAVIGATION_PAGES } from "../../utils/enums";
@@ -752,38 +751,52 @@ export default function Search(props) {
                         <div className="sub-title-txt text-center" >No Results</div>
                     }
                     {Object.values(grouping).length !== 0 &&
-                        <div className={props?.sectionSearch ? 'section-search-results-container' : 'search-results-container'}>
-                            <div className="g-row">
-                                <div className="g-col-4">Search Criteria</div>
-                                <div className="g-col-2">Criteria Codes</div>
-                                <div className="g-col-3">Criteria Name</div>
-                                <div className="g-col-2">Companies</div>
+                        <>
+                            <div className={props?.sectionSearch ? 'section-search-results-container' : 'search-results-container'}>
+                                <div className="g-row">
+                                    <div className="g-col-4">Search Criteria</div>
+                                    <div className="g-col-2">Criteria Codes</div>
+                                    <div className="g-col-3">Criteria Name</div>
+                                    <div className="g-col-2">Companies</div>
 
-                            </div>
-                            {Object.entries(grouping).map(([key, value]) => {
-                                return (
-                                    <div className="search-result-row g-row" key={key}>
-                                        <div className="g-col-4 body-text-bold blue">{key}</div>
-                                        <div className="g-col-8" >
-                                            {
-                                                value.map((group, index) => {
-                                                    return (
-                                                        <div key={index}>
-                                                            <div className="g-col-4 body-text blue">{group._id}</div>
-                                                            <div className="g-col-4 body-text blue">XXX</div>
-                                                            <div className="g-col-4 body-text blue">{group.count}</div>
-                                                        </div>
-                                                    )
-                                                })
-                                            }
+                                </div>
+                                {Object.entries(grouping).map(([key, value]) => {
+                                    return (
+                                        <div className="search-result-row g-row" key={key}>
+                                            <div className="g-col-4 body-text-bold blue">{key}</div>
+                                            <div className="g-col-8" >
+                                                {
+                                                    value.map((group, index) => {
+                                                        return (
+                                                            <div key={index}>
+                                                                {typeof group._id === 'object' ?
+                                                                    <div className="g-row">
+                                                                        <div className="g-col-4 body-text blue">{Object.values(group._id)[0]}</div>
+                                                                        <div className="g-col-4 body-text blue">{Object.values(group._id)[1]}</div>
+                                                                        <div className="g-col-4 body-text blue">{group.count}</div>
+                                                                    </div>
+                                                                    : <>
+                                                                        <div className="g-col-4 body-text blue">{group._id}</div>
+                                                                        <div className="g-col-4 body-text blue">XXX</div>
+                                                                        <div className="g-col-4 body-text blue">{group.count}</div>
+                                                                    </>
+                                                                }
+                                                            </div>
+                                                        )
+                                                    })
+                                                }
+                                            </div>
                                         </div>
-                                    </div>
-                                )
+                                    )
 
-                            })
+                                })
 
-                            }
-                        </div>
+                                }
+                            </div>
+                            <div className="search-result-pagination-container">
+                                <Pagination size="small" current={actPage} onChange={(pageNum) => { onChangePage(pageNum) }} total={pageCount} showSizeChanger={false} />
+                            </div>
+                        </>
                     }
                     {organizations?.length > 0 &&
                         <>
@@ -792,14 +805,11 @@ export default function Search(props) {
                                     return (
                                         <div key={organization?.id} className="search-result-row g-row">
                                             <div className="g-col-1"><img src={logo_thumb} className="logo-thumb" /></div>
-                                            <div className="g-col-3">{organization?.organizationName}</div>
-                                            <div className="g-col-2"><div>{organization?.businessAddr?.businessCountry ? organization.businessAddr.businessCountry : "No Country"}</div>
+                                            <div className="g-col-4">{organization?.organizationName}</div>
+                                            <div className="g-col-3"><div>{organization?.businessAddr?.businessCountry ? organization.businessAddr.businessCountry : "No Country"}</div>
                                                 <div>{organization?.businessAddr?.city ? organization.businessAddr.city : "No City"}</div></div>
-                                            <div className="g-col-2"> <div>{organization?.secCode?.code ? organization.secCode.code : "No Sec Code"}</div>
+                                            <div className="g-col-3"> <div>{organization?.secCode?.code ? organization.secCode.code : "No Sec Code"}</div>
                                                 <div>{organization?.secCode?.description ? organization.secCode.description : "No Description"}</div></div>
-                                            <div className="g-col-2"> <div className="m-l-20">Ratings</div>
-                                                <img src={rating} /></div>
-                                            <div className="g-col-1"><i className="icon-more m-t-20"  ><span className=" tooltip-toggle" aria-label="More..."></span></i></div>
                                             <div className="g-col-1"> <input type="checkbox" value={JSON.stringify(organization)} className="check-box" onChange={onCheckBox} /></div>
                                         </div>
                                     )

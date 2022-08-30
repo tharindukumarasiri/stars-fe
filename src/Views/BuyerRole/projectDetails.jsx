@@ -325,12 +325,6 @@ const SectionView = (props) => {
                             value={newSectionData.toDate ? new Date(newSectionData.toDate) : ""}
                             onChange={(date) => onNewElementDateChange(date, "toDate")}
                         />
-                        <Input
-                            placeholder="Responsible (Users for this Tenant))"
-                            value={newSectionData.responsible || ""}
-                            onChange={(e) => onNewElementChange(e, "responsible")}
-                            endImage="icon-managers"
-                        />
                         <Dropdown
                             values={["Open", "Close"]}
                             onChange={(e) => onNewElementChange(e, "status")}
@@ -349,9 +343,7 @@ const MembersView = (props) => {
     const [tableView, setTableView] = useState(true);
     const [membersData, setMembersData] = useState([]);
     const [modalVisible, setModalVisible] = useState(false);
-    const [editMemberData, setEditMemberData] = useState({ name: "", email: "", sections: [], assigned: "", responsible: "", status: "" });
     const [addMemberData, setAddMemberData] = useState({ name: "", sections: [], responsible: "" });
-    const [editdata, setEditdata] = useState(false);
 
     const [companyUsers, setCompanyUsers] = useState([]);
     const [selectedUser, setSelectedUser] = useState(null);
@@ -381,19 +373,6 @@ const MembersView = (props) => {
             return { ...a };
         });
 
-        headers.splice(4, 0, {
-            title: "Assigned Section(s)",
-            render: (_, record) =>
-                record?.sections?.map((secId) => {
-                    const section = props.sectionData?.find((section) => section.id === secId);
-                    return (
-                        <>
-                            {section?.name || ""}
-                            <br />
-                        </>
-                    );
-                }),
-        });
         headers.push({
             title: "",
             render: (_, record) => (
@@ -404,7 +383,6 @@ const MembersView = (props) => {
                             e.stopPropagation();
                         }}
                     />
-                    <i className="icon-edit table-icon" />
                 </>
             ),
         });
@@ -425,65 +403,31 @@ const MembersView = (props) => {
     };
 
     const addMember = () => {
-        setEditdata(false);
         toggleModal();
     };
 
     const handleOk = () => {
-        if (editdata) {
-            //TODO edit api call
-        } else {
-            const sectionIds = [];
-            addMemberData.sections.map((val) => sectionIds.push(val.id));
-            const membersWithId = { ...addMemberData, id: props.sectionId, sections: sectionIds, name: selectedUser.value };
+        const sectionIds = [];
+        addMemberData.sections.map((val) => sectionIds.push(val.id));
+        const membersWithId = { ...addMemberData, id: props.sectionId, sections: sectionIds, name: selectedUser.value };
 
-            addNewMember(props.id, props.sectionId, membersWithId)
-                .then(() => {
-                    getAllMembers(props.id)
-                        .then((result) => {
-                            setMembersData(result);
-                            setSelectedUser({})
-                            setAddMemberData({ sections: [], responsible: "", fromDate: "", toDate: "", name: '' });
-                            message.success("Add member successful");
-                        })
-                        .catch(() => {
-                            message.warning("Updated data fetch fail please reload");
-                        });
-                    toggleModal();
-                })
-                .catch(() => {
-                    message.error("Add member failed please try again");
-                });
-        }
-    };
-
-    const onClickMember = (params) => {
-        const newEditMemberData = { ...params };
-        const sectionData = [];
-
-        params.sections?.map((secId) => {
-            const sectionName = props.sectionData?.find((section) => section.id === secId);
-            sectionData.push(sectionName);
-        });
-        newEditMemberData.sections = sectionData;
-
-        setEditMemberData(newEditMemberData);
-        setEditdata(true);
-        toggleModal();
-    };
-
-    const onNewElementChange = (e, elementName) => {
-        e.preventDefault();
-        setEditMemberData({ ...editMemberData, [elementName]: e.target.value });
-    };
-
-    const onNewElementDateChange = (date, elementName) => {
-        setEditMemberData({ ...editMemberData, [elementName]: date });
-    };
-
-    const onAddMemberChange = (e, elementName) => {
-        e.preventDefault();
-        setAddMemberData({ ...addMemberData, [elementName]: e.target.value });
+        addNewMember(props.id, props.sectionId, membersWithId)
+            .then(() => {
+                getAllMembers(props.id)
+                    .then((result) => {
+                        setMembersData(result);
+                        setSelectedUser({})
+                        setAddMemberData({ sections: [], responsible: "", fromDate: "", toDate: "", name: '' });
+                        message.success("Add member successful");
+                    })
+                    .catch(() => {
+                        message.warning("Updated data fetch fail please reload");
+                    });
+                toggleModal();
+            })
+            .catch(() => {
+                message.error("Add member failed please try again");
+            });
     };
 
     const onAddMemberDateChange = (date, elementName) => {
@@ -538,11 +482,6 @@ const MembersView = (props) => {
                     dataSource={membersData}
                     columns={tableHeaders}
                     locale={{ emptyText: <EmptyTableView tableName="Members" onButtonClick={addMember} /> }}
-                    onRow={(record, rowIndex) => {
-                        return {
-                            onClick: () => onClickMember(record),
-                        };
-                    }}
                 />
             ) : (
                 <div className="g-row">
@@ -554,7 +493,6 @@ const MembersView = (props) => {
                                         name={member.name}
                                         cardColour={"bg-blue-purple"}
                                         value={"name"}
-                                        onClick={() => onClickMember(member)}
                                     />
                                 </div>
                             );
@@ -565,98 +503,34 @@ const MembersView = (props) => {
                 </div>
             )}
             <Modal
-                title={editdata ? "Member" : "Add Member"}
+                title={"Add Member"}
                 visible={modalVisible}
                 onOk={handleOk}
-                okText={editdata ? "Save" : "Add"}
+                okText={"Add"}
                 onCancel={toggleModal}
                 centered={true}
-                width={1000}
             >
                 <div className="g-row">
-                    {editdata ? (
-                        <>
-                            <div className="g-col-6">
-                                <Input placeholder="Name" value={editMemberData.name || ""} disabled={true} />
-                                <Input placeholder="Email" value={editMemberData.email || ""} disabled={true} />
-                                <Input placeholder="Phone" value={editMemberData.phone || ""} disabled={true} />
-                                <Input placeholder="Company" value={editMemberData.company || ""} disabled={true} />
-                                <DropdownMultiSelect
-                                    placeholder="Section/s"
-                                    dataList={props.sectionData}
-                                    selectedList={editMemberData}
-                                    setSelectedState={setEditMemberData}
-                                    criteriaName="sections"
-                                    containerStyle="member-section-dropdown"
-                                />
-                            </div>
-                            <div className="g-col-6">
-                                <DatePickerInput
-                                    placeholder={"From Date"}
-                                    value={editMemberData.fromDate ? new Date(editMemberData.fromDate) : ""}
-                                    onChange={(date) => onNewElementDateChange(date, "fromDate")}
-                                />
-                                <DatePickerInput
-                                    placeholder={"Due Date"}
-                                    value={editMemberData.toDate ? new Date(editMemberData.toDate) : ""}
-                                    onChange={(date) => onNewElementDateChange(date, "toDate")}
-                                />
-                                <Input
-                                    placeholder="Responsible"
-                                    value={editMemberData.responsible}
-                                    onChange={(e) => onNewElementChange(e, "responsible")}
-                                    endImage="icon-managers"
-                                />
-                                <Dropdown
-                                    values={["Open", "Close"]}
-                                    onChange={(e) => onNewElementChange(e, "status")}
-                                    selected={editMemberData.status || ""}
-                                    placeholder="Status"
-                                />
-                            </div>
-                        </>
-                    ) : (
-                        <>
-                            <div className="g-col-6">
-                                {/* <Input placeholder="Search User" value={addMemberData.name || ''} endImage='icon-search' onChange={(e) => onAddMemberChange(e, 'name')} /> */}
-                                <AutoComplete
-                                    value={text}
-                                    options={filterdUsers}
-                                    onSelect={onUserSelect}
-                                    onSearch={onUserSearch}
-                                    onChange={onUserChange}
-                                    style={{ width: '100%' }}
-                                    className='mb-2'
-                                    placeholder="Search User" />
-                                <DropdownMultiSelect
-                                    placeholder="Section/s"
-                                    dataList={props.sectionData}
-                                    selectedList={addMemberData}
-                                    setSelectedState={setAddMemberData}
-                                    criteriaName="sections"
-                                    containerStyle="member-section-dropdown"
-                                />
-                                <Dropdown
-                                    values={["Admin", "User"]}
-                                    onChange={(e) => onAddMemberChange(e, "responsible")}
-                                    selected={addMemberData.responsible || ""}
-                                    placeholder="Responsible"
-                                />
-                            </div>
-                            <div className="g-col-6">
-                                <DatePickerInput
-                                    placeholder={"From Date"}
-                                    value={addMemberData.fromDate ? new Date(addMemberData.fromDate) : ""}
-                                    onChange={(date) => onAddMemberDateChange(date, "fromDate")}
-                                />
-                                <DatePickerInput
-                                    placeholder={"To Date"}
-                                    value={addMemberData.toDate ? new Date(addMemberData.toDate) : ""}
-                                    onChange={(date) => onAddMemberDateChange(date, "toDate")}
-                                />
-                            </div>
-                        </>
-                    )}
+                    <AutoComplete
+                        value={text}
+                        options={filterdUsers}
+                        onSelect={onUserSelect}
+                        onSearch={onUserSearch}
+                        onChange={onUserChange}
+                        style={{ width: '100%', marginBottom: 10 }}
+                        className='mb-2'
+                        placeholder="Search User" />
+                    <DatePickerInput
+                        placeholder={"From Date"}
+                        value={addMemberData.fromDate ? new Date(addMemberData.fromDate) : ""}
+                        onChange={(date) => onAddMemberDateChange(date, "fromDate")}
+                    />
+                    <DatePickerInput
+                        placeholder={"To Date"}
+                        value={addMemberData.toDate ? new Date(addMemberData.toDate) : ""}
+                        onChange={(date) => onAddMemberDateChange(date, "toDate")}
+                    />
+
                 </div>
                 <div className="n-float" />
             </Modal>

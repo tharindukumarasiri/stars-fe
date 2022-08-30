@@ -85,10 +85,6 @@ export const projectScreenTableHeaders = [
 
 export const sectionTableHeaders = [
     {
-        title: 'section ID',
-        dataIndex: 'id',
-    },
-    {
         title: 'Name',
         dataIndex: 'name',
     },
@@ -125,10 +121,6 @@ export const sectionTableHeaders = [
         }, render: (_, { toDate }) => (
             formatDate(toDate)
         ),
-    },
-    {
-        title: 'Responsible',
-        dataIndex: 'responsible',
     },
     {
         title: 'Status',
@@ -169,10 +161,6 @@ export const membersTableHeaders = [
     {
         title: 'Email',
         dataIndex: 'email',
-    },
-    {
-        title: 'Responsible',
-        dataIndex: 'responsible',
     },
     {
         title: 'Assigned Date',
