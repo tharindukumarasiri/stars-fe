@@ -515,16 +515,6 @@ const MembersView = (props) => {
                         style={{ width: '100%', marginBottom: 10 }}
                         className='mb-2'
                         placeholder="Search User" />
-                    <DatePickerInput
-                        placeholder={"From Date"}
-                        value={addMemberData.fromDate ? new Date(addMemberData.fromDate) : ""}
-                        onChange={(date) => onAddMemberDateChange(date, "fromDate")}
-                    />
-                    <DatePickerInput
-                        placeholder={"To Date"}
-                        value={addMemberData.toDate ? new Date(addMemberData.toDate) : ""}
-                        onChange={(date) => onAddMemberDateChange(date, "toDate")}
-                    />
 
                 </div>
                 <div className="n-float" />

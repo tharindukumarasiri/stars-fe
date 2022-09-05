@@ -35,6 +35,7 @@
 
     "LOCAL_API": "",
     "GET_USER": "/actionapi/bridge/getuser",
+    "GET_CONTACTS": "/actionapi/PersonTs/GetWithChildren",
     "GET_USER_PERSON": "/actionapi/bridge/getperson",
     "GET_SELECTED_COMPANY": "/sessionbridge/getselectedcompany",
     "GET_COMPANY_USERS": "/actionapi/users/GetCompanyUsers",

@@ -1,5 +1,6 @@
 import config from './config.json'
 import http from './httpService'
+import { getAuthHeader } from '../utils';
 
 //Organization
 export async function searchOrganization(params) {
@@ -100,5 +101,11 @@ export async function updateNaceCodes(id, params) {
 }
 export async function searchNaceCodes(params) {
     const { data } = await http.post(config.SEARCH_NACE_CODES, params, { headers: { 'Content-Type': 'application/json' } });
+    return data;
+}
+
+export async function getContacts() {   
+    const url = config.LOCAL_API + config.GET_CONTACTS;    
+    const { data } = await http.get(url, getAuthHeader());
     return data;
 }

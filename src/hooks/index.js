@@ -11,7 +11,7 @@ export const FetchCurrentCompany = () => {
     const getUserDetails = async () => {
         getSelectedCompany().then((company) => {
             setSelectedCompany(company);
-        })
+        });       
     };
 
     return [selectedCompany];

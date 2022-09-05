@@ -1,10 +1,11 @@
 import React, { useContext, useEffect, useState, useMemo } from "react";
-import { Table, Modal, message, Tooltip } from 'antd';
+import { Table, Modal, message, Tooltip, AutoComplete } from 'antd';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import Input from "../../common/input";
 import Dropdown from "../../common/dropdown";
 import DatePickerInput from "../../common/datePickerInput";
 import { getAllProjects, addNewProject, editProject, deleteProject } from "../../services/operationsService"
+import { getContacts } from "../../services/organizationsService";
 import { projectScreenTableHeaders } from "../../utils/constants"
 import NavigationCard from "../../common/navigationCard"
 import { NAVIGATION_PAGES } from "../../utils/enums";
@@ -20,6 +21,11 @@ const Projects = () => {
     const [newProjectData, setNewProjectData] = useState({ name: '', type: '', description: '', permission: '', fromDate: '', toDate: '', responsible: '', status: '' });
     const [editData, setEditData] = useState(false);
     const [loading, setLoading] = useState(false);
+
+    const [companyContacts, setCompanyContacts] = useState([]);
+    const [selectedContact, setSelectedContact] = useState(null);
+    const [filterdContacts, setFilteredContacts] = useState([]);
+    const [contactName, setContactName] = useState('');
 
     const tableHeaders = useMemo(() => {
         const headers = projectScreenTableHeaders.map(a => { return { ...a } })
@@ -57,7 +63,8 @@ const Projects = () => {
         getAllProjects().then(result => {
             setProjectsData(result);
             setLoading(false);
-        })
+        });        
+        getContactsList();
     }, []);
 
     const showDeleteConfirm = (data) => {
@@ -131,6 +138,50 @@ const Projects = () => {
     const onClickProject = (params) => {
         changeActiveTab(NAVIGATION_PAGES.BUYER_PROJECT_DETAILS, params)
     }
+    const getContactsList = async () => {
+        const response = await getContacts();
+        setCompanyContacts(response || []);
+        const options = response ? response.map((user) => {
+            return {
+                key: user.PartyTId,
+                label: user.Name,
+                value: user.Name
+            };
+        }) : [];
+
+        setFilteredContacts(options);
+    };
+
+    const onContactSelect = (value, option) => {
+        setSelectedContact(option);
+        setNewProjectData({...newProjectData, responsible: value});
+    };
+
+    const onContactChange = (data) => {
+        setContactName(data);
+        setNewProjectData({...newProjectData, responsible: data});
+    };
+
+    const onContactSearch = (searchText) => {
+        let filtered = [];
+        companyContacts.forEach((user) => {
+            if (!searchText) {
+                filtered.push({
+                    key: user.PartyTId,
+                    label: user.Name,
+                    value: user.Name,
+                });
+            }
+            if (searchText && user.Name.toLowerCase().search(searchText.toLowerCase()) >= 0) {
+                filtered.push({
+                    key: user.PartyTId,
+                    label: user.Name,
+                    value: user.Name,
+                });
+            }
+        })
+        setFilteredContacts(filtered);
+    };
 
     return (
         <div>
@@ -194,7 +245,15 @@ const Projects = () => {
                     <div className="g-col-6">
                         <DatePickerInput placeholder={'From Date'} value={newProjectData.fromDate ? new Date(newProjectData.fromDate) : ''} minDate={new Date()} onChange={(date) => onNewElementDateChange(date, 'fromDate')} />
                         <DatePickerInput placeholder={'Due Date'} value={newProjectData.toDate ? new Date(newProjectData.toDate) : ''} minDate={new Date()} onChange={(date) => onNewElementDateChange(date, 'toDate')} />
-                        <Input placeholder="Responsible (Users for this Tenant))" value={newProjectData.responsible || ''} onChange={(e) => onNewElementChange(e, 'responsible')} endImage="icon-managers" />
+                        <AutoComplete
+                            value={newProjectData.responsible || ''}
+                            options={filterdContacts}
+                            onSelect={onContactSelect}
+                            onSearch={onContactSearch}
+                            onChange={onContactChange}
+                            style={{ width: '100%', marginBottom: 10 }}
+                            className='mb-2'
+                            placeholder="Responsible (Users for this Tenant)" />
                         <Dropdown values={['Open', 'Close']} onChange={(e) => onNewElementChange(e, 'status')} selected={newProjectData.status || ''} placeholder="Status" />
                     </div>
                 </div>
