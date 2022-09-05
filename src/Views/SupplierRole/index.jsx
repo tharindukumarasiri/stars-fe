@@ -9,6 +9,7 @@ import Summary from './summary';
 import Unspsc from './unspsc';
 import Cpv from './cpv';
 import Nace from './nace';
+import Market from './market';
 
 const SupplireRole = () => {
     const [activeTab, setActiveTab] = useState(NAVIGATION_PAGES.SUPPLIER_HOME);
@@ -107,6 +108,9 @@ const SupplireRole = () => {
                 </div>
                 <div label={"NACE"} id={NAVIGATION_PAGES.SUPPLIER_NACE}>
                     <Nace />
+                </div>
+                <div label={"MARKET VIEW"} id={NAVIGATION_PAGES.SUPPLIER_MARKET}>
+                    <Market />
                 </div>
             </Tabs>
         </TabContext.Provider >

@@ -333,13 +333,13 @@ export const searchResultsTableHeaders = [
             </>
         )
     },
-    {
-        title: '#',
-        dataIndex: 'results',
-        render: (_, { results }) => (
-            results.length
-        ),
-    },
+    // {
+    //     title: '#',
+    //     dataIndex: 'results',
+    //     render: (_, { results }) => (
+    //         results.length
+    //     ),
+    // },
     // {
     //     title: 'Companies',
     //     dataIndex: 'results',

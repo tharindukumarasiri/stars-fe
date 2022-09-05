@@ -35,13 +35,16 @@ const SectionSearch = ({ params }) => {
             </div>
             <div className="custom-tab-container">
                 <Tabs type="card" activeKey={activeTab} onTabClick={onChangeTab}>
-                    <TabPane tab="SEARCH (CRITERIA)" key="1">
+                    <TabPane tab="SEARCH" key="1">
                         <Search sectionSearch={true} projectId={params.proId} sectionId={params.sectionId} searchResult={searchResult} setSearchResults={setSearchResults} />
                     </TabPane>
-                    <TabPane tab="RESULTS" key="2">
+                    <TabPane tab="ALL CRITERIA" key="2">
                         <SearchResults searchResults={searchResults} setSearchResults={setSearchResults} onChangeTab={onChangeTab} projectId={params.proId} sectionId={params.sectionId} />
                     </TabPane>
                     <TabPane tab="REMOVAL CRITERIA" key="3">
+
+                    </TabPane>
+                    <TabPane tab="RESULT LIST" key="4">
 
                     </TabPane>
                 </Tabs>

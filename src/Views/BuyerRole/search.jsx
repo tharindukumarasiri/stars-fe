@@ -630,7 +630,7 @@ export default function Search(props) {
                                 <div className="g-col-2">
                                     {Dropdown({ placeholder: 'Class', dataList: cpvData.cpvClass, dataName: 'desscription', selectedList: selectedCPVValues, setSelectedState: setSelectedCPVValues, selectedRows: selectedCPVRows, setSelectedRows: setSelectedCPVRows, apiCalls: getcpvCodesData, codelevel: 3, keyName: "code" })}
                                 </div>
-                                <div className="g-col-2">
+                                <div className="g-col-3">
                                     {Dropdown({ placeholder: 'Category', dataList: cpvData.category, dataName: 'desscription', selectedList: selectedCPVValues, setSelectedState: setSelectedCPVValues, selectedRows: selectedCPVRows, setSelectedRows: setSelectedCPVRows, apiCalls: getcpvCodesData, codelevel: 4, keyName: "code" })}
                                 </div>
                                 <div className="g-col-3">

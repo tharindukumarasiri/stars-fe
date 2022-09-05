@@ -10,7 +10,8 @@ export default function Tab(props) {
 
   const onCloseBtnClick = (e) => {
     if (activeTab === props.id) {
-      changeActiveTab(openTabs[0])
+      const closeTabIndex = openTabs.indexOf(activeTab);
+      changeActiveTab(openTabs[closeTabIndex - 1]);
     }
     e.stopPropagation();
     closeTab(props.id);

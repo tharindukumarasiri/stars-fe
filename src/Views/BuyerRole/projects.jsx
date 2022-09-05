@@ -192,8 +192,8 @@ const Projects = () => {
                         <Dropdown values={['Public', 'Private']} onChange={(e) => onNewElementChange(e, 'permission')} selected={newProjectData.permission || ''} placeholder="Permission Type" />
                     </div>
                     <div className="g-col-6">
-                        <DatePickerInput placeholder={'From Date'} value={newProjectData.fromDate ? new Date(newProjectData.fromDate) : ''} onChange={(date) => onNewElementDateChange(date, 'fromDate')} />
-                        <DatePickerInput placeholder={'Due Date'} value={newProjectData.toDate ? new Date(newProjectData.toDate) : ''} onChange={(date) => onNewElementDateChange(date, 'toDate')} />
+                        <DatePickerInput placeholder={'From Date'} value={newProjectData.fromDate ? new Date(newProjectData.fromDate) : ''} minDate={new Date()} onChange={(date) => onNewElementDateChange(date, 'fromDate')} />
+                        <DatePickerInput placeholder={'Due Date'} value={newProjectData.toDate ? new Date(newProjectData.toDate) : ''} minDate={new Date()} onChange={(date) => onNewElementDateChange(date, 'toDate')} />
                         <Input placeholder="Responsible (Users for this Tenant))" value={newProjectData.responsible || ''} onChange={(e) => onNewElementChange(e, 'responsible')} endImage="icon-managers" />
                         <Dropdown values={['Open', 'Close']} onChange={(e) => onNewElementChange(e, 'status')} selected={newProjectData.status || ''} placeholder="Status" />
                     </div>

@@ -1,8 +1,7 @@
 import React, { useState, useMemo, useContext, useEffect } from "react";
-import { Tabs, Badge, Tooltip, Table, Modal, message, AutoComplete } from "antd";
+import { Tabs, Tooltip, Table, Modal, message, AutoComplete } from "antd";
 import { formatDate } from "../../utils";
 import Dropdown from "../../common/dropdown";
-import DropdownMultiSelect from "../../common/dropdownMultiSelect";
 import Input from "../../common/input";
 import DatePickerInput from "../../common/datePickerInput";
 import NavigationCard from "../../common/navigationCard";
@@ -83,19 +82,13 @@ const ProjectDetails = ({ params }) => {
                             </div>
                             <div className="g-col-2">
                                 <div className="body-text-bold">Status</div>
-                                {editable ? (
-                                    <Dropdown
-                                        values={["Open", "Close"]}
-                                        onChange={changeStateOfProject}
-                                        selected={status?.toUpperCase() === "OPEN" ? "Open" : "Close"}
-                                        placeholder="Status"
-                                    />
-                                ) : (
-                                    <Badge
-                                        status={status?.toUpperCase() === "OPEN" ? "success" : "default"}
-                                        text={status?.toUpperCase() === "OPEN" ? "Open" : "Close"}
-                                    />
-                                )}
+                                <Dropdown
+                                    values={["Open", "Close"]}
+                                    onChange={changeStateOfProject}
+                                    selected={status?.toUpperCase() === "OPEN" ? "Open" : "Close"}
+                                    placeholder="Status"
+                                />
+
                             </div>
                         </div>
                         <i className="icon-edit detail-edit-icon" onClick={() => setEditable((prev) => !prev)}></i>
@@ -319,11 +312,13 @@ const SectionView = (props) => {
                             placeholder={"From Date"}
                             value={newSectionData.fromDate ? new Date(newSectionData.fromDate) : ""}
                             onChange={(date) => onNewElementDateChange(date, "fromDate")}
+                            minDate={new Date()}
                         />
                         <DatePickerInput
                             placeholder={"Due Date"}
                             value={newSectionData.toDate ? new Date(newSectionData.toDate) : ""}
                             onChange={(date) => onNewElementDateChange(date, "toDate")}
+                            minDate={new Date()}
                         />
                         <Dropdown
                             values={["Open", "Close"]}

@@ -28,7 +28,7 @@ const SupplierHome = () => {
             </div>
             <div className="g-row">
                 <NavigationCard name={"NACE"} cardColour={"bg-vialot"} imageName={'icon-nace'} onClick={() => onClickCard(NAVIGATION_PAGES.SUPPLIER_NACE)} />
-                <NavigationCard name={"MARKETS"} cardColour={"bg-green-lite"} imageName={'icon-nuts'} />
+                <NavigationCard name={"MARKETS"} cardColour={"bg-green-lite"} imageName={'icon-nuts'} onClick={() => onClickCard(NAVIGATION_PAGES.SUPPLIER_MARKET)} />
             </div>
         </>
     )

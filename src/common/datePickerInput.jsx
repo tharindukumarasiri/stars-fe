@@ -2,9 +2,10 @@ import React, { forwardRef } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import "./datePickerInput.scss"
+import { formatDate } from "../utils";
 
-const DatePickerInput = ({ value, onChange, placeholder } = {}) => {
-
+const DatePickerInput = ({ value, onChange, placeholder, minDate = false } = {}) => {
+    const date = formatDate(value) === "01/01/0001" ? "" : value
     const InputView = forwardRef(({ value, onClick, placeholder }, ref) => (
         <div className="datapicker-input m-b-10" onClick={onClick} ref={ref}>
             <div className={value ? "input-hint-text-visible" : "input-hint-text-hidden"}>{placeholder}</div>
@@ -17,7 +18,8 @@ const DatePickerInput = ({ value, onChange, placeholder } = {}) => {
 
     return (
         <DatePicker
-            selected={value}
+            minDate={minDate}
+            selected={date}
             onChange={date => onChange(date)}
             customInput={<InputView />}
             placeholderText={placeholder}
