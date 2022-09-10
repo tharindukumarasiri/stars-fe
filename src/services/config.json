@@ -19,6 +19,8 @@
     "ADD_SEARCH_RESULT": "https://sdcprojectapi.azurewebsites.net/addNewsearchResult",    
     "GET_SEARCH_RESULT": "https://sdcprojectapi.azurewebsites.net/allResults",    
     "GET_SEARCH_RESULT_BY_PROID_SECID": "https://sdcprojectapi.azurewebsites.net/resultsByProjAndSec?projId=",    
+    "GET_NUTS_COUNTRIES": "https://sdcsearchapi.azurewebsites.net/nuts/country",
+    "UPDATE_NUTS": "https://sdcsearchapi.azurewebsites.net/updateNuts/",
 
     "OPERATIONS": "https://sdcprojectapi.azurewebsites.net/operations",
     "ADD_OPERATION": "https://sdcprojectapi.azurewebsites.net/addNewOperation",

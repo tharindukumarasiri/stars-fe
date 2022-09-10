@@ -5,7 +5,7 @@ import Input from "../../common/input";
 import Dropdown from "../../common/dropdown";
 import DatePickerInput from "../../common/datePickerInput";
 import { getAllProjects, addNewProject, editProject, deleteProject } from "../../services/operationsService"
-import { getContacts } from "../../services/organizationsService";
+import { getContacts } from "../../services/userService";
 import { projectScreenTableHeaders } from "../../utils/constants"
 import NavigationCard from "../../common/navigationCard"
 import { NAVIGATION_PAGES } from "../../utils/enums";
@@ -63,7 +63,7 @@ const Projects = () => {
         getAllProjects().then(result => {
             setProjectsData(result);
             setLoading(false);
-        });        
+        });
         getContactsList();
     }, []);
 
@@ -154,12 +154,12 @@ const Projects = () => {
 
     const onContactSelect = (value, option) => {
         setSelectedContact(option);
-        setNewProjectData({...newProjectData, responsible: value});
+        setNewProjectData({ ...newProjectData, responsible: value });
     };
 
     const onContactChange = (data) => {
         setContactName(data);
-        setNewProjectData({...newProjectData, responsible: data});
+        setNewProjectData({ ...newProjectData, responsible: data });
     };
 
     const onContactSearch = (searchText) => {

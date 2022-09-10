@@ -1,6 +1,5 @@
 import config from './config.json'
 import http from './httpService'
-import { getAuthHeader } from '../utils';
 
 //Organization
 export async function searchOrganization(params) {
@@ -104,8 +103,16 @@ export async function searchNaceCodes(params) {
     return data;
 }
 
-export async function getContacts() {   
-    const url = config.LOCAL_API + config.GET_CONTACTS;    
-    const { data } = await http.get(url, getAuthHeader());
+//NUTS Codes
+export async function getAllNutsCountries() {
+    const { data } = await http.get(config.GET_NUTS_COUNTRIES);
+    return data;
+}
+export async function getNutsCodes(countryCode, level) {
+    const { data } = await http.get(`${config.GET_NUTS_COUNTRIES}/${countryCode}/level/${level}`);
+    return data;
+}
+export async function updateNutsCodes(id, params) {
+    const { data } = await http.post(`${config.UPDATE_NUTS}${id}`, params);
     return data;
 }

@@ -100,6 +100,7 @@ const ProjectDetails = ({ params }) => {
                             id={params.id}
                             sectionData={sectionData}
                             setSectionData={setSectionData}
+                            projectStatus={status}
                         />
                     </TabPane>
                     <TabPane tab="MEMBERS" key="3">
@@ -159,9 +160,14 @@ const SectionView = (props) => {
                         className="icon-edit table-icon blue fl"
                         onClick={(e) => {
                             e.stopPropagation();
-                            setEditData(true);
-                            setNewSectionData(record);
-                            setModalVisible(true);
+                            if (props.projectStatus?.toUpperCase() === "CLOSE") {
+                                message.error('Cannot edit closed Projects')
+                            } else {
+                                setEditData(true);
+                                setNewSectionData(record);
+                                setModalVisible(true);
+                            }
+
                         }}
                     />
                 </>
@@ -169,7 +175,7 @@ const SectionView = (props) => {
         });
 
         return headers;
-    }, [props.sectionData]);
+    }, [props.sectionData, props.projectStatus]);
 
     const toggleModal = () => {
         setModalVisible(!modalVisible);
@@ -177,8 +183,10 @@ const SectionView = (props) => {
     };
 
     const handleOk = () => {
+        const newSectionDataUpdate = { ...newSectionData, closedDate: newSectionData.status?.toUpperCase() === "CLOSE" ? new Date() : '0001-01-01T00:00:00Z' }
+
         if (editData) {
-            editSection(props.id, newSectionData.id, newSectionData)
+            editSection(props.id, newSectionData.id, newSectionDataUpdate)
                 .then(() => {
                     getSections(props.id)
                         .then((result) => {
@@ -195,21 +203,25 @@ const SectionView = (props) => {
                     message.error("Edit section failed please try again");
                 });
         } else {
-            addNewSection(props.id, newSectionData)
-                .then(() => {
-                    getSections(props.id)
-                        .then((result) => {
-                            props.setSectionData(result);
-                            message.success("Create section successful");
-                        })
-                        .catch(() => {
-                            message.warning("Updated data fetch fail please reload");
-                        });
-                    toggleModal();
-                })
-                .catch(() => {
-                    message.error("Create section failed please try again");
-                });
+            if (props.sectionData?.findIndex(item => item.name === newSectionData.name) > -1) {
+                message.error('Section already exists')
+            } else {
+                addNewSection(props.id, newSectionDataUpdate)
+                    .then(() => {
+                        getSections(props.id)
+                            .then((result) => {
+                                props.setSectionData(result);
+                                message.success("Create section successful");
+                            })
+                            .catch(() => {
+                                message.warning("Updated data fetch fail please reload");
+                            });
+                        toggleModal();
+                    })
+                    .catch(() => {
+                        message.error("Create section failed please try again");
+                    });
+            }
         }
     };
 
@@ -220,6 +232,8 @@ const SectionView = (props) => {
             projectName: props.projectName,
             sectionId: section.id,
             sectionName: section.name,
+            projectStatus: props.projectStatus,
+            sectionStatus: section.status,
         });
     };
 
@@ -233,9 +247,17 @@ const SectionView = (props) => {
         setNewSectionData({ ...newSectionData, [elementName]: date });
     };
 
+    const onAddSection = () => {
+        if (props.projectStatus?.toUpperCase() === "CLOSE") {
+            message.error('Cannot edit closed Projects')
+        } else {
+            toggleModal();
+        }
+    }
+
     return (
         <div>
-            <h3 className="icon-plus-circled hover-hand m-l-10" onClick={toggleModal}>
+            <h3 className="icon-plus-circled hover-hand m-l-10" onClick={onAddSection}>
                 Add Section
             </h3>
             <Tooltip title="Tile View">

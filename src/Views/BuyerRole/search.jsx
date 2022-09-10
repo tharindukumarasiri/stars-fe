@@ -284,6 +284,8 @@ export default function Search(props) {
         const allSelectedCriteria = searchReq.countries.concat(searchReq.regions, searchReq.cities, searchReq.municipalities, searchReq.cpvs, searchReq.naces, searchReq.unspscs)
         if (allSelectedCriteria.length === 0 && searchText === '') {
             message.warning('Please select criterias to save');
+        } else if (props?.sectionSearch && (props?.projectStatus.toUpperCase() === "CLOSE" || props?.sectionStatus.toUpperCase() === "CLOSE")) {
+            message.warning('Cannot save results for closed projects or sections');
         } else {
             if (props?.sectionSearch) {
                 const saveResultData = {
@@ -611,10 +613,10 @@ export default function Search(props) {
                                 <div className="g-col-3">
                                     {Dropdown({ placeholder: 'Family', dataList: unspscData.family, dataName: 'title', selectedList: selectedUNSPValues, setSelectedState: setSelectedUNSPValues, selectedRows: selectedUNSPRows, setSelectedRows: setSelectedUNSPRows, apiCalls: getUnspscCodesData, codelevel: 2, keyName: "code" })}
                                 </div>
-                                <div className="g-col-3">
+                                <div className="g-col-2">
                                     {Dropdown({ placeholder: 'Class', dataList: unspscData.unspClass, dataName: 'title', selectedList: selectedUNSPValues, setSelectedState: setSelectedUNSPValues, selectedRows: selectedUNSPRows, setSelectedRows: setSelectedUNSPRows, apiCalls: getUnspscCodesData, codelevel: 3, keyName: "code" })}
                                 </div>
-                                <div className="g-col-3">
+                                <div className="g-col-4">
                                     {Dropdown({ placeholder: 'Commodity Class', dataList: unspscData.comClass, dataName: 'title', selectedList: selectedUNSPValues, setSelectedState: setSelectedUNSPValues, selectedRows: selectedUNSPRows, setSelectedRows: setSelectedUNSPRows, codelevel: 4, keyName: "code" })}
                                 </div>
                             </div>
