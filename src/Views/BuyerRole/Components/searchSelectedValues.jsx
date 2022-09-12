@@ -64,11 +64,26 @@ const SearchSelectedValues = ({ selectedValues, setSelectedValues, selectedRows,
                 return;
             } else {
                 for (let secondRowIndex = 1; secondArr.length > secondRowIndex; secondRowIndex++) {
-                    const valuesArr = secondArr[secondRowIndex]
+                    const valuesArr = secondArr[secondRowIndex];
+                    let closeLevel = valuesArr[0] - 1;
+
                     for (let valuesArrIndex = 1; valuesArr.length > valuesArrIndex; valuesArrIndex++) {
+                        closeLevel++;
                         if (valuesArr[valuesArrIndex].code === code) {
                             newSelectedValues[mainRowIndex][secondRowIndex].splice(valuesArrIndex);
-                            setSelectedValues(newSelectedValues)
+                            const newSecondArr = newSelectedValues[mainRowIndex];
+                            let removeCount = 0;
+
+                            for (let secondArrIndex = secondRowIndex + 1; newSecondArr.length > secondArrIndex; secondArrIndex++) {
+                                if (newSecondArr[secondArrIndex][0] > closeLevel) {
+                                    removeCount++;
+                                } else {
+                                    break;
+                                }
+                            }
+
+                            newSelectedValues[mainRowIndex].splice((secondRowIndex + 1), removeCount);
+                            setSelectedValues(newSelectedValues);
                             return;
                         }
                     }
