@@ -48,3 +48,8 @@ export async function addNewMember(opId, secId, params) {
     const { data } = await http.post(`${config.ADD_MEMBER}${opId}&secId=${secId}`, params);
     return data;
 }
+
+export async function addMembers(opId, params) {
+    const { data } = await http.post(`${config.ADD_MEMBERS}${opId}`, params);
+    return data;
+}

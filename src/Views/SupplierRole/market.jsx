@@ -56,7 +56,12 @@ const Market = () => {
             });
         }
 
-        setNutsCodes(organizationData?.nuts?.find(lvl0Codes => lvl0Codes.code === selectedCountry?.code));
+        setNutsCodes(organizationData?.nuts?.find(lvl0Codes => lvl0Codes.code === selectedCountry?.code)
+            || {
+            children: [],
+            code: selectedCountry?.code,
+            name: selectedCountry?.name,
+        });
 
     }, [selectedCompany, organizationData, selectedCountry]);
 
@@ -139,7 +144,7 @@ const Market = () => {
     }
 
     const handleCheckBox = (codes) => {
-        const nutsCodesIndex = organizationData.nuts.findIndex(lvl0Codes => lvl0Codes.code === selectedCountry.code);
+        const nutsCodesIndex = organizationData.nuts?.findIndex(lvl0Codes => lvl0Codes.code === selectedCountry.code) || -1;
         const index = nutsCodes.children.findIndex(child => JSON.stringify(child) === JSON.stringify(codes));
 
         setHaveUnsavedDataRef(true);
@@ -147,10 +152,14 @@ const Market = () => {
         if (index < 0) {
             const newOrganizationData = { ...organizationData };
             const newApendedChildren = [...nutsCodes.children, codes];
-            const newNuts = newOrganizationData.nuts;
+            const newNuts = newOrganizationData.nuts || [];
 
             nutsCodes.children = newApendedChildren;
-            newNuts.splice(nutsCodesIndex, 1, nutsCodes);
+            if (nutsCodesIndex < 0) {
+                newNuts.push(nutsCodes);
+            } else {
+                newNuts.splice(nutsCodesIndex, 1, nutsCodes);
+            }
             newOrganizationData.nuts = newNuts;
             setOrganizationData(newOrganizationData);
         } else {
@@ -160,7 +169,11 @@ const Market = () => {
             const newNuts = newOrganizationData.nuts;
 
             nutsCodes.children = newApendedChildren;
-            newNuts.splice(nutsCodesIndex, 1, nutsCodes);
+            if (nutsCodesIndex < 0) {
+                newNuts.push(nutsCodes);
+            } else {
+                newNuts.splice(nutsCodesIndex, 1, nutsCodes);
+            }
             newOrganizationData.nuts = newNuts;
             setOrganizationData(newOrganizationData);
         }

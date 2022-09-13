@@ -7,10 +7,20 @@ import DatePickerInput from "../../common/datePickerInput";
 import NavigationCard from "../../common/navigationCard";
 import EmptyTableView from "../../Views/SupplierRole/Components/emptyTableView";
 import { sectionTableHeaders, membersTableHeaders } from "../../utils/constants";
-import { addNewSection, getAllMembers, addNewMember, editProject, getSections, editSection } from "../../services/operationsService";
+import {
+    addNewSection,
+    getAllMembers,
+    addNewMember,
+    addMembers,
+    editProject,
+    getSections,
+    editSection,
+} from "../../services/operationsService";
 import { TabContext } from "../../utils/contextStore";
 import { NAVIGATION_PAGES } from "../../utils/enums";
 import { getCompanyMembers } from "../../services/userService";
+import { FetchCurrentCompany } from "../../hooks";
+import moment from "moment";
 
 const { TabPane } = Tabs;
 
@@ -88,7 +98,6 @@ const ProjectDetails = ({ params }) => {
                                     selected={status?.toUpperCase() === "OPEN" ? "Open" : "Close"}
                                     placeholder="Status"
                                 />
-
                             </div>
                         </div>
                         <i className="icon-edit detail-edit-icon" onClick={() => setEditable((prev) => !prev)}></i>
@@ -237,7 +246,6 @@ const SectionView = (props) => {
         });
     };
 
-
     const onNewElementChange = (e, elementName) => {
         e.preventDefault();
         setNewSectionData({ ...newSectionData, [elementName]: e.target.value });
@@ -360,23 +368,36 @@ const MembersView = (props) => {
     const [tableView, setTableView] = useState(true);
     const [membersData, setMembersData] = useState([]);
     const [modalVisible, setModalVisible] = useState(false);
-    const [addMemberData, setAddMemberData] = useState({ name: "", sections: [], responsible: "" });
+    const [addMemberData, setAddMemberData] = useState({
+        name: "",
+        sections: [],
+        responsible: "",
+        email: "",
+        toDate: null,
+        phone: "",
+        company: "",
+        status: "active",
+    });
 
     const [companyUsers, setCompanyUsers] = useState([]);
     const [selectedUser, setSelectedUser] = useState(null);
     const [filterdUsers, setFilteredUsers] = useState([]);
-    const [text, setText] = useState('');
+    const [text, setText] = useState("");
+    const [selectedCompany] = FetchCurrentCompany();
 
     const getUsers = async () => {
         const response = await getCompanyMembers();
         setCompanyUsers(response || []);
-        const options = response ? response.map((user) => {
-            return {
-                key: user.PartyId,
-                label: user.Name,
-                value: user.Name
-            };
-        }) : [];
+        const options = response
+            ? response.map((user) => {
+                  return {
+                      key: user.PartyId,
+                      label: user.Name,
+                      value: user.Name,
+                      email: user.Email,
+                  };
+              })
+            : [];
 
         setFilteredUsers(options);
     };
@@ -398,6 +419,7 @@ const MembersView = (props) => {
                         className="icon-delete table-icon"
                         onClick={(e) => {
                             e.stopPropagation();
+                            deleteMember(record);
                         }}
                     />
                 </>
@@ -405,7 +427,7 @@ const MembersView = (props) => {
         });
 
         return headers;
-    }, [props.sectionData]);
+    }, [props.sectionData, membersData]);
 
     useEffect(() => {
         getSections(props.id).then((data) => {
@@ -415,7 +437,17 @@ const MembersView = (props) => {
     }, []);
 
     const toggleModal = () => {
-        setAddMemberData({ name: "", sections: [], responsible: "", fromDate: "", toDate: "" });
+        setAddMemberData({
+            name: "",
+            sections: [],
+            responsible: "",
+            email: "",
+            toDate: null,
+            phone: "",
+            company: "",
+            status: "active",
+            partyId: "",
+        });
         setModalVisible(!modalVisible);
     };
 
@@ -423,28 +455,81 @@ const MembersView = (props) => {
         toggleModal();
     };
 
-    const handleOk = () => {
-        const sectionIds = [];
-        addMemberData.sections.map((val) => sectionIds.push(val.id));
-        const membersWithId = { ...addMemberData, id: props.sectionId, sections: sectionIds, name: selectedUser.value };
-
-        addNewMember(props.id, props.sectionId, membersWithId)
+    const deleteMember = (member) => {
+        let members = membersData.filter((m) => m.partyId !== member.partyId);
+        
+        addMembers(props.id, members)
             .then(() => {
                 getAllMembers(props.id)
                     .then((result) => {
-                        setMembersData(result);
-                        setSelectedUser({})
-                        setAddMemberData({ sections: [], responsible: "", fromDate: "", toDate: "", name: '' });
-                        message.success("Add member successful");
+                        setMembersData(result);                        
+                        message.success("Delete member successful");
                     })
                     .catch(() => {
                         message.warning("Updated data fetch fail please reload");
                     });
-                toggleModal();
+                
             })
             .catch(() => {
-                message.error("Add member failed please try again");
+                message.error("Delete member failed please try again");
             });
+    };
+
+    const handleOk = () => {
+        const sectionIds = [];
+        addMemberData.sections.map((val) => sectionIds.push(val.id));
+        const membersWithId = {
+            ...addMemberData,
+            sections: sectionIds,
+            name: selectedUser.value,
+            fromDate: moment().toISOString(),
+            email: selectedUser.email,
+            company: selectedCompany.name,
+            partyId: selectedUser.key,
+        };
+
+        // addNewMember(props.id, props.sectionId, membersWithId)
+        //     .then(() => {
+        //         getAllMembers(props.id)
+        //             .then((result) => {
+        //                 setMembersData(result);
+        //                 setSelectedUser({})
+        //                 setAddMemberData({ sections: [], responsible: "", fromDate: "", toDate: "", name: "", partyId: "" });
+        //                 message.success("Add member successful");
+        //             })
+        //             .catch(() => {
+        //                 message.warning("Updated data fetch fail please reload");
+        //             });
+        //         toggleModal();
+        //     })
+        //     .catch(() => {
+        //         message.error("Add member failed please try again");
+        //     });
+
+        let member = membersData.find((m) => m.partyId === selectedUser.key);
+        if (!member) {
+            let members = [...membersData, membersWithId];
+
+            addMembers(props.id, members)
+                .then(() => {
+                    getAllMembers(props.id)
+                        .then((result) => {
+                            setMembersData(result);
+                            setSelectedUser({});
+                            setAddMemberData({ sections: [], responsible: "", fromDate: "", toDate: "", name: "", partyId: "", email: "" });
+                            message.success("Add member successful");
+                        })
+                        .catch(() => {
+                            message.warning("Updated data fetch fail please reload");
+                        });
+                    toggleModal();
+                })
+                .catch(() => {
+                    message.error("Add member failed please try again");
+                });
+        } else {
+            message.warning("Member already added");
+        }
     };
 
     const onAddMemberDateChange = (date, elementName) => {
@@ -466,17 +551,19 @@ const MembersView = (props) => {
                 filtered.push({
                     key: user.PartyId,
                     label: user.Name,
-                    value: user.Name
+                    value: user.Name,
+                    email: user.Email,
                 });
             }
             if (searchText && user.Name.toLowerCase().search(searchText.toLowerCase()) >= 0) {
                 filtered.push({
                     key: user.PartyId,
                     label: user.Name,
-                    value: user.Name
+                    value: user.Name,
+                    email: user.Email,
                 });
             }
-        })
+        });
         setFilteredUsers(filtered);
     };
 
@@ -506,11 +593,7 @@ const MembersView = (props) => {
                         membersData.map((member, index) => {
                             return (
                                 <div key={index}>
-                                    <NavigationCard
-                                        name={member.name}
-                                        cardColour={"bg-blue-purple"}
-                                        value={"name"}
-                                    />
+                                    <NavigationCard name={member.name} cardColour={"bg-blue-purple"} value={"name"} />
                                 </div>
                             );
                         })
@@ -519,14 +602,7 @@ const MembersView = (props) => {
                     )}
                 </div>
             )}
-            <Modal
-                title={"Add Member"}
-                visible={modalVisible}
-                onOk={handleOk}
-                okText={"Add"}
-                onCancel={toggleModal}
-                centered={true}
-            >
+            <Modal title={"Add Member"} visible={modalVisible} onOk={handleOk} okText={"Add"} onCancel={toggleModal} centered={true}>
                 <div className="g-row">
                     <AutoComplete
                         value={text}
@@ -534,10 +610,10 @@ const MembersView = (props) => {
                         onSelect={onUserSelect}
                         onSearch={onUserSearch}
                         onChange={onUserChange}
-                        style={{ width: '100%', marginBottom: 10 }}
-                        className='mb-2'
-                        placeholder="Search User" />
-
+                        style={{ width: "100%", marginBottom: 10 }}
+                        className="mb-2"
+                        placeholder="Search User"
+                    />
                 </div>
                 <div className="n-float" />
             </Modal>

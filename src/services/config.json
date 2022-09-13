@@ -33,6 +33,7 @@
 
     "MEMBERS": "https://sdcprojectapi.azurewebsites.net/getMembers?opId=",
     "ADD_MEMBER": "https://sdcprojectapi.azurewebsites.net/addMember?opId=",
+    "ADD_MEMBERS": "https://sdcprojectapi.azurewebsites.net/addMembers?opId=",
     "SEARCH_UNSPSC_CODES": "https://sdcsearchapi.azurewebsites.net/findUnspsc",
 
     "LOCAL_API": "",
