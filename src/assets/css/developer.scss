@@ -39,10 +39,10 @@
     .search-results-container {
         overflow-y: scroll;
         position: absolute;
-        top: 75px;
+        top: 200px;
         background-color: $white;
         // display: grid;
-        height: calc(88% - 105px);
+        height: calc(88% - 215px);
         width: 48%;
     }
 }

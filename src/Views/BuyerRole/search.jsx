@@ -89,6 +89,14 @@ export default function Search(props) {
         }
     }, [props.searchResult]);
 
+    useEffect(() => {
+        const searchReq = getSearchRequest(1);
+        const allSelectedCriteria = searchReq.countries.concat(searchReq.regions, searchReq.cities, searchReq.municipalities, searchReq.cpvs, searchReq.naces, searchReq.unspscs)
+        if (allSelectedCriteria.length !== 0 || searchText !== '') {
+            onShowResults();
+        }
+    }, [selectedGrouping.accumulation]);
+
     //API calls
     const getRegionsData = (countryName) => {
         getRegions(countryName).then(result => { setMarketInformationData({ ...marketInformationData, regions: result }) });
@@ -214,8 +222,9 @@ export default function Search(props) {
         return newObject;
     }
 
-    const onShowResults = (e) => {
-        e.preventDefault();
+    const onShowResults = (e = null) => {
+        if (e)
+            e.preventDefault();
         setOrganizations([]);
         setGrouping({});
         window.scrollTo(0, 0)
@@ -444,32 +453,29 @@ export default function Search(props) {
 
     const getGroupingCriteria = () => {
         return (
-            <div className="gray-container">
-                {getCriteriaHeader("Grouping and Totals", "xxx", () => toggleOpenCriteria('Grouping'), openCriteria.Grouping)}
-                {openCriteria.Grouping &&
-                    <>
-                        <div className="g-row">
-                            <div className="g-col-6">
-                                <DropdownSelect values={['Company', 'No of accumulated']} placeholder="Results List Type" selected={selectedGrouping.resultType} onChange={onChangeResultListType} />
-                            </div>
-                            <div className="g-col-6">
-                                <DropdownSelect
-                                    values={['None', 'CPV Code', 'NACE Code', 'UNSPSC Code']}
-                                    placeholder="Accumulation"
-                                    selected={selectedGrouping.accumulation}
-                                    onChange={onChangeAccumulation}
-                                    disabled={selectedGrouping.resultType !== 'No of accumulated'} />
-                            </div>
-                        </div>
-                        <div className="g-row">
-                            <div className="g-col-6">
-                                {DropdownList({ placeholder: 'Sorting', dataList: [], selectedList: [], setSelectedState: {}, criteriaName: "", keyName: "" })}
-                            </div>
-
-                        </div>
-                    </>
-
-                }
+            <div className="gray-container pos-a" style={{ top: props?.sectionSearch ? 200 : 60, width: "47%" }}>
+                <div className="text-left sub-title-txt" >
+                    Grouping and Totals
+                    <span className="tooltip-toggle" aria-label={"XXX"}>
+                        <i className="icon-question color-black m-l-5" />
+                    </span>
+                </div>
+                <div className="g-row">
+                    <div className="g-col-4">
+                        <DropdownSelect values={['Company', 'No of accumulated']} placeholder="Results List Type" selected={selectedGrouping.resultType} onChange={onChangeResultListType} />
+                    </div>
+                    <div className="g-col-4">
+                        <DropdownSelect
+                            values={['None', 'CPV Code', 'NACE Code', 'UNSPSC Code']}
+                            placeholder="Accumulation"
+                            selected={selectedGrouping.accumulation}
+                            onChange={onChangeAccumulation}
+                            disabled={selectedGrouping.resultType !== 'No of accumulated'} />
+                    </div>
+                    <div className="g-col-4">
+                        {DropdownList({ placeholder: 'Sorting', dataList: [], selectedList: [], setSelectedState: {}, criteriaName: "", keyName: "" })}
+                    </div>
+                </div>
             </div>
         )
     }
@@ -728,7 +734,6 @@ export default function Search(props) {
                             </div>
                         </div>
                         <h4>Narrow down your search by...</h4>
-                        {getGroupingCriteria()}
                         {getCompanyInfoCriteria()}
                         {getMarketCriteria()}
                         {getProductGroupsCriteria()}
@@ -742,6 +747,7 @@ export default function Search(props) {
             <div className="g-col-6" style={{ height: '100%', paddingBottom: 10 }}>
                 <div className="page-container" style={{ height: '100%' }}>
                     <div className="title-txt text-center">Results</div>
+                    {getGroupingCriteria()}
                     {loading &&
                         <div className="loading">
                             <div></div>

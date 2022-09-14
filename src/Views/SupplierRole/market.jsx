@@ -68,11 +68,13 @@ const Market = () => {
     const onClickRow = (level, expandCode) => {
         const levelName = `lvl${level}`;
         const index = expanded.indexOf(expandCode);
+        setLoading(true);
 
         if (selectedCountry.maxLevels >= level) {
             getNutsCodes(selectedCountry.code, level).then(res => {
                 setMarketData({ ...marketData, [selectedCountry.code]: { ...marketData[selectedCountry.code], [levelName]: res } });
-            })
+                setLoading(false);
+            });
 
             if (index < 0) {
                 setExpanded([...expanded, expandCode]);
@@ -509,7 +511,7 @@ const Market = () => {
                 </div>
                 <div className="g-col-3 m-l-20 m-r-20">
                     <div className="body-text">Country Code ( NUTS Level 0 )</div>
-                    <div className="body-text-bold">{selectedCountry.code}</div>
+                    <div className="body-text-bold">{selectedCountry?.code}</div>
                 </div>
             </div>
             <div className="custom-tab-container">
