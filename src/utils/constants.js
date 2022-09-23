@@ -144,10 +144,10 @@ export const sectionTableHeaders = [
 ];
 
 export const membersTableHeaders = [
-    {
-        title: 'User ID',
-        dataIndex: 'id',
-    },
+    // {
+    //     title: 'User ID',
+    //     dataIndex: 'id',
+    // },
     {
         title: '',
         render: (_) => (

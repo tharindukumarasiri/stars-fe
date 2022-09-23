@@ -3,9 +3,11 @@ import { TabContext } from "../../utils/contextStore";
 import { NAVIGATION_PAGES } from "../../utils/enums";
 import TitleCard from "../../common/titleCard";
 import NavigationCard from "../../common/navigationCard";
+import { FetchCurrentCompany } from "../../hooks";
 
 const SupplierHome = () => {
     const { changeActiveTab } = useContext(TabContext);
+    const [selectedCompany] = FetchCurrentCompany();
 
     const onClickCard = (navigate = '') => {
         changeActiveTab(navigate)

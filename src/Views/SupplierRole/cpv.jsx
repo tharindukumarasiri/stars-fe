@@ -5,7 +5,7 @@ import gb_flag from "../../assets/images/gb_flag.png";
 import CriteriaColorGuideTab from "./Components/criteriaColorGuideTab";
 import UserSelectedFields from "./Components/userSelectedFields";
 import { levelOneReq } from "../../utils/constants";
-import { getOrganization, getCpvCodes, updateCpvCodes, searchCpvCodes } from "../../services/organizationsService";
+import { getOrganization, getCpvCodes, updateCpvCodes, searchCpvCodes, updateOrganization } from "../../services/organizationsService";
 import directional_sign from "../../assets/images/directional-sign.png";
 import { FetchCurrentCompany } from "../../hooks/index"
 
@@ -245,9 +245,10 @@ const Cpv = () => {
         setOrganizationData(newOrganizationData);
     }
 
-    const onUpdate = () => {
+    const onUpdate = async () => {
         setLoading(true);
         window.scrollTo(0, 0);
+        await updateOrganization({ organizationId: selectedCompany.companyRegistrationId, name: selectedCompany.name});
         updateCpvCodes(selectedCompany.companyRegistrationId, organizationData.cpvs).then(result => {
             setLoading(false);
             setHaveUnsavedDataRef(false);

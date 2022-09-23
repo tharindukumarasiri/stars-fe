@@ -24,6 +24,11 @@ export async function getOrganization(id) {
     return data;
 }
 
+export async function updateOrganization(organization) {
+    const { data } = await http.post(config.UPDATE_ORGANIZATION, organization, { headers: { 'Content-Type': 'application/json', } });
+    return data;
+}
+
 export async function getSearchResults() {
     const { data } = await http.get(config.GET_SEARCH_RESULT);
     return data;

@@ -4,6 +4,7 @@
     "ORGANIZATIONS_BY_NACE": "https://sdcsearchapi.azurewebsites.net/organizationsAccumulateNace",
     "ORGANIZATIONS_BY_UNSPSC": "https://sdcsearchapi.azurewebsites.net/organizationsAccumulateUnspsc",
     "GET_ORGANIZATIONS": "https://sdcsearchapi.azurewebsites.net/getOrganization",
+    "UPDATE_ORGANIZATION": "https://sdcsearchapi.azurewebsites.net/organizations/update",
     "COUNTRIES": "https://sdcsearchapi.azurewebsites.net/countries",
     "REGIONS": "https://sdcsearchapi.azurewebsites.net/regions",
     "MUNICIPALITIES": "https://sdcsearchapi.azurewebsites.net/municipalities",

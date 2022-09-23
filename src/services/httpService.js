@@ -12,7 +12,14 @@ axios.interceptors.response.use(null, error => {
     return Promise.reject(error);
 });
 
-axios.defaults.headers.common['tenant-id'] = localStorage.getItem('database_name');
+axios.interceptors.request.use((config) => {
+    config.headers.common['tenant-id'] = localStorage.getItem('database_name');
+    return config;
+}, (error) => {
+    return Promise.reject(error);
+});
+
+//axios.defaults.headers.common['tenant-id'] = localStorage.getItem('database_name');
 
 export default {
     get: axios.get,
