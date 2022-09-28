@@ -83,6 +83,8 @@ const Market = () => {
                 newExpanded.splice(index, 1);
                 setExpanded(newExpanded);
             }
+        } else {
+            setLoading(false);
         }
 
     }
@@ -146,7 +148,7 @@ const Market = () => {
     }
 
     const handleCheckBox = (codes) => {
-        const nutsCodesIndex = organizationData.nuts?.findIndex(lvl0Codes => lvl0Codes.code === selectedCountry.code) || -1;
+        const nutsCodesIndex = organizationData.nuts?.findIndex(lvl0Codes => lvl0Codes.code === selectedCountry.code);
         const index = nutsCodes.children.findIndex(child => JSON.stringify(child) === JSON.stringify(codes));
 
         setHaveUnsavedDataRef(true);

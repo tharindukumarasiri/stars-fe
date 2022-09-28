@@ -236,54 +236,58 @@ export default function Search(props) {
             noSearchResults = false;
             setLoading(true);
             setActPage(1);
-            switch (selectedGrouping.accumulation) {
-                case '':
-                case 'None':
-                    searchOrganization(searchReq).then(result => {
-                        setLoading(false);
-                        setOrganizations(result.organizations);
-                        setPageCount(Math.ceil(result.total / pageSize));
-                    }).catch(error => {
-                        noSearchResults = true;
-                        setLoading(false);
-                    });
-                    break;
-                case 'CPV Code':
-                    searchOrganizationByCPV(searchReq).then(result => {
-                        setLoading(false);
-                        setGrouping(convertStringObject(result.grouping));
-                        setOrganizations(result.organizations);
-                        setPageCount(Math.ceil(result.total / pageSize));
-                    }).catch(error => {
-                        noSearchResults = true;
-                        setLoading(false);
-                    });
-                    break;
-                case 'NACE Code':
-                    searchOrganizationByNACE(searchReq).then(result => {
-                        setLoading(false);
-                        setGrouping(convertStringObject(result.grouping));
-                        setOrganizations(result.organizations);
-                        setPageCount(Math.ceil(result.total / pageSize));
-                    }).catch(error => {
-                        noSearchResults = true;
-                        setLoading(false);
-                    });
-                    break;
-                case 'UNSPSC Code':
-                    searchOrganizationByUNSPSC(searchReq).then(result => {
-                        setLoading(false);
-                        setGrouping(convertStringObject(result.grouping));
-                        setOrganizations(result.organizations);
-                        setPageCount(Math.ceil(result.total / pageSize));
-                    }).catch(error => {
-                        noSearchResults = true;
-                        setLoading(false);
-                    });
-                    break;
-                default:
-                    break;
-            }
+            callSearchOrganization(1);
+        }
+    }
+
+    const callSearchOrganization = (pageNo) => {
+        switch (selectedGrouping.accumulation) {
+            case '':
+            case 'None':
+                searchOrganization(getSearchRequest(pageNo)).then(result => {
+                    setLoading(false);
+                    setOrganizations(result.organizations);
+                    setPageCount(Math.ceil(result.total / pageSize));
+                }).catch(error => {
+                    noSearchResults = true;
+                    setLoading(false);
+                });
+                break;
+            case 'CPV Code':
+                searchOrganizationByCPV(getSearchRequest(pageNo)).then(result => {
+                    setLoading(false);
+                    setGrouping(convertStringObject(result.grouping));
+                    setOrganizations(result.organizations);
+                    setPageCount(Math.ceil(result.total / pageSize));
+                }).catch(error => {
+                    noSearchResults = true;
+                    setLoading(false);
+                });
+                break;
+            case 'NACE Code':
+                searchOrganizationByNACE(getSearchRequest(pageNo)).then(result => {
+                    setLoading(false);
+                    setGrouping(convertStringObject(result.grouping));
+                    setOrganizations(result.organizations);
+                    setPageCount(Math.ceil(result.total / pageSize));
+                }).catch(error => {
+                    noSearchResults = true;
+                    setLoading(false);
+                });
+                break;
+            case 'UNSPSC Code':
+                searchOrganizationByUNSPSC(getSearchRequest(pageNo)).then(result => {
+                    setLoading(false);
+                    setGrouping(convertStringObject(result.grouping));
+                    setOrganizations(result.organizations);
+                    setPageCount(Math.ceil(result.total / pageSize));
+                }).catch(error => {
+                    noSearchResults = true;
+                    setLoading(false);
+                });
+                break;
+            default:
+                break;
         }
     }
 
@@ -388,10 +392,7 @@ export default function Search(props) {
                 setActPage(pageNumber);
         }
 
-        searchOrganization(getSearchRequest(pageNo)).then(result => {
-            setLoading(false);
-            setOrganizations(result.organizations);
-        });
+        callSearchOrganization(pageNo);
     }
 
     const changeCompanyInfoData = (data, dataName) => {

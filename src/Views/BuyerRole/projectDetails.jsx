@@ -107,6 +107,7 @@ const ProjectDetails = ({ params }) => {
                             projectName={params.name}
                             projectId={params.operationId}
                             id={params.id}
+                            projectToDate={params.toDate}
                             sectionData={sectionData}
                             setSectionData={setSectionData}
                             projectStatus={status}
@@ -349,6 +350,7 @@ const SectionView = (props) => {
                             value={newSectionData.toDate ? new Date(newSectionData.toDate) : ""}
                             onChange={(date) => onNewElementDateChange(date, "toDate")}
                             minDate={new Date()}
+                            maxDate={props.projectToDate !== "0001-01-01T00:00:00Z" ? new Date(props.projectToDate) : false}
                         />
                         <Dropdown
                             values={["Open", "Close"]}
@@ -390,13 +392,13 @@ const MembersView = (props) => {
         setCompanyUsers(response || []);
         const options = response
             ? response.map((user) => {
-                  return {
-                      key: user.PartyId,
-                      label: user.Name,
-                      value: user.Name,
-                      email: user.Email,
-                  };
-              })
+                return {
+                    key: user.PartyId,
+                    label: user.Name,
+                    value: user.Name,
+                    email: user.Email,
+                };
+            })
             : [];
 
         setFilteredUsers(options);
@@ -457,18 +459,18 @@ const MembersView = (props) => {
 
     const deleteMember = (member) => {
         let members = membersData.filter((m) => m.partyId !== member.partyId);
-        
+
         addMembers(props.id, members)
             .then(() => {
                 getAllMembers(props.id)
                     .then((result) => {
-                        setMembersData(result);                        
+                        setMembersData(result);
                         message.success("Delete member successful");
                     })
                     .catch(() => {
                         message.warning("Updated data fetch fail please reload");
                     });
-                
+
             })
             .catch(() => {
                 message.error("Delete member failed please try again");

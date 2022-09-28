@@ -4,7 +4,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import "./datePickerInput.scss"
 import { formatDate } from "../utils";
 
-const DatePickerInput = ({ value, onChange, placeholder, minDate = false } = {}) => {
+const DatePickerInput = ({ value, onChange, placeholder, minDate = false, maxDate = false } = {}) => {
     const date = formatDate(value) === "01/01/0001" ? "" : value
     const InputView = forwardRef(({ value, onClick, placeholder }, ref) => (
         <div className="datapicker-input m-b-10" onClick={onClick} ref={ref}>
@@ -19,6 +19,7 @@ const DatePickerInput = ({ value, onChange, placeholder, minDate = false } = {})
     return (
         <DatePicker
             minDate={minDate}
+            maxDate={maxDate}
             selected={date}
             onChange={date => onChange(date)}
             customInput={<InputView />}
