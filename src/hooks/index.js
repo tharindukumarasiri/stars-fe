@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { getSelectedCompany, getCompanyUsers } from "../services/userService";
+import { getSelectedCompany, getCompanyUsers, getLanguage } from "../services/userService";
 
 export const FetchCurrentCompany = () => {
     const [selectedCompany, setSelectedCompany] = useState({ name: '', companyRegistrationId: '' });
@@ -34,4 +34,20 @@ export const FetchCompanyUsers = () => {
     };
 
     return [users];
+}
+
+export const FetchCurrentLanguage = () => {
+    const [language, setLanguage] = useState(null);
+
+    useEffect(() => {
+        getCurrentLanguage();
+    }, []);
+
+    const getCurrentLanguage = async () => {
+        getLanguage().then((response) => {
+            setLanguage(response.language);
+        });       
+    };
+
+    return [language];
 }

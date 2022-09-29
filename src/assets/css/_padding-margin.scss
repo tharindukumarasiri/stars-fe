@@ -13,6 +13,15 @@
 .p-t-10 {padding-top: 10px}
 .p-t-15 {padding-top: 15px}
 .p-t-20{padding-top:20px}
+.p-t-30 {
+    padding-top: 30px
+}
+.p-t-40 {
+    padding-top: 40px
+}
+.p-t-50 {
+    padding-top: 50px
+}
 
 /* Padding right */
 .p-r-5 {
@@ -33,21 +42,13 @@
 
 
 /* Padding bottom */
-.p-t-5 {
-    padding-top: 5px
-}
-
-.p-t-10 {
-    padding-top: 10px
-}
-
-.p-t-15 {
-    padding-top: 15px
-}
-
-.p-t-20 {
-    padding-top: 20px
-}
+.p-b-5 {padding-bottom: 5px}
+.p-b-10 { padding-bottom: 10px}
+.p-b-15 {padding-bottom: 15px}
+.p-b-20 {padding-bottom: 20px}
+.p-b-30 {padding-bottom: 30px}
+.p-b-40 {padding-bottom: 40px}
+.p-b-50 {padding-bottom: 50px}
 
 
 /* Padding left */
@@ -100,6 +101,13 @@
 .p-x-30 { padding-left: 30px; padding-right: 30px;}
 .p-x-40 {padding-left: 40px; padding-right: 40px;}
 .p-x-50 { padding-left: 50px; padding-right: 50px;}
+
+@media screen and (min-width: $desktop) {
+    .large-p-r-50 {
+        padding-right:50px !important;
+    }
+}
+
 
 /* Margin all */
 .m-a-0 {

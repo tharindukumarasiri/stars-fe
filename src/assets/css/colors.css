@@ -1,57 +1,79 @@
-﻿.blue {
-  color: #0592d9;
+﻿/* #2bb201; */
+/*#ff9900*/
+.theme {
+  color: #2196F3;
+}
+
+.theme-alpha-50 {
+  color: rgba(33, 150, 243, 0.5);
+}
+
+.theme-light {
+  color: #b2dbfb;
+}
+
+.blue {
+  color: #2196F3;
 }
 
 .blue-dark {
-  color: #034f75;
+  color: #0960a5;
 }
 
 .blue-darker {
-  color: #022d43;
+  color: #064475;
+}
+
+.blue-darkest {
+  color: #042d4e;
 }
 
 .blue-light {
-  color: #ade2fd;
+  color: #e3f2fd;
 }
 
 .blue-lighter {
-  color: #c6ebfe;
+  color: #fbfdff;
 }
 
 .blue-lighter2 {
-  color: #dff4fe;
+  color: white;
 }
 
 .bg-blue {
-  background-color: #0592d9;
+  background-color: #2196F3;
 }
 
 .bg-dark-blue {
-  background-color: #034f75;
+  background-color: #0960a5;
 }
 
 .bg-darker-blue {
-  background-color: #022d43 !important;
+  background-color: #064475 !important;
 }
 
 .bg-light-dark-blue {
   background-color: #108ece;
 }
 
+.bg-blue-darkest {
+  background-color: #042d4e;
+}
+
 .bg-blue-light {
-  background-color: #ade2fd !important;
+  background-color: #e3f2fd !important;
 }
 
 .bg-blue-lighter {
-  background-color: #c6ebfe !important;
+  background-color: #fbfdff !important;
 }
 
 .bg-blue-lighter2 {
-  background-color: #dff4fe !important;
+  background-color: white !important;
 }
 
 .bg-blue-lighter3 {
-  background-color: #eef9ff !important;
+  background-color: white !important;
 }
 
 .grey {
@@ -83,27 +105,27 @@
 }
 
 .green {
-  color: #2bb201;
+  color: #04bd00;
 }
 
 .green-lite {
-  color: #31cb01;
+  color: #29ff24;
 }
 
 .green-dark {
-  color: #124d00;
+  color: #038a00;
 }
 
 .bg-green {
-  background-color: #2bb201;
+  background-color: #04bd00;
 }
 
 .bg-green-lite {
-  background-color: #31cb01 !important;
+  background-color: #29ff24 !important;
 }
 
 .bg-green-dark {
-  background-color: #124d00;
+  background-color: #038a00 !important;
 }
 
 .red {
@@ -147,23 +169,23 @@
 }
 
 .vialot {
-  color: #b572cd;
+  color: #B572CD;
 }
 
 .bg-vialot {
-  background-color: #b572cd;
+  background-color: #B572CD;
 }
 
 .bluish-green {
-  color: #0aa699;
+  color: #0AA699;
 }
 
 .bg-bluish-green {
-  background-color: #0aa699;
+  background-color: #0AA699;
 }
 
 .bluish-green-dark {
-  color: #0aa699;
+  color: #0AA699;
 }
 
 .bg-bluish-green-dark {
@@ -171,11 +193,11 @@
 }
 
 .blue-purple {
-  background-color: #746ab2;
+  background-color: #746AB2;
 }
 
 .bg-blue-purple {
-  background-color: #746ab2;
+  background-color: #746AB2;
 }
 
 .bg-blue-purple-dark {

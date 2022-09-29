@@ -1,75 +1,110 @@
-﻿$theme: #0592d9;
-$theme-dark: darken($theme, 20%);
-$theme-light-dark: desaturate($theme, 10%);
-$theme-light: lighten($theme, 50%);
-$tab-content: lighten($theme, 45%);
+﻿/////Colors
+$theme: #2196F3 /*#0592D9*/;
+$theme-dark: darken( $theme, 20% );
+$theme-darkest: darken( $theme, 48% );
+$theme-light-dark: desaturate( $theme, 10% );
+$theme-light: lighten( $theme, 30% );
+$tab-content: lighten( $theme, 45% );
+$body-color: #EBEBEB;
 
-//blue
-$blue-color: #0592d9;
-$dark-blue: darken($blue-color, 20%);
-$darker-blue: darken($blue-color, 30%);
-$light-dark-blue: desaturate($blue-color, 10%);
-$light-blue: lighten($blue-color, 40%);
-$lighter-blue: lighten($blue-color, 45%);
-$lighter2-blue: lighten($blue-color, 50%);
-$lighter3-blue: lighten($blue-color, 53%);
-$blue-purple: #746ab2;
-$blue-purple-dark: darken($blue-purple, 10%);
-$bluish-green: #0aa699;
-$bluish-green-dark: darken($bluish-green, 10%);
+//==============blue
+$blue-color: #2196F3 /*#0592D9;*/;
+$blue-dark1: darken( $blue-color, 20% );
+$blue-dark2: darken( $blue-color, 30% );
+$dark-blue: darken( $blue-color, 20% );
+$darker-blue: darken( $blue-color, 30% );
+$darkest-blue: darken( $blue-color, 38% );
+$blue-dark3: darken( $blue-color, 33% );
+$light-dark-blue: darken( $blue-color, 33% );
+$blue-light1: desaturate( $blue-color, 10% );
+$light-blue: lighten( $blue-color, 40% );
+$lighter-blue: lighten( $blue-color, 45% );
+$lighter2-blue: lighten( $blue-color, 50% );
+$lighter3-blue: lighten( $blue-color, 53% );
+$blue-light2: lighten( $blue-color, 40% );
+$blue-light3: lighten( $blue-color, 45% );
+$blue-light4: lighten( $blue-color, 50% );
+$blue-light5: lighten( $blue-color, 53% );
+//
+$blue-purple: #746AB2;
+$blue-purple-dark: darken( $blue-purple, 10% );
+$bluish-green: #0AA699;
+$bluish-green-dark: darken( $bluish-green, 10% );
 //Grey
 $base-gray: #666;
-$grey-dark: darken($base-gray, 10%);
-$grey-light: lighten($base-gray, 30%);
-$lighter-grey: lighten($base-gray, 55%);
-$super-light-grey: lighten($base-gray, 58%);
+$grey-dark: darken( $base-gray, 10% );
+$grey-light: lighten( $base-gray, 30% );
+$lighter-grey: lighten( $base-gray, 55% );
+$super-light-grey: lighten( $base-gray, 58% );
+$body-gray: #f3f3f3;
 //
-
 $red: #ff0000;
-$red-light: lighten($red, 30%);
-$red-dark: darken($red, 10%);
+$red-light: lighten( $red, 30% );
+$red-dark: darken( $red, 10% );
 $orange: #ff9900;
-$orange-dark: darken($orange, 0%);
+$orange-dark: darken( $orange, 0%);
 $white: #fff;
-$vialot: #b572cd;
-$vialot-lite: desaturate($vialot, 20%);
-$green: #2bb201;
-$green-dark: darken($green, 20%);
-$green-lite: lighten($green, 5%);
+$vialot: #B572CD;
+$vialot-lite: desaturate($vialot, 20% );
+
+//Green
+$green: #04bd00; /* #2bb201; */
+$green-dark: darken($green, 10% );
+$green-lite: lighten($green, 20% );
 //
 $white: #fff;
+$black: #000;
+$yellow: #f8f900;
+
+$base-color: #0592D9; /*#ff9900*/
+$dark-blue: darken( $base-color, 20% );
+$light-dark-blue: desaturate( $base-color, 10% );
+
+//Theme
+.theme{
+    color: $theme
+}
+.theme-alpha-50 {
+    color: rgba($theme, 50%);
+}
+.theme-light {
+    color: $theme-light
+}
+
 
 //Blues
 .blue {
-    color: $blue-color;
+    color: $blue-color
 }
 
 .blue-dark {
-    color: $dark-blue;
+    color: $blue-dark1
 }
 
 .blue-darker {
-    color: $darker-blue;
+    color: $darker-blue
 }
-
+.blue-darkest {
+    color: $darkest-blue
+}
 .blue-light {
-    color: $light-blue;
+    color: $light-blue
 }
 
 .blue-lighter {
-    color: $lighter-blue;
+    color: $lighter-blue
 }
 
 .blue-lighter2 {
-    color: $lighter2-blue;
+    color: $lighter2-blue
 }
 
 .bg-blue {
-    background-color: $blue-color;
+    background-color: $blue-color
 }
 
 .bg-dark-blue {
-    background-color: $dark-blue;
+    background-color: $blue-dark1
 }
 
 .bg-darker-blue {
@@ -77,9 +112,11 @@ $white: #fff;
 }
 
 .bg-light-dark-blue {
-    background-color: $light-dark-blue;
+    background-color: $light-dark-blue
 }
-
+.bg-blue-darkest {
+    background-color: $darkest-blue
+}
 .bg-blue-light {
     background-color: $light-blue !important;
 }
@@ -95,6 +132,7 @@ $white: #fff;
 .bg-blue-lighter3 {
     background-color: $lighter3-blue !important;
 }
+
 
 //Greys///
 .grey {
@@ -127,19 +165,19 @@ $white: #fff;
 
 //greens
 .green {
-    color: $green;
+    color: $green
 }
 
 .green-lite {
-    color: $green-lite;
+    color: $green-lite
 }
 
 .green-dark {
-    color: $green-dark;
+    color: $green-dark
 }
 
 .bg-green {
-    background-color: $green;
+    background-color: $green
 }
 
 .bg-green-lite {
@@ -147,7 +185,7 @@ $white: #fff;
 }
 
 .bg-green-dark {
-    background-color: $green-dark;
+    background-color: $green-dark !important;
 }
 
 //Reds
@@ -160,21 +198,20 @@ $white: #fff;
 }
 
 .red-light {
-    color: $red-light;
+    color: $red-light
 }
 
 .bg-red-light {
-    background-color: $red-light;
+    background-color: $red-light
 }
 
 .red-dark {
-    color: $red-dark;
+    color: $red-dark
 }
 
 .bg-red-dark {
-    background-color: $red-dark;
+    background-color: $red-dark
 }
-
 //Orange
 .orange {
     color: $orange;
@@ -191,7 +228,6 @@ $white: #fff;
 .bg-orange-dark {
     background-color: $orange-dark;
 }
-
 //Purples
 .vialot {
     color: $vialot;
@@ -200,32 +236,31 @@ $white: #fff;
 .bg-vialot {
     background-color: $vialot;
 }
-
 //
 .bluish-green {
-    color: $bluish-green;
+    color: $bluish-green
 }
 
 .bg-bluish-green {
-    background-color: $bluish-green;
+    background-color: $bluish-green
 }
 
 .bluish-green-dark {
-    color: $bluish-green;
+    color: $bluish-green
 }
 
 .bg-bluish-green-dark {
-    background-color: $bluish-green-dark;
+    background-color: $bluish-green-dark
 }
 
 .blue-purple {
-    background-color: $blue-purple;
+    background-color: $blue-purple
 }
 
 .bg-blue-purple {
-    background-color: $blue-purple;
+    background-color: $blue-purple
 }
 
 .bg-blue-purple-dark {
-    background-color: $blue-purple-dark;
+    background-color: $blue-purple-dark
 }

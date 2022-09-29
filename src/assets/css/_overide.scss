@@ -1,0 +1,52 @@
+﻿//===override====//'
+* {
+    line-height: 1.4;
+    font-family: 'Poppins', sans-serif;
+    
+}
+
+body {
+    font-size: 0.8rem !important;
+}
+
+.form-wrapper, .form-footer {
+    border: none !important
+}
+h1, h2, h3 {
+ @extend .blue;
+}
+
+h1, .h1 {
+    font-size: 2rem !important;
+}
+.identity-form-wrapper {
+    left: 32vw !important;
+    width: 34vw !important;
+}
+
+.star-top-navbar #notification-wrapper:hover, .star-top-navbar #notification-wrapper.opened {
+    background: transparent !important;
+}
+
+.header{
+    i {
+        color: $white;
+
+        &:hover {
+            color: $theme-dark
+        }
+    }
+}
+
+.star-top-navbar .right-section {margin-right: 25px;}
+
+#help-button.open {
+    right: 300px;
+    background-color: $theme-dark;
+    border-top-left-radius: 4px;
+    border-bottom-left-radius: 4px;
+}
+
+.k-button {
+    background-image:none !important;
+}

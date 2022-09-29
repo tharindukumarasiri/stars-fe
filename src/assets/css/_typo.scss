@@ -1,0 +1,49 @@
+﻿
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    clear: both;
+    font-weight: 500;
+    font-style: normal;
+    font-stretch: normal;
+    margin: 0;
+    text-rendering: optimizeLegibility;
+    color: $theme;
+    text-align: center;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    &:first-child {
+        margin-top: 0;
+    }
+}
+
+h1 {
+    font-size: 2.2em;
+        padding-top: 30px;
+    
+}
+h2{
+    font-size: 1.8em
+}
+h3 {
+    font-size: 1.5em
+}
+h4 {
+    font-size: 1.3em
+}
+h5 {
+    font-size: 1.2em
+}
+h6 {
+    font-size: 1em
+}
+

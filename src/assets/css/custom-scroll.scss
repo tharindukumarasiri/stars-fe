@@ -1,0 +1,26 @@
+/* Firefox */
+* {
+    scrollbar-color: $theme-darkest rgb(0, 0, 0, 0.5);
+}
+
+/* Chrome, Edge, and Safari */
+*::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+*::-webkit-scrollbar-track {
+    /*   background-color: rgb(0, 0, 0, 0.5); */
+    background-color: white;
+}
+
+*::-webkit-scrollbar-thumb {
+    background-color: $theme-darkest;
+    border-radius: 0;
+    border: 0px solid white;
+}
+
+*::-webkit-scrollbar-corner {
+    /*   background-color: rgb(0, 0, 0, 0.5); */
+    background-color: white;
+}

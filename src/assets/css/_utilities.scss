@@ -19,7 +19,7 @@ ul {
 
 ul,
 ol {
-    margin: 0 0 28px 18px;
+    margin: 0;
 
     li {
         line-height: 30px;
@@ -28,7 +28,7 @@ ol {
 
 ol ol,
 ul ul {
-    margin: 35px;
+    margin:0;
 }
 
 ul li>ul,
@@ -104,3 +104,5 @@ ol li>ul {
         transform: translate3d(0, -1rem, 0);
     }
 }
+
+.bold{font-weight:bold}

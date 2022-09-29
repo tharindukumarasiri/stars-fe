@@ -1,0 +1,141 @@
+﻿
+#sidebarMenu {
+    height: 100%;
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 50px;
+    margin-top: 50px;
+    transform: translateX(-50px);
+    transition: transform 250ms ease-in-out;
+    background: $dark-blue;
+    padding-top: 40px;
+    margin-left: 50px;
+    z-index: 1000;
+
+    
+}
+
+.sidebarIconToggle {
+    &::before {
+        border: none !important;
+        background: transparent !important;
+    }
+
+    &::after {
+        display: none !important;
+    }
+}
+
+.menu {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    transition: all 1s;
+}
+
+.menu li {
+    border-top: 1px solid rgba(255,255,255,.1);
+    color: $light-dark-blue;
+    text-transform: uppercase;
+    cursor: pointer;
+    padding: 16px 8px !important;
+    min-height: 50px !important;
+
+    i {
+        float: left;
+        margin: -4px 4px;
+        font-size: 20px;
+    }
+
+    span {
+        padding-top: 0px;
+        font-size: 14px;
+    }
+
+    label {
+        z-index: 999999;
+    }
+}
+
+.menu li:hover {
+    color: #fff;
+}
+
+#openSidebarMenu:checked ~ #sidebarMenu {
+    transform: translateX(0);
+    margin-left: 0;
+    width: 250px;
+    height: 100vh;
+    overflow-y: auto;
+
+  
+}
+
+input#openSidebarMenu {
+    display: none;
+}
+
+.sidebarIconToggle {
+    height: 100%;
+    width: 48px;
+    position: fixed !important;
+    z-index: 99999;
+    top: 68px;
+    left: 0;
+    transition: all 0.3s;
+    cursor: pointer;
+    padding-left: 0 !important;
+}
+
+.spinner {
+    height: 3px;
+    background-color: $light-dark-blue;
+    transition: all 0.3s;
+    text-indent: -99999px;
+    width: 20px;
+    margin-left: 16px;
+}
+
+.spinner.middle,
+.spinner.bottom {
+    margin-top: 3px;
+}
+
+#sidebarMenu > .menu li span {
+    display: block;
+}
+
+
+#openSidebarMenu:checked ~ .sidebarIconToggle > .spinner.middle {
+    opacity: 0;
+}
+
+#openSidebarMenu:checked ~ .sidebarIconToggle > .spinner.top {
+    transform: rotate(135deg);
+    margin-top: 2px;
+}
+
+#openSidebarMenu:checked ~ .main {
+    margin-left: 210px
+}
+
+#openSidebarMenu:checked ~ .sidebarIconToggle > .spinner.bottom {
+    transform: rotate(-135deg);
+    margin-top: -9px;
+}
+
+#openSidebarMenu:checked ~ .left-menu-icon {
+    margin-right: 5px;
+    float: left
+}
+#openSidebarMenu:checked ~ .content-pane{
+    margin-left:200px;
+}
+#sidebarMenu > ul > li > span, #sidebarMenu > .menu li span {
+    display: none;
+}
+
+#openSidebarMenu:checked ~ #sidebarMenu > .menu > li > span, #openSidebarMenu:checked ~ #sidebarMenu > .menu li span {
+    display: block !important;
+}

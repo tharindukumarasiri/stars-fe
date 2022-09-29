@@ -41,3 +41,9 @@ export async function getContacts() {
     const { data } = await http.get(url, getAuthHeader());
     return data;
 }
+
+export async function getLanguage() {
+    const url = config.LOCAL_API + config.GET_LANGUAGE;
+    const { data } = await http.get(url, getAuthHeader());
+    return data;
+}

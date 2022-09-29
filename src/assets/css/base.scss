@@ -1,4 +1,5 @@
-﻿@import 'tooltip.scss';
+﻿@import 'colors.scss';
+@import 'tooltip.scss';
 @import 'grid.scss';
 @import 'variables.scss';
 @import 'radio-checkbox';
@@ -9,120 +10,391 @@
 @import 'model.scss';
 //@import 'buttons.scss'  ***;
 
-
 @import 'fields.scss';
-@import 'colors.scss';
 @import 'padding-margin.scss';
 @import 'developer.scss';
+@import 'side-menu.scss';
+@import 'side-menu.scss';
+@import 'overide.scss';
+@import 'sky.scss';
+@import 'typo.scss';
+@import 'custom-scroll.scss';
 
 
 
-*:before,
-*:after {
-    box-sizing: border-box;
+
+.star-top-navbar {
+    box-shadow: none !important;
+    background-color: $base-color !important;
+
+    .logo-text {
+        color: #fff;
+        font-size: 1em !important;
+        text-transform: uppercase;
+        left: 54px !important;
+    }
+
+    .logo {
+        height: 26px !important;
+        margin: 12px !important;
+        width:34px;
+    }
+
+    #top-menu {
+        font-size: 1em !important;
+    }
+
+    #notification-wrapper {
+        font-size: 1.2em !important;
+        width: 33px !important;
+        color: #ffffff !important;
+    }
 }
 
-html {
-    font-size: 100%;
-    line-height: 1.5;
-    -webkit-text-size-adjust: 100%;
-    -moz-text-size-adjust: 100%;
-    -ms-text-size-adjust: 100%;
-    text-size-adjust: 100%;
-    font-family: 'Poppins', sans-serif;
+.k-menu:not(.k-context-menu) > .k-item {
+    color: #ffffff !important;
 }
 
-body {
-    font-family: $bod-font;
-    font-size: 0.8em;
-}
-
-input,
-input[type="text"],
-select,
-textarea {
-    padding: 14px;
-    border: 1px solid $grey-light;
-    width: 100%;
-}
-
-h1 {
-    font-size: 28px;
-    font-weight: 700;
-    color: $blue-color;
-}
-
-h2 {
-    font-size: 24px;
-    font-weight: 700;
-    color: $blue-color;
-}
-
-h3 {
-    font-size: 18px;
-    font-weight: 700;
-    color: $blue-color;
-}
-
-.h1-semi {
-    font-weight: 600;
-    font-size: 28px;
-    color: $blue-color;
-}
-
-.h2-semi {
-    font-weight: 600;
-    font-size: 24px;
-    color: $blue-color;
-}
-
-.h3-semi {
-    font-weight: 600;
-    font-size: 18px;
-    color: $blue-color;
-}
-
-.body-text {
-    font-weight: 400;
-    font-size: 14px;
-    color: $base-gray;
-}
-
-.body-text-bold {
-    font-weight: 700;
-    font-size: 14px;
-    color: $base-gray;
+.display-none {
+    display: none
 }
 
 .body-content {
-    background-color: $lighter-grey !important;
+    background-color: #fbfbfb
 }
 
-.s-row {
+//////////////////////////////////////////
+
+* {
+    box-sizing: border-box;
+}
+
+html, body {
+    overflow-x: hidden;
+    height: 100%;
+    background-color: $body-color;
+}
+
+
+
+
+
+.main {
+    height: 100%;
+    margin-top: 40px;
+    padding: 10px 0 0 9px;
+    display: inline-table;
+    margin-left: 40px;
+}
+
+
+.left-menu-icon {
+    margin-right: 5px;
     float: left;
+}
+
+///////////////
+ul.custom-button-list {
+    li {
+        padding: 20px;
+        width: 100%;
+        border-bottom: 1px solid #999;
+        list-style: none;
+        cursor: pointer
+    }
+}
+
+
+.m-d.expand-list > li {
+    position: relative;
+}
+
+.m-d label[class^="tab"]:hover {
+    cursor: pointer;
+}
+
+.m-d input {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    display: none;
+}
+
+.tab_lab span {
+    padding-top: 14px;
+    display: block;
+}
+
+.m-d input[class^="tab"] {
     width: 100%;
+    height: 40px;
+    position: absolute;
+    left: 0;
+    top: 0;
+
+    > span {
+        margin-top: 14px
+    }
 }
 
-.a-row {
-    float: left;
+.m-d input[class^="tab"]:hover {
+    cursor: pointer;
 }
 
-.n-float {
-    clear: left
-}
-
-.component-container {
+.m-d label[class^="tab"] {
     width: 100%;
     display: block;
+    position: absolute;
+}
+
+.m-d .ex-content {
+    height: auto;
+    max-height: 0;
+    max-width: 300px;
+    /*        background: yellow;*/
+    overflow: hidden;
+    transform: translateY(20px);
+    transition: all 180ms ease-in-out 0ms;
+
+    ul li {
+        width: 100%;
+        display: inline-block;
+    }
+}
+
+.m-d li[data-md-content="100"] input[class^="tab"]:checked ~ .ex-content, .m-d li[data-md-content="200"] input[class^="tab"]:checked ~ .ex-content {
+    display: inline-table;
+    transition: all 150ms ease-in-out 0ms;
+}
+
+.ex-content {
+    margin-top: 5px;
+    margin-left: 26px;
+    display: inline-block;
+
+    ul {
+        padding: 0;
+
+        li {
+            list-style: none
+        }
+    }
+
+    .open-close-icon {
+        position: absolute;
+        top: 0;
+        margin-top: -5px;
+    }
+}
+
+.m-d .open-close-icon {
+    display: inline-block;
+    position: absolute;
+    right: 40px;
+    transform: translatey(2px);
+    top: 14px;
+}
+
+.m-d .open-close-icon i {
+    position: absolute;
+    left: 0;
+}
+
+.m-d .open-close-icon .icon-right-arrow {
+    transform: rotate(0deg);
+    transition: transform 150ms ease-in-out 0ms;
+}
+
+.m-d input[class^="tab"]:checked ~ .open-close-icon .icon-right-arrow {
+    transform: rotate(90deg);
+    transition: transform 150ms ease-in-out 0ms;
+}
+
+.m-d .open-close-icon .icon-right-arrow {
+    opacity: 1;
+    transform: rotate(0deg);
+    transition: opacity 50ms linear 0ms, transform 150ms ease-in-out 0ms;
+}
+
+
+
+
+/*August 2022*/
+
+
+/*===========================================floating label ===============================*/
+
+.field {
     position: relative;
-    min-height: calc(100vh - 50px);
-    background-color: #f3f3f3;
+    margin-bottom: 10px !important;
+    width: 100%;
 }
 
-.fl {
-    float: left
+.field__label {
+    color: #919293;
+    box-sizing: border-box;
+    display: block;
+    font-size: .7em;
+    line-height: 1;
+    opacity: 0;
+    overflow: hidden;
+    padding: .5em 1em;
+    pointer-events: none;
+    position: absolute;
+    text-overflow: ellipsis;
+    top: 2px;
+    left: 2px;
+    text-align: left;
+    transform: translateY(3px);
+    transition: all .2s ease-out;
+    user-select: none;
+    white-space: nowrap;
+    width: 100%;
+    z-index: 1;
+
+    .field--not-empty & {
+        opacity: 1;
+        transform: none;
+    }
 }
 
-.fr {
-    float: right
+.field__input {
+    border: 1px solid #8b8b8b;
+    padding: 12px;
+    width: 100%;
+    transition: all .2s ease-out;
+    line-height: 2em;
+
+    &:hover, &:focus {
+        /* inset | offset-x | offset-y | blur-radius | spread-radius | color */
+        outline: 0;
+    }
+
+    .field--not-empty & {
+        padding-bottom: 0px;
+        /* padding-top: 18px; */
+    }
 }
+
+::-webkit-input-placeholder {
+    /* Chrome/Opera/Safari */
+    color: #919293;
+}
+
+::-moz-placeholder {
+    /* Firefox 19+ */
+    color: #919293;
+}
+
+:-ms-input-placeholder {
+    /* IE 10+ */
+    color: #919293;
+}
+
+:-moz-placeholder {
+    /* Firefox 18- */
+    color: #919293;
+}
+/*end/floating lable  =============*/
+
+
+.white-logo {
+    max-width: 60px;
+    margin: auto
+}
+
+.login-top {
+    width: 100%;
+    min-height: 50px;
+    padding: 1%;
+    display: block;
+    text-align: center
+}
+
+.modal-box {
+    width: 32vw;
+    left: 34vw;
+    min-height: 300px;
+    display: block;
+    position: absolute;
+    z-index: 1;
+    background-color: $white;
+    padding: 40px;
+    border-radius: 2px;
+    box-shadow: 2px 2px 8px #000;
+}
+
+.wrapper-top {
+    position: absolute;
+    z-index: 10002;
+    width: 100%;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+}
+
+.wapper-bottom {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    background: $darkest-blue url("/Content/images/night-sky.svg") no-repeat left top;
+    z-index: 10001;
+
+    .skyline {
+        position: fixed;
+        bottom: 0;
+    }
+}
+// home page
+.home-img-wrapper {
+    min-height: 350px
+}
+
+.home-img {
+    z-index: 1;
+    width: 100%;
+    text-align: center;
+    margin-top: 58px;
+
+    img {
+        width: 32%;
+    }
+}
+
+.home-img-bg {
+    width: 100%;
+    text-align: center;
+
+    img {
+        width: 100%;
+    }
+}
+
+.star-4-logos {
+    text-align: center;
+    width: 100%;
+    display: block;
+    background-color: $white;
+    min-height: 114px;
+    padding: 40px 20px;
+    box-shadow: 0 0 20px #ccc;
+    transition: all .2s ease-in-out;
+
+    img {
+        width: 72px;
+        height: auto
+    }
+}
+.star-4-logos:hover {
+    transform: scale(1.06);
+    text-decoration:none;
+}
+
+@media screen and (max-width: $desktop) {
+    .home-img > img {
+        width: 50%;
+    }
+}
+
