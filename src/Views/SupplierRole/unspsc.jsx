@@ -8,6 +8,7 @@ import { levelOneReq } from "../../utils/constants";
 import { getOrganization, getUnspscCodes, updateUnspscCodes, searchUnspscCodes } from "../../services/organizationsService";
 import directional_sign from "../../assets/images/directional-sign.png"
 import { FetchCurrentCompany } from "../../hooks/index";
+import { useTranslation } from "react-i18next";
 
 const Unspsc = () => {
     const { organizationData, setOrganizationData, haveUnsavedDataRef, setHaveUnsavedDataRef } = useContext(TabContext);
@@ -18,7 +19,7 @@ const Unspsc = () => {
     const [searchResult, setSearchResult] = useState('')
     const [showingSearchedCodes, setShowingSearchedCodes] = useState(false)
     const [selectedCompany] = FetchCurrentCompany()
-
+    const { t } = useTranslation();
     useEffect(() => {
         getUnspscCodes(levelOneReq).then(result => {
             setUnspscData({
@@ -346,7 +347,7 @@ const Unspsc = () => {
         <>
             <div className="g-row m-l-10">
                 <i className="icon-cubes-1 header-icon m-t-10 m-r-15 fl" />
-                <h3 className="m-t-20">(United Nations Standard Products and Services Code )</h3>
+                <h3 className="m-t-20">{t("(United Nations Standard Products and Services Code)")}</h3>
             </div>
             <div className="page-container">
                 {loading &&
@@ -358,51 +359,51 @@ const Unspsc = () => {
                 }
                 <div className="g-row">
                     <div className="g-col-5">
-                        <h3 className="text-center">UNSPSC Codes</h3>
+                        <h3 className="text-center">{t("UNSPSC Codes")}</h3>
                         <div className="g-row flex-center-middle m-b-15">
                             <form onSubmit={onSearch} className="search-bar g-col-8 m-r-10">
                                 <i className="search-btn icon-search" onClick={onSearch} ></i>
-                                <input type="text" placeholder="Search by Location, Product or Service" onChange={handleSearch} value={searchText} />
+                                <input type="text" placeholder={t("Search by Location, Product or Service")} onChange={handleSearch} value={searchText} />
                             </form>
-                            <h3 className="g-col-2 hover-hand" onClick={clearSearch} >Clear</h3>
+                            <h3 className="g-col-2 hover-hand" onClick={clearSearch} >{t("Clear")}</h3>
                             <div className="g-col-2 g-row hover-hand">
                                 <span className="fl g-col-6 m-r-10">English </span>
-                                <span className="fl g-col-3"><img src={gb_flag} className="flag-image a-row m-r-5" alt='img' /></span>
+                                <span className="fl g-col-3"><img src={gb_flag} className="flag-image fl m-r-5" alt='img' /></span>
                                 <i className="g-col-1 icon-arrow-down fl" />
                             </div>
                         </div>
                         <UnspscData />
                     </div>
                     <div className="g-col-5">
-                        <h3 className="text-center">Your selected UNSPSC Codes</h3>
+                        <h3 className="text-center">{t("Your selected UNSPSC Codes")}</h3>
                         <YourUnspscData />
                     </div>
                     <div className="g-col-2 text-center">
-                        <h3>How to update your UNSPSC Codes?</h3>
+                        <h3>{t("How to update your UNSPSC Codes?")}</h3>
                         <div className="flex-center-middle"><img src={directional_sign} alt='img' className="directional-img" /></div>
 
                         <div className="static-content-container">
-                            <div className="body-text-bold  m-t-20">What are UNSPSC Codes?</div>
-                            <div className="body-text m-t-20">The United Nations Standard Products and Services Code (UNSPSC) is a taxonomy of products and services was created to cater to the many demands of organizations and corporations engaged in the global trade, analysis, and regulation of goods and services. It is an eight-digit number that represents a four-level structure.</div>
-                            <div className="body-text"><strong>XX</strong>000000 the first two digits for <strong>Segment</strong></div>
-                            <div className="body-text">XX<strong>XX</strong>0000 second two digits for <strong>Family</strong></div>
-                            <div className="body-text">XXXX<strong>XX</strong>00 third two digits for <strong>Class</strong></div>
-                            <div className="body-text m-b-20">XXXXXXXX<strong>XX</strong>last two digits for <strong>Commodity</strong></div>
+                            <div className="body-text-bold  m-t-20">{t("What are UNSPSC Codes?")}</div>
+                            <div className="body-text m-t-20">{t("The United Nations Standard Products and Services Code (UNSPSC) is a taxonomy of products and services was created to cater to the many demands of organizations and corporations engaged in the global trade, analysis, and regulation of goods and services. It is an eight-digit number that represents a four-level structure.")}</div>
+                            <div className="body-text"><strong>XX</strong>000000 {t("the first two digits for")} <strong>{t("Segment")}</strong></div>
+                            <div className="body-text">XX<strong>XX</strong>0000 {t("second two digits for")} <strong>{t("Family")}</strong></div>
+                            <div className="body-text">XXXX<strong>XX</strong>00 {t("third two digits for")} <strong>{t("Class")}</strong></div>
+                            <div className="body-text m-b-20">XXXXXXXX<strong>XX</strong>{t("last two digits for")} <strong>{t("Commodity")}</strong></div>
 
-                            <div className="body-text-bold  m-t-20 ">Why update UNSPSC Codes</div>
-                            <div className="body-text">Your company will be listed on the "Star Search Engine," which is also a global standard.</div>
+                            <div className="body-text-bold  m-t-20 ">{t("Why update UNSPSC Codes")}</div>
+                            <div className="body-text">{t("Your company will be listed on the \"Star Search Engine, \" which is also a global standard.")}</div>
 
-                            <div className="body-text-bold  m-t-20 ">How to update UNSPSC Codes?</div>
-                            <div className="body-text">1. The UNSPSC Codes displays according to the hierarchy in selected language (Default language would be logged in language)</div>
-                            <div className="body-text">2. Using "+," make the codes expanded to discover your precise business domain, and "-," make them unfold.</div>
-                            <div className="body-text">3. Check all the boxes to choose the codes that apply to your business domain.</div>
-                            <div className="body-text">4. You may uncheck/remove the unintended codes.</div>
-                            <div className="body-text">5. To save your work, choose "Update”. The UNSPSC Codes will be saved in selected Language.(Do a new update if you want to include a different language.)</div>
+                            <div className="body-text-bold  m-t-20 ">{t("How to update UNSPSC Codes?")}</div>
+                            <div className="body-text">1. {t("The UNSPSC Codes displays according to the hierarchy in selected language (Default language would be logged in language)")}</div>
+                            <div className="body-text">2. {t("Using \"+,\" make the codes expanded to discover your precise business domain, and \"-,\" make them unfold.")}</div>
+                            <div className="body-text">3. {t("Check all the boxes to choose the codes that apply to your business domain.")}</div>
+                            <div className="body-text">4. {t("You may uncheck/remove the unintended codes.")}</div>
+                            <div className="body-text">5. {t("To save your work, choose \"Update\". The UNSPSC Codes will be saved in selected Language.(Do a new update if you want to include a different language.)")}</div>
                         </div>
                     </div>
                 </div>
             </div>
-            <button className="primary-btn update-btn" onClick={onUpdate} >Update</button>
+            <button className="primary-btn update-btn" onClick={onUpdate} >{t("Update")}</button>
         </>
     )
 }

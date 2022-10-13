@@ -1,9 +1,11 @@
 import React, { useContext } from "react";
 import Tab from "./tab";
 import { TabContext } from "../../utils/contextStore";
+import { useTranslation } from 'react-i18next'
 
 export default function Tabs(props) {
   const { activeTab, openTabs } = useContext(TabContext);
+  const { t } = useTranslation();
 
   return (
     <div className="tabs">
@@ -16,7 +18,7 @@ export default function Tabs(props) {
               <Tab
                 key={id}
                 id={id}
-                label={label}
+                label={t(label)}
               />
             );
         })}

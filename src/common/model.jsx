@@ -14,15 +14,15 @@ const Model = ({ visible, onCloseModel, searchCriteria }) => {
                 <div className="my-modal-container">
                     <i className="icon-close-small-x close-btn my-model-close" onClick={onCloseModel} />
                     <div className="my-modal-content">
-                        <p className="title-txt s-row text-center">Save Search Result</p>
+                        <p className="title-txt fl text-center">Save Search Result</p>
                         Result ID:
-                        <div className="input-container s-row m-b-10">
+                        <div className="input-container fl m-b-10">
                             <div className="input-hint-text">Search Criteria</div>
                             <input type="text" value={searchCriteria} onChange={() => { }} />
                         </div>
-                        <input type="text" className="m-b-10 s-row" value={''} placeholder="Slug" onChange={() => { }} />
-                        <input type="text" className="m-b-15 s-row" value={''} placeholder="Special Note" onChange={() => { }} />
-                        <div className="s-row">Flag
+                        <input type="text" className="m-b-10 fl" value={''} placeholder="Slug" onChange={() => { }} />
+                        <input type="text" className="m-b-15 fl" value={''} placeholder="Special Note" onChange={() => { }} />
+                        <div className="fl">Flag
                             <img src={flag_none} className="flag-icon m-r-5 m-l-10" />
                             <img src={flag_pink} className="flag-icon m-r-5" />
                             <img src={flag_green} className="flag-icon m-r-5" />
@@ -30,7 +30,7 @@ const Model = ({ visible, onCloseModel, searchCriteria }) => {
                             <img src={flag_blue} className="flag-icon m-r-5" />
                             <img src={flag_red} className="flag-icon m-r-5" />
                         </div>
-                        <div className="s-row">
+                        <div className="fl">
                             <button className="primary-btn m-l-10" onClick={onCloseModel}>Save</button>
                             <button className="primary-btn m-l-10" onClick={onCloseModel}>Cancel</button>
                         </div>

@@ -95,6 +95,12 @@
     bottom: 50px;
 }
 
+.remove-button {
+    position: absolute;
+    right: 130px;
+    bottom: 50px;
+}
+
 .hint-text {
     position: absolute;
     right: 20px;
@@ -103,7 +109,7 @@
 
 .search-result-pagination-container {
     position: absolute;
-    bottom: 70px;
+    bottom: 20px;
 }
 
 // End Search Page Styles ---*>
@@ -157,6 +163,10 @@
     width: 47%;
 }
 
+.selectAll-checkbox {
+    padding-bottom: 30px;
+}
+
 .member-section-dropdown {
     max-height: 200px;
     overflow-y: scroll;
@@ -168,10 +178,6 @@
 
 .table-separate {
     border-bottom: 0.5px solid $blue-color;
-}
-
-.table-button {
-    min-width: 110px;
 }
 
 // End Projects Page Styles ---*>

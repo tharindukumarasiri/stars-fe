@@ -1,9 +1,10 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 
 const Expandable = (props) => {
     const { title, children, expandedItem, setExpandedItem, label } = props;
     const expanded = expandedItem === label;
-
+    const { t } = useTranslation();
     const Arrow = () => {
         const expandIcon = expanded ? 'icon-right-arrow fr m-t-15' : 'icon-arrow-down fr m-t-15'
         return <i className={expandIcon} />
@@ -19,7 +20,7 @@ const Expandable = (props) => {
     return (
         <div className="expandable hover-hand">
             <div className="g-row" onClick={onHeaderClicked}>
-                <div className="h2-semi g-col-10 m-t-15">{title}</div>
+                <div className="h2-semi g-col-10 m-t-15">{t(title)}</div>
                 <Arrow />
             </div>
             {expanded ? children : null}

@@ -5,6 +5,7 @@ import { TabContext } from '../../utils/contextStore';
 import { NAVIGATION_PAGES } from '../../utils/enums';
 import SellerHome from './sellerHome';
 import GetNotified from './getNotified';
+import MatchingTenders from './matchingTenders';
 
 const SellerRole = () => {
     const [activeTab, setActiveTab] = useState(NAVIGATION_PAGES.SELLER_HOME);
@@ -46,6 +47,7 @@ const SellerRole = () => {
                 </div>
                 <div label={"MATCHING TENDERS"} id={NAVIGATION_PAGES.SELLER_MATCHING_TENDERS}>
                     <div className="page-container">
+                        <MatchingTenders />
                     </div>
                 </div>
                 <div label={"GLOBAL TENDER"} id={NAVIGATION_PAGES.SELLER_GLOBAL_TENDER}>

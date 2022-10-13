@@ -1,11 +1,11 @@
-import React, { useState, useEffect, useContext } from "react";
-import { message, Pagination } from 'antd';
+import React, { useState, useEffect, useContext, useMemo } from "react";
+import { message, Pagination, Modal } from 'antd';
 import { levelOneReq, nacSectionReq } from "../../utils/constants";
 import gb_flag from "../../assets/images/gb_flag.png"
-import logo_thumb from "../../assets/images/logo_thumb.png"
 import Model from "../../common/model";
 import { TabContext } from "../../utils/contextStore";
 import { NAVIGATION_PAGES } from "../../utils/enums";
+import { ExclamationCircleOutlined } from '@ant-design/icons';
 import {
     getCountries,
     getRegions,
@@ -16,10 +16,11 @@ import {
     getCpvCodes,
     getNacCodes,
     addNewSearchResult,
-    getSearchResultsByProjAndSec,
     searchOrganizationByCPV,
     searchOrganizationByNACE,
     searchOrganizationByUNSPSC,
+    removeSearch,
+    deleteSearch,
 } from "../../services/organizationsService";
 import DropdownList from "./Components/dropdownList"
 import Dropdown from "./Components/dropdown";
@@ -28,6 +29,8 @@ import { arrayToUpper } from '../../utils/index';
 import SearchSelectedValues from "./Components/searchSelectedValues";
 import DatePickerInput from "../../common/datePickerInput";
 import ToggleSwitch from "../../common/toggleSwitch";
+import { useTranslation } from 'react-i18next'
+const { confirm } = Modal;
 
 const pageSize = 10;
 
@@ -59,9 +62,10 @@ export default function Search(props) {
     const [actPage, setActPage] = useState(1)
     const [loading, setLoading] = useState(false)
 
-    const [selectedResults, setSelectedResults] = useState([])
+    const [selectedResults, setSelectedResults] = useState([]);
 
     const [showModel, setShowModel] = useState(false);
+    const { t } = useTranslation();
 
     const { changeActiveTab } = useContext(TabContext)
 
@@ -73,21 +77,39 @@ export default function Search(props) {
     }, []);
 
     useEffect(() => {
-        if (props.searchResult?.id) {
-            const searchFilter = props.searchResult.searchFilter
-            const newOrganizations = []
+        if (props?.removeSearch && props?.searchResults?.length > 0) {
+            const searchResultsSet = props?.searchResults[props?.searchResults?.length - 1]
 
-            props.searchResult.results.map((result) => {
-                newOrganizations.push(JSON.parse(result.info))
-            })
+            setLoading(true);
+            const removalReq = {
+                "searchCriteria": {
+                    "name": searchResultsSet?.searchFilter.name || "",
+                    "countries": searchResultsSet?.searchFilter.countries || null,
+                    "regions": searchResultsSet?.searchFilter.regions || null,
+                    "cities": searchResultsSet?.searchFilter.cities || null,
+                    "municipalities": searchResultsSet?.searchFilter.municipalities || null,
+                    "cpvs": searchResultsSet?.searchFilter.cpvs || null,
+                    "naces": searchResultsSet?.searchFilter.naces || null,
+                    "unspscs": searchResultsSet?.searchFilter.unspscs || null,
+                    "pageSize": pageSize,
+                    "pageNo": 1,
+                },
+                "removeCritieria": {
+                    "organizationIds": searchResultsSet?.removeCriteria?.organizationIds || null
+                }
+            }
 
-            setOrganizations(newOrganizations);
-            setSerachText(searchFilter.name);
-            setSelectedMarketCriteria({ selectedCountries: searchFilter.countries, selectedRegions: searchFilter.regions, selectedCities: searchFilter.cities, selectedMunicipalities: searchFilter.municipalities })
+            setSelectedResults(searchResultsSet?.removeCriteria?.organizationIds || [])
 
-            toggleOpenCriteria('Market', (searchFilter.countries.length > 0 || searchFilter.regions.length > 0 || searchFilter.cities.length > 0 || searchFilter.municipalities.length > 0));
+            removeSearch(props.searchResults[0].id, removalReq).then(result => {
+                setLoading(false);
+                setOrganizations(result.organizations);
+                setPageCount(result.total);
+            }).catch(() => {
+                setLoading(false);
+            });
         }
-    }, [props.searchResult]);
+    }, [props]);
 
     useEffect(() => {
         const searchReq = getSearchRequest(1);
@@ -225,19 +247,63 @@ export default function Search(props) {
     const onShowResults = (e = null) => {
         if (e)
             e.preventDefault();
-        setOrganizations([]);
-        setGrouping({});
-        window.scrollTo(0, 0)
-        const searchReq = getSearchRequest(1);
-        const allSelectedCriteria = searchReq.countries.concat(searchReq.regions, searchReq.cities, searchReq.municipalities, searchReq.cpvs, searchReq.naces, searchReq.unspscs)
-        if (allSelectedCriteria.length === 0 && searchText === '') {
-            message.warning('Please select criterias to search');
+
+        if (props?.searchResults?.length > 0 && !props?.removeSearch) {
+            confirm({
+                title: <>{t("If you want to do a fresh search")} <strong className="red">{t('delete')}</strong> {t("your saved Criteria and results")}</>,
+                icon: <ExclamationCircleOutlined />,
+                okText: t('Yes'),
+                okType: 'danger',
+                cancelText: t('No'),
+                onOk() {
+                    deleteSearch(props?.searchResults[0]).then(() => {
+                        setOrganizations([]);
+                        if (props?.searchResults.length === 2) {
+                            deleteSearch(props?.searchResults[1]).then(() => {
+                                message.success("Delete results successful")
+                                props.getSearchResults();
+                            }).catch(() => {
+                                message.success("Delete results fail")
+                            })
+                        } else {
+                            message.success("Delete results successful")
+                            props.getSearchResults();
+                        }
+                    }).catch(() => {
+                        message.success("Delete results fail")
+                    })
+                },
+            });
         } else {
-            noSearchResults = false;
-            setLoading(true);
-            setActPage(1);
-            callSearchOrganization(1);
+            setOrganizations([]);
+            setGrouping({});
+            window.scrollTo(0, 0)
+            const searchReq = getSearchRequest(1);
+            const allSelectedCriteria = searchReq.countries.concat(searchReq.regions, searchReq.cities, searchReq.municipalities, searchReq.cpvs, searchReq.naces, searchReq.unspscs)
+            if (allSelectedCriteria.length === 0 && searchText === '' && !props.removeSearch) {
+                message.warning('Please select criterias to search');
+            } else {
+                noSearchResults = false;
+                setLoading(true);
+                setActPage(1);
+                if (props?.removeSearch) {
+                    callremoveOrganization(1);
+                } else {
+                    callSearchOrganization(1);
+                }
+            }
         }
+    }
+
+    const callremoveOrganization = (pageNo) => {
+        removeSearch(props.searchResults[0].id, getRemovalRequest(pageNo)).then(result => {
+            setLoading(false);
+            setOrganizations(result.organizations);
+            setPageCount(result.total);
+        }).catch(error => {
+            noSearchResults = true;
+            setLoading(false);
+        });
     }
 
     const callSearchOrganization = (pageNo) => {
@@ -247,7 +313,7 @@ export default function Search(props) {
                 searchOrganization(getSearchRequest(pageNo)).then(result => {
                     setLoading(false);
                     setOrganizations(result.organizations);
-                    setPageCount(Math.ceil(result.total / pageSize));
+                    setPageCount(result.total);
                 }).catch(error => {
                     noSearchResults = true;
                     setLoading(false);
@@ -258,7 +324,7 @@ export default function Search(props) {
                     setLoading(false);
                     setGrouping(convertStringObject(result.grouping));
                     setOrganizations(result.organizations);
-                    setPageCount(Math.ceil(result.total / pageSize));
+                    setPageCount(result.total);
                 }).catch(error => {
                     noSearchResults = true;
                     setLoading(false);
@@ -269,7 +335,7 @@ export default function Search(props) {
                     setLoading(false);
                     setGrouping(convertStringObject(result.grouping));
                     setOrganizations(result.organizations);
-                    setPageCount(Math.ceil(result.total / pageSize));
+                    setPageCount(result.total);
                 }).catch(error => {
                     noSearchResults = true;
                     setLoading(false);
@@ -280,7 +346,7 @@ export default function Search(props) {
                     setLoading(false);
                     setGrouping(convertStringObject(result.grouping));
                     setOrganizations(result.organizations);
-                    setPageCount(Math.ceil(result.total / pageSize));
+                    setPageCount(result.total);
                 }).catch(error => {
                     noSearchResults = true;
                     setLoading(false);
@@ -291,22 +357,89 @@ export default function Search(props) {
         }
     }
 
+    const saveButtonText = useMemo(() => {
+        if (!props?.removeSearch && props?.searchResults?.length > 0) {
+            return "Refresh"
+        } else {
+            return "save"
+        }
+    }, [props])
+
     const onSaveResults = (e) => {
         e.preventDefault();
-        const searchReq = getSearchRequest(1);
-        const allSelectedCriteria = searchReq.countries.concat(searchReq.regions, searchReq.cities, searchReq.municipalities, searchReq.cpvs, searchReq.naces, searchReq.unspscs)
-        if (allSelectedCriteria.length === 0 && searchText === '') {
-            message.warning('Please select criterias to save');
-        } else if (props?.sectionSearch && (props?.projectStatus.toUpperCase() === "CLOSE" || props?.sectionStatus.toUpperCase() === "CLOSE")) {
-            message.warning('Cannot save results for closed projects or sections');
+        if (props?.searchResults?.length > 0 && !props?.removeSearch) {
+            deleteSearch(props?.searchResults[0]).then(() => {
+                setOrganizations([]);
+                if (props?.searchResults.length === 2) {
+                    deleteSearch(props?.searchResults[1]).then(() => {
+                        message.success("Delete results successful")
+                        props.getSearchResults();
+                    }).catch(() => {
+                        message.success("Delete results fail")
+                    })
+                } else {
+                    message.success("Delete results successful")
+                    props.getSearchResults();
+                }
+            }).catch(() => {
+                message.success("Delete results fail")
+            })
         } else {
-            if (props?.sectionSearch) {
-                const saveResultData = {
+            const searchReq = getSearchRequest(1);
+            const allSelectedCriteria = searchReq.countries.concat(searchReq.regions, searchReq.cities, searchReq.municipalities, searchReq.cpvs, searchReq.naces, searchReq.unspscs)
+            if (allSelectedCriteria.length === 0 && searchText === '' && !props?.removeSearch) {
+                message.warning('Please select criterias to save');
+            } else if (props?.sectionSearch && (props?.projectStatus.toUpperCase() === "CLOSE" || props?.sectionStatus.toUpperCase() === "CLOSE")) {
+                message.warning('Cannot save results for closed projects or sections');
+            } else {
+                if (props?.sectionSearch) {
+                    addNewSearchResult(getSaveResultData()).then(() => {
+                        message.success('Save results successful');
+                        setSelectedResults([]);
+                        props.getSearchResults();
+                    }).catch(() => {
+                        message.error('Save results failed please try again');
+                    })
+                } else {
+                    setShowModel(true);
+                }
+            }
+        }
+    }
+
+    const getSaveResultData = () => {
+        if (props?.removeSearch) {
+            const allSelectedCriterias = selectedMarketCriteria.selectedCountries.concat(selectedMarketCriteria.selectedRegions, selectedMarketCriteria.selectedCities, selectedMarketCriteria.selectedMunicipalities, getFilterdCodes(selectedCPVValues), getFilterdCodes(selectedNACValues), getFilterdCodes(selectedUNSPValues))
+
+            if (allSelectedCriterias.length === 0) {
+                const searchResultsSet = props?.searchResults[props?.searchResults?.length - 1]
+                return ({
+                    "id": props.searchResults[1]?.id || null,
+                    "parentSearchId": props.searchResults[0].id,
                     "operationId": props.projectId,
                     "sectionId": props.sectionId,
                     "createdDate": new Date(),
                     "searchFilter": {
-                        "name": searchText,
+                        "countries": searchResultsSet?.searchFilter.countries || null,
+                        "regions": searchResultsSet?.searchFilter.regions || null,
+                        "cities": searchResultsSet?.searchFilter.cities || null,
+                        "municipalities": searchResultsSet?.searchFilter.municipalities || null,
+                        "cpvs": searchResultsSet?.searchFilter.cpvs || null,
+                        "naces": searchResultsSet?.searchFilter.naces || null,
+                        "unspscs": searchResultsSet?.searchFilter.unspscs || null,
+                    },
+                    "removeCriteria": {
+                        "organizationIds": selectedResults
+                    }
+                })
+            } else {
+                return ({
+                    "id": props.searchResults[1]?.id || null,
+                    "parentSearchId": props.searchResults[0].id,
+                    "operationId": props.projectId,
+                    "sectionId": props.sectionId,
+                    "createdDate": new Date(),
+                    "searchFilter": {
                         "countries": selectedMarketCriteria.selectedCountries,
                         "regions": selectedMarketCriteria.selectedRegions,
                         "cities": arrayToUpper(selectedMarketCriteria.selectedCities),
@@ -315,22 +448,28 @@ export default function Search(props) {
                         "naces": getFilterdCodes(selectedNACValues),
                         "unspscs": getFilterdCodes(selectedUNSPValues),
                     },
-                    "results": selectedResults,
-                }
-
-                addNewSearchResult(saveResultData).then(() => {
-                    message.success('Save results successful');
-                    getSearchResultsByProjAndSec(props.projectId, props.sectionId).then(data => {
-                        props.setSearchResults(data)
-                    })
-                }).catch(() => {
-                    message.error('Save results failed please try again');
+                    "removeCriteria": {
+                        "organizationIds": selectedResults
+                    }
                 })
-            } else {
-                setShowModel(true);
             }
+        } else {
+            return ({
+                "operationId": props.projectId,
+                "sectionId": props.sectionId,
+                "createdDate": new Date(),
+                "searchFilter": {
+                    "name": searchText,
+                    "countries": selectedMarketCriteria.selectedCountries,
+                    "regions": selectedMarketCriteria.selectedRegions,
+                    "cities": arrayToUpper(selectedMarketCriteria.selectedCities),
+                    "municipalities": selectedMarketCriteria.selectedMunicipalities,
+                    "cpvs": getFilterdCodes(selectedCPVValues),
+                    "naces": getFilterdCodes(selectedNACValues),
+                    "unspscs": getFilterdCodes(selectedUNSPValues),
+                },
+            })
         }
-
     }
 
     const onCloseModel = () => {
@@ -350,6 +489,50 @@ export default function Search(props) {
             "pageSize": pageSize,
             "pageNo": pageNumber,
         })
+    }
+
+    const getRemovalRequest = (pageNumber) => {
+        const allSelectedCriterias = selectedMarketCriteria.selectedCountries.concat(selectedMarketCriteria.selectedRegions, selectedMarketCriteria.selectedCities, selectedMarketCriteria.selectedMunicipalities, getFilterdCodes(selectedCPVValues), getFilterdCodes(selectedNACValues), getFilterdCodes(selectedUNSPValues))
+
+        if (allSelectedCriterias.length === 0) {
+            const searchResultsSet = props?.searchResults[props?.searchResults?.length - 1]
+
+            return ({
+                "searchCriteria": {
+                    "name": searchResultsSet?.searchFilter.name || "",
+                    "countries": searchResultsSet?.searchFilter.countries || null,
+                    "regions": searchResultsSet?.searchFilter.regions || null,
+                    "cities": searchResultsSet?.searchFilter.cities || null,
+                    "municipalities": searchResultsSet?.searchFilter.municipalities || null,
+                    "cpvs": searchResultsSet?.searchFilter.cpvs || null,
+                    "naces": searchResultsSet?.searchFilter.naces || null,
+                    "unspscs": searchResultsSet?.searchFilter.unspscs || null,
+                    "pageSize": pageSize,
+                    "pageNo": pageNumber,
+                },
+                "removeCritieria": {
+                    "organizationIds": selectedResults
+                }
+            })
+        } else {
+            return ({
+                "searchCriteria": {
+                    "countries": selectedMarketCriteria.selectedCountries,
+                    "regions": selectedMarketCriteria.selectedRegions,
+                    "cities": arrayToUpper(selectedMarketCriteria.selectedCities),
+                    "municipalities": selectedMarketCriteria.selectedMunicipalities,
+                    "cpvs": getFilterdCodes(selectedCPVValues),
+                    "naces": getFilterdCodes(selectedNACValues),
+                    "unspscs": getFilterdCodes(selectedUNSPValues),
+                    "pageSize": pageSize,
+                    "pageNo": pageNumber,
+                },
+                "removeCritieria": {
+                    "organizationIds": selectedResults
+                }
+            })
+        }
+
     }
 
     const getFilterdCodes = (selectedValues) => {
@@ -392,7 +575,11 @@ export default function Search(props) {
                 setActPage(pageNumber);
         }
 
-        callSearchOrganization(pageNo);
+        if (props?.removeSearch) {
+            callremoveOrganization(pageNo);
+        } else {
+            callSearchOrganization(pageNo);
+        }
     }
 
     const changeCompanyInfoData = (data, dataName) => {
@@ -400,22 +587,26 @@ export default function Search(props) {
     }
 
     const onCheckBox = (e) => {
-        const resultSet = JSON.parse(e.target.value)
-        const modResultSet = {
-            id: resultSet.id,
-            organizationId: resultSet.organizationId,
-            organizationName: resultSet.organizationName,
-            info: JSON.stringify(resultSet)
-        }
-        const newResultSet = selectedResults.map(a => { return { ...a } })
-
-        const index = selectedResults.findIndex(result => { return result.id === resultSet.id });
+        const newResultSet = [...selectedResults]
+        const index = selectedResults.indexOf(e.target.value);
 
         if (index < 0) {
-            newResultSet.push(modResultSet);
+            newResultSet.push(e.target.value);
             setSelectedResults(newResultSet);
         } else {
             newResultSet.splice(index, 1);
+            setSelectedResults(newResultSet);
+        }
+    }
+
+    const onSelectAllCheckBox = (e) => {
+        const allResultsSet = organizations.map(organization => { return organization.organizationId })
+
+        if (e.target.checked) {
+            const newResultSet = selectedResults.concat(allResultsSet);
+            setSelectedResults(newResultSet);
+        } else {
+            const newResultSet = selectedResults.filter(organization => { return !allResultsSet?.includes(organization) })
             setSelectedResults(newResultSet);
         }
     }
@@ -452,6 +643,14 @@ export default function Search(props) {
         setSelectedGrouping({ ...selectedGrouping, accumulation: e.target.value })
     }
 
+    const disableSaveBtn = useMemo(() => {
+        const searchReq = getSearchRequest(1);
+        const allSelectedCriteria = searchReq.countries.concat(searchReq.regions, searchReq.cities, searchReq.municipalities, searchReq.cpvs, searchReq.naces, searchReq.unspscs)
+
+        return props?.removeSearch && selectedResults?.length < 1 && allSelectedCriteria?.length === 0
+
+    }, [selectedResults, selectedMarketCriteria, selectedCPVValues, selectedNACValues, selectedUNSPValues]);
+
     const getGroupingCriteria = () => {
         return (
             <div className="gray-container pos-a" style={{ top: props?.sectionSearch ? 200 : 60, width: "47%" }}>
@@ -484,13 +683,13 @@ export default function Search(props) {
     const getCompanyInfoCriteria = () => {
         return (
             <div className="gray-container">
-                {getCriteriaHeader("Company Info.", "xxx", () => toggleOpenCriteria('CompanyInfo'), openCriteria.CompanyInfo)}
+                {getCriteriaHeader(t("Company Info"), "xxx", () => toggleOpenCriteria('CompanyInfo'), openCriteria.CompanyInfo)}
                 {openCriteria.CompanyInfo &&
                     <>
                         <div className="g-row">
                             <div className="g-col-6">
                                 <div className="g-row">
-                                    <div className="g-col-5 m-t-15">Registration date</div>
+                                    <div className="g-col-5 m-t-15">{t("Registration date")}</div>
                                     <div className="g-col-7">
                                         <DatePickerInput placeholder={'From Date'} value={selectedCompanyInfo.registrationFromDate} onChange={(date) => changeCompanyInfoData(date, 'registrationFromDate')} />
                                     </div>
@@ -509,7 +708,7 @@ export default function Search(props) {
                         <div className="g-row">
                             <div className="g-col-6">
                                 <div className="g-row">
-                                    <div className="g-col-5 m-t-5">Date of incorporation</div>
+                                    <div className="g-col-5 m-t-5">{t("Date of incorporation")}</div>
                                     <div className="g-col-7">
                                         <DatePickerInput placeholder={'From Date'} value={selectedCompanyInfo.incorpFromDate} onChange={(date) => changeCompanyInfoData(date, 'incorpFromDate')} />
                                     </div>
@@ -530,7 +729,7 @@ export default function Search(props) {
                                 <div className="g-row">
                                     <div className="g-col-5" />
                                     <div className="g-col-7">
-                                        {DropdownList({ placeholder: 'Number of employee', dataList: [], selectedList: [], setSelectedState: {}, criteriaName: "", keyName: "" })}
+                                        {DropdownList({ placeholder: t('Number of employee'), dataList: [], selectedList: [], setSelectedState: {}, criteriaName: "", keyName: "" })}
                                     </div>
                                 </div>
                             </div>
@@ -538,7 +737,7 @@ export default function Search(props) {
                                 <div className="g-row">
                                     <div className="g-col-5"></div>
                                     <div className="g-col-7">
-                                        {DropdownList({ placeholder: 'Organization type', dataList: [], selectedList: [], setSelectedState: {}, criteriaName: "", keyName: "" })}
+                                        {DropdownList({ placeholder: t('Organization type'), dataList: [], selectedList: [], setSelectedState: {}, criteriaName: "", keyName: "" })}
                                     </div>
                                 </div>
                             </div>
@@ -557,7 +756,7 @@ export default function Search(props) {
                                 <div className="g-row">
                                     <div className="g-col-5"></div>
                                     <div className="g-col-7">
-                                        {DropdownList({ placeholder: 'Organization id', dataList: [], selectedList: [], setSelectedState: {}, criteriaName: "", keyName: "" })}
+                                        {DropdownList({ placeholder: t('Organization id'), dataList: [], selectedList: [], setSelectedState: {}, criteriaName: "", keyName: "" })}
                                     </div>
                                 </div>
                             </div>
@@ -567,10 +766,10 @@ export default function Search(props) {
                             <div className="g-col-6">
                                 <div className="g-row">
                                     <div className="g-col-5 m-t-5">
-                                        Sector code institution
+                                        {t("Sector code institution")}
                                     </div>
                                     <div className="g-col-7">
-                                        {DropdownList({ placeholder: 'sector code list - select', dataList: [], selectedList: [], setSelectedState: {}, criteriaName: "", keyName: "" })}
+                                        {DropdownList({ placeholder: t('sector code list - select'), dataList: [], selectedList: [], setSelectedState: {}, criteriaName: "", keyName: "" })}
                                     </div>
                                 </div>
                             </div>
@@ -584,20 +783,20 @@ export default function Search(props) {
     const getMarketCriteria = () => {
         return (
             <div className="gray-container">
-                {getCriteriaHeader("Market Information", "xxx", () => toggleOpenCriteria('Market'), openCriteria.Market)}
+                {getCriteriaHeader(t("Market Information"), "xxx", () => toggleOpenCriteria('Market'), openCriteria.Market)}
                 {openCriteria.Market &&
                     <div className="g-row">
                         <div className="g-col-3">
-                            {DropdownList({ placeholder: 'Country', dataList: marketInformationData.countries, selectedList: selectedMarketCriteria, setSelectedState: setSelectedMarketCriteria, criteriaName: "selectedCountries", apiCalls: getRegionsData, keyName: "alpha3Code" })}
+                            {DropdownList({ placeholder: t('Country'), dataList: marketInformationData.countries, selectedList: selectedMarketCriteria, setSelectedState: setSelectedMarketCriteria, criteriaName: "selectedCountries", apiCalls: getRegionsData, keyName: "alpha3Code" })}
                         </div>
                         <div className="g-col-3">
-                            {DropdownList({ placeholder: 'Region', dataList: marketInformationData.regions, selectedList: selectedMarketCriteria, setSelectedState: setSelectedMarketCriteria, criteriaName: "selectedRegions", apiCalls: getMunicipalitiesData, keyName: "code" })}
+                            {DropdownList({ placeholder: t('Region'), dataList: marketInformationData.regions, selectedList: selectedMarketCriteria, setSelectedState: setSelectedMarketCriteria, criteriaName: "selectedRegions", apiCalls: getMunicipalitiesData, keyName: "code" })}
                         </div>
                         <div className="g-col-3">
-                            {DropdownList({ placeholder: 'Municipality', dataList: marketInformationData.municipalities, selectedList: selectedMarketCriteria, setSelectedState: setSelectedMarketCriteria, criteriaName: "selectedMunicipalities", apiCalls: getCityData, keyName: "code" })}
+                            {DropdownList({ placeholder: t('Municipality'), dataList: marketInformationData.municipalities, selectedList: selectedMarketCriteria, setSelectedState: setSelectedMarketCriteria, criteriaName: "selectedMunicipalities", apiCalls: getCityData, keyName: "code" })}
                         </div>
                         <div className="g-col-3">
-                            {DropdownList({ placeholder: 'City', dataList: marketInformationData.cities, selectedList: selectedMarketCriteria, setSelectedState: setSelectedMarketCriteria, criteriaName: "selectedCities", keyName: "code" })}
+                            {DropdownList({ placeholder: t('City'), dataList: marketInformationData.cities, selectedList: selectedMarketCriteria, setSelectedState: setSelectedMarketCriteria, criteriaName: "selectedCities", keyName: "code" })}
                         </div>
                     </div>
                 }
@@ -609,41 +808,41 @@ export default function Search(props) {
         return (
             <div className="g-col-12">
                 <div className="gray-container">
-                    {getCriteriaHeader("Product Groups (UNSPSC/ CPV Codes)", "xxx", () => toggleOpenCriteria('ProductGroups'), openCriteria.ProductGroups)}
+                    {getCriteriaHeader(t("Product Groups (UNSPSC/ CPV Codes)"), "xxx", () => toggleOpenCriteria('ProductGroups'), openCriteria.ProductGroups)}
                     {openCriteria.ProductGroups &&
                         <>
-                            <div className="m-t-5">UNSPSC Codes</div>
+                            <div className="m-t-5">{t("UNSPSC Codes")}</div>
                             <div className="g-row">
                                 <div className="g-col-3">
-                                    {Dropdown({ placeholder: 'Segmant', dataList: unspscData.segmant, dataName: 'title', selectedList: selectedUNSPValues, setSelectedState: setSelectedUNSPValues, selectedRows: selectedUNSPRows, setSelectedRows: setSelectedUNSPRows, apiCalls: getUnspscCodesData, codelevel: 1, keyName: "code" })}
+                                    {Dropdown({ placeholder: t('Segmant'), dataList: unspscData.segmant, dataName: 'title', selectedList: selectedUNSPValues, setSelectedState: setSelectedUNSPValues, selectedRows: selectedUNSPRows, setSelectedRows: setSelectedUNSPRows, apiCalls: getUnspscCodesData, codelevel: 1, keyName: "code" })}
                                 </div>
                                 <div className="g-col-3">
-                                    {Dropdown({ placeholder: 'Family', dataList: unspscData.family, dataName: 'title', selectedList: selectedUNSPValues, setSelectedState: setSelectedUNSPValues, selectedRows: selectedUNSPRows, setSelectedRows: setSelectedUNSPRows, apiCalls: getUnspscCodesData, codelevel: 2, keyName: "code" })}
+                                    {Dropdown({ placeholder: t('Family'), dataList: unspscData.family, dataName: 'title', selectedList: selectedUNSPValues, setSelectedState: setSelectedUNSPValues, selectedRows: selectedUNSPRows, setSelectedRows: setSelectedUNSPRows, apiCalls: getUnspscCodesData, codelevel: 2, keyName: "code" })}
                                 </div>
                                 <div className="g-col-2">
-                                    {Dropdown({ placeholder: 'Class', dataList: unspscData.unspClass, dataName: 'title', selectedList: selectedUNSPValues, setSelectedState: setSelectedUNSPValues, selectedRows: selectedUNSPRows, setSelectedRows: setSelectedUNSPRows, apiCalls: getUnspscCodesData, codelevel: 3, keyName: "code" })}
+                                    {Dropdown({ placeholder: t('Class'), dataList: unspscData.unspClass, dataName: 'title', selectedList: selectedUNSPValues, setSelectedState: setSelectedUNSPValues, selectedRows: selectedUNSPRows, setSelectedRows: setSelectedUNSPRows, apiCalls: getUnspscCodesData, codelevel: 3, keyName: "code" })}
                                 </div>
                                 <div className="g-col-4">
-                                    {Dropdown({ placeholder: 'Commodity Class', dataList: unspscData.comClass, dataName: 'title', selectedList: selectedUNSPValues, setSelectedState: setSelectedUNSPValues, selectedRows: selectedUNSPRows, setSelectedRows: setSelectedUNSPRows, codelevel: 4, keyName: "code" })}
+                                    {Dropdown({ placeholder: t('Commodity Class'), dataList: unspscData.comClass, dataName: 'title', selectedList: selectedUNSPValues, setSelectedState: setSelectedUNSPValues, selectedRows: selectedUNSPRows, setSelectedRows: setSelectedUNSPRows, codelevel: 4, keyName: "code" })}
                                 </div>
                             </div>
                             <SearchSelectedValues selectedValues={selectedUNSPValues} setSelectedValues={setSelectedUNSPValues} selectedRows={selectedUNSPRows} setSelectedRows={setSelectedUNSPRows} apiCalls={getUnspscCodesData} />
                             <div className="fl m-t-15">CPV Codes</div>
                             <div className="g-row">
                                 <div className="g-col-2">
-                                    {Dropdown({ placeholder: 'Division', dataList: cpvData.division, dataName: 'desscription', selectedList: selectedCPVValues, setSelectedState: setSelectedCPVValues, selectedRows: selectedCPVRows, setSelectedRows: setSelectedCPVRows, apiCalls: getcpvCodesData, codelevel: 1, keyName: "code" })}
+                                    {Dropdown({ placeholder: t('Division'), dataList: cpvData.division, dataName: 'desscription', selectedList: selectedCPVValues, setSelectedState: setSelectedCPVValues, selectedRows: selectedCPVRows, setSelectedRows: setSelectedCPVRows, apiCalls: getcpvCodesData, codelevel: 1, keyName: "code" })}
                                 </div>
                                 <div className="g-col-2">
-                                    {Dropdown({ placeholder: 'Group', dataList: cpvData.cpvGroup, dataName: 'desscription', selectedList: selectedCPVValues, setSelectedState: setSelectedCPVValues, selectedRows: selectedCPVRows, setSelectedRows: setSelectedCPVRows, apiCalls: getcpvCodesData, codelevel: 2, keyName: "code" })}
+                                    {Dropdown({ placeholder: t('Group'), dataList: cpvData.cpvGroup, dataName: 'desscription', selectedList: selectedCPVValues, setSelectedState: setSelectedCPVValues, selectedRows: selectedCPVRows, setSelectedRows: setSelectedCPVRows, apiCalls: getcpvCodesData, codelevel: 2, keyName: "code" })}
                                 </div>
                                 <div className="g-col-2">
-                                    {Dropdown({ placeholder: 'Class', dataList: cpvData.cpvClass, dataName: 'desscription', selectedList: selectedCPVValues, setSelectedState: setSelectedCPVValues, selectedRows: selectedCPVRows, setSelectedRows: setSelectedCPVRows, apiCalls: getcpvCodesData, codelevel: 3, keyName: "code" })}
+                                    {Dropdown({ placeholder: t('Class'), dataList: cpvData.cpvClass, dataName: 'desscription', selectedList: selectedCPVValues, setSelectedState: setSelectedCPVValues, selectedRows: selectedCPVRows, setSelectedRows: setSelectedCPVRows, apiCalls: getcpvCodesData, codelevel: 3, keyName: "code" })}
                                 </div>
                                 <div className="g-col-3">
-                                    {Dropdown({ placeholder: 'Category', dataList: cpvData.category, dataName: 'desscription', selectedList: selectedCPVValues, setSelectedState: setSelectedCPVValues, selectedRows: selectedCPVRows, setSelectedRows: setSelectedCPVRows, apiCalls: getcpvCodesData, codelevel: 4, keyName: "code" })}
+                                    {Dropdown({ placeholder: t('Category'), dataList: cpvData.category, dataName: 'desscription', selectedList: selectedCPVValues, setSelectedState: setSelectedCPVValues, selectedRows: selectedCPVRows, setSelectedRows: setSelectedCPVRows, apiCalls: getcpvCodesData, codelevel: 4, keyName: "code" })}
                                 </div>
                                 <div className="g-col-3">
-                                    {Dropdown({ placeholder: 'Sub Category', dataList: cpvData.subCategory, dataName: 'desscription', selectedList: selectedCPVValues, setSelectedState: setSelectedCPVValues, selectedRows: selectedCPVRows, setSelectedRows: setSelectedCPVRows, codelevel: 5, keyName: "code" })}
+                                    {Dropdown({ placeholder: t('Sub Category'), dataList: cpvData.subCategory, dataName: 'desscription', selectedList: selectedCPVValues, setSelectedState: setSelectedCPVValues, selectedRows: selectedCPVRows, setSelectedRows: setSelectedCPVRows, codelevel: 5, keyName: "code" })}
                                 </div>
                             </div>
                             <SearchSelectedValues selectedValues={selectedCPVValues} setSelectedValues={setSelectedCPVValues} selectedRows={selectedCPVRows} setSelectedRows={setSelectedCPVRows} apiCalls={getcpvCodesData} />
@@ -657,21 +856,21 @@ export default function Search(props) {
     const getProfessionCriteria = () => {
         return (
             <div className="gray-container">
-                {getCriteriaHeader("Profession (NACE Codes)", "xxx", () => toggleOpenCriteria('Profession'), openCriteria.Profession)}
+                {getCriteriaHeader(t("Profession (NACE Codes)"), "xxx", () => toggleOpenCriteria('Profession'), openCriteria.Profession)}
                 {openCriteria.Profession &&
                     <div>
                         <div className="g-row m-b-10">
                             <div className="g-col-3">
-                                {Dropdown({ placeholder: 'Section', dataList: professionData.section, dataName: 'desscription', selectedList: selectedNACValues, setSelectedState: setSelectedNACValues, selectedRows: selectedNACRows, setSelectedRows: setSelectedNACRows, apiCalls: getProfessionData, codelevel: 1, keyName: "code" })}
+                                {Dropdown({ placeholder: t('Section'), dataList: professionData.section, dataName: 'desscription', selectedList: selectedNACValues, setSelectedState: setSelectedNACValues, selectedRows: selectedNACRows, setSelectedRows: setSelectedNACRows, apiCalls: getProfessionData, codelevel: 1, keyName: "code" })}
                             </div>
                             <div className="g-col-3">
-                                {Dropdown({ placeholder: 'Division', dataList: professionData.divition, dataName: 'desscription', selectedList: selectedNACValues, setSelectedState: setSelectedNACValues, selectedRows: selectedNACRows, setSelectedRows: setSelectedNACRows, apiCalls: getProfessionData, codelevel: 2, keyName: "code" })}
+                                {Dropdown({ placeholder: t('Division'), dataList: professionData.divition, dataName: 'desscription', selectedList: selectedNACValues, setSelectedState: setSelectedNACValues, selectedRows: selectedNACRows, setSelectedRows: setSelectedNACRows, apiCalls: getProfessionData, codelevel: 2, keyName: "code" })}
                             </div>
                             <div className="g-col-3">
-                                {Dropdown({ placeholder: 'Group', dataList: professionData.profGroup, dataName: 'desscription', selectedList: selectedNACValues, setSelectedState: setSelectedNACValues, selectedRows: selectedNACRows, setSelectedRows: setSelectedNACRows, apiCalls: getProfessionData, codelevel: 3, keyName: "code" })}
+                                {Dropdown({ placeholder: t('Group'), dataList: professionData.profGroup, dataName: 'desscription', selectedList: selectedNACValues, setSelectedState: setSelectedNACValues, selectedRows: selectedNACRows, setSelectedRows: setSelectedNACRows, apiCalls: getProfessionData, codelevel: 3, keyName: "code" })}
                             </div>
                             <div className="g-col-3">
-                                {Dropdown({ placeholder: 'Class', dataList: professionData.profClass, dataName: 'desscription', selectedList: selectedNACValues, setSelectedState: setSelectedNACValues, selectedRows: selectedNACRows, setSelectedRows: setSelectedNACRows, codelevel: 4, keyName: "code" })}
+                                {Dropdown({ placeholder: t('Class'), dataList: professionData.profClass, dataName: 'desscription', selectedList: selectedNACValues, setSelectedState: setSelectedNACValues, selectedRows: selectedNACRows, setSelectedRows: setSelectedNACRows, codelevel: 4, keyName: "code" })}
                             </div>
                         </div>
                         <SearchSelectedValues selectedValues={selectedNACValues} setSelectedValues={setSelectedNACValues} selectedRows={selectedNACRows} setSelectedRows={setSelectedNACRows} apiCalls={getProfessionData} />
@@ -686,12 +885,12 @@ export default function Search(props) {
             <div className="g-row m-b-20">
                 <div className="g-col-4">
                     <input type="checkbox" className="check-box m-r-15" />
-                    {leftText}
+                    {t(leftText)}
                 </div>
                 <div className="g-col-4"></div>
                 <div className="g-col-4">
                     <input type="checkbox" className="check-box m-r-15" />
-                    {rightText}
+                    {t(rightText)}
                 </div>
             </div>
         )
@@ -700,15 +899,15 @@ export default function Search(props) {
     const getPeppolCriteria = () => {
         return (
             <div className="gray-container">
-                {getCriteriaHeader("Peppol Documents", "xxx", () => toggleOpenCriteria('Peppol'), openCriteria.Peppol)}
+                {getCriteriaHeader(t("Peppol Documents"), "xxx", () => toggleOpenCriteria('Peppol'), openCriteria.Peppol)}
                 {openCriteria.Peppol &&
                     <div>
-                        <div className="p-y-30">Peppol Documents Post award</div>
+                        <div className="p-y-30">{t("Peppol Documents Post award")}</div>
                         {getPeppolRow('Invoice & Credit notes:', 'Order confirmation')}
                         {getPeppolRow('Purchase Order', 'Packing slip')}
                         {getPeppolRow('Order Only', 'Catalogue')}
 
-                        <div className="n-float p-y-30">Peppol Documents Post award</div>
+                        <div className="n-float p-y-30">{t("Peppol Documents Post award")}</div>
                         {getPeppolRow('Proposals', 'A')}
                         {getPeppolRow('Catalogue', 'B')}
                         {getPeppolRow('Contracts', 'C')}
@@ -723,31 +922,35 @@ export default function Search(props) {
             <div className="g-col-6">
                 <div className="page-container m-r-0">
                     <form onSubmit={onShowResults}>
-                        <div className="g-row flex-center-middle m-b-15">
-                            <div className="search-bar g-col-10 m-r-10">
-                                <i className="search-btn icon-search" onClick={onShowResults}></i>
-                                <input type="text" onChange={handleSearch} value={searchText} placeholder="Search by Location, Product or Service" />
+                        {!props?.removeSearch &&
+                            <div className="g-row flex-center-middle m-b-15">
+                                <div className="search-bar g-col-10 m-r-10">
+                                    <i className="search-btn icon-search" onClick={onShowResults}></i>
+                                    <input type="text" onChange={handleSearch} value={searchText} placeholder={t("Search by Location, Product or Service")} />
+                                </div>
+                                <div className="g-col-2 g-row hover-hand">
+                                    <span className="fl g-col-6 m-r-10">English </span>
+                                    <span className="fl g-col-3"><img src={gb_flag} className="flag-image fl m-r-5" /></span>
+                                    <i className="g-col-1 icon-arrow-down fl" />
+                                </div>
                             </div>
-                            <div className="g-col-2 g-row hover-hand">
-                                <span className="fl g-col-6 m-r-10">English </span>
-                                <span className="fl g-col-3"><img src={gb_flag} className="flag-image a-row m-r-5" /></span>
-                                <i className="g-col-1 icon-arrow-down fl" />
-                            </div>
-                        </div>
-                        <h4>Narrow down your search by...</h4>
+                        }
+                        <h4>{t("Narrow down your search by...")}</h4>
                         {getCompanyInfoCriteria()}
                         {getMarketCriteria()}
                         {getProductGroupsCriteria()}
                         {getProfessionCriteria()}
                         {getPeppolCriteria()}
-                        <button className="primary-btn m-l-10" onClick={onShowResults} >Show Result</button>
-                        <button className="primary-btn" onClick={() => { changeActiveTab(NAVIGATION_PAGES.BUYER_SEARCHRESULTS) }} >View History</button>
+                        <button className="primary-btn m-l-10" onClick={onShowResults} >{props?.removeSearch ? t('Filter Results') : t('Show Result')}</button>
+                        {!props?.sectionSearch &&
+                            <button className="primary-btn" onClick={() => { changeActiveTab(NAVIGATION_PAGES.BUYER_SEARCHRESULTS) }} >{t("View History")}</button>
+                        }
                     </form>
                 </div>
             </div>
             <div className="g-col-6" style={{ height: '100%', paddingBottom: 10 }}>
                 <div className="page-container" style={{ height: '100%' }}>
-                    <div className="title-txt text-center">Results</div>
+                    <div className="title-txt text-center">{t("Results")}</div>
                     {getGroupingCriteria()}
                     {loading &&
                         <div className="loading">
@@ -757,16 +960,16 @@ export default function Search(props) {
                         </div>
                     }
                     {noSearchResults &&
-                        <div className="sub-title-txt text-center" >No Results</div>
+                        <div className="sub-title-txt text-center" >{t("No Results")}</div>
                     }
                     {Object.values(grouping).length !== 0 &&
                         <>
                             <div className={props?.sectionSearch ? 'section-search-results-container' : 'search-results-container'}>
                                 <div className="g-row">
-                                    <div className="g-col-4">Search Criteria</div>
-                                    <div className="g-col-2">Criteria Codes</div>
-                                    <div className="g-col-3">Criteria Name</div>
-                                    <div className="g-col-2">Companies</div>
+                                    <div className="g-col-4">{t("Search Criteria")}</div>
+                                    <div className="g-col-2">{t("Criteria Codes")}</div>
+                                    <div className="g-col-3">{t("Criteria Name")}</div>
+                                    <div className="g-col-2">{t("Companies")}</div>
 
                                 </div>
                                 {Object.entries(grouping).map(([key, value]) => {
@@ -810,16 +1013,22 @@ export default function Search(props) {
                     {organizations?.length > 0 &&
                         <>
                             <div className={props?.sectionSearch ? 'section-search-results-container' : 'search-results-container'}>
+                                {props.removeSearch &&
+                                    <div className="fr selectAll-checkbox">
+                                        Select All
+                                        <input type="checkbox" key={'SelectAllCheckBox2'} className="check-box m-l-20" onChange={onSelectAllCheckBox} />
+                                    </div>
+                                }
                                 {organizations.map(organization => {
                                     return (
                                         <div key={organization?.id} className="search-result-row g-row">
-                                            <div className="g-col-1"><img src={logo_thumb} className="logo-thumb" /></div>
-                                            <div className="g-col-4">{organization?.organizationName}</div>
-                                            <div className="g-col-3"><div>{organization?.businessAddr?.businessCountry ? organization.businessAddr.businessCountry : "No Country"}</div>
-                                                <div>{organization?.businessAddr?.city ? organization.businessAddr.city : "No City"}</div></div>
-                                            <div className="g-col-3"> <div>{organization?.secCode?.code ? organization.secCode.code : "No Sec Code"}</div>
-                                                <div>{organization?.secCode?.description ? organization.secCode.description : "No Description"}</div></div>
-                                            <div className="g-col-1"> <input type="checkbox" value={JSON.stringify(organization)} className="check-box" onChange={onCheckBox} /></div>
+                                            <div className="g-col-6"><div>{organization?.organizationName}</div>
+                                                <div>{organization?.businessAddr?.businessCountry || ""}</div></div>
+                                            <div className="g-col-6"><div>{organization?.organizationId}</div>
+                                                <div>{organization?.businessAddr?.city}</div></div>
+                                            {props.removeSearch &&
+                                                <div className="g-col-1"> <input type="checkbox" value={organization.organizationId} checked={selectedResults?.includes(organization.organizationId)} className="check-box" onChange={onCheckBox} /></div>
+                                            }
                                         </div>
                                     )
                                 })}
@@ -829,11 +1038,20 @@ export default function Search(props) {
                             </div>
                         </>
                     }
-                    <button className="primary-btn save-button" onClick={onSaveResults} >Save</button>
-                    <div className="hint-text" >Rows which are 'checked' will be saved</div>
+                    {props.removeSearch &&
+                        <button className="primary-btn remove-button" onClick={onShowResults} disabled={selectedResults?.length === 0} >{t("Remove")}</button>
+                    }
+                    <button className="primary-btn save-button" onClick={onSaveResults} disabled={disableSaveBtn} >{t(saveButtonText)}</button>
+                    {props.removeSearch &&
+                        <div className="hint-text" >{t("Rows which are 'checked' will be removed")}</div>
+                    }
+                    {(!props.removeSearch && props?.searchResults?.length > 0) &&
+                        <div className="hint-text" >{t("If you want to do a fresh search...")}</div>
+                    }
                 </div>
             </div>
             <Model visible={showModel} onCloseModel={onCloseModel} searchCriteria={searchText} />
         </>
     )
 }
+

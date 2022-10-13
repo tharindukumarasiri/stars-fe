@@ -8,6 +8,7 @@ import NavigationCard from "../../common/navigationCard";
 import { getOrganization, getAllNutsCountries } from "../../services/organizationsService";
 import UserSelectedFields from "./Components/userSelectedFields";
 import { FetchCurrentCompany } from "../../hooks/index";
+import { useTranslation } from "react-i18next";
 
 const { TabPane } = Tabs;
 
@@ -19,7 +20,7 @@ const Summary = () => {
     const [activeKey, setActiveKey] = useState('');
     const [nutsCodes, setNutsCodes] = useState(organizationData?.nuts?.find(lvl0Codes => lvl0Codes.code === selectedCountry?.code));
     const [selectedCompany] = FetchCurrentCompany()
-
+    const { t } = useTranslation();
     const onClickCard = (navigate = '') => {
         changeActiveTab(navigate)
     }
@@ -174,7 +175,7 @@ const Summary = () => {
         <>
             <div className="g-row m-l-10">
                 <i className="icon-summary header-icon m-t-10 m-r-15 fl" />
-                <h3 className="m-t-20">SUMMARY</h3>
+                <h3 className="m-t-20">{t("SUMMARY")}</h3>
             </div>
             <div className="page-container">
                 <div className="g-row">

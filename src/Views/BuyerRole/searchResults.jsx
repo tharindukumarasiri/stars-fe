@@ -1,64 +1,45 @@
-import React, { useEffect, useState, useMemo } from "react";
-import { Table } from 'antd';
+import React from "react";
+import { Table, message } from 'antd';
 import { searchResultsTableHeaders } from '../../utils/constants'
-import NavigationCard from '../../common/navigationCard'
-import { getSearchResultsByProjAndSec } from '../../services/organizationsService'
+import { deleteSearch } from '../../services/organizationsService'
 
 const SearchResults = (props) => {
-    const [tableView, setTableView] = useState(true);
-
-    const tableHeaders = useMemo(() => {
-        const headers = searchResultsTableHeaders.map(a => { return { ...a } })
-
-        headers.push({
-            title: '',
-            render: (_, record) => (
-                <>
-                    <button className="primary-btn table-button btn-disabled"><i className="icon-filter" />Purify</button> <br />
-                    <button className="primary-btn table-button" onClick={(e) => onUpdate(e, record)} > <i className="icon-update-search" />Update</button>
-                </>
-            )
-        })
-
-        return headers
-
-    }, [props.searchResults])
-
-    const onUpdate = (e, record) => {
+    const onDelete = (e) => {
         e.preventDefault();
-        props.onChangeTab("1", record);
+        deleteSearch(props?.searchResults[0]).then(() => {
+            if (props?.searchResults.length === 2) {
+                deleteSearch(props?.searchResults[1]).then(() => {
+                    message.success("Delete results successful")
+                    props.getSearchResults();
+                }).catch(() => {
+                    message.success("Delete results fail")
+                })
+            } else {
+                message.success("Delete results successful")
+                props.getSearchResults();
+            }
+        }).catch(() => {
+            message.success("Delete results fail")
+        })
     }
 
-    useEffect(() => {
-        getSearchResultsByProjAndSec(props.projectId, props.sectionId).then(data => {
-            props.setSearchResults(data)
-        })
-    }, []);
-
     return (
-        <>
-            {tableView ?
+        <div className="g-row">
+            <div className="g-col-10">
                 <Table
-                    rowKey={(record) => record.id}
+                    rowKey={(record) => record?.id}
                     dataSource={props.searchResults}
-                    columns={tableHeaders}
+                    columns={searchResultsTableHeaders}
                     pagination={false}
-
                 />
-
-                : <div className="g-row">
-                    {props.searchResults?.length > 0 ?
-                        props.searchResults.map((section, index) => {
-                            return (
-                                <div key={index}>
-                                    <NavigationCard name={section.name} cardColour={"bg-blue-purple"} value={section.id} />
-                                </div>
-                            )
-                        }) : null
-                    }
+            </div>
+            {props.searchResults.length > 0 &&
+                <div className="g-col-2">
+                    <div className="fr m-t-20 p-t-20">If you want to do a fresh search..</div>
+                    <button className="primary-btn m-r-20" onClick={(e) => onDelete(e)} >Delete this Result</button>
                 </div>
             }
-        </>
+        </div>
     )
 }
 

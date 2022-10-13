@@ -21,6 +21,7 @@ import { NAVIGATION_PAGES } from "../../utils/enums";
 import { getCompanyMembers } from "../../services/userService";
 import { FetchCurrentCompany } from "../../hooks";
 import moment from "moment";
+import { useTranslation } from "react-i18next";
 
 const { TabPane } = Tabs;
 
@@ -29,6 +30,7 @@ const ProjectDetails = ({ params }) => {
     const [status, setStatus] = useState(params.status);
     const [closedDate, setClosedDate] = useState(params.closedDate);
     const [sectionData, setSectionData] = useState([]);
+    const { t } = useTranslation();
 
     const changeStateOfProject = (e) => {
         const newProjectData = { ...params };
@@ -56,42 +58,42 @@ const ProjectDetails = ({ params }) => {
         <>
             <div className="g-row m-t-20 m-b-20 m-l-20">
                 <div className="g-col-3 fl body-text">
-                    Project ID: <strong>{params.operationId}</strong>
+                    {t("Project ID")}: <strong>{params.operationId}</strong>
                 </div>
                 <div className="g-col-3 fl body-text">
-                    Name: <strong>{params.name}</strong>
+                    {t("Name")}: <strong>{params.name}</strong>
                 </div>
             </div>
             <div className="custom-tab-container">
                 <Tabs type="card">
-                    <TabPane tab="GENERAL" key="1">
+                    <TabPane tab={t("GENERAL")} key="1">
                         <div className="g-row m-l-20 m-r-20 p-a-20">
                             <div className="g-col-2">
-                                <div className="body-text-bold">Type</div>
+                                <div className="body-text-bold">{t("Type")}</div>
                                 <div className="body-text">{params.type}</div>
                             </div>
                             <div className="g-col-2">
-                                <div className="body-text-bold">Description</div>
+                                <div className="body-text-bold">{t("Description")}</div>
                                 <div className="body-text">{params.description}</div>
                             </div>
                             <div className="g-col-2">
-                                <div className="body-text-bold">From Date</div>
+                                <div className="body-text-bold">{t("From Date")}</div>
                                 <div className="body-text m-b-20">{formatDate(params.fromDate)}</div>
-                                <div className="body-text-bold m-t-20 p-t-20">Due Date</div>
+                                <div className="body-text-bold m-t-20 p-t-20">{t("Due Date")}</div>
                                 <div className="body-text">{formatDate(params.toDate)}</div>
                             </div>
                             <div className="g-col-2">
-                                <div className="body-text-bold">Closed Date</div>
+                                <div className="body-text-bold">{t("Closed Date")}</div>
                                 <div className="body-text">{formatDate(closedDate)}</div>
                             </div>
                             <div className="g-col-2">
-                                <div className="body-text-bold">Permission Type</div>
+                                <div className="body-text-bold">{t("Permission Type")}</div>
                                 <div className="body-text m-b-20">{params.permission}</div>
-                                <div className="body-text-bold m-t-20 p-t-20">Responsible</div>
+                                <div className="body-text-bold m-t-20 p-t-20">{t("Responsible")}</div>
                                 <div className="body-text">{params.responsible}</div>
                             </div>
                             <div className="g-col-2">
-                                <div className="body-text-bold">Status</div>
+                                <div className="body-text-bold">{t("Status")}</div>
                                 <Dropdown
                                     values={["Open", "Close"]}
                                     onChange={changeStateOfProject}
@@ -102,7 +104,7 @@ const ProjectDetails = ({ params }) => {
                         </div>
                         <i className="icon-edit detail-edit-icon" onClick={() => setEditable((prev) => !prev)}></i>
                     </TabPane>
-                    <TabPane tab="SECTION" key="2">
+                    <TabPane tab={t("SECTION")} key="2">
                         <SectionView
                             projectName={params.name}
                             projectId={params.operationId}
@@ -113,7 +115,7 @@ const ProjectDetails = ({ params }) => {
                             projectStatus={status}
                         />
                     </TabPane>
-                    <TabPane tab="MEMBERS" key="3">
+                    <TabPane tab={t("MEMBERS")} key="3">
                         <MembersView
                             id={params.id}
                             sectionId={params.sections[0]?.id || ""}
@@ -141,6 +143,7 @@ const SectionView = (props) => {
         status: "",
     });
     const [editData, setEditData] = useState(false);
+    const { t } = useTranslation();
 
     useEffect(() => {
         getSections(props.id).then((data) => {
@@ -150,7 +153,7 @@ const SectionView = (props) => {
 
     const tableHeaders = useMemo(() => {
         const headers = sectionTableHeaders.map((a) => {
-            return { ...a };
+            return { ...a, title: t(a.title) };
         });
 
         headers.push({
@@ -267,7 +270,7 @@ const SectionView = (props) => {
     return (
         <div>
             <h3 className="icon-plus-circled hover-hand m-l-10" onClick={onAddSection}>
-                Add Section
+                {t("Add Section")}
             </h3>
             <Tooltip title="Tile View">
                 <i className="icon-tile-view grid-view-icon fr hover-hand" onClick={() => setTableView(false)}></i>
@@ -275,7 +278,7 @@ const SectionView = (props) => {
             <Tooltip title="Grid View">
                 <i className="icon-grid-view list-view-icon fr hover-hand" onClick={() => setTableView(true)}></i>
             </Tooltip>
-            <h3 className="p-t-20 m-b-20 m-l-10 fl">Sections List</h3>
+            <h3 className="p-t-20 m-b-20 m-l-10 fl">{t("Sections List")}</h3>
 
             {tableView ? (
                 <Table
@@ -311,18 +314,19 @@ const SectionView = (props) => {
                 </div>
             )}
             <Modal
-                title="Add Section"
+                title={t("Add Section")}
                 visible={modalVisible}
                 onOk={handleOk}
-                okText="Save"
+                okText={t("Save")}
                 onCancel={toggleModal}
+                cancelText={t("Cancel")}
                 centered={true}
                 width={1000}
             >
                 <div className="g-row">
                     <div className="g-col-6">
                         <Input
-                            placeholder="Name (Eg: Furniture, PC etc.,"
+                            placeholder="Name (Eg: Furniture, PC, etc...)"
                             value={newSectionData.name || ""}
                             onChange={(e) => onNewElementChange(e, "name")}
                         />
@@ -387,6 +391,8 @@ const MembersView = (props) => {
     const [text, setText] = useState("");
     const [selectedCompany] = FetchCurrentCompany();
 
+    const { t } = useTranslation();
+
     const getUsers = async () => {
         const response = await getCompanyMembers();
         setCompanyUsers(response || []);
@@ -410,7 +416,7 @@ const MembersView = (props) => {
 
     const tableHeaders = useMemo(() => {
         const headers = membersTableHeaders.map((a) => {
-            return { ...a };
+            return { ...a, title: t(a.title) };
         });
 
         headers.push({
@@ -480,35 +486,23 @@ const MembersView = (props) => {
     const handleOk = () => {
         const sectionIds = [];
         addMemberData.sections.map((val) => sectionIds.push(val.id));
+
+        if (!selectedUser || Object.keys(selectedUser).length === 0) {
+            message.warning("Please select a user");
+            return;
+        }
+
         const membersWithId = {
             ...addMemberData,
             sections: sectionIds,
-            name: selectedUser.value,
+            name: selectedUser?.value,
             fromDate: moment().toISOString(),
-            email: selectedUser.email,
+            email: selectedUser?.email,
             company: selectedCompany.name,
-            partyId: selectedUser.key,
+            partyId: selectedUser?.key,
         };
 
-        // addNewMember(props.id, props.sectionId, membersWithId)
-        //     .then(() => {
-        //         getAllMembers(props.id)
-        //             .then((result) => {
-        //                 setMembersData(result);
-        //                 setSelectedUser({})
-        //                 setAddMemberData({ sections: [], responsible: "", fromDate: "", toDate: "", name: "", partyId: "" });
-        //                 message.success("Add member successful");
-        //             })
-        //             .catch(() => {
-        //                 message.warning("Updated data fetch fail please reload");
-        //             });
-        //         toggleModal();
-        //     })
-        //     .catch(() => {
-        //         message.error("Add member failed please try again");
-        //     });
-
-        let member = membersData.find((m) => m.partyId === selectedUser.key);
+        let member = membersData.find((m) => m.partyId === selectedUser?.key);
         if (!member) {
             let members = [...membersData, membersWithId];
 
@@ -518,8 +512,9 @@ const MembersView = (props) => {
                         .then((result) => {
                             setMembersData(result);
                             setSelectedUser({});
+                            setText("");
                             setAddMemberData({ sections: [], responsible: "", fromDate: "", toDate: "", name: "", partyId: "", email: "" });
-                            message.success("Add member successful");
+                            message.success(t("Add member successful"));
                         })
                         .catch(() => {
                             message.warning("Updated data fetch fail please reload");
@@ -532,10 +527,6 @@ const MembersView = (props) => {
         } else {
             message.warning("Member already added");
         }
-    };
-
-    const onAddMemberDateChange = (date, elementName) => {
-        setAddMemberData({ ...addMemberData, [elementName]: date });
     };
 
     const onUserSelect = (value, option) => {
@@ -572,7 +563,7 @@ const MembersView = (props) => {
     return (
         <div>
             <h3 className="icon-plus-circled hover-hand m-l-10" onClick={addMember}>
-                Add Member
+                {t("Add Member")}
             </h3>
             <Tooltip title="Tile View">
                 <i className="icon-tile-view grid-view-icon fr hover-hand" onClick={() => setTableView(false)}></i>
@@ -580,7 +571,7 @@ const MembersView = (props) => {
             <Tooltip title="Grid View">
                 <i className="icon-grid-view list-view-icon fr hover-hand" onClick={() => setTableView(true)}></i>
             </Tooltip>
-            <h3 className="p-t-20 m-b-20 m-l-10 fl">Members List</h3>
+            <h3 className="p-t-20 m-b-20 m-l-10 fl">{t("Members List")}</h3>
 
             {tableView ? (
                 <Table
@@ -604,7 +595,7 @@ const MembersView = (props) => {
                     )}
                 </div>
             )}
-            <Modal title={"Add Member"} visible={modalVisible} onOk={handleOk} okText={"Add"} onCancel={toggleModal} centered={true}>
+            <Modal title={"Add Member"} visible={modalVisible} onOk={handleOk} okText={t("Add")} onCancel={toggleModal} cancelText={t("Cancel")} centered={true}>
                 <div className="g-row">
                     <AutoComplete
                         value={text}

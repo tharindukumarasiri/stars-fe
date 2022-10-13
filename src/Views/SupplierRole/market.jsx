@@ -7,6 +7,7 @@ import { getAllNutsCountries, getNutsCodes, getOrganization, updateNutsCodes } f
 import directional_sign from "../../assets/images/directional-sign.png";
 import CriteriaColorGuideTab from "./Components/criteriaColorGuideTab";
 import { FetchCurrentCompany } from "../../hooks/index";
+import { useTranslation } from "react-i18next";
 
 const { TabPane } = Tabs;
 
@@ -21,6 +22,7 @@ const Market = () => {
     const [expanded, setExpanded] = useState([]);
     const [nutsCodes, setNutsCodes] = useState(organizationData?.nuts?.find(lvl0Codes => lvl0Codes.code === selectedCountry?.code));
     const [selectedCompany] = FetchCurrentCompany();
+    const { t } = useTranslation();
 
     useEffect(() => {
         getAllNutsCountries().then(result => {
@@ -479,28 +481,28 @@ const Market = () => {
                             <YourMarketData />
                         </div>
                         <div className="g-col-2 text-center">
-                            <h3>How to update your Markets?</h3>
+                            <h3>{t("How to update your Markets?")}</h3>
                             <div className="flex-center-middle"><img src={directional_sign} alt='img' className="directional-img" /></div>
 
                             <div className="static-content-container-small text-left">
-                                <div className="body-text-bold  m-t-20">What are Markets?</div>
-                                <div className="body-text m-t-20">The markets are a good way to find your business in a location wise. You can update the locations of your business here. The locations can be saved according to your country’s administrative divisions. As an example, Norway has Counties, Regions and Municipalities</div>
+                                <div className="body-text-bold  m-t-20">{t("What are Markets?")}</div>
+                                <div className="body-text m-t-20">{t("The markets are a good way to find your business in a location wise. You can update the locations of your business here. The locations can be saved according to your country’s administrative divisions. As an example, Norway has Counties, Regions and Municipalities")}</div>
 
-                                <div className="body-text-bold  m-t-20 ">Why update Markets?</div>
-                                <div className="body-text">Your company will be listed on the "Star Search Engine," according to the market views you save, So that the others can know that your business is out there in their locations.</div>
+                                <div className="body-text-bold  m-t-20 ">{t("Why update Markets?")}</div>
+                                <div className="body-text">{t("Your company will be listed on the \"Star Search Engine,\" according to the market views you save, So that the others can know that your business is out there in their locations.")}</div>
 
-                                <div className="body-text-bold  m-t-20 ">How to update Market?</div>
-                                <div className="body-text">1. First, you have to select your country from the dropdown.</div>
-                                <div className="body-text">2. Then you can select values from dropdowns allocated according to the selected country.</div>
-                                <div className="body-text">3. According to the previously selected dropdown, the rest of the dropdowns will be drilled down.</div>
-                                <div className="body-text">4. You may remove markets by selecting “X” at the municipality level.</div>
-                                <div className="body-text">5. To save your work, choose "Update”. The Markets will be saved and you can view them.</div>
+                                <div className="body-text-bold  m-t-20 ">{t("How to update Market?")}</div>
+                                <div className="body-text">1. {t("First, you have to select your country from the dropdown.")}</div>
+                                <div className="body-text">2. {t("Then you can select values from dropdowns allocated according to the selected country.")}</div>
+                                <div className="body-text">3. {t("According to the previously selected dropdown, the rest of the dropdowns will be drilled down.")}</div>
+                                <div className="body-text">4. {t("You may remove markets by selecting “X” at the municipality level.")}</div>
+                                <div className="body-text">5. {t("To save your work, choose \"Update\". The Markets will be saved and you can view them.")}</div>
                             </div>
                         </div>
                     </div>
 
                 </div>
-                <button className="primary-btn update-btn" onClick={onUpdate} >Update</button>
+                <button className="primary-btn update-btn" onClick={onUpdate} >{t("Update")}</button>
             </>
         )
     }
@@ -512,7 +514,7 @@ const Market = () => {
                     <Dropdown values={countries} selected={JSON.stringify(selectedCountry)} dataName='name' keyName='code' onChange={(e) => onCountrySelect(e)} />
                 </div>
                 <div className="g-col-3 m-l-20 m-r-20">
-                    <div className="body-text">Country Code ( NUTS Level 0 )</div>
+                    <div className="body-text">{t("Country Code")} ( NUTS Level 0 )</div>
                     <div className="body-text-bold">{selectedCountry?.code}</div>
                 </div>
             </div>

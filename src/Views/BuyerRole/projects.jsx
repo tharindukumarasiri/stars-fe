@@ -11,6 +11,7 @@ import NavigationCard from "../../common/navigationCard"
 import { NAVIGATION_PAGES } from "../../utils/enums";
 import { TabContext } from "../../utils/contextStore";
 import EmptyTableView from "../../Views/SupplierRole/Components/emptyTableView";
+import { useTranslation } from "react-i18next";
 const { confirm } = Modal;
 
 const Projects = () => {
@@ -26,10 +27,10 @@ const Projects = () => {
     const [selectedContact, setSelectedContact] = useState(null);
     const [filterdContacts, setFilteredContacts] = useState([]);
     const [contactName, setContactName] = useState('');
+    const { t } = useTranslation();
 
     const tableHeaders = useMemo(() => {
-        const headers = projectScreenTableHeaders.map(a => { return { ...a } })
-
+        const headers = projectScreenTableHeaders.map(a => { return { ...a, title: t(a.title) } })
         headers.push({
             title: '',
             render: (_, record) => (
@@ -69,22 +70,22 @@ const Projects = () => {
 
     const showDeleteConfirm = (data) => {
         confirm({
-            title: <>Are you sure <strong className="red">delete</strong> this Project?</>,
+            title: <>{t("Are you sure")} <strong className="red">{t('delete')}</strong> {t("this Project?")}</>,
             icon: <ExclamationCircleOutlined />,
             content: <div>
-                <div className="body-text">All data will be lost on</div>
-                <div className="body-text">Project ID: <strong>{data.operationId}</strong></div>
-                <div className="body-text">Name: <strong>{data.name}</strong></div>
+                <div className="body-text">{t("All data will be lost on")}</div>
+                <div className="body-text">{t("Project ID")}: <strong>{data.operationId}</strong></div>
+                <div className="body-text">{t("Name")}: <strong>{data.name}</strong></div>
             </div>,
-            okText: 'Yes',
+            okText: t('Yes'),
             okType: 'danger',
-            cancelText: 'No',
+            cancelText: t('No'),
 
             onOk() {
                 deleteProject(data.id).then(() => {
                     getAllProjects().then(result => {
                         setProjectsData(result);
-                        message.success('Delete project successful');
+                        message.success(t('Delete project successful'));
                     }).catch(() => {
                         message.warning('Updated data fetch fail please reload');
                     })
@@ -192,14 +193,14 @@ const Projects = () => {
                     <div></div>
                 </div>
             }
-            <h3 className="icon-plus-circled hover-hand" onClick={toggleModal} >Create Project</h3>
+            <h3 className="icon-plus-circled hover-hand" onClick={toggleModal} >{t("Create Project")}</h3>
             <Tooltip title="Tile View">
                 <i className="icon-tile-view grid-view-icon fr hover-hand" onClick={() => setTableView(false)} ></i>
             </Tooltip>
             <Tooltip title="Grid View">
                 <i className="icon-grid-view list-view-icon fr hover-hand" onClick={() => setTableView(true)} ></i>
             </Tooltip>
-            <h3 className="p-t-20 m-b-20 fl">Projects List</h3>
+            <h3 className="p-t-20 m-b-20 fl">{t("Projects List")}</h3>
 
             {tableView ?
                 <Table
@@ -227,17 +228,18 @@ const Projects = () => {
                 </div>
             }
             <Modal
-                title="Create New Search Project"
+                title={t("Create New Search Project")}
                 visible={modalVisible}
                 onOk={handleOk}
-                okText='Save'
+                okText={t('Save')}
                 onCancel={toggleModal}
+                cancelText={t("Cancel")}
                 centered={true}
                 width={1000}
             >
                 <div className="g-row">
                     <div className="g-col-6">
-                        <Input placeholder="Name (Eg: Furniture, PC etc.," value={newProjectData.name || ''} onChange={(e) => onNewElementChange(e, 'name')} />
+                        <Input placeholder="Name (Eg: Furniture, PC, etc...)" value={newProjectData.name || ''} onChange={(e) => onNewElementChange(e, 'name')} />
                         <Dropdown values={['Resarch project', 'Procurement project']} onChange={(e) => onNewElementChange(e, 'type')} selected={newProjectData.type || ''} placeholder="Type" />
                         <Input lines={3} placeholder="Description" value={newProjectData.description || ''} onChange={(e) => onNewElementChange(e, 'description')} />
                         <Dropdown values={['Public', 'Private']} onChange={(e) => onNewElementChange(e, 'permission')} selected={newProjectData.permission || ''} placeholder="Permission Type" />
@@ -253,7 +255,7 @@ const Projects = () => {
                             onChange={onContactChange}
                             style={{ width: '100%', marginBottom: 10 }}
                             className='mb-2'
-                            placeholder="Responsible (Users for this Tenant)" />
+                            placeholder={t("Responsible (Users for this Tenant)")} />
                         <Dropdown values={['Open', 'Close']} onChange={(e) => onNewElementChange(e, 'status')} selected={newProjectData.status || ''} placeholder="Status" />
                     </div>
                 </div>

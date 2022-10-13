@@ -4,11 +4,9 @@ import { NAVIGATION_PAGES } from "../../utils/enums";
 import NavigationCard from "../../common/navigationCard";
 import TitleCard from "../../common/titleCard";
 import { useTranslation } from 'react-i18next'
-import { FetchCurrentCompany } from "../../hooks";
 
 export default function BuyerHome() {
     const { changeActiveTab } = useContext(TabContext);
-    const [selectedCompany] = FetchCurrentCompany();
     const { t } = useTranslation();
 
     const onClickCard = (navigate = "") => {
@@ -20,12 +18,11 @@ export default function BuyerHome() {
             <div className="g-row m-b-20">
                 <TitleCard title={"Buyer"} topIcon={"icon-buyer"} />
                 <div className="g-col-9 p-l-20">
-                    <h4> {selectedCompany ? selectedCompany.name : ""} </h4>
                     <h4>{t('Buyer Role Space')}</h4>
-                    <div>"Buyer" is a Role space, comes with several inbuilt functionalities.</div>
-                    <div>1- Search Engine : you can use the this to search for products or service providers</div>
-                    <div>2- Under Projects you can "Pick and link" search results to start a Project</div>
-                    <div>3- You can monitor the project you Started under "Operations Management"</div>
+                    <div>{t("\"Buyer\" is a Role space, comes with several inbuilt functionalities.")}</div>
+                    <div>{t("1- Search Engine : you can use the this to search for products or service providers")}</div>
+                    <div>{t("2- Under Projects you can \"Pick and link\" search results to start a Project")}</div>
+                    <div>{t("3- You can monitor the project you Started under \"Operations Management\"")}</div>
                 </div>
             </div>
             <div className="g-row">

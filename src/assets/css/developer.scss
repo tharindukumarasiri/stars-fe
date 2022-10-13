@@ -4,6 +4,18 @@
     color: black;
 }
 
+.fl {
+    float: left;
+}
+
+.fr {
+    float: right;
+}
+
+.n-float {
+    clear: left
+}
+
 .hover-hand {
     cursor: pointer;
 }
@@ -59,6 +71,11 @@
 
     &:hover {
         background-color: $dark-blue;
+    }
+
+    &:disabled {
+        background-color: $base-gray;
+        cursor: not-allowed;
     }
 }
 

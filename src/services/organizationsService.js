@@ -19,6 +19,11 @@ export async function searchOrganizationByUNSPSC(params) {
     return data;
 }
 
+export async function removeSearch(searchId, params) {
+    const { data } = await http.post(`${config.REMOVE_SEARCH}${searchId}`, params);
+    return data;
+}
+
 export async function getOrganization(id) {
     const { data } = await http.post(config.GET_ORGANIZATIONS, id, { headers: { 'Content-Type': 'application/json', } });
     return data;
@@ -39,6 +44,11 @@ export async function getSearchResultsByProjAndSec(proId, secId) {
 }
 export async function addNewSearchResult(params) {
     const { data } = await http.post(config.ADD_SEARCH_RESULT, params);
+    return data;
+}
+
+export async function deleteSearch(params) {
+    const { data } = await http.delete(config.DELETE_SEARCH, { data: params });
     return data;
 }
 

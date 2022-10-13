@@ -1,6 +1,9 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 
 const CriteriaColorGuideTab = ({ dataArr = [], containerStyle = '' }) => {
+    const { t } = useTranslation();
+
     let guideContainerStyle = 'color-guide-container '
     if (dataArr.length === 5) {
         guideContainerStyle = guideContainerStyle + 'g-col-2 '
@@ -30,7 +33,7 @@ const CriteriaColorGuideTab = ({ dataArr = [], containerStyle = '' }) => {
             {dataArr.map((item, index) => {
                 return (
                     <div className={getColor(index)} key={index}>
-                        <div className="h3-semi text-center" >{item}</div>
+                        <div className="h3-semi text-center" >{t(item)}</div>
                     </div>
                 )
             })

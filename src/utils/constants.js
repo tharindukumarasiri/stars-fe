@@ -199,10 +199,6 @@ export const membersTableHeaders = [
 
 export const searchResultsTableHeaders = [
     {
-        title: 'Search ID',
-        dataIndex: 'id',
-    },
-    {
         title: 'Date',
         dataIndex: 'createdDate',
         render: (_, { createdDate }) => (
@@ -215,19 +211,27 @@ export const searchResultsTableHeaders = [
             <div className="g-col-4">Criteria Codes</div>
             <div className="g-col-4">Criteria Name</div>
         </div>,
-        dataIndex: 'searchFilter',
-        render: (_, { searchFilter }) => (
+        dataIndex: ['searchFilter', 'removeCriteria', 'parentSearchId'],
+        render: (_, { searchFilter, removeCriteria, parentSearchId }) => (
             <>
                 {
-                    searchFilter.countries.length > 0 &&
+                    (searchFilter.countries.length > 0 || removeCriteria?.countries?.length > 0) &&
                     <div className="g-row m-b-5 table-separate">
-                        <div className="blue g-col-4" >Country</div>
+                        <div className={searchFilter.countries.length === 0 || parentSearchId ? "red g-col-4" : "blue g-col-4"} >Country</div>
                         <div className="g-col-8">
                             {searchFilter.countries.map((country, index) => {
                                 return (
                                     <div key={index}>
-                                        <div className="blue g-col-6" >XXX</div>
-                                        <div className="blue g-col-6" >{country}</div>
+                                        <div className={parentSearchId ? "red g-col-6" : "blue g-col-6"} >XXX</div>
+                                        <div className={parentSearchId ? "red g-col-6" : "blue g-col-6"} >{country}</div>
+                                    </div>
+                                )
+                            })}
+                            {removeCriteria?.countries?.map((country, index) => {
+                                return (
+                                    <div key={index}>
+                                        <div className="red g-col-6" >XXX</div>
+                                        <div className="red g-col-6" >{country}</div>
                                     </div>
                                 )
                             })}
@@ -235,15 +239,23 @@ export const searchResultsTableHeaders = [
                     </div>
                 }
                 {
-                    searchFilter.regions.length > 0 &&
+                    (searchFilter.regions.length > 0 || removeCriteria?.regions?.length > 0) &&
                     <div className="g-row m-b-5 table-separate">
-                        <div className="blue g-col-4" >Region</div>
+                        <div className={searchFilter.regions.length === 0 || parentSearchId ? "red g-col-4" : "blue g-col-4"} >Region</div>
                         <div className="g-col-8">
                             {searchFilter.regions.map((region, index) => {
                                 return (
                                     <div key={index}>
-                                        <div className="blue g-col-6" >XXX</div>
-                                        <div className="blue g-col-6" >{region}</div>
+                                        <div className={parentSearchId ? "red g-col-6" : "blue g-col-6"} >XXX</div>
+                                        <div className={parentSearchId ? "red g-col-6" : "blue g-col-6"} >{region}</div>
+                                    </div>
+                                )
+                            })}
+                            {removeCriteria?.regions?.map((region, index) => {
+                                return (
+                                    <div key={index}>
+                                        <div className="red g-col-6" >XXX</div>
+                                        <div className="red g-col-6" >{region}</div>
                                     </div>
                                 )
                             })}
@@ -251,15 +263,23 @@ export const searchResultsTableHeaders = [
                     </div>
                 }
                 {
-                    searchFilter.cities.length > 0 &&
+                    (searchFilter.cities.length > 0 || removeCriteria?.cities?.length > 0) &&
                     <div className="g-row m-b-5 table-separate">
-                        <div className="blue g-col-4" >City</div>
+                        <div className={searchFilter.cities.length === 0 || parentSearchId ? "red g-col-4" : "blue g-col-4"} >City</div>
                         <div className="g-col-8">
                             {searchFilter.cities.map((city, index) => {
                                 return (
                                     <div key={index}>
-                                        <div className="blue g-col-6" >XXX</div>
-                                        <div className="blue g-col-6" >{city}</div>
+                                        <div className={parentSearchId ? "red g-col-6" : "blue g-col-6"} >XXX</div>
+                                        <div className={parentSearchId ? "red g-col-6" : "blue g-col-6"} >{city}</div>
+                                    </div>
+                                )
+                            })}
+                            {removeCriteria?.cities?.map((city, index) => {
+                                return (
+                                    <div key={index}>
+                                        <div className="red g-col-6" >XXX</div>
+                                        <div className="red g-col-6" >{city}</div>
                                     </div>
                                 )
                             })}
@@ -267,15 +287,23 @@ export const searchResultsTableHeaders = [
                     </div>
                 }
                 {
-                    searchFilter.municipalities.length > 0 &&
+                    (searchFilter.municipalities.length > 0 || removeCriteria?.municipalities?.length > 0) &&
                     <div className="g-row m-b-5 table-separate">
-                        <div className="blue g-col-4" >Municipality</div>
+                        <div className={searchFilter.municipalities.length === 0 || parentSearchId ? "red g-col-4" : "blue g-col-4"} >Municipality</div>
                         <div className="g-col-8">
                             {searchFilter.municipalities.map((municipality, index) => {
                                 return (
                                     <div key={index}>
-                                        <div className="blue g-col-6" >XXX</div>
-                                        <div className="blue g-col-6" >{municipality}</div>
+                                        <div className={parentSearchId ? "red g-col-6" : "blue g-col-6"} >XXX</div>
+                                        <div className={parentSearchId ? "red g-col-6" : "blue g-col-6"} >{municipality}</div>
+                                    </div>
+                                )
+                            })}
+                            {removeCriteria?.municipalities?.map((municipality, index) => {
+                                return (
+                                    <div key={index}>
+                                        <div className="red g-col-6" >XXX</div>
+                                        <div className="red g-col-6" >{municipality}</div>
                                     </div>
                                 )
                             })}
@@ -283,15 +311,23 @@ export const searchResultsTableHeaders = [
                     </div>
                 }
                 {
-                    searchFilter.cpvs.length > 0 &&
+                    (searchFilter.cpvs.length > 0 || removeCriteria?.cpvs?.length > 0) &&
                     <div className="g-row m-b-5 table-separate">
-                        <div className="blue g-col-4" >CPV</div>
+                        <div className={searchFilter.cpvs.length === 0 || parentSearchId ? "red g-col-4" : "blue g-col-4"} >CPV</div>
                         <div className="g-col-8">
                             {searchFilter.cpvs.map((cpv, index) => {
                                 return (
                                     <div key={index}>
-                                        <div className="blue g-col-6" >{cpv}</div>
-                                        <div className="blue g-col-6" >XXX</div>
+                                        <div className={parentSearchId ? "red g-col-6" : "blue g-col-6"} >{cpv}</div>
+                                        <div className={parentSearchId ? "red g-col-6" : "blue g-col-6"} >XXX</div>
+                                    </div>
+                                )
+                            })}
+                            {removeCriteria?.cpvs?.map((cpv, index) => {
+                                return (
+                                    <div key={index}>
+                                        <div className="red g-col-6" >{cpv}</div>
+                                        <div className="red g-col-6" >XXX</div>
                                     </div>
                                 )
                             })}
@@ -299,15 +335,23 @@ export const searchResultsTableHeaders = [
                     </div>
                 }
                 {
-                    searchFilter.naces.length > 0 &&
+                    (searchFilter.naces.length > 0 || removeCriteria?.naces?.length > 0) &&
                     <div className="g-row m-b-5 table-separate">
-                        <div className="blue g-col-4" >NACE</div>
+                        <div className={searchFilter.naces.length === 0 || parentSearchId ? "red g-col-4" : "blue g-col-4"} >NACE</div>
                         <div className="g-col-8">
                             {searchFilter.naces.map((nace, index) => {
                                 return (
                                     <div key={index}>
-                                        <div className="blue g-col-6" >{nace}</div>
-                                        <div className="blue g-col-6" >XXX</div>
+                                        <div className={parentSearchId ? "red g-col-6" : "blue g-col-6"} >{nace}</div>
+                                        <div className={parentSearchId ? "red g-col-6" : "blue g-col-6"} >XXX</div>
+                                    </div>
+                                )
+                            })}
+                            {removeCriteria?.naces?.map((nace, index) => {
+                                return (
+                                    <div key={index}>
+                                        <div className="red g-col-6" >{nace}</div>
+                                        <div className="red g-col-6" >XXX</div>
                                     </div>
                                 )
                             })}
@@ -315,19 +359,32 @@ export const searchResultsTableHeaders = [
                     </div>
                 }
                 {
-                    searchFilter.unspscs.length > 0 &&
+                    (searchFilter.unspscs.length > 0 || removeCriteria?.unspscs?.length > 0) &&
                     <div className="g-row m-b-5 table-separate">
-                        <div className="blue g-col-4" >UNSPSC</div>
+                        <div className={searchFilter.unspscs.length === 0 || parentSearchId ? "red g-col-4" : "blue g-col-4"} >UNSPSC</div>
                         <div className="g-col-8">
                             {searchFilter.unspscs.map((unspsc, index) => {
                                 return (
                                     <div key={index}>
-                                        <div className="blue g-col-6" >{unspsc}</div>
-                                        <div className="blue g-col-6" >XXX</div>
+                                        <div className={parentSearchId ? "red g-col-6" : "blue g-col-6"} >{unspsc}</div>
+                                        <div className={parentSearchId ? "red g-col-6" : "blue g-col-6"} >XXX</div>
+                                    </div>
+                                )
+                            })}
+                            {removeCriteria?.unspscs?.map((unspsc, index) => {
+                                return (
+                                    <div key={index}>
+                                        <div className="red g-col-6" >{unspsc}</div>
+                                        <div className="red g-col-6" >XXX</div>
                                     </div>
                                 )
                             })}
                         </div>
+                    </div>
+                }
+                {removeCriteria?.organizationIds?.length > 0 &&
+                    <div>
+                        <div className="red g-col-6" >{`Removed organization count: ${removeCriteria.organizationIds.length}`}</div>
                     </div>
                 }
             </>
@@ -359,4 +416,29 @@ export const searchResultsTableHeaders = [
     //         </>
     //     ),
     // },
+];
+
+export const searchResultsListTableHeaders = [
+    {
+        title: 'Company Name',
+        dataIndex: 'organizationName',
+    },
+    {
+        title: 'Organisation ID',
+        dataIndex: 'organizationId',
+    },
+    {
+        title: 'Country',
+        dataIndex: 'businessAddr',
+        render: (_, { businessAddr }) => (
+            businessAddr?.businessCountry
+        ),
+    },
+    {
+        title: 'City',
+        dataIndex: 'businessAddr',
+        render: (_, { businessAddr }) => (
+            businessAddr?.city
+        ),
+    },
 ];
