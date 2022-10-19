@@ -23,7 +23,7 @@ const SearchResultsList = (props) => {
     }, [props]);
 
     const getRemovalRequest = (pageNumber) => {
-        const searchResultsSet = props?.searchResults[props?.searchResults?.length - 1]
+        const searchResultsSet = props?.searchResults[0]
         return ({
             "searchCriteria": {
                 "name": searchResultsSet?.searchFilter.name || "",
@@ -84,6 +84,7 @@ const SearchResultsList = (props) => {
                     <div></div>
                 </div>
             }
+            <div className="h1">{`Total Companies: ${pageCount}`}</div>
             <Table
                 rowKey={(record) => record?.id}
                 dataSource={organizations}

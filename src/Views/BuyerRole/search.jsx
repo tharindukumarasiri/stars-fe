@@ -21,6 +21,8 @@ import {
     searchOrganizationByUNSPSC,
     removeSearch,
     deleteSearch,
+    removeSearchAccumulateCpv,
+    removeSearchAccumulateNace,
 } from "../../services/organizationsService";
 import DropdownList from "./Components/dropdownList"
 import Dropdown from "./Components/dropdown";
@@ -296,14 +298,62 @@ export default function Search(props) {
     }
 
     const callremoveOrganization = (pageNo) => {
-        removeSearch(props.searchResults[0].id, getRemovalRequest(pageNo)).then(result => {
-            setLoading(false);
-            setOrganizations(result.organizations);
-            setPageCount(result.total);
-        }).catch(error => {
-            noSearchResults = true;
-            setLoading(false);
-        });
+        switch (selectedGrouping.accumulation) {
+            case '':
+            case 'None':
+                removeSearch(props.searchResults[0].id, getRemovalRequest(pageNo)).then(result => {
+                    setLoading(false);
+                    setOrganizations(result.organizations);
+                    setPageCount(result.total);
+                }).catch(error => {
+                    noSearchResults = true;
+                    setLoading(false);
+                });
+                break;
+            case 'CPV Code':
+                removeSearchAccumulateCpv(props.searchResults[0].id, getRemovalRequest(pageNo)).then(result => {
+                    setLoading(false);
+                    setGrouping(convertStringObject(result.grouping));
+                    setOrganizations(result.organizations);
+                    setPageCount(result.total);
+                }).catch(error => {
+                    noSearchResults = true;
+                    setLoading(false);
+                });
+                break;
+            case 'NACE Code':
+                removeSearchAccumulateNace(props.searchResults[0].id, getRemovalRequest(pageNo)).then(result => {
+                    setLoading(false);
+                    setGrouping(convertStringObject(result.grouping));
+                    setOrganizations(result.organizations);
+                    setPageCount(result.total);
+                }).catch(error => {
+                    noSearchResults = true;
+                    setLoading(false);
+                });
+                break;
+            case 'UNSPSC Code':
+                // searchOrganizationByUNSPSC(getSearchRequest(pageNo)).then(result => {
+                //     setLoading(false);
+                //     setGrouping(convertStringObject(result.grouping));
+                //     setOrganizations(result.organizations);
+                //     setPageCount(result.total);
+                // }).catch(error => {
+                //     noSearchResults = true;
+                //     setLoading(false);
+                // });
+                break;
+            default:
+                removeSearch(props.searchResults[0].id, getRemovalRequest(pageNo)).then(result => {
+                    setLoading(false);
+                    setOrganizations(result.organizations);
+                    setPageCount(result.total);
+                }).catch(error => {
+                    noSearchResults = true;
+                    setLoading(false);
+                });
+                break;
+        }
     }
 
     const callSearchOrganization = (pageNo) => {
@@ -1014,10 +1064,16 @@ export default function Search(props) {
                         <>
                             <div className={props?.sectionSearch ? 'section-search-results-container' : 'search-results-container'}>
                                 {props.removeSearch &&
-                                    <div className="fr selectAll-checkbox">
-                                        Select All
-                                        <input type="checkbox" key={'SelectAllCheckBox2'} className="check-box m-l-20" onChange={onSelectAllCheckBox} />
-                                    </div>
+                                    <>
+                                        <div className="fr selectAll-checkbox">
+                                            Select Page
+                                            <input type="checkbox" key={'SelectAllCheckBox2'} className="check-box m-l-20" onChange={onSelectAllCheckBox} />
+                                        </div>
+                                        <div className="fr selectAll-checkbox">
+                                            Select All Records
+                                            <input type="checkbox" key={'SelectAllCheckBox2'} className="check-box m-l-20" onChange={() => { }} />
+                                        </div>
+                                    </>
                                 }
                                 {organizations.map(organization => {
                                     return (

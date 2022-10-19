@@ -24,6 +24,16 @@ export async function removeSearch(searchId, params) {
     return data;
 }
 
+export async function removeSearchAccumulateCpv(searchId, params) {
+    const { data } = await http.post(`${config.REMOVE_SEARCH_ACCUMULATE_CPV}${searchId}`, params);
+    return data;
+}
+
+export async function removeSearchAccumulateNace(searchId, params) {
+    const { data } = await http.post(`${config.REMOVE_SEARCH_ACCUMULATE_NACE}${searchId}`, params);
+    return data;
+}
+
 export async function getOrganization(id) {
     const { data } = await http.post(config.GET_ORGANIZATIONS, id, { headers: { 'Content-Type': 'application/json', } });
     return data;
