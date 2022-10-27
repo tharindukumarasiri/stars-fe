@@ -50,3 +50,9 @@ h1, .h1 {
 .k-button {
     background-image:none !important;
 }
+
+.btn-info {
+    color: $white;
+    background-color: $theme !important;
+    border-color: transparent;
+}

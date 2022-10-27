@@ -82,7 +82,7 @@ export default function Search(props) {
 
     useEffect(() => {
         if (props?.removeSearch && props?.searchResults?.length > 0) {
-            const searchResultsSet = props?.searchResults[props?.searchResults?.length - 1]
+            const searchResultsSet = props?.searchResults[0]
 
             setLoading(true);
             const removalReq = {
@@ -99,7 +99,7 @@ export default function Search(props) {
                     "pageNo": 1,
                 },
                 "removeCritieria": {
-                    "organizationIds": searchResultsSet?.removeCriteria?.organizationIds || null
+                    "organizationIds": props?.searchResults[1]?.removeCriteria?.organizationIds || null
                 }
             }
 
@@ -1140,7 +1140,7 @@ export default function Search(props) {
                         </>
                     }
                     {props.removeSearch &&
-                        <button className="primary-btn remove-button" onClick={onShowResults} disabled={selectedResults?.length === 0 && !removeAllResultsChecked} >{t("Remove")}</button>
+                        <button className="primary-btn remove-button m-r-20" onClick={onShowResults} disabled={selectedResults?.length === 0 && !removeAllResultsChecked} >{t("Remove")}</button>
                     }
                     <button className="primary-btn save-button" onClick={onSaveResults} disabled={disableSaveBtn} >{t(saveButtonText)}</button>
                     {props.removeSearch &&

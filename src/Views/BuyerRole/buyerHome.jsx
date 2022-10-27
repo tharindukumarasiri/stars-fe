@@ -19,10 +19,8 @@ export default function BuyerHome() {
                 <TitleCard title={"Buyer"} topIcon={"icon-buyer"} />
                 <div className="g-col-9 p-l-20">
                     <h4>{t('Buyer Role Space')}</h4>
-                    <div>{t("\"Buyer\" is a Role space, comes with several inbuilt functionalities.")}</div>
-                    <div>{t("1- Search Engine : you can use the this to search for products or service providers")}</div>
-                    <div>{t("2- Under Projects you can \"Pick and link\" search results to start a Project")}</div>
-                    <div>{t("3- You can monitor the project you Started under \"Operations Management\"")}</div>
+                    <div>"Buyer" is a Role space, comes with several functionalities.</div>
+                    <div>Buyers are always looking for sellers and suppliers. As a buyer, you want to buy the best from the nearest at the lowest cost. To find that, you need better options in searching for sellers and suppliers. As the STAR Digital Centre, we have worked to give you the best search engine for this. Not only we give you a search engine, but also, we provide you space to keep your search queries saved in projects so that you can reach the suppliers at any time you want.</div>
                 </div>
             </div>
             <div className="g-row">

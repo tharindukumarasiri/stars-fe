@@ -1,9 +1,9 @@
 ﻿@import 'colors.scss';
+@import 'variables.scss';
+@import 'buttons.scss';
 @import 'tooltip.scss';
 @import 'grid.scss';
-@import 'variables.scss';
 @import 'radio-checkbox';
-
 @import 'tab-stripes.scss';
 @import 'elements.scss';
 @import 'utilities.scss';
@@ -20,6 +20,14 @@
 @import 'typo.scss';
 @import 'custom-scroll.scss';
 
+
+*, *:before, *:after {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
 
 
 
@@ -75,19 +83,16 @@ html, body {
     background-color: $body-color;
 }
 
-
-
-
-
 .main {
     height: 100%;
-    margin-top: 40px;
-    padding: 10px 0 0 9px;
-    display: inline-table;
-    margin-left: 40px;
+    width: 100%;
+    margin-top: 44px;
+    margin-bottom: 10px;
+    margin-left: 44px;
+    padding-right: 38px;
 }
 
-
+.content-pane{padding:4px}
 .left-menu-icon {
     margin-right: 5px;
     float: left;
@@ -233,7 +238,7 @@ ul.custom-button-list {
     color: #919293;
     box-sizing: border-box;
     display: block;
-    font-size: .7em;
+    font-size: .8em;
     line-height: 1;
     opacity: 0;
     overflow: hidden;
@@ -348,8 +353,8 @@ ul.custom-button-list {
     }
 }
 // home page
-.home-img-wrapper {
-    min-height: 350px
+.main-img-wrapper {
+    min-height: 400px
 }
 
 .home-img {
@@ -383,9 +388,10 @@ ul.custom-button-list {
     transition: all .2s ease-in-out;
 
     img {
-        width: 72px;
+        width: 40px;
         height: auto
     }
+    i{font-size:3em}
 }
 .star-4-logos:hover {
     transform: scale(1.06);
@@ -398,3 +404,72 @@ ul.custom-button-list {
     }
 }
 
+.scroll-to {
+    position: fixed;
+    bottom: 0;
+    width: 100px;
+    left: 50%;
+    margin-left: -50px;
+  
+    .scroll-down {
+        border: 2px solid $theme;
+        border-radius: 20px;
+        bottom: 12px;
+        height: 50px;
+        left: 0;
+        margin: 0 auto;
+        position: absolute;
+        right: 0;
+        width: 30px;
+        cursor:pointer;
+    }
+
+    .scroll-down::before {
+        animation: scrollDownAnimation 2s infinite;
+        background-color: $theme;
+        border-radius: 100%;
+        content: '';
+        height: 6px;
+        left: 0;
+        margin: 0 auto;
+        position: absolute;
+        right: 0;
+        top: 10px;
+        width: 6px;
+    }
+
+    @-moz-keyframes scrollDownAnimation {
+        0% {opacity: 0; transform: translate(0, 0);}
+        40% { opacity: 1; }
+        80% { opacity: 0;transform: translate(0, 20px); }
+        100% { opacity: 0;}
+    }
+
+    @-webkit-keyframes scrollDownAnimation {
+        0% {opacity: 0;transform: translate(0, 0); }
+        40% { opacity: 1; }
+        80% {opacity: 0; transform: translate(0, 20px);  }
+        100% {opacity: 0; }
+    }
+
+    @-o-keyframes scrollDownAnimation {
+        0% { opacity: 0;transform: translate(0, 0);  }
+        40% { opacity: 1; }
+        80% {opacity: 0; transform: translate(0, 20px); }
+        100% {opacity: 0; }
+    }
+
+    @keyframes scrollDownAnimation {
+        0% { opacity: 0; transform: translate(0, 0);}
+        40% {opacity: 1; }
+        80% { opacity: 0; transform: translate(0, 20px); }
+        100% {opacity: 0; }
+    }
+}
+
+.star-digital-skyline {
+    width: 100%;
+    background: url("/Client/Boot/assets/images/star-digital-skyline.png") repeat-X left top;
+    height: 400px;
+    background-size: cover;
+}
