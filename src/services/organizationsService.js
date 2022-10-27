@@ -24,6 +24,11 @@ export async function removeSearch(searchId, params) {
     return data;
 }
 
+export async function removeAllOrganizationIds(params) {
+    const { data } = await http.post(config.REMOVE_ALL_ORG_IDS, params);
+    return data;
+}
+
 export async function removeSearchAccumulateCpv(searchId, params) {
     const { data } = await http.post(`${config.REMOVE_SEARCH_ACCUMULATE_CPV}${searchId}`, params);
     return data;

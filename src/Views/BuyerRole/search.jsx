@@ -23,6 +23,7 @@ import {
     deleteSearch,
     removeSearchAccumulateCpv,
     removeSearchAccumulateNace,
+    removeAllOrganizationIds,
 } from "../../services/organizationsService";
 import DropdownList from "./Components/dropdownList"
 import Dropdown from "./Components/dropdown";
@@ -65,6 +66,7 @@ export default function Search(props) {
     const [loading, setLoading] = useState(false)
 
     const [selectedResults, setSelectedResults] = useState([]);
+    const [removeAllResultsChecked, setRemoveAllResultsChecked] = useState(false);
 
     const [showModel, setShowModel] = useState(false);
     const { t } = useTranslation();
@@ -298,62 +300,129 @@ export default function Search(props) {
     }
 
     const callremoveOrganization = (pageNo) => {
-        switch (selectedGrouping.accumulation) {
-            case '':
-            case 'None':
-                removeSearch(props.searchResults[0].id, getRemovalRequest(pageNo)).then(result => {
-                    setLoading(false);
-                    setOrganizations(result.organizations);
-                    setPageCount(result.total);
-                }).catch(error => {
-                    noSearchResults = true;
-                    setLoading(false);
-                });
-                break;
-            case 'CPV Code':
-                removeSearchAccumulateCpv(props.searchResults[0].id, getRemovalRequest(pageNo)).then(result => {
-                    setLoading(false);
-                    setGrouping(convertStringObject(result.grouping));
-                    setOrganizations(result.organizations);
-                    setPageCount(result.total);
-                }).catch(error => {
-                    noSearchResults = true;
-                    setLoading(false);
-                });
-                break;
-            case 'NACE Code':
-                removeSearchAccumulateNace(props.searchResults[0].id, getRemovalRequest(pageNo)).then(result => {
-                    setLoading(false);
-                    setGrouping(convertStringObject(result.grouping));
-                    setOrganizations(result.organizations);
-                    setPageCount(result.total);
-                }).catch(error => {
-                    noSearchResults = true;
-                    setLoading(false);
-                });
-                break;
-            case 'UNSPSC Code':
-                // searchOrganizationByUNSPSC(getSearchRequest(pageNo)).then(result => {
-                //     setLoading(false);
-                //     setGrouping(convertStringObject(result.grouping));
-                //     setOrganizations(result.organizations);
-                //     setPageCount(result.total);
-                // }).catch(error => {
-                //     noSearchResults = true;
-                //     setLoading(false);
-                // });
-                break;
-            default:
-                removeSearch(props.searchResults[0].id, getRemovalRequest(pageNo)).then(result => {
-                    setLoading(false);
-                    setOrganizations(result.organizations);
-                    setPageCount(result.total);
-                }).catch(error => {
-                    noSearchResults = true;
-                    setLoading(false);
-                });
-                break;
+        if (removeAllResultsChecked) {
+            removeAllOrganizationIds(getRemovalRequest(1).searchCriteria).then(result => {
+                const removeRequest = getRemovalRequest(pageNo)
+                removeRequest.removeCritieria.organizationIds = result
+                setSelectedResults(result);
+
+                switch (selectedGrouping.accumulation) {
+                    case '':
+                    case 'None':
+                        removeSearch(props.searchResults[0].id, removeRequest).then(result => {
+                            setLoading(false);
+                            setOrganizations(result.organizations);
+                            setPageCount(result.total);
+                        }).catch(error => {
+                            noSearchResults = true;
+                            setLoading(false);
+                        });
+                        break;
+                    case 'CPV Code':
+                        removeSearchAccumulateCpv(props.searchResults[0].id, removeRequest).then(result => {
+                            setLoading(false);
+                            setGrouping(convertStringObject(result.grouping));
+                            setOrganizations(result.organizations);
+                            setPageCount(result.total);
+                        }).catch(error => {
+                            noSearchResults = true;
+                            setLoading(false);
+                        });
+                        break;
+                    case 'NACE Code':
+                        removeSearchAccumulateNace(props.searchResults[0].id, removeRequest).then(result => {
+                            setLoading(false);
+                            setGrouping(convertStringObject(result.grouping));
+                            setOrganizations(result.organizations);
+                            setPageCount(result.total);
+                        }).catch(error => {
+                            noSearchResults = true;
+                            setLoading(false);
+                        });
+                        break;
+                    case 'UNSPSC Code':
+                        // searchOrganizationByUNSPSC(getSearchRequest(pageNo)).then(result => {
+                        //     setLoading(false);
+                        //     setGrouping(convertStringObject(result.grouping));
+                        //     setOrganizations(result.organizations);
+                        //     setPageCount(result.total);
+                        // }).catch(error => {
+                        //     noSearchResults = true;
+                        //     setLoading(false);
+                        // });
+                        break;
+                    default:
+                        removeSearch(props.searchResults[0].id, removeRequest).then(result => {
+                            setLoading(false);
+                            setOrganizations(result.organizations);
+                            setPageCount(result.total);
+                        }).catch(error => {
+                            noSearchResults = true;
+                            setLoading(false);
+                        });
+                        break;
+                }
+            })
+        } else {
+            switch (selectedGrouping.accumulation) {
+                case '':
+                case 'None':
+                    removeSearch(props.searchResults[0].id, getRemovalRequest(pageNo)).then(result => {
+                        setLoading(false);
+                        setOrganizations(result.organizations);
+                        setPageCount(result.total);
+                    }).catch(error => {
+                        noSearchResults = true;
+                        setLoading(false);
+                    });
+                    break;
+                case 'CPV Code':
+                    removeSearchAccumulateCpv(props.searchResults[0].id, getRemovalRequest(pageNo)).then(result => {
+                        setLoading(false);
+                        setGrouping(convertStringObject(result.grouping));
+                        setOrganizations(result.organizations);
+                        setPageCount(result.total);
+                    }).catch(error => {
+                        noSearchResults = true;
+                        setLoading(false);
+                    });
+                    break;
+                case 'NACE Code':
+                    removeSearchAccumulateNace(props.searchResults[0].id, getRemovalRequest(pageNo)).then(result => {
+                        setLoading(false);
+                        setGrouping(convertStringObject(result.grouping));
+                        setOrganizations(result.organizations);
+                        setPageCount(result.total);
+                    }).catch(error => {
+                        noSearchResults = true;
+                        setLoading(false);
+                    });
+                    break;
+                case 'UNSPSC Code':
+                    // searchOrganizationByUNSPSC(getSearchRequest(pageNo)).then(result => {
+                    //     setLoading(false);
+                    //     setGrouping(convertStringObject(result.grouping));
+                    //     setOrganizations(result.organizations);
+                    //     setPageCount(result.total);
+                    // }).catch(error => {
+                    //     noSearchResults = true;
+                    //     setLoading(false);
+                    // });
+                    break;
+                default:
+                    removeSearch(props.searchResults[0].id, getRemovalRequest(pageNo)).then(result => {
+                        setLoading(false);
+                        setOrganizations(result.organizations);
+                        setPageCount(result.total);
+                    }).catch(error => {
+                        noSearchResults = true;
+                        setLoading(false);
+                    });
+                    break;
+            }
         }
+
+
     }
 
     const callSearchOrganization = (pageNo) => {
@@ -459,50 +528,25 @@ export default function Search(props) {
 
     const getSaveResultData = () => {
         if (props?.removeSearch) {
-            const allSelectedCriterias = selectedMarketCriteria.selectedCountries.concat(selectedMarketCriteria.selectedRegions, selectedMarketCriteria.selectedCities, selectedMarketCriteria.selectedMunicipalities, getFilterdCodes(selectedCPVValues), getFilterdCodes(selectedNACValues), getFilterdCodes(selectedUNSPValues))
-
-            if (allSelectedCriterias.length === 0) {
-                const searchResultsSet = props?.searchResults[props?.searchResults?.length - 1]
-                return ({
-                    "id": props.searchResults[1]?.id || null,
-                    "parentSearchId": props.searchResults[0].id,
-                    "operationId": props.projectId,
-                    "sectionId": props.sectionId,
-                    "createdDate": new Date(),
-                    "searchFilter": {
-                        "countries": searchResultsSet?.searchFilter.countries || null,
-                        "regions": searchResultsSet?.searchFilter.regions || null,
-                        "cities": searchResultsSet?.searchFilter.cities || null,
-                        "municipalities": searchResultsSet?.searchFilter.municipalities || null,
-                        "cpvs": searchResultsSet?.searchFilter.cpvs || null,
-                        "naces": searchResultsSet?.searchFilter.naces || null,
-                        "unspscs": searchResultsSet?.searchFilter.unspscs || null,
-                    },
-                    "removeCriteria": {
-                        "organizationIds": selectedResults
-                    }
-                })
-            } else {
-                return ({
-                    "id": props.searchResults[1]?.id || null,
-                    "parentSearchId": props.searchResults[0].id,
-                    "operationId": props.projectId,
-                    "sectionId": props.sectionId,
-                    "createdDate": new Date(),
-                    "searchFilter": {
-                        "countries": selectedMarketCriteria.selectedCountries,
-                        "regions": selectedMarketCriteria.selectedRegions,
-                        "cities": arrayToUpper(selectedMarketCriteria.selectedCities),
-                        "municipalities": selectedMarketCriteria.selectedMunicipalities,
-                        "cpvs": getFilterdCodes(selectedCPVValues),
-                        "naces": getFilterdCodes(selectedNACValues),
-                        "unspscs": getFilterdCodes(selectedUNSPValues),
-                    },
-                    "removeCriteria": {
-                        "organizationIds": selectedResults
-                    }
-                })
-            }
+            return ({
+                "id": props.searchResults[1]?.id || null,
+                "parentSearchId": props.searchResults[0].id,
+                "operationId": props.projectId,
+                "sectionId": props.sectionId,
+                "createdDate": new Date(),
+                "searchFilter": {
+                    "countries": selectedMarketCriteria.selectedCountries,
+                    "regions": selectedMarketCriteria.selectedRegions,
+                    "cities": arrayToUpper(selectedMarketCriteria.selectedCities),
+                    "municipalities": selectedMarketCriteria.selectedMunicipalities,
+                    "cpvs": getFilterdCodes(selectedCPVValues),
+                    "naces": getFilterdCodes(selectedNACValues),
+                    "unspscs": getFilterdCodes(selectedUNSPValues),
+                },
+                "removeCriteria": {
+                    "organizationIds": selectedResults
+                }
+            })
         } else {
             return ({
                 "operationId": props.projectId,
@@ -567,6 +611,7 @@ export default function Search(props) {
         } else {
             return ({
                 "searchCriteria": {
+                    "name": "",
                     "countries": selectedMarketCriteria.selectedCountries,
                     "regions": selectedMarketCriteria.selectedRegions,
                     "cities": arrayToUpper(selectedMarketCriteria.selectedCities),
@@ -1010,7 +1055,7 @@ export default function Search(props) {
                         </div>
                     }
                     {noSearchResults &&
-                        <div className="sub-title-txt text-center" >{t("No Results")}</div>
+                        <div className="sub-title-txt text-center" >{removeAllResultsChecked ? "All Results Removed" : "No Results"}</div>
                     }
                     {Object.values(grouping).length !== 0 &&
                         <>
@@ -1071,7 +1116,7 @@ export default function Search(props) {
                                         </div>
                                         <div className="fr selectAll-checkbox">
                                             Select All Records
-                                            <input type="checkbox" key={'SelectAllCheckBox2'} className="check-box m-l-20" onChange={() => { }} />
+                                            <input type="checkbox" checked={removeAllResultsChecked} className="check-box m-l-20" onChange={() => { setRemoveAllResultsChecked(prev => !prev) }} />
                                         </div>
                                     </>
                                 }
@@ -1095,7 +1140,7 @@ export default function Search(props) {
                         </>
                     }
                     {props.removeSearch &&
-                        <button className="primary-btn remove-button" onClick={onShowResults} disabled={selectedResults?.length === 0} >{t("Remove")}</button>
+                        <button className="primary-btn remove-button" onClick={onShowResults} disabled={selectedResults?.length === 0 && !removeAllResultsChecked} >{t("Remove")}</button>
                     }
                     <button className="primary-btn save-button" onClick={onSaveResults} disabled={disableSaveBtn} >{t(saveButtonText)}</button>
                     {props.removeSearch &&

@@ -18,7 +18,9 @@ const SearchResultsList = (props) => {
             setOrganizations(result.organizations);
             setPageCount(result.total);
         }).catch(() => {
+            setOrganizations([]);
             setLoading(false);
+            setPageCount(0);
         });
     }, [props]);
 

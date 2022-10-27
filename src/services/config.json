@@ -8,6 +8,7 @@
     "REMOVE_SEARCH": "https://sdcsearchapi.azurewebsites.net/removeSearch/",
     "REMOVE_SEARCH_ACCUMULATE_CPV": "https://sdcsearchapi.azurewebsites.net/removeSearchAccumulateCpv/",
     "REMOVE_SEARCH_ACCUMULATE_NACE": "https://sdcsearchapi.azurewebsites.net/removeSearchAccumulateNace/",
+    "REMOVE_ALL_ORG_IDS": "https://sdcsearchapi.azurewebsites.net/removeAllOrganizationIds",
     "COUNTRIES": "https://sdcsearchapi.azurewebsites.net/countries",
     "REGIONS": "https://sdcsearchapi.azurewebsites.net/regions",
     "MUNICIPALITIES": "https://sdcsearchapi.azurewebsites.net/municipalities",
