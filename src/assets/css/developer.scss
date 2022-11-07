@@ -79,6 +79,27 @@
     }
 }
 
+.secondary-btn {
+    float: right;
+    background-color: $white;
+    border: solid $light-dark-blue;
+    border-width: 1px;
+    color: $light-dark-blue;
+    margin-top: 10px;
+    right: 10px;
+    cursor: pointer;
+    transition: $animation-1s;
+
+    &:hover {
+        background-color: $dark-blue;
+    }
+
+    &:disabled {
+        background-color: $base-gray;
+        cursor: not-allowed;
+    }
+}
+
 .btn-disabled {
     opacity: 0.6;
     cursor: not-allowed;
@@ -98,6 +119,7 @@
 .dropdown-list {
     color: $base-gray;
     font-family: $bod-font;
+    border: 2px solid #fafafa;
 
     option {
         color: black;
