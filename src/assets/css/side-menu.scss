@@ -68,8 +68,7 @@
     width: 250px;
     height: 100vh;
     overflow-y: auto;
-
-  
+    padding-bottom: 50px
 }
 
 input#openSidebarMenu {
@@ -81,7 +80,7 @@ input#openSidebarMenu {
     width: 48px;
     position: fixed !important;
     z-index: 99999;
-    top: 48px;
+    top: 62px;
     left: 0;
     transition: all 0.3s;
     cursor: pointer;
@@ -113,7 +112,7 @@ input#openSidebarMenu {
 
 #openSidebarMenu:checked ~ .sidebarIconToggle > .spinner.top {
     transform: rotate(135deg);
-    margin-top: 2px;
+    margin-top: 7px;
 }
 
 #openSidebarMenu:checked ~ .main {

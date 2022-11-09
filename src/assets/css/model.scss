@@ -1,3 +1,17 @@
+.modal-box {
+    left: 50%;
+    min-height: 300px;
+    display: block;
+    position: absolute;
+    z-index: 1;
+    background-color: $white;
+    padding: 40px;
+    border-radius: 2px;
+    box-shadow: 2px 2px 8px #000;
+    width: 460px;
+    margin-left: -230px;
+}
+
 .my-modal {
     position: fixed;
     left: 0;

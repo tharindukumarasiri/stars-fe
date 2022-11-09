@@ -56,3 +56,7 @@ h1, .h1 {
     background-color: $theme !important;
     border-color: transparent;
 }
+
+.k-content {
+    height: calc(100vh - 130px) !important;
+}

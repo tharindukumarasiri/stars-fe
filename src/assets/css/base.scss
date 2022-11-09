@@ -86,10 +86,10 @@ html, body {
 .main {
     height: 100%;
     width: 100%;
-    margin-top: 44px;
+    margin-top: 48px;
     margin-bottom: 10px;
-    margin-left: 44px;
-    padding-right: 38px;
+    margin-left: 48px;
+    padding-right: 48px;
 }
 
 .content-pane{padding:4px}
@@ -315,18 +315,7 @@ ul.custom-button-list {
     text-align: center
 }
 
-.modal-box {
-    width: 32vw;
-    left: 34vw;
-    min-height: 300px;
-    display: block;
-    position: absolute;
-    z-index: 1;
-    background-color: $white;
-    padding: 40px;
-    border-radius: 2px;
-    box-shadow: 2px 2px 8px #000;
-}
+
 
 .wrapper-top {
     position: absolute;
@@ -472,4 +461,51 @@ ul.custom-button-list {
     background: url("/Client/Boot/assets/images/star-digital-skyline.png") repeat-X left top;
     height: 400px;
     background-size: cover;
+}
+
+/*=========Star Admin Home styles=====*/
+#tile-menu-9 {
+    > button {
+        padding: 30px;
+        color: $white;
+        border-radius: 4px;
+        > span {
+            font-size: 2em;
+        }
+    }
+    > button:nth-child(1) {
+        background-color: $blue-purple;
+    }
+    > button:nth-child(2) {
+        background-color: $vialot;
+    }
+    > button:nth-child(3) {
+        background-color: $vialot-lite;
+    }
+    > button:nth-child(4) {
+        background-color: $blue-purple-dark;
+    }
+    > button:nth-child(5) {
+        background-color: $blue-dark1;
+    }
+}
+
+#tile-menu-12 {
+    > button {
+        padding: 30px;
+        color: $white;
+        border-radius: 4px;
+
+        > span {
+            font-size: 2em;
+        }
+    }
+
+    > button:nth-child(odd) {
+        background-color: $theme-dark1;
+    }
+
+    > button:nth-child(even) {
+        background-color: $theme-darkest;
+    }
 }

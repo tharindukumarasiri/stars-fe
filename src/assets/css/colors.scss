@@ -1,7 +1,9 @@
 ﻿/////Colors
 $theme: #2196F3 /*#0592D9*/;
 $theme-dark: darken( $theme, 20% );
-$theme-darkest: darken( $theme, 48% );
+$theme-dark1: darken( $theme, 25% );
+$theme-dark2: darken( $theme, 30% );
+$theme-darkest: darken( $theme, 34% );
 $theme-light-dark: desaturate( $theme, 10% );
 $theme-light: lighten( $theme, 30% );
 $tab-content: lighten( $theme, 45% );
