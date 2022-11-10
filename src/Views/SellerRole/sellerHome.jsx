@@ -16,7 +16,7 @@ export default function SellerHome() {
     return (
         <>
             <div className="g-row m-b-20">
-                <TitleCard title={t("Seller")} topIcon={"icon-contact-persons"} />
+                <TitleCard title={t("Seller")} topIcon={"icon-seller"} />
                 <div className="g-col-9 p-l-20">
                     <h4>{t('Seller Role Space')}</h4>
                     <div>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque lacinia est vitae sapienursus,</div>

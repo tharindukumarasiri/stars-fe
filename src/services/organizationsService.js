@@ -146,3 +146,19 @@ export async function updateNutsCodes(id, params) {
     const { data } = await http.post(`${config.UPDATE_NUTS}${id}`, params);
     return data;
 }
+
+//Seller 
+export async function getTenders(orgId, pageSize, index, language, country) {
+    const { data } = await http.get(`${config.GET_TENDERS}${orgId}?country=${country}&pageSize=${pageSize}&index=${index}&language=${language}`);
+    return data;
+}
+
+export async function updateTenementCPV(params) {
+    const { data } = await http.post(config.UPDATE_TENENT_CPV, params);
+    return data;
+}
+
+export async function getTenementCPV(id, country) {
+    const { data } = await http.get(`${config.GET_TENENT_CPV}${id}&country=${country}`);
+    return data;
+}

@@ -185,7 +185,7 @@ const Unspsc = () => {
         const index = organizationData.unspscs?.findIndex(data => data.code === mostChild.code)
         setHaveUnsavedDataRef(true);
 
-        if (index < 0 || !index) {
+        if (index < 0 || index === undefined) {
             const newOrganizationData = { ...organizationData }
             const newUnspscs = index ? [...organizationData.unspscs] : []
 

@@ -187,7 +187,7 @@ const Nace = () => {
         const index = organizationData.naces?.findIndex(data => data.code === mostChild.code)
         setHaveUnsavedDataRef(true);
 
-        if (index < 0 || !index) {
+        if (index < 0 || index === undefined) {
             const newOrganizationData = { ...organizationData }
             const newNaces = index ? [...organizationData.naces] : []
 

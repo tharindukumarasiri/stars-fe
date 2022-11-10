@@ -442,3 +442,54 @@ export const searchResultsListTableHeaders = [
         ),
     },
 ];
+
+export const matchinTendersTableHeaders = [
+    {
+        title: 'Document Number',
+        dataIndex: 'referenceNumber',
+    },
+    {
+        title: 'Main CPV code',
+        dataIndex: 'mainCPVCode',
+    },
+    {
+        title: 'Description',
+        dataIndex: 'buyerDescription',
+    },
+    {
+        title: 'Published Date',
+        dataIndex: 'publicationDate',
+    },
+    {
+        title: 'Deadline',
+        dataIndex: 'deletionDate',
+    },
+    {
+        title: 'Contact Person',
+        dataIndex: 'buyerDetails',
+        render: (_, { buyerDetails }) => (
+            buyerDetails?.contactPerson
+        ),
+    },
+    {
+        title: 'NUTS code',
+        dataIndex: 'buyerDetails',
+        render: (_, { buyerDetails }) => (
+            buyerDetails?.nutsCode
+        ),
+    },
+    {
+        title: 'Email',
+        dataIndex: 'buyerDetails',
+        render: (_, { buyerDetails }) => (
+            buyerDetails?.email
+        ),
+    },
+    {
+        title: 'City',
+        dataIndex: 'buyerDetails',
+        render: (_, { buyerDetails }) => (
+            buyerDetails?.city
+        ),
+    },
+];

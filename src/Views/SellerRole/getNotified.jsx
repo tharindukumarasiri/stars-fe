@@ -1,8 +1,12 @@
 import React, { useState, useMemo, useEffect, useContext } from "react";
-import { getCpvCodes, searchCpvCodes } from "../../services/organizationsService";
+import { message } from 'antd';
+import { getCpvCodes, searchCpvCodes, updateTenementCPV, getTenementCPV } from "../../services/organizationsService";
 import { levelOneReq } from "../../utils/constants";
 import { TabContext } from "../../utils/contextStore";
 import { useTranslation } from 'react-i18next'
+import CriteriaColorGuideTab from "./Components/criteriaColorGuideTab";
+import UserSelectedFields from "./Components/userSelectedFields";
+import { FetchCurrentCompany } from "../../hooks/index"
 
 const GetNotified = () => {
     const { haveUnsavedDataRef, setHaveUnsavedDataRef } = useContext(TabContext);
@@ -13,6 +17,8 @@ const GetNotified = () => {
     const [expanded, setExpanded] = useState({ division: [], cpvGroup: [], cpvClass: [], category: [] });
     const [searchResult, setSearchResult] = useState('');
     const [showingSearchedCodes, setShowingSearchedCodes] = useState(false);
+    const [tenderCpvs, setTenderCpvs] = useState([]);
+    const [selectedCompany] = FetchCurrentCompany();
 
     useEffect(() => {
         getCpvCodes(levelOneReq).then(result => {
@@ -20,6 +26,11 @@ const GetNotified = () => {
                 ...cpvData, division: result
             })
         });
+
+        getTenementCPV(selectedCompany.orgId, 'NO').then(result => {
+            if (result?.cpvs?.length > 0)
+                setTenderCpvs(result?.cpvs)
+        })
 
         const unloadCallback = (event) => {
             if (haveUnsavedDataRef.current) {
@@ -173,41 +184,50 @@ const GetNotified = () => {
     }
 
     const handleChekBox = ({ mostChild, parents } = {}) => {
-        // const index = organizationData.cpvs?.findIndex(data => data.code === mostChild.code)
-        // setHaveUnsavedDataRef(true);
+        const index = tenderCpvs?.findIndex(data => data.code === mostChild.code)
+        setHaveUnsavedDataRef(true);
 
-        // if (index < 0 || !index) {
-        //     const newOrganizationData = { ...organizationData }
-        //     const newCpvs = index ? [...organizationData.cpvs] : []
-
-        //     newCpvs.push({ code: mostChild.code, description: [{ lang: 'en', parent: parents, value: mostChild.value }] })
-        //     newOrganizationData.cpvs = newCpvs
-
-        //     setOrganizationData(newOrganizationData)
-        // } else {
-        //     const newOrganizationData = { ...organizationData }
-        //     const newCpvs = [...organizationData.cpvs]
-
-        //     newCpvs.splice(index, 1);
-        //     newOrganizationData.cpvs = newCpvs
-        //     setOrganizationData(newOrganizationData)
-        // }
+        if (index < 0 || index === undefined) {
+            const newCpvs = index ? [...tenderCpvs] : []
+            newCpvs.push({ code: mostChild.code, description: [{ lang: 'en', parent: parents, value: mostChild.value }] })
+            setTenderCpvs(newCpvs)
+        } else {
+            const newCpvs = [...tenderCpvs]
+            newCpvs.splice(index, 1);
+            setTenderCpvs(newCpvs)
+        }
     }
 
     const onDelete = (code) => {
-        // const index = organizationData.cpvs.findIndex(data => data.code === code)
+        const index = tenderCpvs.findIndex(data => data.code === code)
+        const newCpvs = [...tenderCpvs]
 
-        // const newOrganizationData = { ...organizationData }
-        // const newCpvs = [...organizationData.cpvs]
-
-        // newCpvs.splice(index, 1);
-        // newOrganizationData.cpvs = newCpvs
-        // setHaveUnsavedDataRef(true);
-        // setOrganizationData(newOrganizationData);
+        newCpvs.splice(index, 1);
+        setHaveUnsavedDataRef(true);
+        setTenderCpvs(newCpvs)
     }
 
-    const onUpdate = () => {
+    const onUpdate = async () => {
+        setLoading(true);
+        window.scrollTo(0, 0);
+        const params = {
+            organizationId: selectedCompany.orgId,
+            countryCode: 'NO',
+            cpvs: tenderCpvs,
+        }
 
+        updateTenementCPV(params).then(result => {
+            setLoading(false);
+            setHaveUnsavedDataRef(false);
+            if (result === 'Ok') {
+                message.success('Update successful');
+            } else {
+                message.error('Update failed please try again');
+            }
+        }).catch(() => {
+            setLoading(false);
+            message.error('Update failed please try again');
+        })
     }
 
     const handleSearch = (e) => {
@@ -236,12 +256,21 @@ const GetNotified = () => {
         }
     }
 
+    const YourCpvData = () => {
+        return (
+            <>
+                <CriteriaColorGuideTab dataArr={['Division', 'Group', 'Class', 'Category', 'Sub Category']} containerStyle='selected-codes' />
+                <UserSelectedFields data={tenderCpvs} dataFeieldName='description' closable={true} onClose={onDelete} />
+            </>
+        )
+    }
+
     const CPVData = () => {
         return (
             divisionData.map((division, divIndex) => {
                 return (
                     <div key={divIndex}>
-                        <div className="result-item hover-hand bg-blue-light" onClick={() => { getCpvGroupData(division.code) }}>
+                        <div className="result-item hover-hand bg-bluish-green-light1" onClick={() => { getCpvGroupData(division.code) }}>
                             <div className="body-text">
                                 <i className={expanded.division.includes(division.code) ? 'icon-minus-circled fl toggle-icon' : 'icon-plus-circled fl toggle-icon'} />
                                 <div className="body-text-bold m-r-10 fl">{division.code}</div>
@@ -255,7 +284,7 @@ const GetNotified = () => {
                                         cpvGroup.data.map((cpvGroupData, famIndex) => {
                                             return (
                                                 <div key={famIndex}>
-                                                    <div className="result-item hover-hand bg-blue-lighter" style={getIndent(2)} onClick={() => { getClassData(cpvGroupData.code) }}>
+                                                    <div className="result-item hover-hand bg-bluish-green-light2" style={getIndent(2)} onClick={() => { getClassData(cpvGroupData.code) }}>
                                                         <div className="body-text">
                                                             <i className={expanded.cpvGroup.includes(cpvGroupData.code) ? 'icon-minus-circled fl toggle-icon' : 'icon-plus-circled fl toggle-icon'} />
                                                             <div className="body-text-bold m-r-10 fl">{cpvGroupData.code}</div>
@@ -269,7 +298,7 @@ const GetNotified = () => {
                                                                     cpvClass.data.map((cpvClassData, classIndex) => {
                                                                         return (
                                                                             <div key={classIndex}>
-                                                                                <div className="result-item hover-hand bg-blue-lighter2" style={getIndent(3)} onClick={() => { getCategoryData(cpvClassData.code) }}>
+                                                                                <div className="result-item hover-hand bg-bluish-green-light3" style={getIndent(3)} onClick={() => { getCategoryData(cpvClassData.code) }}>
                                                                                     <div className="body-text">
                                                                                         <i className={expanded.cpvClass.includes(cpvClassData.code) ? 'icon-minus-circled fl toggle-icon' : 'icon-plus-circled fl toggle-icon'} />
                                                                                         <div className="body-text-bold m-r-10 fl">{cpvClassData.code}</div>
@@ -283,7 +312,7 @@ const GetNotified = () => {
                                                                                                 category.data.map((categoryData, comIndex) => {
                                                                                                     return (
                                                                                                         <div key={comIndex}>
-                                                                                                            <div className="result-item hover-hand bg-blue-lighter2" style={getIndent(4)} onClick={() => { getSubCategoryData(categoryData.code) }}>
+                                                                                                            <div className="result-item hover-hand bg-bluish-green-light4" style={getIndent(4)} onClick={() => { getSubCategoryData(categoryData.code) }}>
                                                                                                                 <div className="body-text">
                                                                                                                     <i className={expanded.category.includes(categoryData.code) ? 'icon-minus-circled fl toggle-icon' : 'icon-plus-circled fl toggle-icon'} />
                                                                                                                     <div className="body-text-bold m-r-10 fl">{categoryData.code}</div>
@@ -296,7 +325,7 @@ const GetNotified = () => {
                                                                                                                         return (
                                                                                                                             subCategory.data.map((subCategoryData, subCategoryIndex) => {
                                                                                                                                 return (
-                                                                                                                                    <div className="result-item hover-hand bg-blue-lighter3" style={getIndent(5)} key={subCategoryIndex}
+                                                                                                                                    <div className="result-item hover-hand bg-bluish-green-light5" style={getIndent(5)} key={subCategoryIndex}
                                                                                                                                         onClick={() =>
                                                                                                                                             handleChekBox(
                                                                                                                                                 {
@@ -314,7 +343,7 @@ const GetNotified = () => {
                                                                                                                                             {subCategoryData.desscription}
                                                                                                                                         </div>
                                                                                                                                         <input type="checkbox" className="check-box"
-                                                                                                                                            // checked={organizationData.cpvs?.findIndex(data => data.code === subCategoryData.code) > -1}
+                                                                                                                                            checked={tenderCpvs?.findIndex(data => data.code === subCategoryData.code) > -1}
                                                                                                                                             onChange={() =>
                                                                                                                                                 handleChekBox(
                                                                                                                                                     {
@@ -383,8 +412,8 @@ const GetNotified = () => {
                     <CPVData />
                 </div>
                 <div className="g-col-5">
-                    <h3 className="text-center">You will get notifications for  the  below slected CPV Codes </h3>
-                    {/* <YourCpvData /> */}
+                    <h3 className="text-center p-b-20">You will get notifications for  the  below slected CPV Codes </h3>
+                    <YourCpvData />
                 </div>
                 <div className="g-col-2 text-center">
                     <h3>How to get notified for Tenders?</h3>

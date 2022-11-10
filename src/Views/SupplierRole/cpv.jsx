@@ -217,7 +217,7 @@ const Cpv = () => {
         const index = organizationData.cpvs?.findIndex(data => data.code === mostChild.code)
         setHaveUnsavedDataRef(true);
 
-        if (index < 0 || !index) {
+        if (index < 0 || index === undefined) {
             const newOrganizationData = { ...organizationData }
             const newCpvs = index ? [...organizationData.cpvs] : []
 
