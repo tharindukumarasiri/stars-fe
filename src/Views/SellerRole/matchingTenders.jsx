@@ -22,11 +22,13 @@ const MatchingTenders = () => {
     const { t } = useTranslation();
 
     useEffect(() => {
-        getTenders(selectedCompany.orgId, pageSize, pageNumber, 'english', 'NO').then(result => {
-            setTendersData(result.tenders);
-            setPageCount(result.totalCount)
-        })
-    }, []);
+        if(selectedCompany.companyRegistrationId){
+            getTenders(selectedCompany.companyRegistrationId, pageSize, pageNumber, 'english', 'NO').then(result => {
+                setTendersData(result.tenders);
+                setPageCount(result.totalCount)
+            })
+        }
+    }, [selectedCompany]);
 
     const onLanguageSelect = () => {
 

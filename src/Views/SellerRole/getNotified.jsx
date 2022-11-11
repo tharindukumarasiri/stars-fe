@@ -11,7 +11,7 @@ import { FetchCurrentCompany } from "../../hooks/index"
 const GetNotified = () => {
     const { haveUnsavedDataRef, setHaveUnsavedDataRef } = useContext(TabContext);
     const { t } = useTranslation();
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true);
     const [searchText, setSearchText] = useState('')
     const [cpvData, setCpvData] = useState({ division: [], cpvGroup: [], cpvClass: [], category: [], subCategory: [] });
     const [expanded, setExpanded] = useState({ division: [], cpvGroup: [], cpvClass: [], category: [] });
@@ -27,11 +27,6 @@ const GetNotified = () => {
             })
         });
 
-        getTenementCPV(selectedCompany.orgId, 'NO').then(result => {
-            if (result?.cpvs?.length > 0)
-                setTenderCpvs(result?.cpvs)
-        })
-
         const unloadCallback = (event) => {
             if (haveUnsavedDataRef.current) {
                 event.preventDefault();
@@ -44,6 +39,17 @@ const GetNotified = () => {
         return () => window.removeEventListener("beforeunload", unloadCallback);
 
     }, []);
+
+    useEffect(() => {
+        if(selectedCompany.companyRegistrationId){
+            getTenementCPV(selectedCompany.companyRegistrationId, 'NO').then(result => {
+                if (result?.cpvs?.length > 0)
+                    setTenderCpvs(result?.cpvs)
+
+                setLoading(false);
+            }).catch(()=> setLoading(false))
+        }
+    },[selectedCompany]);
 
     const divisionData = useMemo(() => {
         if (showingSearchedCodes) {
@@ -211,7 +217,7 @@ const GetNotified = () => {
         setLoading(true);
         window.scrollTo(0, 0);
         const params = {
-            organizationId: selectedCompany.orgId,
+            organizationId: selectedCompany.companyRegistrationId,
             countryCode: 'NO',
             cpvs: tenderCpvs,
         }

@@ -42,7 +42,7 @@ const Unspsc = () => {
 
     useEffect(() => {
         if (selectedCompany.companyRegistrationId && JSON.stringify(organizationData) === '{}') {
-            getOrganization(`"${selectedCompany.companyRegistrationId}"`).then(result => {
+            getOrganization(`${selectedCompany.companyRegistrationId}`).then(result => {
                 setOrganizationData(result)
             });
         }
