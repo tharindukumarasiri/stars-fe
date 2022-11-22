@@ -40,7 +40,7 @@ export async function removeSearchAccumulateNace(searchId, params) {
 }
 
 export async function getOrganization(id) {
-    const { data } = await http.post(config.GET_ORGANIZATIONS, id, { headers: { 'Content-Type': 'application/json', } });
+    const { data } = await http.get(`${config.GET_ORGANIZATIONS}/${id}/NO`);
     return data;
 }
 

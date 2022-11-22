@@ -496,7 +496,7 @@ input[type=submit]:focus {
   }
 }
 input[type=checkbox] {
-  display: none;
+  /* display: none; */
 }
 input[type=checkbox]:not(:checked) + label::before {
   content: "";
