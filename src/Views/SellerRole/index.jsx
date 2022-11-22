@@ -7,6 +7,7 @@ import SellerHome from './sellerHome';
 import GetNotified from './getNotified';
 import MatchingTenders from './matchingTenders';
 import TenderDetails from './tenderDetails';
+import GlobalTenderSearch from './globalTenderSearch';
 import { Button, notification } from 'antd';
 
 const SellerRole = () => {
@@ -16,7 +17,7 @@ const SellerRole = () => {
     const haveUnsavedDataRef = useRef(false);
     const shouldBeClosed = useRef({ state: false, tab: '' });
 
-    const changeActiveTab = (tab) => {
+    const changeActiveTab = (tab, params = null) => {
         const openNotification = (placement = 'top') => {
             const key = `open${Date.now()}`;
             const btn = (
@@ -50,6 +51,9 @@ const SellerRole = () => {
             };
             notification.warning(args);
         };
+
+        if (params)
+            setParams(pre => ({ ...pre, [tab]: params }))
 
         if (haveUnsavedDataRef.current) {
             openNotification()
@@ -105,8 +109,7 @@ const SellerRole = () => {
                     </div>
                 </div>
                 <div label={"GLOBAL TENDER"} id={NAVIGATION_PAGES.SELLER_GLOBAL_TENDER}>
-                    <div className="page-container">
-                    </div>
+                    <GlobalTenderSearch />
                 </div>
                 <div label={`MATCHING TENDERS : ${params.SELLER_TENDER_DETAILS?.receiptionId}`} id={NAVIGATION_PAGES.SELLER_TENDER_DETAILS}>
                     <div className="page-container">

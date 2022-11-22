@@ -9,13 +9,13 @@ const Dropdown = ({ values, selected = '', onChange, placeholder, disabled = fal
     return (
         <div className={containerStyle}>
             <div className={hintTextStyle}>{t(placeholder)}</div>
-            <select className="dropdown-list" onChange={onChange} value={t(selected) || '0'} disabled={disabled}>
+            <select className="dropdown-list" onChange={onChange} value={selected || '0'} disabled={disabled}>
                 {placeholder &&
                     <option value="0" disabled defaultValue="selected" hidden={true} className="disable-option" >{t(placeholder)}</option>
                 }
                 {
                     values.map((item, index) => {
-                        return <option value={dataName ? JSON.stringify(item) : item} key={index}>{dataName ? item[dataName] : item}</option>
+                        return <option value={dataName ? JSON.stringify(item) : item} key={index}>{dataName ? t(item[dataName]) : t(item)}</option>
                     })
                 }
             </select>

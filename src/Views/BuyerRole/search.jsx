@@ -46,13 +46,14 @@ export default function Search(props) {
     const [grouping, setGrouping] = useState({})
 
     // Data from back-end
-    const [marketInformationData, setMarketInformationData] = useState({ countries: [{ "name": "Norway", "alpha3Code": "NOR" }], regions: [], cities: [], municipalities: [] });
+    const [marketInformationData, setMarketInformationData] = useState({ countries: [{ "name": "Norway", "alpha3Code": "NO" }], regions: [], cities: [], municipalities: [] });
     const [unspscData, setUnspscData] = useState({ segmant: [], family: [], unspClass: [], comClass: [] })
     const [cpvData, setCpvData] = useState({ division: [], cpvGroup: [], cpvClass: [], category: [], subCategory: [] })
     const [professionData, setProfessionData] = useState({ section: [], divition: [], profGroup: [], profClass: [] })
     // Drop Down selected eliments data
     const [selectedCompanyInfo, setSelectedCompanyInfo] = useState({ registrationFromDate: '', registrationToDate: '', incorpFromDate: '', incorpToDate: '' })
     const [selectedMarketCriteria, setSelectedMarketCriteria] = useState({ selectedCountries: [], selectedRegions: [], selectedCities: [], selectedMunicipalities: [] });
+    const [selectedMarketHierarchy, setSelectedMarketHierarchy] = useState([[]]);
     const [selectedUNSPValues, setSelectedUNSPValues] = useState([[[]]]);
     const [selectedUNSPRows, setSelectedUNSPRows] = useState({ cuurentRow: 0, preLevel: 0 });
     const [selectedCPVValues, setSelectedCPVValues] = useState([[[]]]);
@@ -60,6 +61,7 @@ export default function Search(props) {
     const [selectedNACValues, setSelectedNACValues] = useState([[[]]]);
     const [selectedNACRows, setSelectedNACRows] = useState({ cuurentRow: 0, preLevel: 0 });
     const [selectedGrouping, setSelectedGrouping] = useState({ resultType: '', accumulation: '', sorting: '' })
+    const [marketLastSelectedCodeLvl, setMarketLastSelectedCodeLvl] = useState(0)
 
     const [pageCount, setPageCount] = useState(0);
     const [actPage, setActPage] = useState(1)
@@ -768,7 +770,7 @@ export default function Search(props) {
                             disabled={selectedGrouping.resultType !== 'No of accumulated'} />
                     </div>
                     <div className="g-col-4">
-                        {DropdownList({ placeholder: 'Sorting', dataList: [], selectedList: [], setSelectedState: {}, criteriaName: "", keyName: "" })}
+                        <DropdownSelect values={[]} placeholder="Sorting" selected={''} onChange={() => { }} disabled />
                     </div>
                 </div>
             </div>
@@ -824,7 +826,7 @@ export default function Search(props) {
                                 <div className="g-row">
                                     <div className="g-col-5" />
                                     <div className="g-col-7">
-                                        {DropdownList({ placeholder: t('Number of employee'), dataList: [], selectedList: [], setSelectedState: {}, criteriaName: "", keyName: "" })}
+                                        <DropdownSelect values={[]} placeholder="Number of employee" selected={''} onChange={() => { }} disabled />
                                     </div>
                                 </div>
                             </div>
@@ -832,7 +834,7 @@ export default function Search(props) {
                                 <div className="g-row">
                                     <div className="g-col-5"></div>
                                     <div className="g-col-7">
-                                        {DropdownList({ placeholder: t('Organization type'), dataList: [], selectedList: [], setSelectedState: {}, criteriaName: "", keyName: "" })}
+                                        <DropdownSelect values={[]} placeholder="Organization type" selected={''} onChange={() => { }} disabled />
                                     </div>
                                 </div>
                             </div>
@@ -851,7 +853,7 @@ export default function Search(props) {
                                 <div className="g-row">
                                     <div className="g-col-5"></div>
                                     <div className="g-col-7">
-                                        {DropdownList({ placeholder: t('Organization id'), dataList: [], selectedList: [], setSelectedState: {}, criteriaName: "", keyName: "" })}
+                                        <DropdownSelect values={[]} placeholder="Organization id" selected={''} onChange={() => { }} disabled />
                                     </div>
                                 </div>
                             </div>
@@ -864,7 +866,7 @@ export default function Search(props) {
                                         {t("Sector code institution")}
                                     </div>
                                     <div className="g-col-7">
-                                        {DropdownList({ placeholder: t('sector code list - select'), dataList: [], selectedList: [], setSelectedState: {}, criteriaName: "", keyName: "" })}
+                                        <DropdownSelect values={[]} placeholder="sector code list - select" selected={''} onChange={() => { }} disabled />
                                     </div>
                                 </div>
                             </div>
@@ -881,17 +883,53 @@ export default function Search(props) {
                 {getCriteriaHeader(t("Market Information"), "xxx", () => toggleOpenCriteria('Market'), openCriteria.Market)}
                 {openCriteria.Market &&
                     <div className="g-row">
-                        <div className="g-col-3">
-                            {DropdownList({ placeholder: t('Country'), dataList: marketInformationData.countries, selectedList: selectedMarketCriteria, setSelectedState: setSelectedMarketCriteria, criteriaName: "selectedCountries", apiCalls: getRegionsData, keyName: "alpha3Code" })}
+                        <div className="g-col-4">
+                            <DropdownList
+                                placeholder={t('Country')}
+                                dataList={marketInformationData.countries}
+                                selectedList={selectedMarketCriteria}
+                                setSelectedState={setSelectedMarketCriteria}
+                                criteriaName="selectedCountries"
+                                apiCalls={getRegionsData}
+                                keyName="alpha3Code"
+                                selectedMarketHierarchy={selectedMarketHierarchy}
+                                setSelectedMarketHierarchy={setSelectedMarketHierarchy}
+                                marketLastSelectedCodeLvl={marketLastSelectedCodeLvl}
+                                setMarketLastSelectedCodeLvl={setMarketLastSelectedCodeLvl}
+                                codeLevel={0}
+                            />
                         </div>
-                        <div className="g-col-3">
-                            {DropdownList({ placeholder: t('Region'), dataList: marketInformationData.regions, selectedList: selectedMarketCriteria, setSelectedState: setSelectedMarketCriteria, criteriaName: "selectedRegions", apiCalls: getMunicipalitiesData, keyName: "code" })}
+                        <div className="g-col-4">
+                            <DropdownList
+                                placeholder={t('Region')}
+                                dataList={marketInformationData.regions}
+                                selectedList={selectedMarketCriteria}
+                                setSelectedState={setSelectedMarketCriteria}
+                                criteriaName="selectedRegions"
+                                apiCalls={getMunicipalitiesData}
+                                keyName="code"
+                                selectedMarketHierarchy={selectedMarketHierarchy}
+                                setSelectedMarketHierarchy={setSelectedMarketHierarchy}
+                                marketLastSelectedCodeLvl={marketLastSelectedCodeLvl}
+                                setMarketLastSelectedCodeLvl={setMarketLastSelectedCodeLvl}
+                                codeLevel={1}
+                            />
                         </div>
-                        <div className="g-col-3">
-                            {DropdownList({ placeholder: t('Municipality'), dataList: marketInformationData.municipalities, selectedList: selectedMarketCriteria, setSelectedState: setSelectedMarketCriteria, criteriaName: "selectedMunicipalities", apiCalls: getCityData, keyName: "code" })}
-                        </div>
-                        <div className="g-col-3">
-                            {DropdownList({ placeholder: t('City'), dataList: marketInformationData.cities, selectedList: selectedMarketCriteria, setSelectedState: setSelectedMarketCriteria, criteriaName: "selectedCities", keyName: "code" })}
+                        <div className="g-col-4">
+                            <DropdownList
+                                placeholder={t('Municipality')}
+                                dataList={marketInformationData.municipalities}
+                                selectedList={selectedMarketCriteria}
+                                setSelectedState={setSelectedMarketCriteria}
+                                criteriaName="selectedMunicipalities"
+                                apiCalls={getCityData}
+                                keyName="code"
+                                selectedMarketHierarchy={selectedMarketHierarchy}
+                                setSelectedMarketHierarchy={setSelectedMarketHierarchy}
+                                marketLastSelectedCodeLvl={marketLastSelectedCodeLvl}
+                                setMarketLastSelectedCodeLvl={setMarketLastSelectedCodeLvl}
+                                codeLevel={2}
+                            />
                         </div>
                     </div>
                 }
@@ -1124,9 +1162,11 @@ export default function Search(props) {
                                     return (
                                         <div key={organization?.id} className="search-result-row g-row">
                                             <div className="g-col-6"><div>{organization?.organizationName}</div>
-                                                <div>{organization?.businessAddr?.businessCountry || ""}</div></div>
-                                            <div className="g-col-6"><div>{organization?.organizationId}</div>
-                                                <div>{organization?.businessAddr?.city}</div></div>
+                                                <div>{organization?.businessAddress?.country || ""}</div></div>
+                                            <div className="g-col-6">
+                                                <div>{organization?.organizationId}</div>
+                                                <div>{organization?.businessAddress?.city}</div>
+                                            </div>
                                             {props.removeSearch &&
                                                 <div className="g-col-1"> <input type="checkbox" value={organization.organizationId} checked={selectedResults?.includes(organization.organizationId)} className="check-box" onChange={onCheckBox} /></div>
                                             }

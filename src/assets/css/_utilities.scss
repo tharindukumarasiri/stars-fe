@@ -28,7 +28,7 @@ ol {
 
 ol ol,
 ul ul {
-    margin:0;
+    margin: 0;
 }
 
 ul li>ul,
@@ -64,6 +64,15 @@ ol li>ul {
     }
 }
 
+.flex-align-center {
+    display: flex;
+    align-items: center;
+}
+
+.flex-justify-center {
+    display: flex;
+    justify-content: center;
+}
 
 //Heights
 .min-h-50 {
@@ -105,4 +114,6 @@ ol li>ul {
     }
 }
 
-.bold{font-weight:bold}
+.bold {
+    font-weight: bold
+}

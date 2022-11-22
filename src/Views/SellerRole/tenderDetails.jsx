@@ -1,43 +1,92 @@
-import React from "react";
-import { Tabs } from "antd";
+import React, { useEffect, useState } from "react";
+import { Tabs, Modal } from "antd";
 import Dropdown from "../../common/dropdown";
-import { FilePdfTwoTone, CopyTwoTone } from '@ant-design/icons';
+import { FilePdfTwoTone, CopyTwoTone, ShareAltOutlined } from '@ant-design/icons';
+import { getTendersByNoticeNumber } from "../../services/organizationsService";
+import { FetchCurrentLanguage } from "../../hooks";
+import { FacebookShareButton, FacebookIcon, EmailShareButton, EmailIcon, TwitterShareButton, TwitterIcon, LinkedinShareButton, LinkedinIcon } from "react-share";
+
 const { TabPane } = Tabs;
 
 
 const TenderDetails = (props) => {
+    const [allTenders, setAllTenders] = useState([]);
+    const [tenderDetails, setTenderDetails] = useState({});
+    const [selectedLanguage, setSelectedLanguage] = useState("");
+    const [allLanguages, setAllLanguages] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [modalVisible, setModalVisible] = useState(false);
 
-    const onLanguageSelect = () => {
+    const currentLanguage = FetchCurrentLanguage();
 
+    useEffect(() => {
+        getTendersByNoticeNumber(props?.noticeNumber).then(result => {
+            const allLangs = result.map(tender => tender.noticeLanguage)
+
+            setAllTenders(result);
+            setSelectedLanguage(result[0]?.noticeLanguage);
+            setAllLanguages(allLangs);
+            setTenderDetails(result[0]);
+            setLoading(false);
+        }).catch(() => setLoading(false));
+    }, [props]);
+
+    const onLanguageSelect = (e) => {
+        e.preventDefault();
+        const tender = allTenders.find(val => val.noticeLanguage === e.target.value)
+        console.log(tender)
+        setSelectedLanguage(e.target.value);
+        setTenderDetails(tender);
+    }
+
+    const downloadLink = () => {
+        return `https://ted.europa.eu/udl?uri=TED:NOTICE:539585-2022:PDF:${selectedLanguage}:HTML&tabId=0`
+    }
+
+    const toggelModal = () => {
+        setModalVisible(prev => !prev)
     }
 
     const GeneralView = () => {
         return (
             <>
-                <div className="notification-box flex-center-middle">
-                    <div className="white">This Notice is not available in your “Default” Language.Please select options below.</div>
-                </div>
+                {loading &&
+                    <div className="loading center-loading">
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                    </div>
+                }
+                {currentLanguage !== selectedLanguage &&
+                    <div className="notification-box flex-center-middle">
+                        <div className="white">This Notice is not available in your “Default” Language.Please select options below.</div>
+                    </div>
+                }
+
                 <div className="language-dropdown">
-                    <Dropdown values={["English"]}
+                    <Dropdown values={allLanguages}
                         onChange={onLanguageSelect}
-                        selected={""}
+                        selected={selectedLanguage}
                         placeholder="Available Language/s"
                     />
                 </div>
-                <TextRow label="Description" value={props?.buyerDescription} />
-                <TextRow label="Main CPV code" value={props?.mainCPVCode} />
-                <TextRow label="Email" value={props?.buyerDetails?.email} />
-                <TextRow label="State" value={props?.noticeStatus} />
+                <TextRow label="Description" value={tenderDetails?.buyerDescription} />
+                <TextRow label="Main CPV code" value={tenderDetails?.mainCPVCode} />
+                <TextRow label="Email" value={tenderDetails?.buyerDetails?.email} />
+                <TextRow label="State" value={tenderDetails?.noticeStatus} />
                 <h3 className="fl m-t-20 p-t-20">Buyer Details</h3>
-                <TextRow label="Company Name" value={props?.buyerDetails?.name} />
+                <TextRow label="Company Name" value={tenderDetails?.buyerDetails?.name} />
                 <TextRow label="Organisarion ID" />
-                <TextRow label="Location" value={props?.buyerDetails?.postalAddress} />
+                <TextRow label="Location" value={tenderDetails?.buyerDetails?.postalAddress} />
                 <TextRow label="Date" value={""} />
-                <a className="fl m-t-20 p-t-20" href='https://ted.europa.eu/udl?uri=TED:NOTICE:609394-2022:PDF:EN:HTML' download >
+                <a className="fl m-t-20 p-t-20" href={downloadLink()} download >
                     <div><FilePdfTwoTone className="m-r-5" />Download original Pdf</div>
                 </a>
-                <div className="fl m-t-20 p-t-20 m-l-20 hover-hand" onClick={() => { navigator.clipboard.writeText('https://ted.europa.eu/udl?uri=TED:NOTICE:609394-2022:PDF:EN:HTML') }} >
+                <div className="fl m-t-20 p-t-20 m-l-20 hover-hand" onClick={() => { navigator.clipboard.writeText(downloadLink()) }} >
                     <div><CopyTwoTone className="m-r-5" />Copy Download Link</div>
+                </div>
+                <div className="fl m-t-20 p-t-20 m-l-20 hover-hand" onClick={toggelModal} >
+                    <div className="share-btn"><ShareAltOutlined className="m-r-5" />Share</div>
                 </div>
             </>
         )
@@ -45,13 +94,13 @@ const TenderDetails = (props) => {
     return (
         <>
             <div className="g-row m-l-20 m-b-20 m-t-10">
-                <TextColumn label={'Docement Number'} value={props?.receiptionId} containerStyle="g-col-2" />
-                <TextColumn label={'NUTS Code'} value={props?.buyerDetails?.nutsCode} />
-                <TextColumn label={'Location'} value={props?.buyerDetails?.country} />
-                <TextColumn label={'published Date'} value={props?.publicationDate} containerStyle="g-col-2" />
-                <TextColumn label={'Deadline'} value={props?.deletionDate} containerStyle="g-col-2" />
-                <TextColumn label={'Contact Person'} value={props?.buyerDetails?.contactPerson} />
-                <TextColumn label={'Original Language'} value={''} containerStyle="g-col-2 fr m-l-20" />
+                <TextColumn label={'Document Number'} value={tenderDetails?.noticeNumber} containerStyle="g-col-2" />
+                <TextColumn label={'NUTS Code'} value={tenderDetails?.buyerDetails?.nutsCode} />
+                <TextColumn label={'Location'} value={tenderDetails?.buyerDetails?.country} />
+                <TextColumn label={'published Date'} value={tenderDetails?.publicationDate} containerStyle="g-col-2" />
+                <TextColumn label={'Deadline'} value={tenderDetails?.deletionDate} containerStyle="g-col-2" />
+                <TextColumn label={'Contact Person'} value={tenderDetails?.buyerDetails?.contactPerson} />
+                <TextColumn label={'Original Language'} value={tenderDetails?.originalLanguage} containerStyle="g-col-2 fr m-l-20" />
             </div>
             <div className="page-container">
                 <div className="custom-tab-container">
@@ -64,6 +113,49 @@ const TenderDetails = (props) => {
                     </Tabs>
                 </div>
             </div>
+            <Modal
+                title={'Share'}
+                visible={modalVisible}
+                centered={true}
+                footer={null}
+                onCancel={toggelModal}
+                width={380}
+            >
+                <div className="m-b-20 p-b-10 m-l-20 p-l-20">
+                    <EmailShareButton children={
+                        <div className="flex-center-middle m-r-20 p-r-20">
+                            <EmailIcon size={32} />
+                            <div className="m-l-10">E-mail</div>
+                        </div>}
+                        url={downloadLink()}
+                    />
+                    <FacebookShareButton children={
+                        <div className="flex-center-middle m-r-20 p-r-20">
+                            <FacebookIcon size={32} />
+                            <div className="m-l-10">FaceBook</div>
+                        </div>}
+                        url={downloadLink()}
+                    />
+                    <br />
+                </div>
+                <div className="m-b-20 p-b-10 m-l-20 p-l-20">
+                    <TwitterShareButton children={
+                        <div className="flex-center-middle m-r-20 p-r-20">
+                            <TwitterIcon size={32} />
+                            <div className="m-l-10">Twitter</div>
+                        </div>}
+                        url={downloadLink()}
+                    />
+                    <LinkedinShareButton children={
+                        <div className="flex-center-middle m-r-20 p-r-20">
+                            <LinkedinIcon size={32} />
+                            <div className="m-l-10">Linkedin</div>
+                        </div>}
+                        url={downloadLink()}
+                    />
+                    <br />
+                </div>
+            </Modal>
         </>
     )
 

@@ -446,7 +446,11 @@ export const searchResultsListTableHeaders = [
 export const matchinTendersTableHeaders = [
     {
         title: 'Document Number',
-        dataIndex: 'referenceNumber',
+        dataIndex: 'noticeNumber',
+        sorter: (a, b) => a?.noticeNumber?.split("_")[0] - b?.noticeNumber?.split("_")[0]
+        ,
+        defaultSortOrder: 'ascend',
+
     },
     {
         title: 'Main CPV code',
@@ -459,10 +463,22 @@ export const matchinTendersTableHeaders = [
     {
         title: 'Published Date',
         dataIndex: 'publicationDate',
+        sorter: (a, b) => {
+            if (getDateDiff(a.publicationDate, b.publicationDate) > 0)
+                return 1
+            else
+                return -1
+        },
     },
     {
         title: 'Deadline',
         dataIndex: 'deletionDate',
+        sorter: (a, b) => {
+            if (getDateDiff(a.deletionDate, b.deletionDate) > 0)
+                return 1
+            else
+                return -1
+        },
     },
     {
         title: 'Contact Person',
@@ -486,10 +502,47 @@ export const matchinTendersTableHeaders = [
         ),
     },
     {
-        title: 'City',
+        title: 'Country',
+        dataIndex: 'countryCode',
+    },
+];
+
+export const searchTendersTableHeaders = [
+    {
+        title: 'Document Number',
+        dataIndex: 'noticeNumber',
+    },
+    {
+        title: 'Main CPV code',
+        dataIndex: 'mainCPVCode',
+    },
+    {
+        title: 'Published Date',
+        dataIndex: 'publicationDate',
+    },
+    {
+        title: 'Deadline',
+        dataIndex: 'deletionDate',
+    },
+    {
+        title: 'NUTS code',
         dataIndex: 'buyerDetails',
         render: (_, { buyerDetails }) => (
-            buyerDetails?.city
+            buyerDetails?.nutsCode
+        ),
+    },
+    {
+        title: 'Country',
+        dataIndex: 'countryCode',
+    },
+    {
+        title: 'Status',
+        dataIndex: 'noticeStatus',
+    },
+    {
+        title: '',
+        render: () => (
+            <input type="checkbox" className="check-box" />
         ),
     },
 ];

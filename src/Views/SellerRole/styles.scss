@@ -17,3 +17,25 @@
     border-color: black;
 
 }
+
+.search-colaps-icon {
+    position: absolute;
+    font-size: 25px;
+    width: 35px;
+    height: 35px;
+    border-radius: 10px;
+    background-color: $tab-content;
+    z-index: 3;
+}
+
+.open-pane {
+    transform: scaleX(-1);
+    left: 47%;
+}
+
+.share-btn {
+    border: 1px solid $base-gray;
+    border-radius: 5px;
+    padding-left: 1px;
+    padding-right: 3px;
+}

@@ -91,6 +91,11 @@ export async function getCities(name) {
     return data;
 }
 
+export async function getCitiesByCountry(country) {
+    const { data } = await http.get(`${config.CITIES_BY_COUNTRY}${country}`);
+    return data;
+}
+
 //Unspsc Codes
 export async function getUnspscCodes(params) {
     const { data } = await http.post(config.UNSPSC_CODES, params);
@@ -148,8 +153,18 @@ export async function updateNutsCodes(id, params) {
 }
 
 //Seller 
+export async function getAllTenders({ pageSize, index, language = '', searchText = '', country = '', cities = '', cpvs = '', noticeType = '', nutsCode = '', postalCode = '', publicationType = '', referenceNo = '', publishedDateFrom = '', publishedDateTo = '', expiryDateFrom = '', expiryDateTo = '', sortBy = '', sortDirection = 'asc' } = {}) {
+    const { data } = await http.get(`${config.GET_ALL_TENDERS}${language}&searchText=${searchText}&country=${country}&cities=${cities}&cpvs=${cpvs}&nutsCode=${nutsCode}&postalCode=${postalCode}&noticeType=${noticeType}&publicationType=${publicationType}&referenceNo=${referenceNo}&publishedDateFrom=${publishedDateFrom}&publishedDateTo=${publishedDateTo}&expiryDateFrom=${expiryDateFrom}&expiryDateTo=${expiryDateTo}&sortBy=${sortBy}&sortDirection=${sortDirection}&pageSize=${pageSize}&index=${index}`);
+    return data;
+}
+
 export async function getTenders(orgId, pageSize, index, language, country) {
     const { data } = await http.get(`${config.GET_TENDERS}${orgId}?country=${country}&pageSize=${pageSize}&index=${index}&language=${language}`);
+    return data;
+}
+
+export async function getTendersByNoticeNumber(noticeNumber) {
+    const { data } = await http.get(`${config.GET_TENDER_BY_NOTICE_NUMBER}${noticeNumber}`);
     return data;
 }
 

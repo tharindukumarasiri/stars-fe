@@ -13,6 +13,7 @@
     "REGIONS": "https://sdcsearchapi.azurewebsites.net/regions",
     "MUNICIPALITIES": "https://sdcsearchapi.azurewebsites.net/municipalities",
     "CITIES": "https://sdcsearchapi.azurewebsites.net/cities",
+    "CITIES_BY_COUNTRY": "https://sdcsearchapi.azurewebsites.net/citiesByCountry?country=",
     "CPV_CODES": "https://sdcsearchapi.azurewebsites.net/cpv",
     "SEARCH_CPV_CODES": "https://sdcsearchapi.azurewebsites.net/findCpv",
     "DELETE_SEARCH": "https://sdcprojectapi.azurewebsites.net/deleteSearch",
@@ -51,7 +52,9 @@
     "GET_COMPANY_MEMBERS": "/sessionbridge/GetMembersByCompany",
     "GET_LANGUAGE": "/sessionbridge/GetCurrentLanguage",
 
+    "GET_ALL_TENDERS": "https://sdcsearchapi.azurewebsites.net/getAllTenders?language=",
     "GET_TENDERS": "https://sdcsearchapi.azurewebsites.net/getTenders/",
+    "GET_TENDER_BY_NOTICE_NUMBER": "https://sdcsearchapi.azurewebsites.net/GetTendersByNoticeNumber/",
     "UPDATE_TENENT_CPV": "https://sdcsearchapi.azurewebsites.net/tenantTenderCPV",
     "GET_TENENT_CPV": "https://sdcsearchapi.azurewebsites.net/getTenantTenderCPV?orgId="
 }
