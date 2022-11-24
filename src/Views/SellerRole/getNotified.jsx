@@ -18,12 +18,14 @@ const GetNotified = () => {
     const [searchResult, setSearchResult] = useState('');
     const [showingSearchedCodes, setShowingSearchedCodes] = useState(false);
     const [tenderCpvs, setTenderCpvs] = useState([]);
+    const [allCpvCodes, setAllCpvCodes] = useState([]);
+
     const [selectedCompany] = FetchCurrentCompany();
 
     useEffect(() => {
         getCpvCodes(levelOneReq).then(result => {
             setCpvData({
-                ...cpvData, division: result
+                ...cpvData, division: result.map(val => { return { code: val.code2, desscription: val.desscription } })
             })
         });
 
@@ -41,15 +43,25 @@ const GetNotified = () => {
     }, []);
 
     useEffect(() => {
-        if(selectedCompany.companyRegistrationId){
+        if (selectedCompany.companyRegistrationId) {
             getTenementCPV(selectedCompany.companyRegistrationId, 'NO').then(result => {
-                if (result?.cpvs?.length > 0)
+                if (result?.cpvs?.length > 0) {
                     setTenderCpvs(result?.cpvs)
 
+                    let newAllCpvCodes = [];
+                    for (let i = 0; i < result.cpvs.length; i++) {
+                        const parentCodelist = result.cpvs[i].description[0].parent.map(val => { return val.code })
+                        newAllCpvCodes = newAllCpvCodes.concat(parentCodelist);
+                        newAllCpvCodes.push(result.cpvs[i].code);
+                    }
+
+                    setAllCpvCodes(newAllCpvCodes)
+                }
+
                 setLoading(false);
-            }).catch(()=> setLoading(false))
+            }).catch(() => setLoading(false))
         }
-    },[selectedCompany]);
+    }, [selectedCompany]);
 
     const divisionData = useMemo(() => {
         if (showingSearchedCodes) {
@@ -80,7 +92,7 @@ const GetNotified = () => {
             if (!isDataAvailavle) {
                 getCpvCodes(data).then(result => {
                     const newGroupData = [...cpvData.cpvGroup]
-                    newGroupData.push({ parent: code, data: result })
+                    newGroupData.push({ parent: code, data: result.map(val => { return { code: val.code2, desscription: val.desscription } }) })
                     setCpvData({ ...cpvData, cpvGroup: newGroupData })
                 });
             }
@@ -110,7 +122,7 @@ const GetNotified = () => {
             if (!isDataAvailable) {
                 getCpvCodes(data).then(result => {
                     const newClassData = [...cpvData.cpvClass]
-                    newClassData.push({ parent: code, data: result })
+                    newClassData.push({ parent: code, data: result.map(val => { return { code: val.code2, desscription: val.desscription } }) })
                     setCpvData({ ...cpvData, cpvClass: newClassData })
                 });
             }
@@ -141,7 +153,7 @@ const GetNotified = () => {
             if (!isDataAvailable) {
                 getCpvCodes(data).then(result => {
                     const newCommodityData = [...cpvData.category]
-                    newCommodityData.push({ parent: code, data: result })
+                    newCommodityData.push({ parent: code, data: result.map(val => { return { code: val.code2, desscription: val.desscription } }) })
                     setCpvData({ ...cpvData, category: newCommodityData })
                 });
             }
@@ -172,7 +184,7 @@ const GetNotified = () => {
             if (!isDataAvailable) {
                 getCpvCodes(data).then(result => {
                     const newSubCategoryData = [...cpvData.subCategory]
-                    newSubCategoryData.push({ parent: code, data: result })
+                    newSubCategoryData.push({ parent: code, data: result.map(val => { return { code: val.code2, desscription: val.desscription } }) })
                     setCpvData({ ...cpvData, subCategory: newSubCategoryData })
                 });
             }
@@ -197,10 +209,22 @@ const GetNotified = () => {
             const newCpvs = index ? [...tenderCpvs] : []
             newCpvs.push({ code: mostChild.code, description: [{ lang: 'en', parent: parents, value: mostChild.value }] })
             setTenderCpvs(newCpvs)
+
+            const parentCodeSet = parents.map(val => { return val.code })
+            const newAllCpvs = allCpvCodes.concat(parentCodeSet)
+            newAllCpvs.push(mostChild.code);
+            setAllCpvCodes(newAllCpvs)
         } else {
             const newCpvs = [...tenderCpvs]
             newCpvs.splice(index, 1);
             setTenderCpvs(newCpvs)
+
+            const allCpvIndex = allCpvCodes.indexOf(mostChild.code);
+            const newAllCpvs = [...allCpvCodes]
+            if (allCpvIndex > 0) {
+                newAllCpvs.splice(allCpvIndex - 4, 5)
+                setAllCpvCodes(newAllCpvs)
+            }
         }
     }
 
@@ -220,6 +244,7 @@ const GetNotified = () => {
             organizationId: selectedCompany.companyRegistrationId,
             countryCode: 'NO',
             cpvs: tenderCpvs,
+            cpvCodes: [...new Set(allCpvCodes)]
         }
 
         updateTenementCPV(params).then(result => {

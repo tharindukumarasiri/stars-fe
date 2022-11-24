@@ -68,10 +68,10 @@ export async function deleteSearch(params) {
 }
 
 //Countries
-export async function getCountries() {
-    const { data } = await http.get(config.COUNTRIES);
-    return data;
-}
+// export async function getCountries() {
+//     const { data } = await http.get(config.COUNTRIES);
+//     return data;
+// }
 
 //Regions
 export async function getRegions(name) {

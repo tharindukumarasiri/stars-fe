@@ -34,7 +34,6 @@ const TenderDetails = (props) => {
     const onLanguageSelect = (e) => {
         e.preventDefault();
         const tender = allTenders.find(val => val.noticeLanguage === e.target.value)
-        console.log(tender)
         setSelectedLanguage(e.target.value);
         setTenderDetails(tender);
     }

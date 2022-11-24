@@ -20,7 +20,7 @@ const MatchingTenders = () => {
     const { t } = useTranslation();
 
     useEffect(() => {
-        if(selectedCompany.companyRegistrationId){
+        if (selectedCompany.companyRegistrationId) {
             getTenders(selectedCompany.companyRegistrationId, pageSize, pageNumber, 'english', 'NO').then(result => {
                 setTendersData(result.tenders);
                 setPageCount(result.totalCount)
@@ -78,4 +78,4 @@ const MatchingTenders = () => {
 
 }
 
-export default MatchingTenders;
+export default MatchingTenders

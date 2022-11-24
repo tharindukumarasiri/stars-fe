@@ -7,7 +7,7 @@ const CountryDropDown = ({ dataList, selectedList, setSelectedState, apiCalls, c
                 <option value="0" disabled defaultValue="selected" hidden={true} className="disable-option" >Country</option>
                 {
                     dataList.map(item => {
-                        return <option value={`{"name":"${item.name}", "id":"${item.alpha3Code}"}`} key={item.alpha3Code} >{item.name}</option>
+                        return <option value={`{"name":"${item.name}", "id":"${item.code}"}`} key={item.code} >{item.name}</option>
                     })
                 }
             </select>

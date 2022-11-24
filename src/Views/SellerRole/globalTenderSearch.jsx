@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from "react";
 import { Table, Pagination } from 'antd';
 import { TabContext } from "../../utils/contextStore";
 import { levelOneReq } from "../../utils/constants";
-import { getCpvCodes, getCitiesByCountry, getAllTenders } from "../../services/organizationsService";
+import { getCpvCodes, getCitiesByCountry, getAllTenders, getNutsCodes } from "../../services/organizationsService";
 import DropdownCPV from "./Components/dropdown";
 import Dropdown from "../../common/dropdown"
 import CountryDropDown from "./Components/countryDropDown";
@@ -23,7 +23,7 @@ const pageSize = 10;
 const GlobalTenderSearch = () => {
     const { changeActiveTab } = useContext(TabContext);
 
-    const [marketInformationData, setMarketInformationData] = useState({ countries: [{ "name": "Norway", "alpha3Code": "NO" }], cities: [] });
+    const [marketInformationData, setMarketInformationData] = useState({ countries: [], cities: [] });
     const [cpvData, setCpvData] = useState({ division: [], cpvGroup: [], cpvClass: [], category: [], subCategory: [] });
     const [tendersData, setTendersData] = useState([]);
 
@@ -47,7 +47,7 @@ const GlobalTenderSearch = () => {
     const { t } = useTranslation();
 
     useEffect(() => {
-        // getCountries().then(result => { setMarketInformationData({...marketInformationData, countries: result}) });
+        getNutsCodes(0, 0).then(result => setMarketInformationData({ ...marketInformationData, countries: result }))
         getCpvCodes(levelOneReq).then(result => { setCpvData({ ...cpvData, division: result }) })
         getAllTenders({ pageSize, index: 1 }).then(result => {
             setTendersData(result.tenders);

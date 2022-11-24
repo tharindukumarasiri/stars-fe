@@ -4,11 +4,9 @@ import "./dropdownList.scss"
 const DropdownList = ({
     placeholder,
     dataList,
-    dataName = 'name',
     criteriaName,
     selectedList,
     setSelectedState,
-    keyName,
     selectedMarketHierarchy,
     setSelectedMarketHierarchy,
     marketLastSelectedCodeLvl,
@@ -23,7 +21,7 @@ const DropdownList = ({
                 <option value="0" disabled defaultValue="selected" hidden={true} className="disable-option" >{placeholder}</option>
                 {
                     dataList.map(item => {
-                        return <option value={item[dataName]} key={item[dataName]}>{item.code} {item[dataName]}</option>
+                        return <option value={JSON.stringify(item)} key={item.code}>{item.code} {item.name}</option>
                     })
                 }
             </select>
@@ -42,9 +40,9 @@ const DropdownList = ({
                 {
                     selectedList[criteriaName]?.map(item => {
                         return (
-                            <div className="selected-item" key={item}>
+                            <div className="selected-item" key={item.code}>
                                 <i className="close-btn icon-close-small-x m-t-5" onClick={() => onCloseBtnClick(item)} > </i>
-                                {item}
+                                {`${item.code}: ${item.name}`}
                             </div>
                         )
                     })
@@ -55,11 +53,13 @@ const DropdownList = ({
 
     const handleDropdownSelect = (e) => {
         e.preventDefault();
-        const index = selectedList[criteriaName].indexOf(e.target.value);
+        const value = JSON.parse(e.target.value)
+
+        const index = selectedList[criteriaName].findIndex(val => val.code === value.code);
 
         if (index < 0) {
             const newSelectedCriteria = [...selectedList[criteriaName]];
-            newSelectedCriteria.push(e.target.value);
+            newSelectedCriteria.push(value);
             setSelectedState({ ...selectedList, [criteriaName]: newSelectedCriteria });
         }
 
@@ -67,19 +67,19 @@ const DropdownList = ({
             const newSelectedMarketHierarchy = [...selectedMarketHierarchy];
             const lastSelectedHierarchy = selectedMarketHierarchy[selectedMarketHierarchy.length - 1];
             if (marketLastSelectedCodeLvl === codeLevel && codeLevel !== 0) {
-                lastSelectedHierarchy.push('SME_LVL', e.target.value)
+                lastSelectedHierarchy.push('SME_LVL', value.code)
             } else {
-                lastSelectedHierarchy.push(e.target.value)
+                lastSelectedHierarchy.push(value.code)
             }
             newSelectedMarketHierarchy[selectedMarketHierarchy.length - 1] = lastSelectedHierarchy;
             setSelectedMarketHierarchy(newSelectedMarketHierarchy)
         } else {
             const newSelectedMarketHierarchy = [...selectedMarketHierarchy];
-            newSelectedMarketHierarchy.push([e.target.value]);
+            newSelectedMarketHierarchy.push([value.code]);
             setSelectedMarketHierarchy(newSelectedMarketHierarchy)
         }
 
-        apiCalls(e.target.value);
+        apiCalls(value.country, codeLevel);
         setMarketLastSelectedCodeLvl(codeLevel)
     }
 
@@ -87,7 +87,7 @@ const DropdownList = ({
         const itemsToRemove = []
 
         for (let lvl1 = 0; lvl1 < selectedMarketHierarchy.length; lvl1++) {
-            const lvl2index = selectedMarketHierarchy[lvl1].findIndex(val => val === item)
+            const lvl2index = selectedMarketHierarchy[lvl1].findIndex(val => val === item.code)
 
             if (lvl2index >= 0) {
                 if (selectedMarketHierarchy[lvl1][lvl2index + 1] === 'SME_LVL') {
@@ -114,10 +114,10 @@ const DropdownList = ({
 
 
         const newSelectedList = {
-            selectedCountries: selectedList.selectedCountries.filter(val => !itemsToRemove.includes(val)),
-            selectedRegions: selectedList.selectedRegions.filter(val => !itemsToRemove.includes(val)),
-            selectedCities: selectedList.selectedCities.filter(val => !itemsToRemove.includes(val)),
-            selectedMunicipalities: selectedList.selectedMunicipalities.filter(val => !itemsToRemove.includes(val)),
+            selectedCountries: selectedList.selectedCountries.filter(val => !itemsToRemove.includes(val.code)),
+            selectedRegions: selectedList.selectedRegions.filter(val => !itemsToRemove.includes(val.code)),
+            selectedCities: selectedList.selectedCities.filter(val => !itemsToRemove.includes(val.code)),
+            selectedMunicipalities: selectedList.selectedMunicipalities.filter(val => !itemsToRemove.includes(val.code)),
         }
 
         setSelectedState(newSelectedList)

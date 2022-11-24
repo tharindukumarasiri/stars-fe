@@ -7,11 +7,8 @@ import { TabContext } from "../../utils/contextStore";
 import { NAVIGATION_PAGES } from "../../utils/enums";
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import {
-    getCountries,
-    getRegions,
-    getMunicipalities,
+    getNutsCodes,
     searchOrganization,
-    getCities,
     getUnspscCodes,
     getCpvCodes,
     getNacCodes,
@@ -28,7 +25,6 @@ import {
 import DropdownList from "./Components/dropdownList"
 import Dropdown from "./Components/dropdown";
 import DropdownSelect from "../../common/dropdown"
-import { arrayToUpper } from '../../utils/index';
 import SearchSelectedValues from "./Components/searchSelectedValues";
 import DatePickerInput from "../../common/datePickerInput";
 import ToggleSwitch from "../../common/toggleSwitch";
@@ -46,7 +42,7 @@ export default function Search(props) {
     const [grouping, setGrouping] = useState({})
 
     // Data from back-end
-    const [marketInformationData, setMarketInformationData] = useState({ countries: [{ "name": "Norway", "alpha3Code": "NO" }], regions: [], cities: [], municipalities: [] });
+    const [marketInformationData, setMarketInformationData] = useState({ countries: [], regions: [], cities: [], municipalities: [] });
     const [unspscData, setUnspscData] = useState({ segmant: [], family: [], unspClass: [], comClass: [] })
     const [cpvData, setCpvData] = useState({ division: [], cpvGroup: [], cpvClass: [], category: [], subCategory: [] })
     const [professionData, setProfessionData] = useState({ section: [], divition: [], profGroup: [], profClass: [] })
@@ -76,7 +72,7 @@ export default function Search(props) {
     const { changeActiveTab } = useContext(TabContext)
 
     useEffect(() => {
-        // getCountries().then(result => { setMarketInformationData({...marketInformationData, countries: result}) });
+        getNutsCodes(0, 0).then(result => setMarketInformationData({ ...marketInformationData, countries: result }))
         getUnspscCodes(levelOneReq).then(result => { setUnspscData({ ...unspscData, segmant: result }) });
         getCpvCodes(levelOneReq).then(result => { setCpvData({ ...cpvData, division: result }) })
         getNacCodes(nacSectionReq).then(result => { setProfessionData({ ...professionData, section: result }) });
@@ -126,16 +122,23 @@ export default function Search(props) {
     }, [selectedGrouping.accumulation]);
 
     //API calls
-    const getRegionsData = (countryName) => {
-        getRegions(countryName).then(result => { setMarketInformationData({ ...marketInformationData, regions: result }) });
-    }
+    const getCountryCodes = (country, level) => {
+        const getCountryName = (lvl) => {
+            switch (lvl) {
+                case 1:
+                    return 'regions';
+                case 2:
+                    return 'cities';
+                case 3:
+                    return 'municipalities';
+                default:
+                    break;
+            }
+        }
 
-    const getMunicipalitiesData = (regionName) => {
-        getMunicipalities(regionName).then(result => { setMarketInformationData({ ...marketInformationData, municipalities: result }) });
-    }
-
-    const getCityData = (MunicipalityName) => {
-        getCities(MunicipalityName).then(result => { setMarketInformationData({ ...marketInformationData, cities: result }) });
+        getNutsCodes(country, level + 1).then(result => {
+            setMarketInformationData({ ...marketInformationData, [getCountryName(level + 1)]: result })
+        })
     }
 
     const getUnspscCodesData = (title, level) => {
@@ -510,7 +513,7 @@ export default function Search(props) {
             const allSelectedCriteria = searchReq.countries.concat(searchReq.regions, searchReq.cities, searchReq.municipalities, searchReq.cpvs, searchReq.naces, searchReq.unspscs)
             if (allSelectedCriteria.length === 0 && searchText === '' && !props?.removeSearch) {
                 message.warning('Please select criterias to save');
-            } else if (props?.sectionSearch && (props?.projectStatus.toUpperCase() === "CLOSE" || props?.sectionStatus.toUpperCase() === "CLOSE")) {
+            } else if (props?.sectionSearch && (props?.projectStatus?.toUpperCase() === "CLOSE" || props?.sectionStatus?.toUpperCase() === "CLOSE")) {
                 message.warning('Cannot save results for closed projects or sections');
             } else {
                 if (props?.sectionSearch) {
@@ -528,6 +531,12 @@ export default function Search(props) {
         }
     }
 
+    const getMarketCodes = (marketList) => {
+        return marketList.map((val) => {
+            return val.code
+        })
+    }
+
     const getSaveResultData = () => {
         if (props?.removeSearch) {
             return ({
@@ -537,10 +546,10 @@ export default function Search(props) {
                 "sectionId": props.sectionId,
                 "createdDate": new Date(),
                 "searchFilter": {
-                    "countries": selectedMarketCriteria.selectedCountries,
-                    "regions": selectedMarketCriteria.selectedRegions,
-                    "cities": arrayToUpper(selectedMarketCriteria.selectedCities),
-                    "municipalities": selectedMarketCriteria.selectedMunicipalities,
+                    "countries": getMarketCodes(selectedMarketCriteria.selectedCountries),
+                    "regions": getMarketCodes(selectedMarketCriteria.selectedRegions),
+                    "cities": getMarketCodes(selectedMarketCriteria.selectedCities),
+                    "municipalities": getMarketCodes(selectedMarketCriteria.selectedMunicipalities),
                     "cpvs": getFilterdCodes(selectedCPVValues),
                     "naces": getFilterdCodes(selectedNACValues),
                     "unspscs": getFilterdCodes(selectedUNSPValues),
@@ -556,10 +565,10 @@ export default function Search(props) {
                 "createdDate": new Date(),
                 "searchFilter": {
                     "name": searchText,
-                    "countries": selectedMarketCriteria.selectedCountries,
-                    "regions": selectedMarketCriteria.selectedRegions,
-                    "cities": arrayToUpper(selectedMarketCriteria.selectedCities),
-                    "municipalities": selectedMarketCriteria.selectedMunicipalities,
+                    "countries": getMarketCodes(selectedMarketCriteria.selectedCountries),
+                    "regions": getMarketCodes(selectedMarketCriteria.selectedRegions),
+                    "cities": getMarketCodes(selectedMarketCriteria.selectedCities),
+                    "municipalities": getMarketCodes(selectedMarketCriteria.selectedMunicipalities),
                     "cpvs": getFilterdCodes(selectedCPVValues),
                     "naces": getFilterdCodes(selectedNACValues),
                     "unspscs": getFilterdCodes(selectedUNSPValues),
@@ -575,10 +584,10 @@ export default function Search(props) {
     const getSearchRequest = (pageNumber) => {
         return ({
             "name": searchText,
-            "countries": selectedMarketCriteria.selectedCountries,
-            "regions": selectedMarketCriteria.selectedRegions,
-            "cities": arrayToUpper(selectedMarketCriteria.selectedCities),
-            "municipalities": selectedMarketCriteria.selectedMunicipalities,
+            "countries": getMarketCodes(selectedMarketCriteria.selectedCountries),
+            "regions": getMarketCodes(selectedMarketCriteria.selectedRegions),
+            "cities": getMarketCodes(selectedMarketCriteria.selectedCities),
+            "municipalities": getMarketCodes(selectedMarketCriteria.selectedMunicipalities),
             "cpvs": getFilterdCodes(selectedCPVValues),
             "naces": getFilterdCodes(selectedNACValues),
             "unspscs": getFilterdCodes(selectedUNSPValues),
@@ -614,10 +623,10 @@ export default function Search(props) {
             return ({
                 "searchCriteria": {
                     "name": "",
-                    "countries": selectedMarketCriteria.selectedCountries,
-                    "regions": selectedMarketCriteria.selectedRegions,
-                    "cities": arrayToUpper(selectedMarketCriteria.selectedCities),
-                    "municipalities": selectedMarketCriteria.selectedMunicipalities,
+                    "countries": getMarketCodes(selectedMarketCriteria.selectedCountries),
+                    "regions": getMarketCodes(selectedMarketCriteria.selectedRegions),
+                    "cities": getMarketCodes(selectedMarketCriteria.selectedCities),
+                    "municipalities": getMarketCodes(selectedMarketCriteria.selectedMunicipalities),
                     "cpvs": getFilterdCodes(selectedCPVValues),
                     "naces": getFilterdCodes(selectedNACValues),
                     "unspscs": getFilterdCodes(selectedUNSPValues),
@@ -883,15 +892,14 @@ export default function Search(props) {
                 {getCriteriaHeader(t("Market Information"), "xxx", () => toggleOpenCriteria('Market'), openCriteria.Market)}
                 {openCriteria.Market &&
                     <div className="g-row">
-                        <div className="g-col-4">
+                        <div className="g-col-3">
                             <DropdownList
                                 placeholder={t('Country')}
                                 dataList={marketInformationData.countries}
                                 selectedList={selectedMarketCriteria}
                                 setSelectedState={setSelectedMarketCriteria}
                                 criteriaName="selectedCountries"
-                                apiCalls={getRegionsData}
-                                keyName="alpha3Code"
+                                apiCalls={getCountryCodes}
                                 selectedMarketHierarchy={selectedMarketHierarchy}
                                 setSelectedMarketHierarchy={setSelectedMarketHierarchy}
                                 marketLastSelectedCodeLvl={marketLastSelectedCodeLvl}
@@ -899,15 +907,14 @@ export default function Search(props) {
                                 codeLevel={0}
                             />
                         </div>
-                        <div className="g-col-4">
+                        <div className="g-col-3">
                             <DropdownList
-                                placeholder={t('Region')}
+                                placeholder={t('Level 1')}
                                 dataList={marketInformationData.regions}
                                 selectedList={selectedMarketCriteria}
                                 setSelectedState={setSelectedMarketCriteria}
                                 criteriaName="selectedRegions"
-                                apiCalls={getMunicipalitiesData}
-                                keyName="code"
+                                apiCalls={getCountryCodes}
                                 selectedMarketHierarchy={selectedMarketHierarchy}
                                 setSelectedMarketHierarchy={setSelectedMarketHierarchy}
                                 marketLastSelectedCodeLvl={marketLastSelectedCodeLvl}
@@ -915,20 +922,33 @@ export default function Search(props) {
                                 codeLevel={1}
                             />
                         </div>
-                        <div className="g-col-4">
+                        <div className="g-col-3">
                             <DropdownList
-                                placeholder={t('Municipality')}
-                                dataList={marketInformationData.municipalities}
+                                placeholder={t('Level 2')}
+                                dataList={marketInformationData.cities}
                                 selectedList={selectedMarketCriteria}
                                 setSelectedState={setSelectedMarketCriteria}
-                                criteriaName="selectedMunicipalities"
-                                apiCalls={getCityData}
-                                keyName="code"
+                                criteriaName="selectedCities"
+                                apiCalls={getCountryCodes}
                                 selectedMarketHierarchy={selectedMarketHierarchy}
                                 setSelectedMarketHierarchy={setSelectedMarketHierarchy}
                                 marketLastSelectedCodeLvl={marketLastSelectedCodeLvl}
                                 setMarketLastSelectedCodeLvl={setMarketLastSelectedCodeLvl}
                                 codeLevel={2}
+                            />
+                        </div>
+                        <div className="g-col-3">
+                            <DropdownList
+                                placeholder={t('Level 3')}
+                                dataList={marketInformationData.municipalities}
+                                selectedList={selectedMarketCriteria}
+                                setSelectedState={setSelectedMarketCriteria}
+                                criteriaName="selectedMunicipalities"
+                                selectedMarketHierarchy={selectedMarketHierarchy}
+                                setSelectedMarketHierarchy={setSelectedMarketHierarchy}
+                                marketLastSelectedCodeLvl={marketLastSelectedCodeLvl}
+                                setMarketLastSelectedCodeLvl={setMarketLastSelectedCodeLvl}
+                                codeLevel={3}
                             />
                         </div>
                     </div>
