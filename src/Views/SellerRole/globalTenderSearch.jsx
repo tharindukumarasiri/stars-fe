@@ -15,7 +15,7 @@ import { searchTendersTableHeaders } from "../../utils/constants";
 import { NAVIGATION_PAGES } from "../../utils/enums";
 import { formatDate } from "../../utils";
 
-const noticeTypes = ['All', 'PIN', 'NOTICE', 'AWARD', 'INTENTION', 'BUYER PROFILE', 'DYNAMIC PURCHASING SYSTEM'];
+const noticeTypes = ['All', 'open', 'awarded'];
 const publicationTypes = ['All', 'NATIONAL', 'EUROPEAN', 'MARKET CONSULTING']
 const sortByTypes = ['None', 'Publisher', 'Publication Date', 'Expired Date', 'Country', 'Main CPV']
 const pageSize = 10;
