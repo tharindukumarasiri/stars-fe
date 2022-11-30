@@ -241,8 +241,8 @@ const GetNotified = () => {
         setLoading(true);
         window.scrollTo(0, 0);
         const params = {
-            organizationId: selectedCompany.orgId,
-            tenantId: selectedCompany.companyRegistrationId,
+            organizationId: selectedCompany.companyRegistrationId,
+            tenantId: selectedCompany.tenantId,
             countryCode: 'NO',
             cpvs: tenderCpvs,
             cpvCodes: [...new Set(allCpvCodes)]

@@ -21,7 +21,7 @@ const MatchingTenders = () => {
 
     useEffect(() => {
         if (selectedCompany.companyRegistrationId) {
-            getTenders(selectedCompany.companyRegistrationId, pageSize, pageNumber, 'english', 'NO').then(result => {
+            getTenders(selectedCompany.companyRegistrationId, pageSize, pageNumber, null, 'NO').then(result => {
                 setTendersData(result.tenders);
                 setPageCount(result.totalCount)
             })
