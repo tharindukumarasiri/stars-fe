@@ -56,5 +56,6 @@
     "GET_TENDERS": "https://sdcsearchapi.azurewebsites.net/getTenders/",
     "GET_TENDER_BY_NOTICE_NUMBER": "https://sdcsearchapi.azurewebsites.net/GetTendersByNoticeNumber/",
     "UPDATE_TENENT_CPV": "https://sdcsearchapi.azurewebsites.net/tenantTenderCPV",
-    "GET_TENENT_CPV": "https://sdcsearchapi.azurewebsites.net/getTenantTenderCPV?orgId="
+    "GET_TENENT_CPV": "https://sdcsearchapi.azurewebsites.net/getTenantTenderCPV?orgId=",
+    "UPDATE_TENENT_TENDER_MARKER": "https://sdcsearchapi.azurewebsites.net/updateTenantTenderMarker"
 }

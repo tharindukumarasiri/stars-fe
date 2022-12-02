@@ -1,17 +1,18 @@
-import React, { useState, useEffect, useContext } from "react";
-import { Table, Pagination } from 'antd';
+import React, { useState, useEffect, useContext, useMemo } from "react";
+import { Table, Pagination, Dropdown, Menu } from 'antd';
 import { TabContext } from "../../utils/contextStore";
 import { levelOneReq } from "../../utils/constants";
-import { getCpvCodes, getCitiesByCountry, getAllTenders, getNutsCodes } from "../../services/organizationsService";
+import { getCpvCodes, getCitiesByCountry, getAllTenders, getNutsCodes, updateTenantTenderMarker } from "../../services/organizationsService";
 import DropdownCPV from "./Components/dropdown";
-import Dropdown from "../../common/dropdown"
+import DropdownComp from "../../common/dropdown"
 import CountryDropDown from "./Components/countryDropDown";
 import CitiesDropDown from "./Components/citiesDropDown";
 import SearchSelectedValues from "./Components/searchSelectedValues";
 import gb_flag from "../../assets/images/gb_flag.png"
 import { useTranslation } from "react-i18next";
 import DatePickerInput from "../../common/datePickerInput";
-import { searchTendersTableHeaders } from "../../utils/constants";
+import { searchTendersTableHeaders, markTendersitems } from "../../utils/constants";
+import { FetchCurrentCompany } from "../../hooks";
 import { NAVIGATION_PAGES } from "../../utils/enums";
 import { formatDate } from "../../utils";
 
@@ -44,6 +45,8 @@ const GlobalTenderSearch = () => {
     const [pageCount, setPageCount] = useState(0);
     const [loading, setLoading] = useState(true);
 
+    const [selectedCompany] = FetchCurrentCompany();
+
     const { t } = useTranslation();
 
     useEffect(() => {
@@ -59,6 +62,73 @@ const GlobalTenderSearch = () => {
     useEffect(() => {
         searchTenders(1);
     }, [sortBy]);
+
+    const handleMenuClick = (noticeNumber, markType) => {
+        const params = {
+            organizationId: selectedCompany.companyRegistrationId,
+            countryCode: 'NO',
+            noticeNumber: noticeNumber,
+            markerType: markType
+        }
+        updateTenantTenderMarker(params).then(() => {
+            if ('Ok') {
+                searchTenders(pageNumber)
+            }
+        })
+    };
+
+    const getMenu = (noticeNumber) => {
+        return (
+            <Menu>
+                {markTendersitems.map((item, index) => {
+                    return (<Menu.Item onClick={() => handleMenuClick(noticeNumber, item.value)} key={index}>{item.icon}{item.label}</Menu.Item>)
+                })}
+            </Menu>
+        )
+    };
+
+    const getMarkAsIcon = (markAsType) => {
+        switch (markAsType) {
+            case "NEW":
+                return "icon-tender-new green"
+            case "OPEN_FOR_CONSIDERATION":
+                return "icon-tender-open blue-dark"
+            case "PROPOSAL":
+                return "icon-tender-proposal blue-purple"
+            case "NOT_RELEVANT":
+                return "icon-tender-not-relevant"
+            case "CLOSED":
+                return "icon-tender-closed red"
+            default:
+                return "icon-tender-new green"
+        }
+    }
+
+    const tableHeaders = useMemo(() => {
+        const headers = searchTendersTableHeaders.map((a) => {
+            return { ...a, title: t(a.title) };
+        });
+
+        headers.push({
+            title: 'Mark As',
+            dataIndex: ['id', 'countryCode', 'noticeNumber', 'markerType'],
+            render: (_, { noticeNumber, markerType }) => (
+                <div onClick={(e) => { e.stopPropagation() }}>
+                    <Dropdown
+                        overlay={getMenu(noticeNumber)}
+                        trigger={['click']}
+                    >
+                        <div>
+                            <i className={getMarkAsIcon(markerType)} />
+                            <i className="icon-arrow-down" />
+                        </div>
+                    </Dropdown>
+                </div>
+            ),
+        });
+
+        return headers;
+    }, [tendersData]);
 
     //Api calles
     const getCitiesData = (countryName) => {
@@ -298,7 +368,7 @@ const GlobalTenderSearch = () => {
                             Notice Type
                         </div>
                         <div className="g-col-4">
-                            <Dropdown values={noticeTypes} selected={selectedTypes.notice} onChange={(e) => onTypeSelect(e, 'notice')} placeholder='' />
+                            <DropdownComp values={noticeTypes} selected={selectedTypes.notice} onChange={(e) => onTypeSelect(e, 'notice')} placeholder='' />
                         </div>
                     </div>
                     <div className="g-row flex-align-center">
@@ -306,7 +376,7 @@ const GlobalTenderSearch = () => {
                             Publicaton Type
                         </div>
                         <div className="g-col-4">
-                            <Dropdown values={publicationTypes} selected={selectedTypes.publication} onChange={(e) => onTypeSelect(e, 'publication')} placeholder='' />
+                            <DropdownComp values={publicationTypes} selected={selectedTypes.publication} onChange={(e) => onTypeSelect(e, 'publication')} placeholder='' />
                         </div>
                     </div>
                     <div className="g-row fl flex-align-center">
@@ -383,18 +453,27 @@ const GlobalTenderSearch = () => {
             }
             <div style={{ height: '100%', paddingBottom: 10 }}>
                 <div className="page-container" >
-                    <div className="g-row flex-align-center p-b-20 m-b-20 p-t-20">
+                    {!searchCriteriaVisible &&
+                        <div className="g-row m-t-20 p-t-20 fr">
+                            <div className="g-col-1"><i className="icon-tender-new green" />New</div>
+                            <div className="g-col-2"><i className="icon-tender-open blue-dark" />Open for consideration</div>
+                            <div className="g-col-3"><i className="icon-tender-proposal blue-purple" />Decided to reply with a proposal</div>
+                            <div className="g-col-2"><i className="icon-tender-not-relevant" />Not relevant</div>
+                            <div className="g-col-1"><i className="icon-tender-closed red" />Closed</div>
+                        </div>
+                    }
+                    <div className="g-row flex-align-center p-t-20">
                         <div className="text-left g-col-1">
                             Sort By
                         </div>
                         <div className="g-col-4">
-                            <Dropdown values={sortByTypes} selected={sortBy} onChange={onSortBySelect} placeholder='' />
+                            <DropdownComp values={sortByTypes} selected={sortBy} onChange={onSortBySelect} placeholder='' />
                         </div>
                     </div>
                     <Table
                         rowKey={(record) => record.id}
                         dataSource={tendersData}
-                        columns={searchTendersTableHeaders}
+                        columns={tableHeaders}
                         pagination={false}
                         onRow={(record, rowIndex) => {
                             return {

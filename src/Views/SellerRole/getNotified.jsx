@@ -6,7 +6,8 @@ import { TabContext } from "../../utils/contextStore";
 import { useTranslation } from 'react-i18next'
 import CriteriaColorGuideTab from "./Components/criteriaColorGuideTab";
 import UserSelectedFields from "./Components/userSelectedFields";
-import { FetchCurrentCompany } from "../../hooks/index"
+import DropdownMultiSelect from "../../common/dropdownMultiSelect"
+import { FetchCurrentCompany, FetchCompanyUsers } from "../../hooks/index"
 
 const GetNotified = () => {
     const { haveUnsavedDataRef, setHaveUnsavedDataRef } = useContext(TabContext);
@@ -19,8 +20,10 @@ const GetNotified = () => {
     const [showingSearchedCodes, setShowingSearchedCodes] = useState(false);
     const [tenderCpvs, setTenderCpvs] = useState([]);
     const [allCpvCodes, setAllCpvCodes] = useState([]);
+    const [selectedUsers, setSelectedUsers] = useState([]);
 
     const [selectedCompany] = FetchCurrentCompany();
+    const [users] = FetchCompanyUsers();
 
     useEffect(() => {
         getCpvCodes(levelOneReq).then(result => {
@@ -43,10 +46,14 @@ const GetNotified = () => {
     }, []);
 
     useEffect(() => {
-        if (selectedCompany.companyRegistrationId) {
+        if (selectedCompany.companyRegistrationId && tenderCpvs.length === 0) {
             getTenementCPV(selectedCompany.companyRegistrationId, 'NO').then(result => {
                 if (result?.cpvs?.length > 0) {
                     setTenderCpvs(result?.cpvs)
+                    const formattedUserList = result?.contactUsers.map(val => {
+                        return { UserName: val?.name, Email: val?.email }
+                    })
+                    setSelectedUsers(formattedUserList)
 
                     let newAllCpvCodes = [];
                     for (let i = 0; i < result.cpvs.length; i++) {
@@ -237,6 +244,12 @@ const GetNotified = () => {
         setTenderCpvs(newCpvs)
     }
 
+    const getFormattedUserList = () => {
+        return selectedUsers?.map(val => {
+            return { name: val?.UserName, email: val?.Email }
+        })
+    }
+
     const onUpdate = async () => {
         setLoading(true);
         window.scrollTo(0, 0);
@@ -245,7 +258,8 @@ const GetNotified = () => {
             tenantId: selectedCompany.tenantId,
             countryCode: 'NO',
             cpvs: tenderCpvs,
-            cpvCodes: [...new Set(allCpvCodes)]
+            cpvCodes: [...new Set(allCpvCodes)],
+            contactUsers: getFormattedUserList(),
         }
 
         updateTenementCPV(params).then(result => {
@@ -290,10 +304,10 @@ const GetNotified = () => {
 
     const YourCpvData = () => {
         return (
-            <>
+            <div className="m-t-10">
                 <CriteriaColorGuideTab dataArr={['Division', 'Group', 'Class', 'Category', 'Sub Category']} containerStyle='selected-codes' />
                 <UserSelectedFields data={tenderCpvs} dataFeieldName='description' closable={true} onClose={onDelete} />
-            </>
+            </div>
         )
     }
 
@@ -434,6 +448,7 @@ const GetNotified = () => {
             <div className="g-row">
                 <div className="g-col-5">
                     <h3 className="text-center">CPV Codes</h3>
+                    <h6>How to get notified for Tenders?</h6>
                     <div className="g-row flex-center-middle m-b-15">
                         <form onSubmit={onSearch} className="search-bar g-col-11">
                             <i className="search-btn icon-search" onClick={onSearch} ></i>
@@ -447,9 +462,9 @@ const GetNotified = () => {
                     <h3 className="text-center p-b-20">You will get notifications for  the  below slected CPV Codes </h3>
                     <YourCpvData />
                 </div>
-                <div className="g-col-2 text-center">
-                    <h3>How to get notified for Tenders?</h3>
-                    <div className="static-content-container">
+                <div className="g-col-2 m-t-5">
+                    <h3>Receivers</h3>
+                    {/* <div className="static-content-container">
                         <div className="body-text-bold  m-t-20">Get notified</div>
                         <div className="body-text m-t-20">Being updated on the new tenders that have been updated is vital to win the competition. Tenders can be figured out by the CPV codes included in the tender notice. CPV codes is the taxonomy used to find the business domains/areas in Europea region. This is a feature where we let you save separate CPV codes to receive notifications when new tenders have been updated in our global tender's database. We will send the assigned user emails when new tenders are updated, and you can view them in your “Local Tenders” features. You can select/ update the CPV codes which covers your interested business domain/area at any time to receive the updates. </div>
 
@@ -463,7 +478,9 @@ const GetNotified = () => {
                         <div className="body-text">We will send all the updates for tenders including the lowest levels of the CPV codes if you have selected the higher levels.</div>
                         <div className="body-text">Select the link on email notifications to navigate to the updated tenders.</div>
                         <div className="body-text">View the new tender notices. </div>
-                    </div>
+                    </div> */}
+                    <h6 className="m-t-20 text-left">Select user(s)</h6>
+                    <DropdownMultiSelect placeholder="Users" dataList={users} dataName='UserName' keyName="Email" selectedList={selectedUsers} setSelectedState={setSelectedUsers} />
                 </div>
             </div>
             <button className="primary-btn update-btn" onClick={onUpdate} >Update</button>

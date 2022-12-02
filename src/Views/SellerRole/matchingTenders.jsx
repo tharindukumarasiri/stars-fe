@@ -1,10 +1,9 @@
 import React, { useEffect, useState, useMemo, useContext } from "react";
-import { Table, Pagination } from 'antd';
+import { Table, Pagination, Dropdown, Menu } from 'antd';
 import { TabContext } from "../../utils/contextStore";
-import { getTenders } from "../../services/organizationsService";
-import { matchinTendersTableHeaders } from "../../utils/constants";
+import { getTenders, updateTenantTenderMarker } from "../../services/organizationsService";
+import { matchinTendersTableHeaders, markTendersitems } from "../../utils/constants";
 import { useTranslation } from "react-i18next";
-import Dropdown from "../../common/dropdown";
 import { NAVIGATION_PAGES } from "../../utils/enums";
 import { FetchCurrentCompany } from "../../hooks/index"
 
@@ -28,8 +27,49 @@ const MatchingTenders = () => {
         }
     }, [selectedCompany]);
 
-    const onLanguageSelect = () => {
+    const handleMenuClick = (noticeNumber, markType) => {
+        const params = {
+            organizationId: selectedCompany.companyRegistrationId,
+            countryCode: 'NO',
+            noticeNumber: noticeNumber,
+            markerType: markType
+        }
+        updateTenantTenderMarker(params).then(() => {
+            if ('Ok') {
+                getTenders(selectedCompany.companyRegistrationId, pageSize, pageNumber, null, 'NO').then(result => {
+                    setTendersData(result.tenders);
+                    setPageCount(result.totalCount)
+                })
+            }
+        })
+    };
 
+
+    const getMenu = (noticeNumber) => {
+        return (
+            <Menu>
+                {markTendersitems.map((item, index) => {
+                    return (<Menu.Item onClick={() => handleMenuClick(noticeNumber, item.value)} key={index}>{item.icon}{item.label}</Menu.Item>)
+                })}
+            </Menu>
+        )
+    };
+
+    const getMarkAsIcon = (markAsType) => {
+        switch (markAsType) {
+            case "NEW":
+                return "icon-tender-new green"
+            case "OPEN_FOR_CONSIDERATION":
+                return "icon-tender-open blue-dark"
+            case "PROPOSAL":
+                return "icon-tender-proposal blue-purple"
+            case "NOT_RELEVANT":
+                return "icon-tender-not-relevant"
+            case "CLOSED":
+                return "icon-tender-closed red"
+            default:
+                return "icon-tender-new green"
+        }
     }
 
     const tableHeaders = useMemo(() => {
@@ -38,16 +78,19 @@ const MatchingTenders = () => {
         });
 
         headers.push({
-            title: 'Status',
-            dataIndex: 'noticeStatus',
-            render: (_, { noticeStatus }) => (
-                <div style={{ width: 110 }}>
-                    <div className="fl m-r-20">{noticeStatus}</div>
-                    <input type="checkbox" className="check-box m-b-20" />
-                    <Dropdown values={["English"]}
-                        onChange={onLanguageSelect}
-                        selected={""}
-                        placeholder="Language" />
+            title: 'Mark As',
+            dataIndex: ['id', 'countryCode', 'noticeNumber', 'markerType'],
+            render: (_, { noticeNumber, markerType }) => (
+                <div onClick={(e) => { e.stopPropagation() }}>
+                    <Dropdown
+                        overlay={getMenu(noticeNumber)}
+                        trigger={['click']}
+                    >
+                        <div>
+                            <i className={getMarkAsIcon(markerType)} />
+                            <i className="icon-arrow-down" />
+                        </div>
+                    </Dropdown>
                 </div>
             ),
         });
@@ -61,6 +104,13 @@ const MatchingTenders = () => {
 
     return (
         <>
+            <div className="g-row fr">
+                <div className="g-col-1"><i className="icon-tender-new green" />New</div>
+                <div className="g-col-2"><i className="icon-tender-open blue-dark" />Open for consideration</div>
+                <div className="g-col-3"><i className="icon-tender-proposal blue-purple" />Decided to reply with a proposal</div>
+                <div className="g-col-2"><i className="icon-tender-not-relevant" />Not relevant</div>
+                <div className="g-col-1"><i className="icon-tender-closed red" />Closed</div>
+            </div>
             <Table
                 rowKey={(record) => record.id}
                 dataSource={tendersData}

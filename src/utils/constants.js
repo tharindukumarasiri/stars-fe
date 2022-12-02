@@ -539,10 +539,32 @@ export const searchTendersTableHeaders = [
         title: 'Status',
         dataIndex: 'noticeStatus',
     },
+];
+
+export const markTendersitems = [
     {
-        title: '',
-        render: () => (
-            <input type="checkbox" className="check-box" />
-        ),
+        label: 'New',
+        value: 'NEW',
+        icon: <i className="icon-tender-new green" />,
+    },
+    {
+        label: 'Open for consideration',
+        value: 'OPEN_FOR_CONSIDERATION',
+        icon: <i className="icon-tender-open blue-dark" />,
+    },
+    {
+        label: 'Decided to reply with a proposal',
+        value: 'PROPOSAL',
+        icon: <i className="icon-tender-proposal blue-purple" />,
+    },
+    {
+        label: 'Not relevant',
+        value: 'NOT_RELEVANT',
+        icon: <i className="icon-tender-not-relevant" />,
+    },
+    {
+        label: 'Closed',
+        value: 'CLOSED',
+        icon: <i className="icon-tender-closed red" />,
     },
 ];

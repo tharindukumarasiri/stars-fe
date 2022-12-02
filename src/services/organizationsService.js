@@ -177,3 +177,8 @@ export async function getTenementCPV(id, country) {
     const { data } = await http.get(`${config.GET_TENENT_CPV}${id}&country=${country}`);
     return data;
 }
+
+export async function updateTenantTenderMarker(params) {
+    const { data } = await http.post(config.UPDATE_TENENT_TENDER_MARKER, params);
+    return data;
+}

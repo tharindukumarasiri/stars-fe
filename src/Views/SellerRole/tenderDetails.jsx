@@ -90,6 +90,33 @@ const TenderDetails = (props) => {
             </>
         )
     }
+
+    const AdditionalAttachments = () => {
+        return (
+            <>
+                {
+                    !(tenderDetails?.doffinExpreeofintUrl || tenderDetails?.attachDocument || tenderDetails?.attachParticipant) &&
+                    <div>No Attachments</div>
+                }
+                {tenderDetails?.doffinExpreeofintUrl &&
+                    <a className="fl m-t-20 p-t-20" href={tenderDetails?.doffinExpreeofintUrl} download >
+                        <div><FilePdfTwoTone className="m-r-5" />Doffin Expree of int</div>
+                    </a>
+                }
+                {tenderDetails?.attachDocument &&
+                    <a className="fl m-t-20 p-t-20" href={tenderDetails.attachDocument} download >
+                        <div><FilePdfTwoTone className="m-r-5" />Attach Document</div>
+                    </a>
+                }
+                {tenderDetails?.attachParticipant &&
+                    <a className="fl m-t-20 p-t-20" href={tenderDetails?.attachParticipant} download >
+                        <div><FilePdfTwoTone className="m-r-5" />Attach Participant</div>
+                    </a>
+                }
+            </>
+        )
+    }
+
     return (
         <>
             <div className="g-row m-l-20 m-b-20 m-t-10">
@@ -108,6 +135,7 @@ const TenderDetails = (props) => {
                             <GeneralView />
                         </TabPane>
                         <TabPane tab="ADDITIONAL ATTACHMENTS" key="2">
+                            <AdditionalAttachments />
                         </TabPane>
                     </Tabs>
                 </div>
