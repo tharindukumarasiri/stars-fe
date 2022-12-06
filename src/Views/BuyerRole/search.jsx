@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext, useMemo } from "react";
 import { message, Pagination, Modal } from 'antd';
-import { levelOneReq, nacSectionReq } from "../../utils/constants";
+import { levelOneReq, nacSectionReq, organizationTypes, numberOfEmployeesList } from "../../utils/constants";
 import gb_flag from "../../assets/images/gb_flag.png"
 import Model from "../../common/model";
 import { TabContext } from "../../utils/contextStore";
@@ -29,6 +29,9 @@ import SearchSelectedValues from "./Components/searchSelectedValues";
 import DatePickerInput from "../../common/datePickerInput";
 import ToggleSwitch from "../../common/toggleSwitch";
 import { useTranslation } from 'react-i18next'
+import Input from '../../common/input'
+import { formatDate } from "../../utils";
+
 const { confirm } = Modal;
 
 const pageSize = 10;
@@ -47,7 +50,7 @@ export default function Search(props) {
     const [cpvData, setCpvData] = useState({ division: [], cpvGroup: [], cpvClass: [], category: [], subCategory: [] })
     const [professionData, setProfessionData] = useState({ section: [], divition: [], profGroup: [], profClass: [] })
     // Drop Down selected eliments data
-    const [selectedCompanyInfo, setSelectedCompanyInfo] = useState({ registrationFromDate: null, registrationToDate: null, incorpFromDate: null, incorpToDate: null, active: true })
+    const [selectedCompanyInfo, setSelectedCompanyInfo] = useState({ registrationFromDate: null, registrationToDate: null, incorpFromDate: null, active: true, incorpToDate: null, noOfEmployees: '', organizationId: '', sectorCode: '', organizationType: null });
     const [selectedMarketCriteria, setSelectedMarketCriteria] = useState({ selectedCountries: [], selectedRegions: [], selectedCities: [], selectedMunicipalities: [] });
     const [selectedMarketHierarchy, setSelectedMarketHierarchy] = useState([[]]);
     const [selectedUNSPValues, setSelectedUNSPValues] = useState([[[]]]);
@@ -58,14 +61,15 @@ export default function Search(props) {
     const [selectedNACRows, setSelectedNACRows] = useState({ cuurentRow: 0, preLevel: 0 });
     const [selectedGrouping, setSelectedGrouping] = useState({ resultType: '', accumulation: '', sorting: '' })
     const [marketLastSelectedCodeLvl, setMarketLastSelectedCodeLvl] = useState(0)
-    const [selectedPeppol, setSelectedPeppol] = useState({ invoiceCreditNote: false, 
-                                                        purchaseOrder: false, 
-                                                        order: false,
-                                                        orderConfirmation: false,
-                                                        packingSlip: false,
-                                                        catalog: false,
-                                                        proposals: false,
-                                                        contracts: false })
+    const [selectedPeppol, setSelectedPeppol] = useState({
+        invoiceCreditNote: false,
+        order: false,
+        contract: false,
+        orderResponse: false,
+        advice: false,
+        catalog: false,
+        proposals: false,
+    })
 
     const [pageCount, setPageCount] = useState(0);
     const [actPage, setActPage] = useState(1)
@@ -609,6 +613,24 @@ export default function Search(props) {
         setShowModel(false);
     }
 
+    const getNoOfEmployees = () => {
+        switch (selectedCompanyInfo.noOfEmployees) {
+            case '0 to 50':
+                return { from: 0, to: 50 }
+            case '50 to 100':
+                return { from: 50, to: 100 }
+            case '100 to 500':
+                return { from: 100, to: 500 }
+            case '500 to 2000':
+                return { from: 500, to: 2000 }
+            case 'more than 2000':
+                return { from: 2000, to: 0 }
+            default:
+                return { from: 0, to: 0 }
+
+        }
+    }
+
     const getSearchRequest = (pageNumber) => {
         return ({
             "name": searchText,
@@ -619,18 +641,17 @@ export default function Search(props) {
             "cpvs": getFilterdCodes(selectedCPVValues),
             "naces": getFilterdCodes(selectedNACValues),
             "unspscs": getFilterdCodes(selectedUNSPValues),
-
-            "active": selectedCompanyInfo.active,
-            "registrationDateFrom": selectedCompanyInfo.registrationFromDate,
-            "registrationDateTo": selectedCompanyInfo.registrationToDate,
-            "inCorporationDateFrom": selectedCompanyInfo.incorpFromDate,
-            "inCorporationDateTo": selectedCompanyInfo.incorpToDate,
-            "noOfEmployeesFrom": null,
-            "noOfEmployeesTo": null,
-            "organizationTypeCode": "",
-            "organizationId": "",
             "peppol": getSelectedPepolTypes(),
-           
+            "active": selectedCompanyInfo.active,
+            "registrationDateFrom": formatDate(selectedCompanyInfo.registrationFromDate, 'YYYY-MM-DD'),
+            "registrationDateTo": formatDate(selectedCompanyInfo.registrationToDate, 'YYYY-MM-DD'),
+            "inCorporationDateFrom": formatDate(selectedCompanyInfo.incorpFromDate, 'YYYY-MM-DD'),
+            "inCorporationDateTo": formatDate(selectedCompanyInfo.incorpToDate, 'YYYY-MM-DD'),
+            "noOfEmployeesFrom": getNoOfEmployees().from,
+            "noOfEmployeesTo": getNoOfEmployees().to,
+            "organizationTypeCode": selectedCompanyInfo.organizationType,
+            "organizationId": selectedCompanyInfo.organizationId,
+            "sectorCode": selectedCompanyInfo.sectorCode,
             "pageSize": pageSize,
             "pageNo": pageNumber,
 
@@ -704,14 +725,14 @@ export default function Search(props) {
 
     const getSelectedPepolTypes = () => {
         let types = [];
-        if(selectedPeppol.invoiceCreditNote){
+        if (selectedPeppol.invoiceCreditNote) {
             types.push("invoice");
             types.push("creditnote");
         }
-        if(selectedPeppol.order){
+        if (selectedPeppol.order) {
             types.push("order");
         }
-        if(selectedPeppol.catalog){
+        if (selectedPeppol.catalog) {
             types.push("catalog");
         }
         return types;
@@ -766,6 +787,16 @@ export default function Search(props) {
 
     const changeCompanyInfoData = (data, dataName) => {
         setSelectedCompanyInfo({ ...selectedCompanyInfo, [dataName]: data })
+    }
+
+    const onChangeOrgId = (e) => {
+        e.preventDefault();
+        setSelectedCompanyInfo({ ...selectedCompanyInfo, organizationId: e.target.value });
+    }
+
+    const onChangeSectorCode = (e) => {
+        e.preventDefault();
+        setSelectedCompanyInfo({ ...selectedCompanyInfo, sectorCode: e.target.value });
     }
 
     const onCheckBox = (e) => {
@@ -911,7 +942,7 @@ export default function Search(props) {
                                 <div className="g-row">
                                     <div className="g-col-5" />
                                     <div className="g-col-7">
-                                        <DropdownSelect values={[]} placeholder="Number of employee" selected={''} onChange={() => { }} disabled />
+                                        <DropdownSelect values={numberOfEmployeesList} placeholder="Number of employee" selected={selectedCompanyInfo.noOfEmployees} onChange={(e) => changeCompanyInfoData(e.target.value, 'noOfEmployees')} />
                                     </div>
                                 </div>
                             </div>
@@ -919,7 +950,7 @@ export default function Search(props) {
                                 <div className="g-row">
                                     <div className="g-col-5"></div>
                                     <div className="g-col-7">
-                                        <DropdownSelect values={[]} placeholder="Organization type" selected={''} onChange={() => { }} disabled />
+                                        <DropdownSelect values={organizationTypes} placeholder="Organization type" selected={selectedCompanyInfo.organizationType} onChange={(e) => changeCompanyInfoData(e.target.value, 'organizationType')} />
                                     </div>
                                 </div>
                             </div>
@@ -930,19 +961,20 @@ export default function Search(props) {
                                 <div className="g-row">
                                     <div className="g-col-5" />
                                     <div className="g-col-7 m-t-15">
-                                        <ToggleSwitch label={'Active'} value={selectedCompanyInfo.active} onChange={(e) => {setSelectedCompanyInfo({...selectedCompanyInfo, active: e.target.checked})}} />
-                                    </div>
-                                </div>
-                            </div>
+                                        <ToggleSwitch label={'Active'} onChange={(e) => changeCompanyInfoData(e.target.checked, 'active')} checked={selectedCompanyInfo.active} />
+                                    </div >
+                                </div >
+                            </div >
                             <div className="g-col-6">
                                 <div className="g-row">
                                     <div className="g-col-5"></div>
                                     <div className="g-col-7">
-                                        <DropdownSelect values={[]} placeholder="Organization id" selected={''} onChange={() => { }} disabled />
+                                        <Input placeholder="Organization Id" value={selectedCompanyInfo.organizationId} onChange={onChangeOrgId} />
+
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        </div >
 
                         <div className="g-row">
                             <div className="g-col-6">
@@ -951,14 +983,14 @@ export default function Search(props) {
                                         {t("Sector code institution")}
                                     </div>
                                     <div className="g-col-7">
-                                        <DropdownSelect values={[]} placeholder="sector code list - select" selected={''} onChange={() => { }} disabled />
+                                        <Input placeholder="sector code" value={selectedCompanyInfo.sectorCode} onChange={onChangeSectorCode} />
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </>
                 }
-            </div>
+            </div >
         )
     }
 
@@ -1107,20 +1139,51 @@ export default function Search(props) {
                 }
             </div>
         )
-    }  
+    }
+    console.log(selectedPeppol)
+    const onPeppolCheckBoxSelect = (e, label) => {
+        switch (label) {
+            case 'Invoice & Credit notes:':
+                setSelectedPeppol({ ...selectedPeppol, invoiceCreditNote: e.target.checked })
+                break;
+            case 'Order Response':
+                setSelectedPeppol({ ...selectedPeppol, orderResponse: e.target.checked })
+                break;
+            case 'Order':
+                setSelectedPeppol({ ...selectedPeppol, order: e.target.checked })
+                break;
+            case 'Despatch Advice':
+                setSelectedPeppol({ ...selectedPeppol, advice: e.target.checked })
+                break;
+            case 'Contract':
+                setSelectedPeppol({ ...selectedPeppol, contract: e.target.checked })
+                break;
+            case 'Catalogue':
+                setSelectedPeppol({ ...selectedPeppol, catalog: e.target.checked })
+                break;
+            case 'Proposals':
+                setSelectedPeppol({ ...selectedPeppol, proposals: e.target.checked })
+                break;
+            default:
+                break;
+        }
+
+    }
 
     const getPeppolRow = (leftText, rightText) => {
         return (
             <div className="g-row m-b-20">
                 <div className="g-col-4">
-                    <input type="checkbox" className="check-box m-r-15" />
-                    {t(leftText)}
+                    <input type="checkbox" className="fl check-box m-r-15" onChange={(e) => onPeppolCheckBoxSelect(e, leftText)} />
+                    <div className="fl">{t(leftText)}</div>
                 </div>
                 <div className="g-col-4"></div>
-                <div className="g-col-4">
-                    <input type="checkbox" className="check-box m-r-15" />
-                    {t(rightText)}
-                </div>
+                {rightText &&
+                    <div className="g-col-4">
+                        <input type="checkbox" className="fl check-box m-r-15" onChange={(e) => onPeppolCheckBoxSelect(e, rightText)} />
+                        <div className="fl">{t(rightText)}</div>
+                    </div>
+                }
             </div>
         )
     }
@@ -1132,75 +1195,15 @@ export default function Search(props) {
                 {openCriteria.Peppol &&
                     <div>
                         <div className="p-y-30">{t("Peppol Documents Post award")}</div>
-                        {/* {getPeppolRow('Invoice & Credit notes:', 'Order confirmation')} */}
-                        <div className="g-row m-b-20">
-                            <div className="g-col-4">
-                                <input type="checkbox" className="check-box m-r-15" checked={selectedPeppol.invoiceCreditNote}
-                                    onChange={(e) => { setSelectedPeppol({...selectedPeppol, invoiceCreditNote: e.target.checked}) }} />
-                                {t('Invoice & Credit notes:')}
-                            </div>
-                            <div className="g-col-4"></div>
-                            <div className="g-col-4">
-                                <input type="checkbox" className="check-box m-r-15" />
-                                {t('Order confirmation')}
-                            </div>
-                        </div>
+                        {getPeppolRow('Invoice & Credit notes:', 'Order Response')}
+                        {getPeppolRow('Order', 'Despatch Advice')}
+                        {getPeppolRow('Contract', 'Catalogue')}
 
-                        {/* {getPeppolRow('Purchase Order', 'Packing slip')} */}
-                        <div className="g-row m-b-20">
-                            <div className="g-col-4">
-                                <input type="checkbox" className="check-box m-r-15" />
-                                {t('Purchase Order')}
-                            </div>
-                            <div className="g-col-4"></div>
-                            <div className="g-col-4">
-                                <input type="checkbox" className="check-box m-r-15" />
-                                {t('Packing slip')}
-                            </div>
-                        </div>
-                        {/* {getPeppolRow('Order Only', 'Catalogue')} */}
-                        <div className="g-row m-b-20">
-                            <div className="g-col-4">
-                                <input type="checkbox" className="check-box m-r-15" checked={selectedPeppol.order}
-                                    onChange={(e) => { setSelectedPeppol({...selectedPeppol, order: e.target.checked}) }} />
-                                {t('Order Only')}
-                            </div>
-                            <div className="g-col-4"></div>
-                            <div className="g-col-4">
-                                <input type="checkbox" className="check-box m-r-15" checked={selectedPeppol.catalog}
-                                    onChange={(e) => { setSelectedPeppol({...selectedPeppol, catalog: e.target.checked}) }} />
-                                {t('Catalogue')}
-                            </div>
-                        </div>
-
-                        <div className="n-float p-y-30">{t("Peppol Documents Post award")}</div>
-                        {/* {getPeppolRow('Proposals', 'A')} */}
-                        <div className="g-row m-b-20">
-                            <div className="g-col-4">
-                                <input type="checkbox" className="check-box m-r-15" />
-                                {t('Proposals')}
-                            </div>
-                            <div className="g-col-8"></div>
-                        </div>
-                        {/* {getPeppolRow('Catalogue', 'B')} */}
-                        <div className="g-row m-b-20">
-                            <div className="g-col-4">
-                                <input type="checkbox" className="check-box m-r-15" />
-                                {t('Catalogue')}
-                            </div>
-                            <div className="g-col-8"></div>
-                        </div>
-                        {/* {getPeppolRow('Contracts', 'C')} */}
-                        <div className="g-row m-b-20">
-                            <div className="g-col-4">
-                                <input type="checkbox" className="check-box m-r-15" />
-                                {t('Contracts')}
-                            </div>
-                            <div className="g-col-8"></div>
-                        </div>
-                    </div>
+                        <div className="n-float p-y-30">{t("Peppol Documents Pre award")}</div>
+                        {getPeppolRow('Proposals')}
+                    </div >
                 }
-            </div>
+            </div >
         )
     }
 

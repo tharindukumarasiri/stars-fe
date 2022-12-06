@@ -55,5 +55,6 @@
     "GET_TENDERS": "getTenders/",
     "GET_TENDER_BY_NOTICE_NUMBER": "GetTendersByNoticeNumber/",
     "UPDATE_TENENT_CPV": "tenantTenderCPV",
-    "GET_TENENT_CPV": "getTenantTenderCPV?orgId="
+    "GET_TENENT_CPV": "getTenantTenderCPV?orgId=",
+    "UPDATE_TENENT_TENDER_MARKER": "updateTenantTenderMarker"
 }

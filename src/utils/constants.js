@@ -568,3 +568,39 @@ export const markTendersitems = [
         icon: <i className="icon-tender-closed red" />,
     },
 ];
+
+export const numberOfEmployeesList = [
+    '0 to 50',
+    '50 to 100',
+    '100 to 500',
+    '500 to 2000',
+    'more than 2000'
+]
+
+export const organizationTypes = [
+    'ANNA',
+    'ANS',
+    'AS',
+    'ASA',
+    'BA',
+    'BRL',
+    'DA',
+    'ENK',
+    'ESEK',
+    'FLI',
+    'IKS',
+    'KBO',
+    'KIRK',
+    'KS',
+    'KTRF',
+    'NUF',
+    'ORGL',
+    'PRE',
+    'SA',
+    'SAM',
+    'SF',
+    'STI',
+    'SÆR',
+    'UTLA',
+    'VPFO'
+]

@@ -36,7 +36,6 @@ const GlobalTenderSearch = () => {
     const [selectedCPVRows, setSelectedCPVRows] = useState({ cuurentRow: 0, preLevel: 0 });
     const [selectedTypes, setSelectedTypes] = useState({ notice: 'All', publication: 'All' })
     const [selectedDates, setSelectedDates] = useState({ publishedFrom: '', publishedTo: '', expiryFrom: '', expiryTo: '', })
-    const [referenceText, setReferenceText] = useState("");
     const [sortBy, setSortBy] = useState("");
 
     const [openCriteria, setOpenCriteria] = useState({ Market: false, CPV: false, Type: false });
@@ -211,11 +210,6 @@ const GlobalTenderSearch = () => {
         setPostalCodeText(e.target.value);
     }
 
-    const handleReferenceText = (e) => {
-        e.preventDefault();
-        setReferenceText(e.target.value);
-    }
-
     const getCountryCodeList = () => {
         return selectedMarketCriteria.selectedCountries.map(value => {
             return value.id
@@ -237,7 +231,7 @@ const GlobalTenderSearch = () => {
             cpvs: getFilterdCodes(selectedCPVValues).toString(),
             noticeType: selectedTypes.notice === 'All' ? '' : selectedTypes.notice,
             publicationType: selectedTypes.publication === 'All' ? '' : selectedTypes.publication,
-            referenceNo: referenceText,
+            referenceNo: '',
             publishedDateFrom: formatDate(selectedDates.publishedFrom, 'YYYY-MM-DD'),
             publishedDateTo: formatDate(selectedDates.publishedTo, 'YYYY-MM-DD'),
             expiryDateFrom: formatDate(selectedDates.expiryFrom, 'YYYY-MM-DD'),
@@ -377,14 +371,6 @@ const GlobalTenderSearch = () => {
                         </div>
                         <div className="g-col-4">
                             <DropdownComp values={publicationTypes} selected={selectedTypes.publication} onChange={(e) => onTypeSelect(e, 'publication')} placeholder='' />
-                        </div>
-                    </div>
-                    <div className="g-row fl flex-align-center">
-                        <div className="text-left sub-title-txt g-col-3">
-                            Reference
-                        </div>
-                        <div className="g-col-4">
-                            <input type="text" onChange={handleReferenceText} value={referenceText} placeholder={"Reference"} />
                         </div>
                     </div>
                     <div className="g-row fl flex-align-center ">

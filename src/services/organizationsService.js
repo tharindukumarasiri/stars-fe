@@ -158,7 +158,7 @@ export async function getAllTenders({ pageSize, index, language = '', searchText
     return data;
 }
 
-export async function getTenders(orgId, pageSize, index, language, country) {    
+export async function getTenders(orgId, pageSize, index, language, country) {
     const { data } = await http.get(`${process.env.SDC_SEARCH_API + config.GET_TENDERS}${orgId}?country=${country}&pageSize=${pageSize}&index=${index}&language=${language}`);
     return data;
 }
@@ -179,6 +179,6 @@ export async function getTenementCPV(id, country) {
 }
 
 export async function updateTenantTenderMarker(params) {
-    const { data } = await http.post(config.UPDATE_TENENT_TENDER_MARKER, params);
+    const { data } = await http.post(process.env.SDC_SEARCH_API + config.UPDATE_TENENT_TENDER_MARKER, params);
     return data;
 }
