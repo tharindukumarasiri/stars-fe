@@ -47,7 +47,7 @@ export default function Search(props) {
     const [cpvData, setCpvData] = useState({ division: [], cpvGroup: [], cpvClass: [], category: [], subCategory: [] })
     const [professionData, setProfessionData] = useState({ section: [], divition: [], profGroup: [], profClass: [] })
     // Drop Down selected eliments data
-    const [selectedCompanyInfo, setSelectedCompanyInfo] = useState({ registrationFromDate: '', registrationToDate: '', incorpFromDate: '', incorpToDate: '' })
+    const [selectedCompanyInfo, setSelectedCompanyInfo] = useState({ registrationFromDate: null, registrationToDate: null, incorpFromDate: null, incorpToDate: null, active: true })
     const [selectedMarketCriteria, setSelectedMarketCriteria] = useState({ selectedCountries: [], selectedRegions: [], selectedCities: [], selectedMunicipalities: [] });
     const [selectedMarketHierarchy, setSelectedMarketHierarchy] = useState([[]]);
     const [selectedUNSPValues, setSelectedUNSPValues] = useState([[[]]]);
@@ -58,6 +58,14 @@ export default function Search(props) {
     const [selectedNACRows, setSelectedNACRows] = useState({ cuurentRow: 0, preLevel: 0 });
     const [selectedGrouping, setSelectedGrouping] = useState({ resultType: '', accumulation: '', sorting: '' })
     const [marketLastSelectedCodeLvl, setMarketLastSelectedCodeLvl] = useState(0)
+    const [selectedPeppol, setSelectedPeppol] = useState({ invoiceCreditNote: false, 
+                                                        purchaseOrder: false, 
+                                                        order: false,
+                                                        orderConfirmation: false,
+                                                        packingSlip: false,
+                                                        catalog: false,
+                                                        proposals: false,
+                                                        contracts: false })
 
     const [pageCount, setPageCount] = useState(0);
     const [actPage, setActPage] = useState(1)
@@ -553,6 +561,16 @@ export default function Search(props) {
                     "cpvs": getFilterdCodes(selectedCPVValues),
                     "naces": getFilterdCodes(selectedNACValues),
                     "unspscs": getFilterdCodes(selectedUNSPValues),
+                    "active": selectedCompanyInfo.active,
+                    "registrationDateFrom": selectedCompanyInfo.registrationFromDate,
+                    "registrationDateTo": selectedCompanyInfo.registrationToDate,
+                    "inCorporationDateFrom": selectedCompanyInfo.incorpFromDate,
+                    "inCorporationDateTo": selectedCompanyInfo.incorpToDate,
+                    "noOfEmployeesFrom": null,
+                    "noOfEmployeesTo": null,
+                    "organizationTypeCode": "",
+                    "organizationId": "",
+                    "peppol": getSelectedPepolTypes()
                 },
                 "removeCriteria": {
                     "organizationIds": selectedResults
@@ -572,6 +590,16 @@ export default function Search(props) {
                     "cpvs": getFilterdCodes(selectedCPVValues),
                     "naces": getFilterdCodes(selectedNACValues),
                     "unspscs": getFilterdCodes(selectedUNSPValues),
+                    "active": selectedCompanyInfo.active,
+                    "registrationDateFrom": selectedCompanyInfo.registrationFromDate,
+                    "registrationDateTo": selectedCompanyInfo.registrationToDate,
+                    "inCorporationDateFrom": selectedCompanyInfo.incorpFromDate,
+                    "inCorporationDateTo": selectedCompanyInfo.incorpToDate,
+                    "noOfEmployeesFrom": null,
+                    "noOfEmployeesTo": null,
+                    "organizationTypeCode": "",
+                    "organizationId": "",
+                    "peppol": getSelectedPepolTypes()
                 },
             })
         }
@@ -591,8 +619,21 @@ export default function Search(props) {
             "cpvs": getFilterdCodes(selectedCPVValues),
             "naces": getFilterdCodes(selectedNACValues),
             "unspscs": getFilterdCodes(selectedUNSPValues),
+
+            "active": selectedCompanyInfo.active,
+            "registrationDateFrom": selectedCompanyInfo.registrationFromDate,
+            "registrationDateTo": selectedCompanyInfo.registrationToDate,
+            "inCorporationDateFrom": selectedCompanyInfo.incorpFromDate,
+            "inCorporationDateTo": selectedCompanyInfo.incorpToDate,
+            "noOfEmployeesFrom": null,
+            "noOfEmployeesTo": null,
+            "organizationTypeCode": "",
+            "organizationId": "",
+            "peppol": getSelectedPepolTypes(),
+           
             "pageSize": pageSize,
             "pageNo": pageNumber,
+
         })
     }
 
@@ -612,6 +653,16 @@ export default function Search(props) {
                     "cpvs": searchResultsSet?.searchFilter.cpvs || null,
                     "naces": searchResultsSet?.searchFilter.naces || null,
                     "unspscs": searchResultsSet?.searchFilter.unspscs || null,
+                    "active": selectedCompanyInfo.active,
+                    "registrationDateFrom": selectedCompanyInfo.registrationFromDate,
+                    "registrationDateTo": selectedCompanyInfo.registrationToDate,
+                    "inCorporationDateFrom": selectedCompanyInfo.incorpFromDate,
+                    "inCorporationDateTo": selectedCompanyInfo.incorpToDate,
+                    "noOfEmployeesFrom": null,
+                    "noOfEmployeesTo": null,
+                    "organizationTypeCode": "",
+                    "organizationId": "",
+                    "peppol": getSelectedPepolTypes(),
                     "pageSize": pageSize,
                     "pageNo": pageNumber,
                 },
@@ -630,6 +681,16 @@ export default function Search(props) {
                     "cpvs": getFilterdCodes(selectedCPVValues),
                     "naces": getFilterdCodes(selectedNACValues),
                     "unspscs": getFilterdCodes(selectedUNSPValues),
+                    "active": selectedCompanyInfo.active,
+                    "registrationDateFrom": selectedCompanyInfo.registrationFromDate,
+                    "registrationDateTo": selectedCompanyInfo.registrationToDate,
+                    "inCorporationDateFrom": selectedCompanyInfo.incorpFromDate,
+                    "inCorporationDateTo": selectedCompanyInfo.incorpToDate,
+                    "noOfEmployeesFrom": null,
+                    "noOfEmployeesTo": null,
+                    "organizationTypeCode": "",
+                    "organizationId": "",
+                    "peppol": getSelectedPepolTypes(),
                     "pageSize": pageSize,
                     "pageNo": pageNumber,
                 },
@@ -639,6 +700,21 @@ export default function Search(props) {
             })
         }
 
+    }
+
+    const getSelectedPepolTypes = () => {
+        let types = [];
+        if(selectedPeppol.invoiceCreditNote){
+            types.push("invoice");
+            types.push("creditnote");
+        }
+        if(selectedPeppol.order){
+            types.push("order");
+        }
+        if(selectedPeppol.catalog){
+            types.push("catalog");
+        }
+        return types;
     }
 
     const getFilterdCodes = (selectedValues) => {
@@ -854,7 +930,7 @@ export default function Search(props) {
                                 <div className="g-row">
                                     <div className="g-col-5" />
                                     <div className="g-col-7 m-t-15">
-                                        <ToggleSwitch label={'Active'} />
+                                        <ToggleSwitch label={'Active'} value={selectedCompanyInfo.active} onChange={(e) => {setSelectedCompanyInfo({...selectedCompanyInfo, active: e.target.checked})}} />
                                     </div>
                                 </div>
                             </div>
@@ -1031,7 +1107,7 @@ export default function Search(props) {
                 }
             </div>
         )
-    }
+    }  
 
     const getPeppolRow = (leftText, rightText) => {
         return (
@@ -1056,14 +1132,72 @@ export default function Search(props) {
                 {openCriteria.Peppol &&
                     <div>
                         <div className="p-y-30">{t("Peppol Documents Post award")}</div>
-                        {getPeppolRow('Invoice & Credit notes:', 'Order confirmation')}
-                        {getPeppolRow('Purchase Order', 'Packing slip')}
-                        {getPeppolRow('Order Only', 'Catalogue')}
+                        {/* {getPeppolRow('Invoice & Credit notes:', 'Order confirmation')} */}
+                        <div className="g-row m-b-20">
+                            <div className="g-col-4">
+                                <input type="checkbox" className="check-box m-r-15" checked={selectedPeppol.invoiceCreditNote}
+                                    onChange={(e) => { setSelectedPeppol({...selectedPeppol, invoiceCreditNote: e.target.checked}) }} />
+                                {t('Invoice & Credit notes:')}
+                            </div>
+                            <div className="g-col-4"></div>
+                            <div className="g-col-4">
+                                <input type="checkbox" className="check-box m-r-15" />
+                                {t('Order confirmation')}
+                            </div>
+                        </div>
+
+                        {/* {getPeppolRow('Purchase Order', 'Packing slip')} */}
+                        <div className="g-row m-b-20">
+                            <div className="g-col-4">
+                                <input type="checkbox" className="check-box m-r-15" />
+                                {t('Purchase Order')}
+                            </div>
+                            <div className="g-col-4"></div>
+                            <div className="g-col-4">
+                                <input type="checkbox" className="check-box m-r-15" />
+                                {t('Packing slip')}
+                            </div>
+                        </div>
+                        {/* {getPeppolRow('Order Only', 'Catalogue')} */}
+                        <div className="g-row m-b-20">
+                            <div className="g-col-4">
+                                <input type="checkbox" className="check-box m-r-15" checked={selectedPeppol.order}
+                                    onChange={(e) => { setSelectedPeppol({...selectedPeppol, order: e.target.checked}) }} />
+                                {t('Order Only')}
+                            </div>
+                            <div className="g-col-4"></div>
+                            <div className="g-col-4">
+                                <input type="checkbox" className="check-box m-r-15" checked={selectedPeppol.catalog}
+                                    onChange={(e) => { setSelectedPeppol({...selectedPeppol, catalog: e.target.checked}) }} />
+                                {t('Catalogue')}
+                            </div>
+                        </div>
 
                         <div className="n-float p-y-30">{t("Peppol Documents Post award")}</div>
-                        {getPeppolRow('Proposals', 'A')}
-                        {getPeppolRow('Catalogue', 'B')}
-                        {getPeppolRow('Contracts', 'C')}
+                        {/* {getPeppolRow('Proposals', 'A')} */}
+                        <div className="g-row m-b-20">
+                            <div className="g-col-4">
+                                <input type="checkbox" className="check-box m-r-15" />
+                                {t('Proposals')}
+                            </div>
+                            <div className="g-col-8"></div>
+                        </div>
+                        {/* {getPeppolRow('Catalogue', 'B')} */}
+                        <div className="g-row m-b-20">
+                            <div className="g-col-4">
+                                <input type="checkbox" className="check-box m-r-15" />
+                                {t('Catalogue')}
+                            </div>
+                            <div className="g-col-8"></div>
+                        </div>
+                        {/* {getPeppolRow('Contracts', 'C')} */}
+                        <div className="g-row m-b-20">
+                            <div className="g-col-4">
+                                <input type="checkbox" className="check-box m-r-15" />
+                                {t('Contracts')}
+                            </div>
+                            <div className="g-col-8"></div>
+                        </div>
                     </div>
                 }
             </div>

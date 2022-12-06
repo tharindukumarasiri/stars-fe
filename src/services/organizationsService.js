@@ -3,67 +3,67 @@ import http from './httpService'
 
 //Organization
 export async function searchOrganization(params) {
-    const { data } = await http.post(config.ORGANIZATIONS, params);
+    const { data } = await http.post(process.env.SDC_SEARCH_API + config.ORGANIZATIONS, params);
     return data;
 }
 export async function searchOrganizationByCPV(params) {
-    const { data } = await http.post(config.ORGANIZATIONS_BY_CPV, params);
+    const { data } = await http.post(process.env.SDC_SEARCH_API + config.ORGANIZATIONS_BY_CPV, params);
     return data;
 }
 export async function searchOrganizationByNACE(params) {
-    const { data } = await http.post(config.ORGANIZATIONS_BY_NACE, params);
+    const { data } = await http.post(process.env.SDC_SEARCH_API + config.ORGANIZATIONS_BY_NACE, params);
     return data;
 }
 export async function searchOrganizationByUNSPSC(params) {
-    const { data } = await http.post(config.ORGANIZATIONS_BY_UNSPSC, params);
+    const { data } = await http.post(process.env.SDC_SEARCH_API + config.ORGANIZATIONS_BY_UNSPSC, params);
     return data;
 }
 
 export async function removeSearch(searchId, params) {
-    const { data } = await http.post(`${config.REMOVE_SEARCH}${searchId}`, params);
+    const { data } = await http.post(`${process.env.SDC_SEARCH_API + config.REMOVE_SEARCH}${searchId}`, params);
     return data;
 }
 
 export async function removeAllOrganizationIds(params) {
-    const { data } = await http.post(config.REMOVE_ALL_ORG_IDS, params);
+    const { data } = await http.post(process.env.SDC_SEARCH_API + config.REMOVE_ALL_ORG_IDS, params);
     return data;
 }
 
 export async function removeSearchAccumulateCpv(searchId, params) {
-    const { data } = await http.post(`${config.REMOVE_SEARCH_ACCUMULATE_CPV}${searchId}`, params);
+    const { data } = await http.post(`${process.env.SDC_SEARCH_API + config.REMOVE_SEARCH_ACCUMULATE_CPV}${searchId}`, params);
     return data;
 }
 
 export async function removeSearchAccumulateNace(searchId, params) {
-    const { data } = await http.post(`${config.REMOVE_SEARCH_ACCUMULATE_NACE}${searchId}`, params);
+    const { data } = await http.post(`${process.env.SDC_SEARCH_API + config.REMOVE_SEARCH_ACCUMULATE_NACE}${searchId}`, params);
     return data;
 }
 
 export async function getOrganization(id) {
-    const { data } = await http.get(`${config.GET_ORGANIZATIONS}/${id}/NO`);
+    const { data } = await http.get(`${process.env.SDC_SEARCH_API + config.GET_ORGANIZATIONS}/${id}/NO`);
     return data;
 }
 
 export async function updateOrganization(organization) {
-    const { data } = await http.post(config.UPDATE_ORGANIZATION, organization, { headers: { 'Content-Type': 'application/json', } });
+    const { data } = await http.post(process.env.SDC_SEARCH_API + config.UPDATE_ORGANIZATION, organization, { headers: { 'Content-Type': 'application/json', } });
     return data;
 }
 
 export async function getSearchResults() {
-    const { data } = await http.get(config.GET_SEARCH_RESULT);
+    const { data } = await http.get(process.env.SDC_PROJECT_API + config.GET_SEARCH_RESULT);
     return data;
 }
 export async function getSearchResultsByProjAndSec(proId, secId) {
-    const { data } = await http.get(`${config.GET_SEARCH_RESULT_BY_PROID_SECID}${proId}&secId=${secId}`);
+    const { data } = await http.get(`${process.env.SDC_PROJECT_API + config.GET_SEARCH_RESULT_BY_PROID_SECID}${proId}&secId=${secId}`);
     return data;
 }
 export async function addNewSearchResult(params) {
-    const { data } = await http.post(config.ADD_SEARCH_RESULT, params);
+    const { data } = await http.post(process.env.SDC_PROJECT_API + config.ADD_SEARCH_RESULT, params);
     return data;
 }
 
 export async function deleteSearch(params) {
-    const { data } = await http.delete(config.DELETE_SEARCH, { data: params });
+    const { data } = await http.delete(process.env.SDC_PROJECT_API + config.DELETE_SEARCH, { data: params });
     return data;
 }
 
@@ -75,106 +75,106 @@ export async function deleteSearch(params) {
 
 //Regions
 export async function getRegions(name) {
-    const { data } = await http.post(config.REGIONS, name, { headers: { 'Content-Type': 'application/json' } });
+    const { data } = await http.post(process.env.SDC_SEARCH_API + config.REGIONS, name, { headers: { 'Content-Type': 'application/json' } });
     return data;
 }
 
 //Municipalities
 export async function getMunicipalities(name) {
-    const { data } = await http.post(config.MUNICIPALITIES, name, { headers: { 'Content-Type': 'application/json' } });
+    const { data } = await http.post(process.env.SDC_SEARCH_API + config.MUNICIPALITIES, name, { headers: { 'Content-Type': 'application/json' } });
     return data;
 }
 
 //Cities
 export async function getCities(name) {
-    const { data } = await http.post(config.CITIES, name, { headers: { 'Content-Type': 'application/json' } });
+    const { data } = await http.post(process.env.SDC_SEARCH_API + config.CITIES, name, { headers: { 'Content-Type': 'application/json' } });
     return data;
 }
 
 export async function getCitiesByCountry(country) {
-    const { data } = await http.get(`${config.CITIES_BY_COUNTRY}${country}`);
+    const { data } = await http.get(`${process.env.SDC_SEARCH_API + config.CITIES_BY_COUNTRY}${country}`);
     return data;
 }
 
 //Unspsc Codes
 export async function getUnspscCodes(params) {
-    const { data } = await http.post(config.UNSPSC_CODES, params);
+    const { data } = await http.post(process.env.SDC_SEARCH_API + config.UNSPSC_CODES, params);
     return data;
 }
 export async function updateUnspscCodes(id, params) {
-    const { data } = await http.post(`${config.UPDATE_UNSPSC}${id}`, params);
+    const { data } = await http.post(`${process.env.SDC_SEARCH_API + config.UPDATE_UNSPSC}${id}`, params);
     return data;
 }
 export async function searchUnspscCodes(params) {
-    const { data } = await http.post(config.SEARCH_UNSPSC_CODES, params, { headers: { 'Content-Type': 'application/json' } });
+    const { data } = await http.post(process.env.SDC_SEARCH_API + config.SEARCH_UNSPSC_CODES, params, { headers: { 'Content-Type': 'application/json' } });
     return data;
 }
 
 //Cpv Codes
 export async function getCpvCodes(params) {
-    const { data } = await http.post(config.CPV_CODES, params);
+    const { data } = await http.post(process.env.SDC_SEARCH_API + config.CPV_CODES, params);
     return data;
 }
 export async function updateCpvCodes(id, params) {
-    const { data } = await http.post(`${config.UPDATE_CPV}${id}`, params);
+    const { data } = await http.post(`${process.env.SDC_SEARCH_API + config.UPDATE_CPV}${id}`, params);
     return data;
 }
 export async function searchCpvCodes(params) {
-    const { data } = await http.post(config.SEARCH_CPV_CODES, params, { headers: { 'Content-Type': 'application/json' } });
+    const { data } = await http.post(process.env.SDC_SEARCH_API + config.SEARCH_CPV_CODES, params, { headers: { 'Content-Type': 'application/json' } });
     return data;
 }
 
 //Nac Codes
 export async function getNacCodes(params) {
-    const { data } = await http.post(config.NAC_CODES, params);
+    const { data } = await http.post(process.env.SDC_SEARCH_API + config.NAC_CODES, params);
     return data;
 }
 export async function updateNaceCodes(id, params) {
-    const { data } = await http.post(`${config.UPDATE_NACE}${id}`, params);
+    const { data } = await http.post(`${process.env.SDC_SEARCH_API + config.UPDATE_NACE}${id}`, params);
     return data;
 }
 export async function searchNaceCodes(params) {
-    const { data } = await http.post(config.SEARCH_NACE_CODES, params, { headers: { 'Content-Type': 'application/json' } });
+    const { data } = await http.post(process.env.SDC_SEARCH_API + config.SEARCH_NACE_CODES, params, { headers: { 'Content-Type': 'application/json' } });
     return data;
 }
 
 //NUTS Codes
 export async function getAllNutsCountries() {
-    const { data } = await http.get(config.GET_NUTS_COUNTRIES);
+    const { data } = await http.get(process.env.SDC_SEARCH_API + config.GET_NUTS_COUNTRIES);
     return data;
 }
 export async function getNutsCodes(countryCode, level) {
-    const { data } = await http.get(`${config.GET_NUTS_COUNTRIES}/${countryCode}/level/${level}`);
+    const { data } = await http.get(`${process.env.SDC_SEARCH_API + config.GET_NUTS_COUNTRIES}/${countryCode}/level/${level}`);
     return data;
 }
 export async function updateNutsCodes(id, params) {
-    const { data } = await http.post(`${config.UPDATE_NUTS}${id}`, params);
+    const { data } = await http.post(`${process.env.SDC_SEARCH_API + config.UPDATE_NUTS}${id}`, params);
     return data;
 }
 
 //Seller 
 export async function getAllTenders({ pageSize, index, language = '', searchText = '', country = '', cities = '', cpvs = '', noticeType = '', nutsCode = '', postalCode = '', publicationType = '', referenceNo = '', publishedDateFrom = '', publishedDateTo = '', expiryDateFrom = '', expiryDateTo = '', sortBy = '', sortDirection = 'asc' } = {}) {
-    const { data } = await http.get(`${config.GET_ALL_TENDERS}${language}&searchText=${searchText}&country=${country}&cities=${cities}&cpvs=${cpvs}&nutsCode=${nutsCode}&postalCode=${postalCode}&noticeType=${noticeType}&publicationType=${publicationType}&referenceNo=${referenceNo}&publishedDateFrom=${publishedDateFrom}&publishedDateTo=${publishedDateTo}&expiryDateFrom=${expiryDateFrom}&expiryDateTo=${expiryDateTo}&sortBy=${sortBy}&sortDirection=${sortDirection}&pageSize=${pageSize}&index=${index}`);
+    const { data } = await http.get(`${process.env.SDC_SEARCH_API + config.GET_ALL_TENDERS}${language}&searchText=${searchText}&country=${country}&cities=${cities}&cpvs=${cpvs}&nutsCode=${nutsCode}&postalCode=${postalCode}&noticeType=${noticeType}&publicationType=${publicationType}&referenceNo=${referenceNo}&publishedDateFrom=${publishedDateFrom}&publishedDateTo=${publishedDateTo}&expiryDateFrom=${expiryDateFrom}&expiryDateTo=${expiryDateTo}&sortBy=${sortBy}&sortDirection=${sortDirection}&pageSize=${pageSize}&index=${index}`);
     return data;
 }
 
-export async function getTenders(orgId, pageSize, index, language, country) {
-    const { data } = await http.get(`${config.GET_TENDERS}${orgId}?country=${country}&pageSize=${pageSize}&index=${index}&language=${language}`);
+export async function getTenders(orgId, pageSize, index, language, country) {    
+    const { data } = await http.get(`${process.env.SDC_SEARCH_API + config.GET_TENDERS}${orgId}?country=${country}&pageSize=${pageSize}&index=${index}&language=${language}`);
     return data;
 }
 
 export async function getTendersByNoticeNumber(noticeNumber) {
-    const { data } = await http.get(`${config.GET_TENDER_BY_NOTICE_NUMBER}${noticeNumber}`);
+    const { data } = await http.get(`${process.env.SDC_SEARCH_API + config.GET_TENDER_BY_NOTICE_NUMBER}${noticeNumber}`);
     return data;
 }
 
 export async function updateTenementCPV(params) {
-    const { data } = await http.post(config.UPDATE_TENENT_CPV, params);
+    const { data } = await http.post(process.env.SDC_SEARCH_API + config.UPDATE_TENENT_CPV, params);
     return data;
 }
 
 export async function getTenementCPV(id, country) {
-    const { data } = await http.get(`${config.GET_TENENT_CPV}${id}&country=${country}`);
+    const { data } = await http.get(`${process.env.SDC_SEARCH_API + config.GET_TENENT_CPV}${id}&country=${country}`);
     return data;
 }
 
