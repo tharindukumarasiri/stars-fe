@@ -86,7 +86,7 @@ const GetNotified = () => {
         }
     }, [cpvData, showingSearchedCodes, searchResult]);
 
-    const getCpvGroupData = (code) => {
+    const getCpvGroupData = (code, desscription) => {
         const indexOfCode = expanded.division.indexOf(code)
 
         if (indexOfCode < 0) {
@@ -99,7 +99,11 @@ const GetNotified = () => {
             if (!isDataAvailavle) {
                 getCpvCodes(data).then(result => {
                     const newGroupData = [...cpvData.cpvGroup]
-                    newGroupData.push({ parent: code, data: result.map(val => { return { code: val.code2, desscription: val.desscription } }) })
+                    if (result.length === 0) {
+                        newGroupData.push({ parent: code, data: [{ code: code, desscription: desscription }] })
+                    } else {
+                        newGroupData.push({ parent: code, data: result.map(val => { return { code: val.code2, desscription: val.desscription } }) })
+                    }
                     setCpvData({ ...cpvData, cpvGroup: newGroupData })
                 });
             }
@@ -115,7 +119,7 @@ const GetNotified = () => {
         }
     }
 
-    const getClassData = (code) => {
+    const getClassData = (code, desscription) => {
         const indexOfCode = expanded.cpvGroup.indexOf(code)
 
         if (indexOfCode < 0) {
@@ -129,7 +133,11 @@ const GetNotified = () => {
             if (!isDataAvailable) {
                 getCpvCodes(data).then(result => {
                     const newClassData = [...cpvData.cpvClass]
-                    newClassData.push({ parent: code, data: result.map(val => { return { code: val.code2, desscription: val.desscription } }) })
+                    if (result.length === 0) {
+                        newClassData.push({ parent: code, data: [{ code: code, desscription: desscription }] })
+                    } else {
+                        newClassData.push({ parent: code, data: result.map(val => { return { code: val.code2, desscription: val.desscription } }) })
+                    }
                     setCpvData({ ...cpvData, cpvClass: newClassData })
                 });
             }
@@ -146,7 +154,7 @@ const GetNotified = () => {
 
     }
 
-    const getCategoryData = (code) => {
+    const getCategoryData = (code, desscription) => {
         const indexOfCode = expanded.cpvClass.indexOf(code)
 
         if (indexOfCode < 0) {
@@ -160,7 +168,11 @@ const GetNotified = () => {
             if (!isDataAvailable) {
                 getCpvCodes(data).then(result => {
                     const newCommodityData = [...cpvData.category]
-                    newCommodityData.push({ parent: code, data: result.map(val => { return { code: val.code2, desscription: val.desscription } }) })
+                    if (result.length === 0) {
+                        newCommodityData.push({ parent: code, data: [{ code: code, desscription: desscription }] })
+                    } else {
+                        newCommodityData.push({ parent: code, data: result.map(val => { return { code: val.code2, desscription: val.desscription } }) })
+                    }
                     setCpvData({ ...cpvData, category: newCommodityData })
                 });
             }
@@ -177,7 +189,7 @@ const GetNotified = () => {
 
     }
 
-    const getSubCategoryData = (code) => {
+    const getSubCategoryData = (code, desscription) => {
         const indexOfCode = expanded.category.indexOf(code)
 
         if (indexOfCode < 0) {
@@ -191,7 +203,11 @@ const GetNotified = () => {
             if (!isDataAvailable) {
                 getCpvCodes(data).then(result => {
                     const newSubCategoryData = [...cpvData.subCategory]
-                    newSubCategoryData.push({ parent: code, data: result.map(val => { return { code: val.code2, desscription: val.desscription } }) })
+                    if (result.length === 0) {
+                        newSubCategoryData.push({ parent: code, data: [{ code: code, desscription: desscription }] })
+                    } else {
+                        newSubCategoryData.push({ parent: code, data: result.map(val => { return { code: val.code2, desscription: val.desscription } }) })
+                    }
                     setCpvData({ ...cpvData, subCategory: newSubCategoryData })
                 });
             }
@@ -316,7 +332,7 @@ const GetNotified = () => {
             divisionData.map((division, divIndex) => {
                 return (
                     <div key={divIndex}>
-                        <div className="result-item hover-hand bg-bluish-green-light1" onClick={() => { getCpvGroupData(division.code) }}>
+                        <div className="result-item hover-hand bg-bluish-green-light1" onClick={() => { getCpvGroupData(division.code, division.desscription) }}>
                             <div className="body-text">
                                 <i className={expanded.division.includes(division.code) ? 'icon-minus-circled fl toggle-icon' : 'icon-plus-circled fl toggle-icon'} />
                                 <div className="body-text-bold m-r-10 fl">{division.code}</div>
@@ -330,7 +346,7 @@ const GetNotified = () => {
                                         cpvGroup.data.map((cpvGroupData, famIndex) => {
                                             return (
                                                 <div key={famIndex}>
-                                                    <div className="result-item hover-hand bg-bluish-green-light2" style={getIndent(2)} onClick={() => { getClassData(cpvGroupData.code) }}>
+                                                    <div className="result-item hover-hand bg-bluish-green-light2" style={getIndent(2)} onClick={() => { getClassData(cpvGroupData.code, cpvGroupData.desscription) }}>
                                                         <div className="body-text">
                                                             <i className={expanded.cpvGroup.includes(cpvGroupData.code) ? 'icon-minus-circled fl toggle-icon' : 'icon-plus-circled fl toggle-icon'} />
                                                             <div className="body-text-bold m-r-10 fl">{cpvGroupData.code}</div>
@@ -344,7 +360,7 @@ const GetNotified = () => {
                                                                     cpvClass.data.map((cpvClassData, classIndex) => {
                                                                         return (
                                                                             <div key={classIndex}>
-                                                                                <div className="result-item hover-hand bg-bluish-green-light3" style={getIndent(3)} onClick={() => { getCategoryData(cpvClassData.code) }}>
+                                                                                <div className="result-item hover-hand bg-bluish-green-light3" style={getIndent(3)} onClick={() => { getCategoryData(cpvClassData.code, cpvClassData.desscription) }}>
                                                                                     <div className="body-text">
                                                                                         <i className={expanded.cpvClass.includes(cpvClassData.code) ? 'icon-minus-circled fl toggle-icon' : 'icon-plus-circled fl toggle-icon'} />
                                                                                         <div className="body-text-bold m-r-10 fl">{cpvClassData.code}</div>
@@ -358,7 +374,7 @@ const GetNotified = () => {
                                                                                                 category.data.map((categoryData, comIndex) => {
                                                                                                     return (
                                                                                                         <div key={comIndex}>
-                                                                                                            <div className="result-item hover-hand bg-bluish-green-light4" style={getIndent(4)} onClick={() => { getSubCategoryData(categoryData.code) }}>
+                                                                                                            <div className="result-item hover-hand bg-bluish-green-light4" style={getIndent(4)} onClick={() => { getSubCategoryData(categoryData.code, categoryData.desscription) }}>
                                                                                                                 <div className="body-text">
                                                                                                                     <i className={expanded.category.includes(categoryData.code) ? 'icon-minus-circled fl toggle-icon' : 'icon-plus-circled fl toggle-icon'} />
                                                                                                                     <div className="body-text-bold m-r-10 fl">{categoryData.code}</div>

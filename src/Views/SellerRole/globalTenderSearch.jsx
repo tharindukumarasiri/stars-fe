@@ -17,7 +17,7 @@ import { NAVIGATION_PAGES } from "../../utils/enums";
 import { formatDate } from "../../utils";
 
 const noticeTypes = ['All', 'open', 'awarded'];
-const publicationTypes = ['All', 'NATIONAL', 'EUROPEAN', 'MARKET CONSULTING']
+const publicationTypes = ['All', 'BODY_PUBLIC', 'EU_INSTITUTION', 'REGIONAL_AUTHORITY']
 const sortByTypes = ['None', 'Publisher', 'Publication Date', 'Expired Date', 'Country', 'Main CPV']
 const pageSize = 10;
 

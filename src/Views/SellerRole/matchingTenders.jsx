@@ -15,6 +15,7 @@ const MatchingTenders = () => {
     const [pageCount, setPageCount] = useState(0);
     const [tendersData, setTendersData] = useState([]);
     const [selectedCompany] = FetchCurrentCompany();
+    const [loading, setLoading] = useState(true);
 
     const { t } = useTranslation();
 
@@ -22,8 +23,9 @@ const MatchingTenders = () => {
         if (selectedCompany.companyRegistrationId) {
             getTenders(selectedCompany.companyRegistrationId, pageSize, pageNumber, null, 'NO').then(result => {
                 setTendersData(result.tenders);
-                setPageCount(result.totalCount)
-            })
+                setPageCount(result.totalCount);
+                setLoading(false);
+            }).catch(() => { setLoading(false) })
         }
     }, [selectedCompany]);
 
@@ -104,7 +106,15 @@ const MatchingTenders = () => {
 
     return (
         <>
-            <div className="g-row fr">
+            {loading &&
+                <div className="loading center-loading">
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                </div>
+            }
+            <div className="g-row fr m-l-20 p-l-20">
+                <div className="g-col-3" />
                 <div className="g-col-1"><i className="icon-tender-new green" />New</div>
                 <div className="g-col-2"><i className="icon-tender-open blue-dark" />Open for consideration</div>
                 <div className="g-col-3"><i className="icon-tender-proposal blue-purple" />Decided to reply with a proposal</div>

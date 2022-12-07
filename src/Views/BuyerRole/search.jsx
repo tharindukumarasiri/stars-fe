@@ -50,7 +50,7 @@ export default function Search(props) {
     const [cpvData, setCpvData] = useState({ division: [], cpvGroup: [], cpvClass: [], category: [], subCategory: [] })
     const [professionData, setProfessionData] = useState({ section: [], divition: [], profGroup: [], profClass: [] })
     // Drop Down selected eliments data
-    const [selectedCompanyInfo, setSelectedCompanyInfo] = useState({ registrationFromDate: null, registrationToDate: null, incorpFromDate: null, active: true, incorpToDate: null, noOfEmployees: '', organizationId: '', sectorCode: '', organizationType: null });
+    const [selectedCompanyInfo, setSelectedCompanyInfo] = useState({ registrationFromDate: null, registrationToDate: null, incorpFromDate: null, active: true, incorpToDate: null, noOfEmployees: '', organizationId: '', sectorCode: '', organizationType: '' });
     const [selectedMarketCriteria, setSelectedMarketCriteria] = useState({ selectedCountries: [], selectedRegions: [], selectedCities: [], selectedMunicipalities: [] });
     const [selectedMarketHierarchy, setSelectedMarketHierarchy] = useState([[]]);
     const [selectedUNSPValues, setSelectedUNSPValues] = useState([[[]]]);
@@ -300,7 +300,7 @@ export default function Search(props) {
             setGrouping({});
             window.scrollTo(0, 0)
             const searchReq = getSearchRequest(1);
-            const allSelectedCriteria = searchReq.countries.concat(searchReq.regions, searchReq.cities, searchReq.municipalities, searchReq.cpvs, searchReq.naces, searchReq.unspscs)
+            const allSelectedCriteria = searchReq.countries.concat(searchReq.regions, searchReq.cities, searchReq.municipalities, searchReq.cpvs, searchReq.naces, searchReq.unspscs, searchReq.peppol, searchReq.registrationDateFrom, searchReq.registrationDateTo, searchReq.inCorporationDateFrom, searchReq.inCorporationDateTo, searchReq.noOfEmployeesFrom, searchReq.noOfEmployeesTo, searchReq.organizationTypeCode, searchReq.organizationId, searchReq.sectorCode)
             if (allSelectedCriteria.length === 0 && searchText === '' && !props.removeSearch) {
                 message.warning('Please select criterias to search');
             } else {
@@ -626,7 +626,7 @@ export default function Search(props) {
             case 'more than 2000':
                 return { from: 2000, to: 0 }
             default:
-                return { from: 0, to: 0 }
+                return { from: null, to: null }
 
         }
     }
@@ -643,10 +643,10 @@ export default function Search(props) {
             "unspscs": getFilterdCodes(selectedUNSPValues),
             "peppol": getSelectedPepolTypes(),
             "active": selectedCompanyInfo.active,
-            "registrationDateFrom": formatDate(selectedCompanyInfo.registrationFromDate, 'YYYY-MM-DD'),
-            "registrationDateTo": formatDate(selectedCompanyInfo.registrationToDate, 'YYYY-MM-DD'),
-            "inCorporationDateFrom": formatDate(selectedCompanyInfo.incorpFromDate, 'YYYY-MM-DD'),
-            "inCorporationDateTo": formatDate(selectedCompanyInfo.incorpToDate, 'YYYY-MM-DD'),
+            "registrationDateFrom": selectedCompanyInfo.registrationFromDate,
+            "registrationDateTo": selectedCompanyInfo.registrationToDate,
+            "inCorporationDateFrom": selectedCompanyInfo.incorpFromDate,
+            "inCorporationDateTo": selectedCompanyInfo.incorpToDate,
             "noOfEmployeesFrom": getNoOfEmployees().from,
             "noOfEmployeesTo": getNoOfEmployees().to,
             "organizationTypeCode": selectedCompanyInfo.organizationType,
