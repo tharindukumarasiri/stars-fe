@@ -11,12 +11,13 @@ import SearchSelectedValues from "./Components/searchSelectedValues";
 import gb_flag from "../../assets/images/gb_flag.png"
 import { useTranslation } from "react-i18next";
 import DatePickerInput from "../../common/datePickerInput";
-import { searchTendersTableHeaders, markTendersitems } from "../../utils/constants";
+import { markTendersitems } from "../../utils/constants";
+import { searchTendersTableHeaders, searchTendersTableHeadersExpanded } from "../../utils/tableHeaders";
 import { FetchCurrentCompany } from "../../hooks";
 import { NAVIGATION_PAGES } from "../../utils/enums";
 import { formatDate } from "../../utils";
 
-const noticeTypes = ['All', 'open', 'awarded'];
+const noticeTypes = ['All', 'open', 'awarded', 'pin', 'intention'];
 const publicationTypes = ['All', 'BODY_PUBLIC', 'EU_INSTITUTION', 'REGIONAL_AUTHORITY']
 const sortByTypes = ['None', 'Publisher', 'Publication Date', 'Expired Date', 'Country', 'Main CPV']
 const pageSize = 10;
@@ -31,14 +32,16 @@ const GlobalTenderSearch = () => {
     const [searchText, setSerachText] = useState("");
     const [nutsCodeText, setnutsCodeText] = useState("");
     const [postalCodeText, setPostalCodeText] = useState("");
+    const [referenceNoText, setReferenceNoText] = useState("");
     const [selectedMarketCriteria, setSelectedMarketCriteria] = useState({ selectedCountries: [], selectedCities: [] });
     const [selectedCPVValues, setSelectedCPVValues] = useState([[[]]]);
     const [selectedCPVRows, setSelectedCPVRows] = useState({ cuurentRow: 0, preLevel: 0 });
     const [selectedTypes, setSelectedTypes] = useState({ notice: 'All', publication: 'All' })
-    const [selectedDates, setSelectedDates] = useState({ publishedFrom: '', publishedTo: '', expiryFrom: '', expiryTo: '', })
+    const [selectedDates, setSelectedDates] = useState({ publishedFrom: '', publishedTo: '', expiryFrom: '', expiryTo: '', });
+    const [selectedSource, setSelectedSource] = useState('');
     const [sortBy, setSortBy] = useState("");
 
-    const [openCriteria, setOpenCriteria] = useState({ Market: false, CPV: false, Type: false });
+    const [openCriteria, setOpenCriteria] = useState({ Market: false, CPV: false, Type: false, Source: false });
     const [searchCriteriaVisible, setSearchCriteriaVisible] = useState(true);
     const [pageNumber, setpageNumber] = useState(1);
     const [pageCount, setPageCount] = useState(0);
@@ -104,13 +107,17 @@ const GlobalTenderSearch = () => {
     }
 
     const tableHeaders = useMemo(() => {
-        const headers = searchTendersTableHeaders.map((a) => {
+        const headers = searchCriteriaVisible ? searchTendersTableHeaders.map((a) => {
+            return { ...a, title: t(a.title) };
+        }) : searchTendersTableHeadersExpanded.map((a) => {
             return { ...a, title: t(a.title) };
         });
 
         headers.push({
             title: 'Mark As',
             dataIndex: ['id', 'countryCode', 'noticeNumber', 'markerType'],
+            fixed: 'right',
+            width: 90,
             render: (_, { noticeNumber, markerType }) => (
                 <div onClick={(e) => { e.stopPropagation() }}>
                     <Dropdown
@@ -127,7 +134,7 @@ const GlobalTenderSearch = () => {
         });
 
         return headers;
-    }, [tendersData]);
+    }, [tendersData, searchCriteriaVisible]);
 
     //Api calles
     const getCitiesData = (countryName) => {
@@ -210,10 +217,25 @@ const GlobalTenderSearch = () => {
         setPostalCodeText(e.target.value);
     }
 
+    const handlereferenceNo = (e) => {
+        e.preventDefault();
+        setReferenceNoText(e.target.value);
+    }
+
     const getCountryCodeList = () => {
         return selectedMarketCriteria.selectedCountries.map(value => {
             return value.id
         })
+    }
+
+    const getServiceProvider = () => {
+        if (selectedSource === 'TED') {
+            return 'ted'
+        } else if (selectedSource === 'Doffin') {
+            return 'Doffin'
+        } else {
+            return ''
+        }
     }
 
     const searchTenders = (pageNumber) => {
@@ -231,12 +253,13 @@ const GlobalTenderSearch = () => {
             cpvs: getFilterdCodes(selectedCPVValues).toString(),
             noticeType: selectedTypes.notice === 'All' ? '' : selectedTypes.notice,
             publicationType: selectedTypes.publication === 'All' ? '' : selectedTypes.publication,
-            referenceNo: '',
+            referenceNo: referenceNoText,
             publishedDateFrom: formatDate(selectedDates.publishedFrom, 'YYYY-MM-DD'),
             publishedDateTo: formatDate(selectedDates.publishedTo, 'YYYY-MM-DD'),
             expiryDateFrom: formatDate(selectedDates.expiryFrom, 'YYYY-MM-DD'),
             expiryDateTo: formatDate(selectedDates.expiryTo, 'YYYY-MM-DD'),
             sortBy: getSortingOptions(),
+            serviceProvider: getServiceProvider(),
         }).then(result => {
             setTendersData(result.tenders);
             setPageCount(result.totalCount);
@@ -259,13 +282,33 @@ const GlobalTenderSearch = () => {
         setOpenCriteria({ ...openCriteria, [criteriaName]: state || !openCriteria[criteriaName] })
     }
 
+    const onChangeSelectedSource = (e) => {
+        e.preventDefault()
+        setSelectedSource(e.target.value)
+    }
+
+    const getSource = () => {
+        return (
+            <div className="gray-container">
+                {getCriteriaHeader(t("Source"), () => toggleOpenCriteria('Source'), openCriteria.Source)}
+                {openCriteria.Source &&
+                    <div className="g-row m-t-20">
+                        <div className="g-col-4">
+                            <DropdownComp values={["All", "TED", "Doffin"]} selected={selectedSource} onChange={onChangeSelectedSource} placeholder='' />
+                        </div>
+                    </div>
+                }
+            </div>
+        )
+    }
+
     const getMarketCriteria = () => {
         return (
             <div className="gray-container">
                 {getCriteriaHeader(t("Market Information"), () => toggleOpenCriteria('Market'), openCriteria.Market)}
                 {openCriteria.Market &&
                     <>
-                        <div className="g-row">
+                        <div className="g-row m-t-20">
                             <div className="g-col-6">
                                 <CountryDropDown dataList={marketInformationData.countries} selectedList={selectedMarketCriteria} setSelectedState={setSelectedMarketCriteria} apiCalls={getCitiesData} />
                             </div>
@@ -273,14 +316,14 @@ const GlobalTenderSearch = () => {
                                 <CitiesDropDown dataList={marketInformationData.cities} selectedList={selectedMarketCriteria} setSelectedState={setSelectedMarketCriteria} />
                             </div>
                         </div>
-                        <div className="g-row m-t-20">
+                        {/* <div className="g-row m-t-20">
                             <div className="g-col-6">
                                 <input type="text" onChange={handleNutsCode} value={nutsCodeText} placeholder={"Nuts Code"} />
                             </div>
                             <div className="g-col-6">
                                 <input type="text" onChange={handlePostalCode} value={postalCodeText} placeholder={"Postal Code"} />
                             </div>
-                        </div>
+                        </div> */}
                     </>
                 }
             </div>
@@ -294,7 +337,7 @@ const GlobalTenderSearch = () => {
                     {getCriteriaHeader(t("CPV Codes"), () => toggleOpenCriteria('ProductGroups'), openCriteria.ProductGroups)}
                     {openCriteria.ProductGroups &&
                         <>
-                            <div className="g-row">
+                            <div className="g-row  m-t-20">
                                 <div className="g-col-2">
                                     {DropdownCPV({ placeholder: t('Division'), dataList: cpvData.division, dataName: 'desscription', selectedList: selectedCPVValues, setSelectedState: setSelectedCPVValues, selectedRows: selectedCPVRows, setSelectedRows: setSelectedCPVRows, apiCalls: getcpvCodesData, codelevel: 1, keyName: "code" })}
                                 </div>
@@ -365,12 +408,20 @@ const GlobalTenderSearch = () => {
                             <DropdownComp values={noticeTypes} selected={selectedTypes.notice} onChange={(e) => onTypeSelect(e, 'notice')} placeholder='' />
                         </div>
                     </div>
-                    <div className="g-row flex-align-center">
+                    {/* <div className="g-row flex-align-center">
                         <div className="text-left sub-title-txt g-col-3">
                             Publicaton Type
                         </div>
                         <div className="g-col-4">
                             <DropdownComp values={publicationTypes} selected={selectedTypes.publication} onChange={(e) => onTypeSelect(e, 'publication')} placeholder='' />
+                        </div>
+                    </div> */}
+                    <div className="g-row flex-align-center">
+                        <div className="text-left sub-title-txt g-col-3">
+                            Reference
+                        </div>
+                        <div className="g-col-4">
+                            <input type="text" onChange={handlereferenceNo} value={referenceNoText} placeholder={"Document Number"} />
                         </div>
                     </div>
                     <div className="g-row fl flex-align-center ">
@@ -427,6 +478,7 @@ const GlobalTenderSearch = () => {
                                 </div>
                             </div>
                             <h4>Narrow down your search by...</h4>
+                            {getSource()}
                             {getMarketCriteria()}
                             {getCPVCriteria()}
                             {typesCriteria()}
@@ -435,10 +487,10 @@ const GlobalTenderSearch = () => {
                     </div>
                 </div>
                 :
-                < i className="icon-circle-arrow-r2 search-colaps-icon hover-hand" onClick={() => setSearchCriteriaVisible(prev => !prev)} />
+                < i className="icon-circle-arrow-r2 search-colaps-icon close-pane hover-hand" onClick={() => setSearchCriteriaVisible(prev => !prev)} />
             }
             <div style={{ height: '100%', paddingBottom: 10 }}>
-                <div className="page-container" >
+                <div className={searchCriteriaVisible ? "page-container collapsed-table-container" : "page-container expanded-table-container"} >
                     {!searchCriteriaVisible &&
                         <div className="g-row m-t-20 p-t-20 fr">
                             <div className="g-col-1"><i className="icon-tender-new green" />New</div>
@@ -456,17 +508,22 @@ const GlobalTenderSearch = () => {
                             <DropdownComp values={sortByTypes} selected={sortBy} onChange={onSortBySelect} placeholder='' />
                         </div>
                     </div>
-                    <Table
-                        rowKey={(record) => record.id}
-                        dataSource={tendersData}
-                        columns={tableHeaders}
-                        pagination={false}
-                        onRow={(record, rowIndex) => {
-                            return {
-                                onClick: () => onClickTender(record),
-                            };
-                        }}
-                    />
+                    <div className={searchCriteriaVisible ? 'collapsed-table-width' : 'expanded-table-width'}>
+                        <Table
+                            rowKey={(record) => record.id}
+                            dataSource={tendersData}
+                            columns={tableHeaders}
+                            pagination={false}
+                            scroll={{
+                                x: '48vw',
+                            }}
+                            onRow={(record, rowIndex) => {
+                                return {
+                                    onClick: () => onClickTender(record),
+                                };
+                            }}
+                        />
+                    </div>
                     <Pagination size="small" className="fr m-t-20 m-b-20" current={pageNumber} onChange={(pageNum) => { searchTenders(pageNum) }} total={pageCount} showSizeChanger={false} />
                 </div>
             </div>

@@ -6,7 +6,7 @@ import Dropdown from "../../common/dropdown";
 import DatePickerInput from "../../common/datePickerInput";
 import { getAllProjects, addNewProject, editProject, deleteProject } from "../../services/operationsService"
 import { getContacts } from "../../services/userService";
-import { projectScreenTableHeaders } from "../../utils/constants"
+import { projectScreenTableHeaders } from "../../utils/tableHeaders"
 import NavigationCard from "../../common/navigationCard"
 import { NAVIGATION_PAGES } from "../../utils/enums";
 import { TabContext } from "../../utils/contextStore";

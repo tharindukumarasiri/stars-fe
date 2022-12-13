@@ -2,7 +2,8 @@ import React, { useEffect, useState, useMemo, useContext } from "react";
 import { Table, Pagination, Dropdown, Menu } from 'antd';
 import { TabContext } from "../../utils/contextStore";
 import { getTenders, updateTenantTenderMarker } from "../../services/organizationsService";
-import { matchinTendersTableHeaders, markTendersitems } from "../../utils/constants";
+import { markTendersitems } from "../../utils/constants";
+import { matchinTendersTableHeaders } from "../../utils/tableHeaders";
 import { useTranslation } from "react-i18next";
 import { NAVIGATION_PAGES } from "../../utils/enums";
 import { FetchCurrentCompany } from "../../hooks/index"
@@ -28,6 +29,16 @@ const MatchingTenders = () => {
             }).catch(() => { setLoading(false) })
         }
     }, [selectedCompany]);
+
+    const onChangePage = (pageNum) => {
+        window.scrollTo(0, 0);
+
+        getTenders(selectedCompany.companyRegistrationId, pageSize, pageNum, null, 'NO').then(result => {
+            setTendersData(result.tenders);
+            setPageCount(result.totalCount);
+            setpageNumber(pageNum)
+        })
+    }
 
     const handleMenuClick = (noticeNumber, markType) => {
         const params = {
@@ -132,7 +143,7 @@ const MatchingTenders = () => {
                     };
                 }}
             />
-            <Pagination size="small" className="fr m-t-20 m-b-20" current={pageNumber} onChange={(pageNum) => { setpageNumber(pageNum) }} total={pageCount} showSizeChanger={false} />
+            <Pagination size="small" className="fr m-t-20 m-b-20" current={pageNumber} onChange={onChangePage} total={pageCount} showSizeChanger={false} />
         </>
     )
 

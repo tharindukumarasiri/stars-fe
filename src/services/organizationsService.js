@@ -153,8 +153,8 @@ export async function updateNutsCodes(id, params) {
 }
 
 //Seller 
-export async function getAllTenders({ pageSize, index, language = '', searchText = '', country = '', cities = '', cpvs = '', noticeType = '', nutsCode = '', postalCode = '', publicationType = '', referenceNo = '', publishedDateFrom = '', publishedDateTo = '', expiryDateFrom = '', expiryDateTo = '', sortBy = '', sortDirection = 'asc' } = {}) {
-    const { data } = await http.get(`${process.env.SDC_SEARCH_API + config.GET_ALL_TENDERS}${language}&searchText=${searchText}&country=${country}&cities=${cities}&cpvs=${cpvs}&nutsCode=${nutsCode}&postalCode=${postalCode}&noticeType=${noticeType}&publicationType=${publicationType}&referenceNo=${referenceNo}&publishedDateFrom=${publishedDateFrom}&publishedDateTo=${publishedDateTo}&expiryDateFrom=${expiryDateFrom}&expiryDateTo=${expiryDateTo}&sortBy=${sortBy}&sortDirection=${sortDirection}&pageSize=${pageSize}&index=${index}`);
+export async function getAllTenders({ pageSize, index, language = '', searchText = '', country = '', cities = '', cpvs = '', noticeType = '', nutsCode = '', postalCode = '', publicationType = '', referenceNo = '', publishedDateFrom = '', publishedDateTo = '', expiryDateFrom = '', expiryDateTo = '', sortBy = '', sortDirection = 'asc', serviceProvider = '' } = {}) {
+    const { data } = await http.get(`${process.env.SDC_SEARCH_API + config.GET_ALL_TENDERS}${language}&searchText=${searchText}&country=${country}&cities=${cities}&cpvs=${cpvs}&nutsCode=${nutsCode}&postalCode=${postalCode}&noticeType=${noticeType}&publicationType=${publicationType}&referenceNo=${referenceNo}&publishedDateFrom=${publishedDateFrom}&publishedDateTo=${publishedDateTo}&expiryDateFrom=${expiryDateFrom}&expiryDateTo=${expiryDateTo}&sortBy=${sortBy}&sortDirection=${sortDirection}&serviceProvider=${serviceProvider}&pageSize=${pageSize}&index=${index}`);
     return data;
 }
 

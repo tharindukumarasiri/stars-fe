@@ -26,3 +26,12 @@ export const getAuthHeader = () => {
     const token = localStorage.getItem('auth_token');
     return { headers: { 'Authorization': `Bearer ${token}` } };
 };
+
+export const getCountryFlag = (countryCode) => {
+    try {
+        const flag = require(`../assets/images/flags/${countryCode.toLowerCase()}.png`)
+        return flag
+    } catch {
+        return ''
+    }
+}

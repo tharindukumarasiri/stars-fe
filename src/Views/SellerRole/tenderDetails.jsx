@@ -8,7 +8,6 @@ import { FacebookShareButton, FacebookIcon, EmailShareButton, EmailIcon, Twitter
 
 const { TabPane } = Tabs;
 
-
 const TenderDetails = (props) => {
     const [allTenders, setAllTenders] = useState([]);
     const [tenderDetails, setTenderDetails] = useState({});
@@ -39,7 +38,11 @@ const TenderDetails = (props) => {
     }
 
     const downloadLink = () => {
-        return `https://ted.europa.eu/udl?uri=TED:NOTICE:539585-2022:PDF:${selectedLanguage}:HTML&tabId=0`
+        if (props?.serviceProvider === "Ted") {
+            return `https://ted.europa.eu/udl?uri=TED:NOTICE:539585-2022:PDF:${selectedLanguage}:HTML&tabId=0`
+        } else {
+            return `https://www.doffin.no/en/Notice/Details/${props.noticeNumber}`
+        }
     }
 
     const toggelModal = () => {

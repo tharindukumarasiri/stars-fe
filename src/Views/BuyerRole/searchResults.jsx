@@ -1,6 +1,6 @@
 import React from "react";
 import { Table, message } from 'antd';
-import { searchResultsTableHeaders } from '../../utils/constants'
+import { searchResultsTableHeaders } from '../../utils/tableHeaders'
 import { deleteSearch } from '../../services/organizationsService'
 
 const SearchResults = (props) => {

@@ -1140,7 +1140,7 @@ export default function Search(props) {
             </div>
         )
     }
-    console.log(selectedPeppol)
+
     const onPeppolCheckBoxSelect = (e, label) => {
         switch (label) {
             case 'Invoice & Credit notes:':

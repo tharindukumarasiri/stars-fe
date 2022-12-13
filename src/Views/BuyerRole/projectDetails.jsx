@@ -6,7 +6,7 @@ import Input from "../../common/input";
 import DatePickerInput from "../../common/datePickerInput";
 import NavigationCard from "../../common/navigationCard";
 import EmptyTableView from "../../Views/SupplierRole/Components/emptyTableView";
-import { sectionTableHeaders, membersTableHeaders } from "../../utils/constants";
+import { sectionTableHeaders, membersTableHeaders } from "../../utils/tableHeaders";
 import {
     addNewSection,
     getAllMembers,

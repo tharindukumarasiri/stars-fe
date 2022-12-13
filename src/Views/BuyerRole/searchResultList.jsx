@@ -1,7 +1,7 @@
 import React, { useEffect, useState, } from "react";
 import { Table, Pagination } from 'antd';
 import { removeSearch } from "../../services/organizationsService";
-import { searchResultsListTableHeaders } from "../../utils/constants";
+import { searchResultsListTableHeaders } from "../../utils/tableHeaders";
 const pageSize = 10
 
 const SearchResultsList = (props) => {
