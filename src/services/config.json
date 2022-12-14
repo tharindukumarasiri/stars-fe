@@ -56,5 +56,7 @@
     "GET_TENDER_BY_NOTICE_NUMBER": "GetTendersByNoticeNumber/",
     "UPDATE_TENENT_CPV": "tenantTenderCPV",
     "GET_TENENT_CPV": "getTenantTenderCPV?orgId=",
-    "UPDATE_TENENT_TENDER_MARKER": "updateTenantTenderMarker"
+    "UPDATE_TENENT_TENDER_MARKER": "updateTenantTenderMarker",
+
+    "UPDATE_MESSAGE_TEMPLATE": "actionapi/MessageTemplates/Post"
 }

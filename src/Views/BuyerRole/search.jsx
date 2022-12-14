@@ -126,9 +126,7 @@ export default function Search(props) {
     }, [props]);
 
     useEffect(() => {
-        const searchReq = getSearchRequest(1);
-        const allSelectedCriteria = searchReq.countries.concat(searchReq.regions, searchReq.cities, searchReq.municipalities, searchReq.cpvs, searchReq.naces, searchReq.unspscs)
-        if (allSelectedCriteria.length !== 0 || searchText !== '') {
+        if (getAllSelectedCriteriaLength() !== 0 || searchText !== '') {
             onShowResults();
         }
     }, [selectedGrouping.accumulation]);
@@ -257,6 +255,17 @@ export default function Search(props) {
         setSerachText(e.target.value);
     }
 
+    const getAllSelectedCriteriaLength = () => {
+        const searchReq = getSearchRequest(1);
+        const allSelectedCriteria = searchReq.countries.concat(searchReq.regions, searchReq.cities,
+            searchReq.municipalities, searchReq.cpvs, searchReq.naces,
+            searchReq.unspscs, searchReq.peppol, searchReq.registrationDateFrom,
+            searchReq.registrationDateTo, searchReq.inCorporationDateFrom,
+            searchReq.inCorporationDateTo, searchReq.noOfEmployeesFrom, searchReq.noOfEmployeesTo,
+            searchReq.organizationTypeCode, searchReq.organizationId, searchReq.sectorCode)
+        return allSelectedCriteria.length;
+    }
+
     const convertStringObject = (object) => {
         const newObject = {}
         Object.entries(object).forEach(([key, value]) => {
@@ -299,9 +308,8 @@ export default function Search(props) {
             setOrganizations([]);
             setGrouping({});
             window.scrollTo(0, 0)
-            const searchReq = getSearchRequest(1);
-            const allSelectedCriteria = searchReq.countries.concat(searchReq.regions, searchReq.cities, searchReq.municipalities, searchReq.cpvs, searchReq.naces, searchReq.unspscs, searchReq.peppol, searchReq.registrationDateFrom, searchReq.registrationDateTo, searchReq.inCorporationDateFrom, searchReq.inCorporationDateTo, searchReq.noOfEmployeesFrom, searchReq.noOfEmployeesTo, searchReq.organizationTypeCode, searchReq.organizationId, searchReq.sectorCode)
-            if (allSelectedCriteria.length === 0 && searchText === '' && !props.removeSearch) {
+
+            if (getAllSelectedCriteriaLength() === 0 && searchText === '' && !props.removeSearch) {
                 message.warning('Please select criterias to search');
             } else {
                 noSearchResults = false;
@@ -521,9 +529,7 @@ export default function Search(props) {
                 message.success("Delete results fail")
             })
         } else {
-            const searchReq = getSearchRequest(1);
-            const allSelectedCriteria = searchReq.countries.concat(searchReq.regions, searchReq.cities, searchReq.municipalities, searchReq.cpvs, searchReq.naces, searchReq.unspscs)
-            if (allSelectedCriteria.length === 0 && searchText === '' && !props?.removeSearch) {
+            if (getAllSelectedCriteriaLength() === 0 && searchText === '' && !props?.removeSearch) {
                 message.warning('Please select criterias to save');
             } else if (props?.sectionSearch && (props?.projectStatus?.toUpperCase() === "CLOSE" || props?.sectionStatus?.toUpperCase() === "CLOSE")) {
                 message.warning('Cannot save results for closed projects or sections');
@@ -659,9 +665,7 @@ export default function Search(props) {
     }
 
     const getRemovalRequest = (pageNumber) => {
-        const allSelectedCriterias = selectedMarketCriteria.selectedCountries.concat(selectedMarketCriteria.selectedRegions, selectedMarketCriteria.selectedCities, selectedMarketCriteria.selectedMunicipalities, getFilterdCodes(selectedCPVValues), getFilterdCodes(selectedNACValues), getFilterdCodes(selectedUNSPValues))
-
-        if (allSelectedCriterias.length === 0) {
+        if (getAllSelectedCriteriaLength() === 0) {
             const searchResultsSet = props?.searchResults[props?.searchResults?.length - 1]
 
             return ({
@@ -859,10 +863,7 @@ export default function Search(props) {
     }
 
     const disableSaveBtn = useMemo(() => {
-        const searchReq = getSearchRequest(1);
-        const allSelectedCriteria = searchReq.countries.concat(searchReq.regions, searchReq.cities, searchReq.municipalities, searchReq.cpvs, searchReq.naces, searchReq.unspscs)
-
-        return props?.removeSearch && selectedResults?.length < 1 && allSelectedCriteria?.length === 0
+        return props?.removeSearch && selectedResults?.length < 1 && getAllSelectedCriteriaLength() === 0
 
     }, [selectedResults, selectedMarketCriteria, selectedCPVValues, selectedNACValues, selectedUNSPValues]);
 
@@ -963,7 +964,7 @@ export default function Search(props) {
                                 <div className="g-row">
                                     <div className="g-col-5" />
                                     <div className="g-col-7 m-t-15">
-                                        <ToggleSwitch label={'Active'} onChange={(e) => changeCompanyInfoData(e.target.checked, 'active')} checked={selectedCompanyInfo.active} />
+                                        <ToggleSwitch label={selectedCompanyInfo.active ? 'Active' : 'Inactive'} onChange={(e) => changeCompanyInfoData(e.target.checked, 'active')} checked={selectedCompanyInfo.active} />
                                     </div >
                                 </div >
                             </div >

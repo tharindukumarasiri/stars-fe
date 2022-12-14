@@ -38,7 +38,7 @@ const DatePickerInput = ({ value, onChange, placeholder, minDate = false, maxDat
             <div className={value ? "input-hint-text-visible" : "input-hint-text-hidden"}>{placeholder}</div>
             <div >
                 {value ? value : placeholder}
-                <i className="icon-calander datapicker-icon"></i>
+                {!value && <i className="icon-calander datapicker-icon" />}
             </div>
         </div>
     ));
@@ -62,13 +62,7 @@ const DatePickerInput = ({ value, onChange, placeholder, minDate = false, maxDat
                 prevMonthButtonDisabled,
                 nextMonthButtonDisabled,
             }) => (
-                <div
-                    style={{
-                        margin: 10,
-                        display: "flex",
-                        justifyContent: "center",
-                    }}
-                >
+                <div className="flex-justify-center">
                     <button onClick={decreaseMonth} disabled={prevMonthButtonDisabled}>
                         {"<"}
                     </button>
@@ -84,10 +78,11 @@ const DatePickerInput = ({ value, onChange, placeholder, minDate = false, maxDat
                     </select>
 
                     <select
-                        value={months[formatDate(date, "MM")]}
+                        value={formatDate(date, "MMMM")}
                         onChange={({ target: { value } }) =>
                             changeMonth(months.indexOf(value))
                         }
+                        style={{ width: 120 }}
                     >
                         {months.map((option) => (
                             <option key={option} value={option}>

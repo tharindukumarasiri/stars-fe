@@ -1,24 +1,44 @@
 import React, { useRef, useState } from "react";
 import EmailEditor from 'react-email-editor';
 import Input from '../../common/input'
+import { updateMessageTemplates } from "services/userService";
 import { message } from 'antd';
+import { FetchCurrentCompany } from "../../hooks/index"
 
 const CreateTemplate = ({ closeModal }) => {
     const [loading, setLoading] = useState(true);
     const [selectedTemplateType, setSelectedTemplateType] = useState('Notification');
     const [templateName, setTemplateName] = useState('');
+
+    const [selectedCompany] = FetchCurrentCompany();
+
     const emailEditorRef = useRef(null);
 
-    const exportHtml = () => {
+    const onSave = () => {
         emailEditorRef.current.editor.exportHtml((data) => {
             const { design, html } = data;
+
+            const params = {
+                "Name": templateName,
+                "MessageBody": html,
+                "TenantId": selectedCompany?.tenantId,
+                "CreatedDateTime": new Date(),
+            }
+
+            updateMessageTemplates(params).then(result => {
+                message.success('Template saved in console!');
+                console.log(result)
+            })
+
             console.log('export HTML:');
             console.log({ html })
             console.log('export JSON:');
             console.log(design)
-            message.success('Template saved in console!');
-
         });
+
+
+
+
     };
 
     const onLoad = () => {
@@ -95,9 +115,9 @@ const CreateTemplate = ({ closeModal }) => {
                 </div>
             }
             <div>
-                <input type="radio" id="Notification" name="Notification" checked={selectedTemplateType === 'Notification'} onChange={onTemplateTypeChange} /> <label className="p-r-20" htmlFor="Notification">Notification Template</label>
-                <input type="radio" id="Landing" name="Landing" checked={selectedTemplateType === 'Landing'} className="m-l-20" onChange={onTemplateTypeChange} /> <label className="p-r-20" htmlFor="Landing">Landing Page Template</label>
-                <input type="radio" id="Business" name="Business" checked={selectedTemplateType === 'Business'} className="m-l-20" onChange={onTemplateTypeChange} /> <label htmlFor="Business">Business Communication Template</label>
+                <input type="radio" id="Notification" name="Notification" checked={selectedTemplateType === 'Notification'} onChange={onTemplateTypeChange} /> <label className="p-r-20 p-l-20" htmlFor="Notification">Notification Template</label>
+                <input type="radio" id="Landing" name="Landing" checked={selectedTemplateType === 'Landing'} className="m-l-20" onChange={onTemplateTypeChange} /> <label className="p-r-20 p-l-20" htmlFor="Landing">Landing Page Template</label>
+                <input type="radio" id="Business" name="Business" checked={selectedTemplateType === 'Business'} className="m-l-20" onChange={onTemplateTypeChange} /> <label className="p-l-20" htmlFor="Business">Business Communication Template</label>
             </div>
             <EmailEditor ref={emailEditorRef} onLoad={onLoad} onReady={onReady} displayMode="email" minHeight={'70vh'}
                 projectId={108663}
@@ -114,7 +134,7 @@ const CreateTemplate = ({ closeModal }) => {
             />
             <div className="g-row">
                 <div className="g-col-4"><Input value={templateName} placeholder="Template Name" onChange={onChangeTemplateName} /></div>
-                <button className="primary-btn g-col-1 m-r-20" onClick={exportHtml} >Save</button>
+                <button className="primary-btn g-col-1 m-r-20" onClick={onSave} >Save</button>
                 <button className="secondary-btn g-col-1" onClick={closeModal} >Cancel</button>
             </div>
         </div>

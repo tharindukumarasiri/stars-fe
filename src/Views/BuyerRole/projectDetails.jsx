@@ -196,28 +196,32 @@ const SectionView = (props) => {
     };
 
     const handleOk = () => {
-        const newSectionDataUpdate = { ...newSectionData, closedDate: newSectionData.status?.toUpperCase() === "CLOSE" ? new Date() : '0001-01-01T00:00:00Z' }
+        const newSectionDataUpdate = { ...newSectionData, closedDate: newSectionData.status?.toUpperCase() === "CLOSE" ? new Date() : '0001-01-01T00:00:00Z' };
+        const index = props.sectionData.findIndex(sec => sec.name === newSectionData.name);
 
-        if (editData) {
-            editSection(props.id, newSectionData.id, newSectionDataUpdate)
-                .then(() => {
-                    getSections(props.id)
-                        .then((result) => {
-                            props.setSectionData(result);
-                            message.success("Edit section successful");
-                        })
-                        .catch(() => {
-                            message.warning("Updated data fetch fail please reload");
-                        });
-                    setEditData(false);
-                    toggleModal();
-                })
-                .catch(() => {
-                    message.error("Edit section failed please try again");
-                });
+        if (!newSectionData.name) {
+            message.error("Section name cannot be empty");
+        } else if (index > -1) {
+            message.error("Section name already exists");
+            return;
         } else {
-            if (props.sectionData?.findIndex(item => item.name === newSectionData.name) > -1) {
-                message.error('Section already exists')
+            if (editData) {
+                editSection(props.id, newSectionData.id, newSectionDataUpdate)
+                    .then(() => {
+                        getSections(props.id)
+                            .then((result) => {
+                                props.setSectionData(result);
+                                message.success("Edit section successful");
+                            })
+                            .catch(() => {
+                                message.warning("Updated data fetch fail please reload");
+                            });
+                        setEditData(false);
+                        toggleModal();
+                    })
+                    .catch(() => {
+                        message.error("Edit section failed please try again");
+                    });
             } else {
                 addNewSection(props.id, newSectionDataUpdate)
                     .then(() => {
