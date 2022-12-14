@@ -5,8 +5,32 @@ import "./datePickerInput.scss"
 import { formatDate } from "../utils";
 import { useTranslation } from 'react-i18next'
 
-const DatePickerInput = ({ value, onChange, placeholder, minDate = false, maxDate = false } = {}) => {
+const DatePickerInput = ({ value, onChange, placeholder, minDate = false, maxDate = false, isClearable = false } = {}) => {
     const { t } = useTranslation();
+
+    const years = (startYear) => {
+        var currentYear = new Date().getFullYear(), years = [];
+        startYear = startYear || 1980;
+        while (startYear <= currentYear) {
+            years.push(startYear++);
+        }
+        return years;
+    }
+
+    const months = [
+        "January",
+        "February",
+        "March",
+        "April",
+        "May",
+        "June",
+        "July",
+        "August",
+        "September",
+        "October",
+        "November",
+        "December",
+    ];
 
     const date = formatDate(value) === "01/01/0001" ? "" : value
     const InputView = forwardRef(({ value, onClick, placeholder }, ref) => (
@@ -27,6 +51,56 @@ const DatePickerInput = ({ value, onChange, placeholder, minDate = false, maxDat
             onChange={date => onChange(date)}
             customInput={<InputView />}
             placeholderText={t(placeholder)}
+            isClearable={isClearable}
+
+            renderCustomHeader={({
+                date,
+                changeYear,
+                changeMonth,
+                decreaseMonth,
+                increaseMonth,
+                prevMonthButtonDisabled,
+                nextMonthButtonDisabled,
+            }) => (
+                <div
+                    style={{
+                        margin: 10,
+                        display: "flex",
+                        justifyContent: "center",
+                    }}
+                >
+                    <button onClick={decreaseMonth} disabled={prevMonthButtonDisabled}>
+                        {"<"}
+                    </button>
+                    <select
+                        value={formatDate(date, "YYYY")}
+                        onChange={({ target: { value } }) => changeYear(value)}
+                    >
+                        {years().map((option) => (
+                            <option key={option} value={option}>
+                                {option}
+                            </option>
+                        ))}
+                    </select>
+
+                    <select
+                        value={months[formatDate(date, "MM")]}
+                        onChange={({ target: { value } }) =>
+                            changeMonth(months.indexOf(value))
+                        }
+                    >
+                        {months.map((option) => (
+                            <option key={option} value={option}>
+                                {option}
+                            </option>
+                        ))}
+                    </select>
+
+                    <button onClick={increaseMonth} disabled={nextMonthButtonDisabled}>
+                        {">"}
+                    </button>
+                </div>
+            )}
         />
     )
 }

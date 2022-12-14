@@ -906,7 +906,7 @@ export default function Search(props) {
                                 <div className="g-row">
                                     <div className="g-col-5 m-t-15">{t("Registration date")}</div>
                                     <div className="g-col-7">
-                                        <DatePickerInput placeholder={'From Date'} value={selectedCompanyInfo.registrationFromDate} onChange={(date) => changeCompanyInfoData(date, 'registrationFromDate')} />
+                                        <DatePickerInput placeholder={'From Date'} value={selectedCompanyInfo.registrationFromDate} onChange={(date) => changeCompanyInfoData(date, 'registrationFromDate')} isClearable={true} />
                                     </div>
                                 </div>
                             </div>
@@ -914,7 +914,7 @@ export default function Search(props) {
                                 <div className="g-row">
                                     <div className="g-col-5"></div>
                                     <div className="g-col-7">
-                                        <DatePickerInput placeholder={'To Date'} value={selectedCompanyInfo.registrationToDate} onChange={(date) => changeCompanyInfoData(date, 'registrationToDate')} />
+                                        <DatePickerInput placeholder={'To Date'} value={selectedCompanyInfo.registrationToDate} onChange={(date) => changeCompanyInfoData(date, 'registrationToDate')} isClearable={true} />
                                     </div>
                                 </div>
                             </div>
@@ -925,7 +925,7 @@ export default function Search(props) {
                                 <div className="g-row">
                                     <div className="g-col-5 m-t-5">{t("Date of incorporation")}</div>
                                     <div className="g-col-7">
-                                        <DatePickerInput placeholder={'From Date'} value={selectedCompanyInfo.incorpFromDate} onChange={(date) => changeCompanyInfoData(date, 'incorpFromDate')} />
+                                        <DatePickerInput placeholder={'From Date'} value={selectedCompanyInfo.incorpFromDate} onChange={(date) => changeCompanyInfoData(date, 'incorpFromDate')} isClearable={true} />
                                     </div>
                                 </div>
                             </div>
@@ -933,7 +933,7 @@ export default function Search(props) {
                                 <div className="g-row">
                                     <div className="g-col-5"></div>
                                     <div className="g-col-7">
-                                        <DatePickerInput placeholder={'To Date'} value={selectedCompanyInfo.incorpToDate} onChange={(date) => changeCompanyInfoData(date, 'incorpToDate')} />
+                                        <DatePickerInput placeholder={'To Date'} value={selectedCompanyInfo.incorpToDate} onChange={(date) => changeCompanyInfoData(date, 'incorpToDate')} isClearable={true} />
                                     </div>
                                 </div>
                             </div>
