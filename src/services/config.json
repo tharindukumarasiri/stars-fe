@@ -58,5 +58,5 @@
     "GET_TENENT_CPV": "getTenantTenderCPV?orgId=",
     "UPDATE_TENENT_TENDER_MARKER": "updateTenantTenderMarker",
 
-    "UPDATE_MESSAGE_TEMPLATE": "actionapi/MessageTemplates/Post"
+    "UPDATE_MESSAGE_TEMPLATE": "/actionapi/MessageTemplates/Post?userPartyId="
 }

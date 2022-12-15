@@ -48,8 +48,8 @@ export async function getLanguage() {
     return data;
 }
 
-export async function updateMessageTemplates(params) {
-    const url = process.env.LOCAL_API + config.UPDATE_MESSAGE_TEMPLATE;
+export async function updateMessageTemplates(partyId, params) {
+    const url =  config.UPDATE_MESSAGE_TEMPLATE + partyId;
     const { data } = await http.post(url, params);
     return data;
 }

@@ -1,8 +1,9 @@
 import React, { useRef, useState } from "react";
-import EmailEditor from 'react-email-editor';
-import Input from '../../common/input'
-import { updateMessageTemplates } from "services/userService";
 import { message } from 'antd';
+import EmailEditor from 'react-email-editor';
+
+import Input from '../../common/input'
+import { updateMessageTemplates } from "../../services/userService";
 import { FetchCurrentCompany } from "../../hooks/index"
 
 const CreateTemplate = ({ closeModal }) => {
@@ -25,9 +26,11 @@ const CreateTemplate = ({ closeModal }) => {
                 "CreatedDateTime": new Date(),
             }
 
-            updateMessageTemplates(params).then(result => {
-                message.success('Template saved in console!');
+            updateMessageTemplates(selectedCompany?.tenantId, params).then(result => {
+                message.success('Template saved!');
                 console.log(result)
+            }).catch(err => {
+                console.log(err)
             })
 
             console.log('export HTML:');

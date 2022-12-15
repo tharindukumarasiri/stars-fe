@@ -29,8 +29,8 @@ export const getAuthHeader = () => {
 
 export const getCountryFlag = (countryCode) => {
     try {
-        const flag = require(`../assets/images/flags/${countryCode.toLowerCase()}.png`)
-        return flag
+        const flag = require(`../assets/images/flags/${countryCode.toLowerCase()}.png`).default;
+        return flag;
     } catch {
         return ''
     }

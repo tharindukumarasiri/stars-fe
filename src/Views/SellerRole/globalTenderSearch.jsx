@@ -17,7 +17,7 @@ import { FetchCurrentCompany } from "../../hooks";
 import { NAVIGATION_PAGES } from "../../utils/enums";
 import { formatDate } from "../../utils";
 
-const noticeTypes = ['All', 'open', 'awarded', 'pin', 'intention'];
+const noticeTypes = ['All', 'Open', 'Awarded', 'Pin', 'Intention'];
 const publicationTypes = ['All', 'BODY_PUBLIC', 'EU_INSTITUTION', 'REGIONAL_AUTHORITY']
 const sortByTypes = ['None', 'Publisher', 'Publication Date', 'Expired Date', 'Country', 'Main CPV']
 const pageSize = 10;
@@ -37,7 +37,7 @@ const GlobalTenderSearch = () => {
     const [selectedCPVValues, setSelectedCPVValues] = useState([[[]]]);
     const [selectedCPVRows, setSelectedCPVRows] = useState({ cuurentRow: 0, preLevel: 0 });
     const [selectedTypes, setSelectedTypes] = useState({ notice: 'All', publication: 'All' })
-    const [selectedDates, setSelectedDates] = useState({ publishedFrom: '', publishedTo: '', expiryFrom: '', expiryTo: '', });
+    const [selectedDates, setSelectedDates] = useState({ publishedFrom: null, publishedTo: null, expiryFrom: null, expiryTo: null, });
     const [selectedSource, setSelectedSource] = useState('');
     const [sortBy, setSortBy] = useState("");
 
@@ -62,7 +62,9 @@ const GlobalTenderSearch = () => {
     }, []);
 
     useEffect(() => {
-        searchTenders(1);
+        if(sortBy){
+            searchTenders(1);
+        }
     }, [sortBy]);
 
     const handleMenuClick = (noticeNumber, markType) => {
@@ -199,6 +201,7 @@ const GlobalTenderSearch = () => {
     const onShowResults = (e) => {
         e.preventDefault();
         setTendersData([])
+        setPageCount(0);
         searchTenders(1);
     }
 
@@ -228,16 +231,6 @@ const GlobalTenderSearch = () => {
         })
     }
 
-    const getServiceProvider = () => {
-        if (selectedSource === 'TED') {
-            return 'ted'
-        } else if (selectedSource === 'Doffin') {
-            return 'Doffin'
-        } else {
-            return ''
-        }
-    }
-
     const searchTenders = (pageNumber) => {
         setpageNumber(pageNumber);
         setLoading(true);
@@ -259,7 +252,7 @@ const GlobalTenderSearch = () => {
             expiryDateFrom: formatDate(selectedDates.expiryFrom, 'YYYY-MM-DD'),
             expiryDateTo: formatDate(selectedDates.expiryTo, 'YYYY-MM-DD'),
             sortBy: getSortingOptions(),
-            serviceProvider: getServiceProvider(),
+            serviceProvider: selectedSource === 'All' ? '' : selectedSource,
         }).then(result => {
             setTendersData(result.tenders);
             setPageCount(result.totalCount);
@@ -294,7 +287,7 @@ const GlobalTenderSearch = () => {
                 {openCriteria.Source &&
                     <div className="g-row m-t-20">
                         <div className="g-col-4">
-                            <DropdownComp values={["All", "TED", "Doffin"]} selected={selectedSource} onChange={onChangeSelectedSource} placeholder='' />
+                            <DropdownComp values={["All", "Ted", "Doffin"]} selected={selectedSource} onChange={onChangeSelectedSource} placeholder='' />
                         </div>
                     </div>
                 }
@@ -396,6 +389,10 @@ const GlobalTenderSearch = () => {
         changeActiveTab(NAVIGATION_PAGES.SELLER_TENDER_DETAILS, record)
     }
 
+    const onPageChange = (pageNum) => {
+        searchTenders(pageNum)
+    }
+
     const typesCriteria = () => {
         return (
             <div className="g-col-12">
@@ -429,10 +426,10 @@ const GlobalTenderSearch = () => {
                             Published Date
                         </div>
                         <div className="g-col-4 m-t-10">
-                            <DatePickerInput placeholder={'From Date'} value={selectedDates.publishedFrom} onChange={(date) => onChangeDates(date, 'publishedFrom')} />
+                            <DatePickerInput placeholder={'From Date'} value={selectedDates.publishedFrom} onChange={(date) => onChangeDates(date, 'publishedFrom')} isClearable={true} />
                         </div>
                         <div className="g-col-4 m-t-10">
-                            <DatePickerInput placeholder={'To Date'} value={selectedDates.publishedTo} onChange={(date) => onChangeDates(date, 'publishedTo')} />
+                            <DatePickerInput placeholder={'To Date'} value={selectedDates.publishedTo} onChange={(date) => onChangeDates(date, 'publishedTo')} isClearable={true} />
                         </div>
                     </div>
                     <div className="g-row fl flex-align-center">
@@ -440,10 +437,10 @@ const GlobalTenderSearch = () => {
                             Expiry Date
                         </div>
                         <div className="g-col-4 m-t-10">
-                            <DatePickerInput placeholder={'From Date'} value={selectedDates.expiryFrom} onChange={(date) => onChangeDates(date, 'expiryFrom')} />
+                            <DatePickerInput placeholder={'From Date'} value={selectedDates.expiryFrom} onChange={(date) => onChangeDates(date, 'expiryFrom')} isClearable={true} />
                         </div>
                         <div className="g-col-4 m-t-10">
-                            <DatePickerInput placeholder={'To Date'} value={selectedDates.expiryTo} onChange={(date) => onChangeDates(date, 'expiryTo')} />
+                            <DatePickerInput placeholder={'To Date'} value={selectedDates.expiryTo} onChange={(date) => onChangeDates(date, 'expiryTo')} isClearable={true} />
                         </div>
                     </div>
                 </div>
@@ -515,7 +512,7 @@ const GlobalTenderSearch = () => {
                             columns={tableHeaders}
                             pagination={false}
                             scroll={{
-                                x: '48vw',
+                                x: '43vw',
                             }}
                             onRow={(record, rowIndex) => {
                                 return {
@@ -524,7 +521,7 @@ const GlobalTenderSearch = () => {
                             }}
                         />
                     </div>
-                    <Pagination size="small" className="fr m-t-20 m-b-20" current={pageNumber} onChange={(pageNum) => { searchTenders(pageNum) }} total={pageCount} showSizeChanger={false} />
+                    <Pagination size="small" className="fr m-t-20 m-b-20" current={pageNumber} onChange={onPageChange} total={pageCount} showSizeChanger={false} />
                 </div>
             </div>
         </>
