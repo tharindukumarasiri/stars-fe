@@ -372,6 +372,171 @@ export const searchResultsTableHeaders = [
                         </div>
                     </div>
                 }
+                {
+                    (searchFilter.peppol.length > 0 || removeCriteria?.peppol?.length > 0) &&
+                    <div className="g-row m-b-5 table-separate">
+                        <div className={searchFilter.peppol.length === 0 || parentSearchId ? "red g-col-4" : "blue g-col-4"} >Peppol</div>
+                        <div className="g-col-8">
+                            {searchFilter.peppol.map((pep, index) => {
+                                return (
+                                    <div key={index}>
+                                        <div className={parentSearchId ? "red g-col-6" : "blue g-col-6"} ></div>
+                                        <div className={parentSearchId ? "red g-col-6" : "blue g-col-6"} >{pep}</div>
+                                    </div>
+                                )
+                            })}
+                            {removeCriteria?.peppol?.map((pep, index) => {
+                                return (
+                                    <div key={index}>
+                                        <div className="red g-col-6" ></div>
+                                        <div className="red g-col-6" >{pep}</div>
+                                    </div>
+                                )
+                            })}
+                        </div>
+                    </div>
+                }
+                {
+                    (searchFilter?.sectorCode || removeCriteria?.sectorCode ||
+                        searchFilter?.active ||
+                        searchFilter?.registrationDateFrom || removeCriteria?.registrationDateFrom ||
+                        searchFilter?.registrationDateTo || removeCriteria?.registrationDateTo ||
+                        searchFilter?.inCorporationDateFrom || removeCriteria?.inCorporationDateFrom ||
+                        searchFilter?.inCorporationDateTo || removeCriteria?.inCorporationDateTo ||
+                        searchFilter?.noOfEmployeesFrom || removeCriteria?.noOfEmployeesFrom ||
+                        searchFilter?.noOfEmployeesTo || removeCriteria?.noOfEmployeesTo ||
+                        searchFilter?.organizationTypeCode || removeCriteria?.organizationTypeCode ||
+                        searchFilter?.organizationId || removeCriteria?.organizationId) &&
+                    <div className="g-row m-b-5 table-separate">
+                        <div className="blue g-col-4" >Company Info</div>
+                        <div className="g-col-8">
+                            {searchFilter?.sectorCode &&
+                                <div>
+                                    <div className={parentSearchId ? "red g-col-6" : "blue g-col-6"} >{searchFilter?.sectorCode}</div>
+                                    <div className={parentSearchId ? "red g-col-6" : "blue g-col-6"} >Sector code</div>
+                                </div>
+                            }
+                            {removeCriteria?.sectorCode &&
+                                <div>
+                                    <div className="red g-col-6" >{removeCriteria?.sectorCode}</div>
+                                    <div className="red g-col-6" >Sector code</div>
+                                </div>
+                            }
+
+                            {searchFilter?.active &&
+                                <div>
+                                    <div className={parentSearchId ? "red g-col-6" : "blue g-col-6"} >{searchFilter?.active}</div>
+                                    <div className={parentSearchId ? "red g-col-6" : "blue g-col-6"} >Active</div>
+                                </div>
+                            }
+
+                            {searchFilter?.registrationDateFrom &&
+                                <div>
+                                    <div className={parentSearchId ? "red g-col-6" : "blue g-col-6"} >{searchFilter?.registrationDateFrom}</div>
+                                    <div className={parentSearchId ? "red g-col-6" : "blue g-col-6"} >Registration Date From</div>
+                                </div>
+                            }
+                            {removeCriteria?.registrationDateFrom &&
+                                <div>
+                                    <div className="red g-col-6" >{removeCriteria?.registrationDateFrom}</div>
+                                    <div className="red g-col-6" >Registration Date From</div>
+                                </div>
+                            }
+
+                            {searchFilter?.registrationDateTo &&
+                                <div>
+                                    <div className={parentSearchId ? "red g-col-6" : "blue g-col-6"} >{searchFilter?.registrationDateTo}</div>
+                                    <div className={parentSearchId ? "red g-col-6" : "blue g-col-6"} >Registration Date TO</div>
+                                </div>
+                            }
+                            {removeCriteria?.registrationDateTo &&
+                                <div>
+                                    <div className="red g-col-6" >{removeCriteria?.registrationDateTo}</div>
+                                    <div className="red g-col-6" >Registration Date To</div>
+                                </div>
+                            }
+
+                            {searchFilter?.inCorporationDateFrom &&
+                                <div>
+                                    <div className={parentSearchId ? "red g-col-6" : "blue g-col-6"} >{searchFilter?.inCorporationDateFrom}</div>
+                                    <div className={parentSearchId ? "red g-col-6" : "blue g-col-6"} >inCorporation Date From</div>
+                                </div>
+                            }
+                            {removeCriteria?.inCorporationDateFrom &&
+                                <div>
+                                    <div className="red g-col-6" >{removeCriteria?.inCorporationDateFrom}</div>
+                                    <div className="red g-col-6" >inCorporation Date From</div>
+                                </div>
+                            }
+
+                            {searchFilter?.inCorporationDateTo &&
+                                <div>
+                                    <div className={parentSearchId ? "red g-col-6" : "blue g-col-6"} >{searchFilter?.inCorporationDateTo}</div>
+                                    <div className={parentSearchId ? "red g-col-6" : "blue g-col-6"} >inCorporation Date To</div>
+                                </div>
+                            }
+                            {removeCriteria?.inCorporationDateTo &&
+                                <div>
+                                    <div className="red g-col-6" >{removeCriteria?.inCorporationDateTo}</div>
+                                    <div className="red g-col-6" >inCorporation Date To</div>
+                                </div>
+                            }
+
+                            {searchFilter?.noOfEmployeesFrom &&
+                                <div>
+                                    <div className={parentSearchId ? "red g-col-6" : "blue g-col-6"} >{searchFilter?.noOfEmployeesFrom}</div>
+                                    <div className={parentSearchId ? "red g-col-6" : "blue g-col-6"} >Number Of Employees From</div>
+                                </div>
+                            }
+                            {removeCriteria?.noOfEmployeesFrom &&
+                                <div>
+                                    <div className="red g-col-6" >{removeCriteria?.noOfEmployeesFrom}</div>
+                                    <div className="red g-col-6" >Number Of Employees From</div>
+                                </div>
+                            }
+
+                            {searchFilter?.noOfEmployeesTo &&
+                                <div>
+                                    <div className={parentSearchId ? "red g-col-6" : "blue g-col-6"} >{searchFilter?.noOfEmployeesTo}</div>
+                                    <div className={parentSearchId ? "red g-col-6" : "blue g-col-6"} >Number Of Employees To</div>
+                                </div>
+                            }
+                            {removeCriteria?.noOfEmployeesTo &&
+                                <div>
+                                    <div className="red g-col-6" >{removeCriteria?.noOfEmployeesTo}</div>
+                                    <div className="red g-col-6" >Number Of Employees To</div>
+                                </div>
+                            }
+
+                            {searchFilter?.organizationTypeCode &&
+                                <div>
+                                    <div className={parentSearchId ? "red g-col-6" : "blue g-col-6"} >{searchFilter?.organizationTypeCode}</div>
+                                    <div className={parentSearchId ? "red g-col-6" : "blue g-col-6"} >Organization Type</div>
+                                </div>
+                            }
+                            {removeCriteria?.organizationTypeCode &&
+                                <div>
+                                    <div className="red g-col-6" >{removeCriteria?.organizationTypeCode}</div>
+                                    <div className="red g-col-6" >Organization Type</div>
+                                </div>
+                            }
+
+                            {searchFilter?.organizationId &&
+                                <div>
+                                    <div className={parentSearchId ? "red g-col-6" : "blue g-col-6"} >{searchFilter?.organizationId}</div>
+                                    <div className={parentSearchId ? "red g-col-6" : "blue g-col-6"} >Organization Id</div>
+                                </div>
+                            }
+                            {removeCriteria?.organizationId &&
+                                <div>
+                                    <div className="red g-col-6" >{removeCriteria?.organizationId}</div>
+                                    <div className="red g-col-6" >Organization Id</div>
+                                </div>
+                            }
+
+                        </div>
+                    </div>
+                }
                 {removeCriteria?.organizationIds?.length > 0 &&
                     <div>
                         <div className="red g-col-6" >{`Removed organization count: ${removeCriteria.organizationIds.length}`}</div>

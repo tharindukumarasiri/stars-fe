@@ -3,7 +3,7 @@ import { message } from 'antd';
 import EmailEditor from 'react-email-editor';
 
 import Input from '../../common/input'
-import { updateMessageTemplates } from "../../services/userService";
+import { updateMessageTemplates } from "../../services/templateService";
 import { FetchCurrentCompany } from "../../hooks/index"
 
 const CreateTemplate = ({ closeModal }) => {
@@ -20,10 +20,24 @@ const CreateTemplate = ({ closeModal }) => {
             const { design, html } = data;
 
             const params = {
+                "MessageTriggerPointId": 3,
+                "MessageMediumId": 1,
+                "MessageTypeId": 2,
                 "Name": templateName,
+                "MessageSubject": "tenderNotification",
                 "MessageBody": html,
+                "LanguageId": 2057,
                 "TenantId": selectedCompany?.tenantId,
+                "IsSubTemplate": false,
+                "MessageTriggerPoint": null,
+                "MessageMedium": null,
+                "MessageType": null,
+                "LanguageMessageTemplates": [],
+                "Id": 1,
                 "CreatedDateTime": new Date(),
+                "CreatedUserPartyId": selectedCompany?.tenantId,
+                "DeletedDateTime": "2022-12-16T04:35:08.112Z",
+                "DeletedUserPartyId": 0
             }
 
             updateMessageTemplates(selectedCompany?.tenantId, params).then(result => {
@@ -59,7 +73,7 @@ const CreateTemplate = ({ closeModal }) => {
     const dynamicParameters = [
         {
             name: "User Name/s",
-            value: "{{full_name}}",
+            value: "{{firstName}}",
             sample: "User Name/s"
         },
         {

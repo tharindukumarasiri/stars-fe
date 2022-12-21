@@ -47,9 +47,3 @@ export async function getLanguage() {
     const { data } = await http.get(url, getAuthHeader());
     return data;
 }
-
-export async function updateMessageTemplates(partyId, params) {
-    const url =  config.UPDATE_MESSAGE_TEMPLATE + partyId;
-    const { data } = await http.post(url, params);
-    return data;
-}

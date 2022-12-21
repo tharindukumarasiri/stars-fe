@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext, useMemo } from "react";
 import { message, Pagination, Modal } from 'antd';
-import { levelOneReq, nacSectionReq, organizationTypes, numberOfEmployeesList } from "../../utils/constants";
+import { levelOneReq, nacSectionReq, numberOfEmployeesList } from "../../utils/constants";
 import gb_flag from "../../assets/images/gb_flag.png"
 import Model from "../../common/model";
 import { TabContext } from "../../utils/contextStore";
@@ -16,21 +16,22 @@ import {
     searchOrganizationByCPV,
     searchOrganizationByNACE,
     searchOrganizationByUNSPSC,
+    searchOrganizationMunicipality,
     removeSearch,
     deleteSearch,
     removeSearchAccumulateCpv,
     removeSearchAccumulateNace,
     removeAllOrganizationIds,
+    getOrganizationTypes,
 } from "../../services/organizationsService";
+import { getPerson } from "../../services/userService"
 import DropdownList from "./Components/dropdownList"
 import Dropdown from "./Components/dropdown";
 import DropdownSelect from "../../common/dropdown"
 import SearchSelectedValues from "./Components/searchSelectedValues";
 import DatePickerInput from "../../common/datePickerInput";
-import ToggleSwitch from "../../common/toggleSwitch";
 import { useTranslation } from 'react-i18next'
 import Input from '../../common/input'
-import { formatDate } from "../../utils";
 
 const { confirm } = Modal;
 
@@ -49,8 +50,9 @@ export default function Search(props) {
     const [unspscData, setUnspscData] = useState({ segmant: [], family: [], unspClass: [], comClass: [] })
     const [cpvData, setCpvData] = useState({ division: [], cpvGroup: [], cpvClass: [], category: [], subCategory: [] })
     const [professionData, setProfessionData] = useState({ section: [], divition: [], profGroup: [], profClass: [] })
+    const [organizationTypes, setOrganizationTypes] = useState([])
     // Drop Down selected eliments data
-    const [selectedCompanyInfo, setSelectedCompanyInfo] = useState({ registrationFromDate: null, registrationToDate: null, incorpFromDate: null, active: true, incorpToDate: null, noOfEmployees: '', organizationId: '', sectorCode: '', organizationType: '' });
+    const [selectedCompanyInfo, setSelectedCompanyInfo] = useState({ registrationFromDate: null, registrationToDate: null, incorpFromDate: null, active: true, incorpToDate: null, noOfEmployees: '', organizationId: '', sectorCode: '', organizationType: {} });
     const [selectedMarketCriteria, setSelectedMarketCriteria] = useState({ selectedCountries: [], selectedRegions: [], selectedCities: [], selectedMunicipalities: [] });
     const [selectedMarketHierarchy, setSelectedMarketHierarchy] = useState([[]]);
     const [selectedUNSPValues, setSelectedUNSPValues] = useState([[[]]]);
@@ -88,6 +90,9 @@ export default function Search(props) {
         getUnspscCodes(levelOneReq).then(result => { setUnspscData({ ...unspscData, segmant: result }) });
         getCpvCodes(levelOneReq).then(result => { setCpvData({ ...cpvData, division: result }) })
         getNacCodes(nacSectionReq).then(result => { setProfessionData({ ...professionData, section: result }) });
+        // getPerson().then(result => {
+            getOrganizationTypes("NO", "EN").then(result => { setOrganizationTypes(result) })
+        // })
     }, []);
 
     useEffect(() => {
@@ -115,7 +120,7 @@ export default function Search(props) {
 
             setSelectedResults(searchResultsSet?.removeCriteria?.organizationIds || [])
 
-            removeSearch(props.searchResults[0].id, removalReq).then(result => {
+            removeSearch(props.searchResults[0]?.id, removalReq).then(result => {
                 setLoading(false);
                 setOrganizations(result.organizations);
                 setPageCount(result.total);
@@ -126,7 +131,7 @@ export default function Search(props) {
     }, [props]);
 
     useEffect(() => {
-        if (getAllSelectedCriteriaLength() !== 0 || searchText !== '') {
+        if (selectedGrouping.accumulation && (getAllSelectedCriteriaLength() !== 0 || searchText !== '')) {
             onShowResults();
         }
     }, [selectedGrouping.accumulation]);
@@ -308,9 +313,10 @@ export default function Search(props) {
             setOrganizations([]);
             setGrouping({});
             window.scrollTo(0, 0)
+            const searchReq = getSearchRequest(1);
+            if (isAllCriteriaEmpty(searchReq) && !props.removeSearch) {
+                message.warning('Please select criteria to search');
 
-            if (getAllSelectedCriteriaLength() === 0 && searchText === '' && !props.removeSearch) {
-                message.warning('Please select criterias to search');
             } else {
                 noSearchResults = false;
                 setLoading(true);
@@ -334,7 +340,7 @@ export default function Search(props) {
                 switch (selectedGrouping.accumulation) {
                     case '':
                     case 'None':
-                        removeSearch(props.searchResults[0].id, removeRequest).then(result => {
+                        removeSearch(props.searchResults[0]?.id, removeRequest).then(result => {
                             setLoading(false);
                             setOrganizations(result.organizations);
                             setPageCount(result.total);
@@ -344,7 +350,7 @@ export default function Search(props) {
                         });
                         break;
                     case 'CPV Code':
-                        removeSearchAccumulateCpv(props.searchResults[0].id, removeRequest).then(result => {
+                        removeSearchAccumulateCpv(props.searchResults[0]?.id, removeRequest).then(result => {
                             setLoading(false);
                             setGrouping(convertStringObject(result.grouping));
                             setOrganizations(result.organizations);
@@ -355,7 +361,7 @@ export default function Search(props) {
                         });
                         break;
                     case 'NACE Code':
-                        removeSearchAccumulateNace(props.searchResults[0].id, removeRequest).then(result => {
+                        removeSearchAccumulateNace(props.searchResults[0]?.id, removeRequest).then(result => {
                             setLoading(false);
                             setGrouping(convertStringObject(result.grouping));
                             setOrganizations(result.organizations);
@@ -377,7 +383,7 @@ export default function Search(props) {
                         // });
                         break;
                     default:
-                        removeSearch(props.searchResults[0].id, removeRequest).then(result => {
+                        removeSearch(props.searchResults[0]?.id, removeRequest).then(result => {
                             setLoading(false);
                             setOrganizations(result.organizations);
                             setPageCount(result.total);
@@ -392,7 +398,7 @@ export default function Search(props) {
             switch (selectedGrouping.accumulation) {
                 case '':
                 case 'None':
-                    removeSearch(props.searchResults[0].id, getRemovalRequest(pageNo)).then(result => {
+                    removeSearch(props.searchResults[0]?.id, getRemovalRequest(pageNo)).then(result => {
                         setLoading(false);
                         setOrganizations(result.organizations);
                         setPageCount(result.total);
@@ -402,7 +408,7 @@ export default function Search(props) {
                     });
                     break;
                 case 'CPV Code':
-                    removeSearchAccumulateCpv(props.searchResults[0].id, getRemovalRequest(pageNo)).then(result => {
+                    removeSearchAccumulateCpv(props.searchResults[0]?.id, getRemovalRequest(pageNo)).then(result => {
                         setLoading(false);
                         setGrouping(convertStringObject(result.grouping));
                         setOrganizations(result.organizations);
@@ -413,7 +419,7 @@ export default function Search(props) {
                     });
                     break;
                 case 'NACE Code':
-                    removeSearchAccumulateNace(props.searchResults[0].id, getRemovalRequest(pageNo)).then(result => {
+                    removeSearchAccumulateNace(props.searchResults[0]?.id, getRemovalRequest(pageNo)).then(result => {
                         setLoading(false);
                         setGrouping(convertStringObject(result.grouping));
                         setOrganizations(result.organizations);
@@ -435,7 +441,7 @@ export default function Search(props) {
                     // });
                     break;
                 default:
-                    removeSearch(props.searchResults[0].id, getRemovalRequest(pageNo)).then(result => {
+                    removeSearch(props.searchResults[0]?.id, getRemovalRequest(pageNo)).then(result => {
                         setLoading(false);
                         setOrganizations(result.organizations);
                         setPageCount(result.total);
@@ -496,6 +502,17 @@ export default function Search(props) {
                     setLoading(false);
                 });
                 break;
+            case 'Municipality':
+                searchOrganizationMunicipality(getSearchRequest(pageNo)).then(result => {
+                    setLoading(false);
+                    setGrouping(convertStringObject(result.grouping));
+                    setOrganizations(result.organizations);
+                    setPageCount(result.total);
+                }).catch(error => {
+                    noSearchResults = true;
+                    setLoading(false);
+                });
+                break;
             default:
                 break;
         }
@@ -508,6 +525,31 @@ export default function Search(props) {
             return "save"
         }
     }, [props])
+
+    const isAllCriteriaEmpty = (searchReq) => {
+        const allSelectedCriteria = searchReq.countries.concat(
+            searchReq.regions,
+            searchReq.cities,
+            searchReq.municipalities,
+            searchReq.cpvs,
+            searchReq.naces,
+            searchReq.unspscs,
+            searchReq.peppol
+        )
+
+        if (allSelectedCriteria.length === 0 &&
+            searchReq.name === '' &&
+            searchReq.active == null &&
+            !searchReq.registrationDateFrom && !searchReq.registrationDateTo &&
+            !searchReq.inCorporationDateFrom && !searchReq.inCorporationDateTo &&
+            searchReq.noOfEmployeesFrom == null && searchReq.noOfEmployeesTo == null &&
+            !searchReq.organizationTypeCode && !searchReq.organizationId &&
+            !searchReq.sectorCode
+        ) {
+            return true;
+        }
+        else return false;
+    }
 
     const onSaveResults = (e) => {
         e.preventDefault();
@@ -529,8 +571,9 @@ export default function Search(props) {
                 message.success("Delete results fail")
             })
         } else {
-            if (getAllSelectedCriteriaLength() === 0 && searchText === '' && !props?.removeSearch) {
-                message.warning('Please select criterias to save');
+            const searchReq = getSearchRequest(1);
+            if (isAllCriteriaEmpty(searchReq) && !props?.removeSearch) {
+                message.warning('Please select criteria to save');
             } else if (props?.sectionSearch && (props?.projectStatus?.toUpperCase() === "CLOSE" || props?.sectionStatus?.toUpperCase() === "CLOSE")) {
                 message.warning('Cannot save results for closed projects or sections');
             } else {
@@ -558,8 +601,8 @@ export default function Search(props) {
     const getSaveResultData = () => {
         if (props?.removeSearch) {
             return ({
-                "id": props.searchResults[1]?.id || null,
-                "parentSearchId": props.searchResults[0].id,
+                "id": props?.searchResults[1]?.id || null,
+                "parentSearchId": props?.searchResults[0]?.id,
                 "operationId": props.projectId,
                 "sectionId": props.sectionId,
                 "createdDate": new Date(),
@@ -571,14 +614,14 @@ export default function Search(props) {
                     "cpvs": getFilterdCodes(selectedCPVValues),
                     "naces": getFilterdCodes(selectedNACValues),
                     "unspscs": getFilterdCodes(selectedUNSPValues),
-                    "active": selectedCompanyInfo.active,
+                    "active": getActiveStatus(),
                     "registrationDateFrom": selectedCompanyInfo.registrationFromDate,
                     "registrationDateTo": selectedCompanyInfo.registrationToDate,
                     "inCorporationDateFrom": selectedCompanyInfo.incorpFromDate,
                     "inCorporationDateTo": selectedCompanyInfo.incorpToDate,
                     "noOfEmployeesFrom": null,
                     "noOfEmployeesTo": null,
-                    "organizationTypeCode": "",
+                    "organizationTypeCode": selectedCompanyInfo.organizationType?.code || "",
                     "organizationId": "",
                     "peppol": getSelectedPepolTypes()
                 },
@@ -600,14 +643,14 @@ export default function Search(props) {
                     "cpvs": getFilterdCodes(selectedCPVValues),
                     "naces": getFilterdCodes(selectedNACValues),
                     "unspscs": getFilterdCodes(selectedUNSPValues),
-                    "active": selectedCompanyInfo.active,
+                    "active": getActiveStatus(),
                     "registrationDateFrom": selectedCompanyInfo.registrationFromDate,
                     "registrationDateTo": selectedCompanyInfo.registrationToDate,
                     "inCorporationDateFrom": selectedCompanyInfo.incorpFromDate,
                     "inCorporationDateTo": selectedCompanyInfo.incorpToDate,
                     "noOfEmployeesFrom": null,
                     "noOfEmployeesTo": null,
-                    "organizationTypeCode": "",
+                    "organizationTypeCode": selectedCompanyInfo.organizationType?.code || "",
                     "organizationId": "",
                     "peppol": getSelectedPepolTypes()
                 },
@@ -637,6 +680,17 @@ export default function Search(props) {
         }
     }
 
+    const getActiveStatus = () => {
+        switch (selectedCompanyInfo.active) {
+            case "Active":
+                return true;
+            case "Inactive":
+                return false;
+            default:
+                return null;
+        }
+    }
+
     const getSearchRequest = (pageNumber) => {
         return ({
             "name": searchText,
@@ -648,14 +702,14 @@ export default function Search(props) {
             "naces": getFilterdCodes(selectedNACValues),
             "unspscs": getFilterdCodes(selectedUNSPValues),
             "peppol": getSelectedPepolTypes(),
-            "active": selectedCompanyInfo.active,
+            "active": getActiveStatus(),
             "registrationDateFrom": selectedCompanyInfo.registrationFromDate,
             "registrationDateTo": selectedCompanyInfo.registrationToDate,
             "inCorporationDateFrom": selectedCompanyInfo.incorpFromDate,
             "inCorporationDateTo": selectedCompanyInfo.incorpToDate,
             "noOfEmployeesFrom": getNoOfEmployees().from,
             "noOfEmployeesTo": getNoOfEmployees().to,
-            "organizationTypeCode": selectedCompanyInfo.organizationType,
+            "organizationTypeCode": selectedCompanyInfo.organizationType?.code || "",
             "organizationId": selectedCompanyInfo.organizationId,
             "sectorCode": selectedCompanyInfo.sectorCode,
             "pageSize": pageSize,
@@ -678,14 +732,14 @@ export default function Search(props) {
                     "cpvs": searchResultsSet?.searchFilter.cpvs || null,
                     "naces": searchResultsSet?.searchFilter.naces || null,
                     "unspscs": searchResultsSet?.searchFilter.unspscs || null,
-                    "active": selectedCompanyInfo.active,
+                    "active": getActiveStatus(),
                     "registrationDateFrom": selectedCompanyInfo.registrationFromDate,
                     "registrationDateTo": selectedCompanyInfo.registrationToDate,
                     "inCorporationDateFrom": selectedCompanyInfo.incorpFromDate,
                     "inCorporationDateTo": selectedCompanyInfo.incorpToDate,
                     "noOfEmployeesFrom": getNoOfEmployees().from,
                     "noOfEmployeesTo": getNoOfEmployees().to,
-                    "organizationTypeCode": selectedCompanyInfo.organizationType,
+                    "organizationTypeCode": selectedCompanyInfo.organizationType?.code || "",
                     "organizationId": selectedCompanyInfo.organizationId,
                     "sectorCode": selectedCompanyInfo.sectorCode,
                     "peppol": getSelectedPepolTypes(),
@@ -707,14 +761,14 @@ export default function Search(props) {
                     "cpvs": getFilterdCodes(selectedCPVValues),
                     "naces": getFilterdCodes(selectedNACValues),
                     "unspscs": getFilterdCodes(selectedUNSPValues),
-                    "active": selectedCompanyInfo.active,
+                    "active": getActiveStatus(),
                     "registrationDateFrom": selectedCompanyInfo.registrationFromDate,
                     "registrationDateTo": selectedCompanyInfo.registrationToDate,
                     "inCorporationDateFrom": selectedCompanyInfo.incorpFromDate,
                     "inCorporationDateTo": selectedCompanyInfo.incorpToDate,
                     "noOfEmployeesFrom": getNoOfEmployees().from,
                     "noOfEmployeesTo": getNoOfEmployees().to,
-                    "organizationTypeCode": selectedCompanyInfo.organizationType,
+                    "organizationTypeCode": selectedCompanyInfo.organizationType?.code || "",
                     "organizationId": selectedCompanyInfo.organizationId,
                     "sectorCode": selectedCompanyInfo.sectorCode,
                     "peppol": getSelectedPepolTypes(),
@@ -793,6 +847,10 @@ export default function Search(props) {
 
     const changeCompanyInfoData = (data, dataName) => {
         setSelectedCompanyInfo({ ...selectedCompanyInfo, [dataName]: data })
+    }
+
+    const onChangeOrgType = (e) => {
+        setSelectedCompanyInfo({ ...selectedCompanyInfo, organizationType: JSON.parse(e.target.value) })
     }
 
     const onChangeOrgId = (e) => {
@@ -882,7 +940,7 @@ export default function Search(props) {
                     </div>
                     <div className="g-col-4">
                         <DropdownSelect
-                            values={['None', 'CPV Code', 'NACE Code', 'UNSPSC Code']}
+                            values={['None', 'CPV Code', 'NACE Code', 'UNSPSC Code', 'Municipality']}
                             placeholder="Accumulation"
                             selected={selectedGrouping.accumulation}
                             onChange={onChangeAccumulation}
@@ -953,7 +1011,12 @@ export default function Search(props) {
                                 <div className="g-row">
                                     <div className="g-col-5"></div>
                                     <div className="g-col-7">
-                                        <DropdownSelect values={organizationTypes} placeholder="Organization type" selected={selectedCompanyInfo.organizationType} onChange={(e) => changeCompanyInfoData(e.target.value, 'organizationType')} />
+                                        <DropdownSelect
+                                            values={organizationTypes}
+                                            placeholder="Organization type"
+                                            dataName="description"
+                                            selected={selectedCompanyInfo.organizationType?.code ? JSON.stringify(selectedCompanyInfo.organizationType) : ''}
+                                            onChange={onChangeOrgType} />
                                     </div>
                                 </div>
                             </div>
@@ -962,12 +1025,16 @@ export default function Search(props) {
                         <div className="g-row">
                             <div className="g-col-6">
                                 <div className="g-row">
-                                    <div className="g-col-5" />
-                                    <div className="g-col-7 m-t-15">
-                                        <ToggleSwitch label={selectedCompanyInfo.active ? 'Active' : 'Inactive'} onChange={(e) => changeCompanyInfoData(e.target.checked, 'active')} checked={selectedCompanyInfo.active} />
-                                    </div >
-                                </div >
-                            </div >
+                                    <div className="g-col-5 m-t-5">Active</div>
+                                    <div className="g-col-7">
+                                        <DropdownSelect
+                                            values={["All", "Active", "Inactive"]}
+                                            selected={selectedCompanyInfo?.active}
+                                            onChange={(e) => changeCompanyInfoData(e.target.value, 'active')}
+                                        />
+                                    </div>
+                                </div>
+                            </div>
                             <div className="g-col-6">
                                 <div className="g-row">
                                     <div className="g-col-5"></div>

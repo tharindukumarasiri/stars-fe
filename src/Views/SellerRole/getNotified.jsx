@@ -1,13 +1,13 @@
 import React, { useState, useMemo, useEffect, useContext } from "react";
 import { message } from 'antd';
-import { getCpvCodes, searchCpvCodes, updateTenementCPV, getTenementCPV } from "../../services/organizationsService";
+import { getCpvCodes, searchCpvCodes, updateTenementCPV, getTenementCPV, getSubscribedPartyTsByTenantId, getNotSubscribedPartyTsByTenantId } from "../../services/organizationsService";
 import { levelOneReq } from "../../utils/constants";
 import { TabContext } from "../../utils/contextStore";
 import { useTranslation } from 'react-i18next'
 import CriteriaColorGuideTab from "./Components/criteriaColorGuideTab";
 import UserSelectedFields from "./Components/userSelectedFields";
 import DropdownMultiSelect from "../../common/dropdownMultiSelect"
-import { FetchCurrentCompany, FetchCompanyUsers } from "../../hooks/index"
+import { FetchCurrentCompany } from "../../hooks/index"
 
 const GetNotified = () => {
     const { haveUnsavedDataRef, setHaveUnsavedDataRef } = useContext(TabContext);
@@ -20,10 +20,10 @@ const GetNotified = () => {
     const [showingSearchedCodes, setShowingSearchedCodes] = useState(false);
     const [tenderCpvs, setTenderCpvs] = useState([]);
     const [allCpvCodes, setAllCpvCodes] = useState([]);
+    const [users, setUsers] = useState([]);
     const [selectedUsers, setSelectedUsers] = useState([]);
 
     const [selectedCompany] = FetchCurrentCompany();
-    const [users] = FetchCompanyUsers();
 
     useEffect(() => {
         getCpvCodes(levelOneReq).then(result => {
@@ -67,6 +67,16 @@ const GetNotified = () => {
 
                 setLoading(false);
             }).catch(() => setLoading(false))
+
+            getSubscribedPartyTsByTenantId(selectedCompany?.tenantId).then( result => {
+                setSelectedUsers(result)
+                console.log(result)
+            })
+
+            getNotSubscribedPartyTsByTenantId(selectedCompany?.tenantId).then( result => {
+                setUsers(result);
+                console.log(result)
+            })
         }
     }, [selectedCompany]);
 

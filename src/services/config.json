@@ -3,6 +3,7 @@
     "ORGANIZATIONS_BY_CPV": "organizationsAccumulateCpv",
     "ORGANIZATIONS_BY_NACE": "organizationsAccumulateNace",
     "ORGANIZATIONS_BY_UNSPSC": "organizationsAccumulateUnspsc",
+    "ORGANIZATIONS_BY_MUNICIPALITY": "organizationsAccumulateMunicipality",
     "GET_ORGANIZATIONS": "getOrganization",
     "UPDATE_ORGANIZATION": "organizations/update",
     "REMOVE_SEARCH": "removeSearch/",
@@ -28,6 +29,7 @@
     "GET_SEARCH_RESULT_BY_PROID_SECID": "resultsByProjAndSec?projId=",    
     "GET_NUTS_COUNTRIES": "nuts/country",
     "UPDATE_NUTS": "updateNuts/",
+    "GET_ORGANIZATION_TYPES": "getOrganizationTypes/",
 
     "OPERATIONS": "operations",
     "ADD_OPERATION": "addNewOperation",
@@ -57,6 +59,8 @@
     "UPDATE_TENENT_CPV": "tenantTenderCPV",
     "GET_TENENT_CPV": "getTenantTenderCPV?orgId=",
     "UPDATE_TENENT_TENDER_MARKER": "updateTenantTenderMarker",
+    "GET_SUBSCRIBED_USERS": "/actionapi/PersonTs/GetSubscribedPartyTsByTenantId?tenantId=",
+    "GET_NOT_SUBSCRIBED_USERS": "/actionapi/PersonTs/GetNotSubscribedPartyTsByTenantId?tenantId=",
 
     "UPDATE_MESSAGE_TEMPLATE": "/actionapi/MessageTemplates/Post?userPartyId="
 }

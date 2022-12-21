@@ -18,6 +18,10 @@ export async function searchOrganizationByUNSPSC(params) {
     const { data } = await http.post(process.env.SDC_SEARCH_API + config.ORGANIZATIONS_BY_UNSPSC, params);
     return data;
 }
+export async function searchOrganizationMunicipality(params) {
+    const { data } = await http.post(process.env.SDC_SEARCH_API + config.ORGANIZATIONS_BY_MUNICIPALITY, params);
+    return data;
+}
 
 export async function removeSearch(searchId, params) {
     const { data } = await http.post(`${process.env.SDC_SEARCH_API + config.REMOVE_SEARCH}${searchId}`, params);
@@ -59,6 +63,11 @@ export async function getSearchResultsByProjAndSec(proId, secId) {
 }
 export async function addNewSearchResult(params) {
     const { data } = await http.post(process.env.SDC_PROJECT_API + config.ADD_SEARCH_RESULT, params);
+    return data;
+}
+
+export async function getOrganizationTypes(countryCode, languageCode) {
+    const { data } = await http.get(`${process.env.SDC_SEARCH_API + config.GET_ORGANIZATION_TYPES}${countryCode}/${languageCode}`);
     return data;
 }
 
@@ -180,5 +189,15 @@ export async function getTenementCPV(id, country) {
 
 export async function updateTenantTenderMarker(params) {
     const { data } = await http.post(process.env.SDC_SEARCH_API + config.UPDATE_TENENT_TENDER_MARKER, params);
+    return data;
+}
+
+export async function getSubscribedPartyTsByTenantId(id) {
+    const { data } = await http.get(`${config.GET_SUBSCRIBED_USERS}${id}`);
+    return data;
+}
+
+export async function getNotSubscribedPartyTsByTenantId(id) {
+    const { data } = await http.get(`${config.GET_NOT_SUBSCRIBED_USERS}${id}`);
     return data;
 }

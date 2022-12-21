@@ -9,7 +9,7 @@ const DatePickerInput = ({ value, onChange, placeholder, minDate = false, maxDat
     const { t } = useTranslation();
 
     const years = (startYear) => {
-        var currentYear = new Date().getFullYear(), years = [];
+        var currentYear = new Date().getFullYear() + 1, years = [];
         startYear = startYear || 1980;
         while (startYear <= currentYear) {
             years.push(startYear++);
@@ -63,7 +63,7 @@ const DatePickerInput = ({ value, onChange, placeholder, minDate = false, maxDat
                 nextMonthButtonDisabled,
             }) => (
                 <div className="flex-justify-center">
-                    <button onClick={decreaseMonth} disabled={prevMonthButtonDisabled}>
+                    <button onClick={(e) => {e.preventDefault(); decreaseMonth() }} disabled={prevMonthButtonDisabled}>
                         {"<"}
                     </button>
                     <select
@@ -91,7 +91,7 @@ const DatePickerInput = ({ value, onChange, placeholder, minDate = false, maxDat
                         ))}
                     </select>
 
-                    <button onClick={increaseMonth} disabled={nextMonthButtonDisabled}>
+                    <button onClick={(e) => {e.preventDefault(); increaseMonth() }} disabled={nextMonthButtonDisabled}>
                         {">"}
                     </button>
                 </div>
