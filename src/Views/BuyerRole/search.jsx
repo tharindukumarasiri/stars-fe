@@ -23,6 +23,7 @@ import {
     removeSearchAccumulateNace,
     removeAllOrganizationIds,
     getOrganizationTypes,
+    removeSearchAccumulateMunicipality,
 } from "../../services/organizationsService";
 import { getPerson } from "../../services/userService"
 import DropdownList from "./Components/dropdownList"
@@ -91,7 +92,7 @@ export default function Search(props) {
         getCpvCodes(levelOneReq).then(result => { setCpvData({ ...cpvData, division: result }) })
         getNacCodes(nacSectionReq).then(result => { setProfessionData({ ...professionData, section: result }) });
         // getPerson().then(result => {
-            getOrganizationTypes("NO", "EN").then(result => { setOrganizationTypes(result) })
+        getOrganizationTypes("NO", "EN").then(result => { setOrganizationTypes(result) })
         // })
     }, []);
 
@@ -382,6 +383,17 @@ export default function Search(props) {
                         //     setLoading(false);
                         // });
                         break;
+                    case 'Municipality':
+                        removeSearchAccumulateMunicipality(props.searchResults[0]?.id, removeRequest).then(result => {
+                            setLoading(false);
+                            setGrouping(convertStringObject(result.grouping));
+                            setOrganizations(result.organizations);
+                            setPageCount(result.total);
+                        }).catch(error => {
+                            noSearchResults = true;
+                            setLoading(false);
+                        });
+                        break;
                     default:
                         removeSearch(props.searchResults[0]?.id, removeRequest).then(result => {
                             setLoading(false);
@@ -439,6 +451,17 @@ export default function Search(props) {
                     //     noSearchResults = true;
                     //     setLoading(false);
                     // });
+                    break;
+                case 'Municipality':
+                    removeSearchAccumulateMunicipality(props.searchResults[0]?.id, getRemovalRequest(pageNo)).then(result => {
+                        setLoading(false);
+                        setGrouping(convertStringObject(result.grouping));
+                        setOrganizations(result.organizations);
+                        setPageCount(result.total);
+                    }).catch(error => {
+                        noSearchResults = true;
+                        setLoading(false);
+                    });
                     break;
                 default:
                     removeSearch(props.searchResults[0]?.id, getRemovalRequest(pageNo)).then(result => {
@@ -1276,7 +1299,7 @@ export default function Search(props) {
             </div >
         )
     }
-
+    console.log(grouping)
     return (
         <>
             <div className="g-col-6">
@@ -1343,8 +1366,9 @@ export default function Search(props) {
                                                             <div key={index}>
                                                                 {typeof group._id === 'object' ?
                                                                     <div className="g-row">
-                                                                        <div className="g-col-4 body-text blue">{Object.values(group._id)[0]}</div>
+                                                                        <div className="g-col-3 body-text blue">{Object.values(group._id)[0]}</div>
                                                                         <div className="g-col-4 body-text blue">{Object.values(group._id)[1]}</div>
+                                                                        <div className="g-col-1 body-text blue">{Object.values(group._id)[2]}</div>
                                                                         <div className="g-col-4 body-text blue">{group.count}</div>
                                                                     </div>
                                                                     : <>

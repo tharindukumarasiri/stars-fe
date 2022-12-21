@@ -43,6 +43,11 @@ export async function removeSearchAccumulateNace(searchId, params) {
     return data;
 }
 
+export async function removeSearchAccumulateMunicipality(searchId, params) {
+    const { data } = await http.post(`${process.env.SDC_SEARCH_API + config.REMOVE_SEARCH_ACCUMULATE_MUNICIPALITY}${searchId}`, params);
+    return data;
+}
+
 export async function getOrganization(id) {
     const { data } = await http.get(`${process.env.SDC_SEARCH_API + config.GET_ORGANIZATIONS}/${id}/NO`);
     return data;
