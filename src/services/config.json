@@ -9,6 +9,8 @@
     "REMOVE_SEARCH": "removeSearch/",
     "REMOVE_SEARCH_ACCUMULATE_CPV": "removeSearchAccumulateCpv/",
     "REMOVE_SEARCH_ACCUMULATE_NACE": "removeSearchAccumulateNace/",
+    "REMOVE_SEARCH_ACCUMULATE_UNSPSC": "removeSearchAccumulateUNSPSC/",
+    "REMOVE_SEARCH_ACCUMULATE_MUNICIPALITY": "removeSearchAccumulateMunicipality/",
     "REMOVE_ALL_ORG_IDS": "removeAllOrganizationIds",
     "COUNTRIES": "countries",
     "REGIONS": "regions",

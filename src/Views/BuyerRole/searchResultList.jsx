@@ -25,24 +25,13 @@ const SearchResultsList = (props) => {
     }, [props]);
 
     const getRemovalRequest = (pageNumber) => {
-        const searchResultsSet = props?.searchResults[0]
-        return ({
-            "searchCriteria": {
-                "name": searchResultsSet?.searchFilter.name || "",
-                "countries": searchResultsSet?.searchFilter.countries || null,
-                "regions": searchResultsSet?.searchFilter.regions || null,
-                "cities": searchResultsSet?.searchFilter.cities || null,
-                "municipalities": searchResultsSet?.searchFilter.municipalities || null,
-                "cpvs": searchResultsSet?.searchFilter.cpvs || null,
-                "naces": searchResultsSet?.searchFilter.naces || null,
-                "unspscs": searchResultsSet?.searchFilter.unspscs || null,
-                "pageSize": pageSize,
-                "pageNo": pageNumber,
-            },
-            "removeCritieria": {
-                "organizationIds": props?.searchResults[1]?.removeCriteria.organizationIds || null
-            }
-        })
+        const searchResultsSet = {
+            "searchCriteria": props?.searchResults[0]?.searchFilter || {},
+            "removeCritieria": props?.searchResults[1]?.removeCriteria || {}
+        }
+        searchResultsSet.searchCriteria.pageNo = pageNumber;
+
+        return searchResultsSet
     }
 
     const callremoveOrganization = (pageNo) => {

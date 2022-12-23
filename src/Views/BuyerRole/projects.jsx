@@ -24,9 +24,7 @@ const Projects = () => {
     const [loading, setLoading] = useState(false);
 
     const [companyContacts, setCompanyContacts] = useState([]);
-    const [selectedContact, setSelectedContact] = useState(null);
     const [filterdContacts, setFilteredContacts] = useState([]);
-    const [contactName, setContactName] = useState('');
     const { t } = useTranslation();
 
     const tableHeaders = useMemo(() => {
@@ -98,32 +96,41 @@ const Projects = () => {
     const toggleModal = () => {
         setModalVisible(!modalVisible);
         setNewProjectData({})
+        setEditData(false)
     };
 
     const handleOk = () => {
-        if (editData) {
-            editProject(newProjectData.id, newProjectData).then(() => {
-                getAllProjects().then(result => {
-                    setProjectsData(result);
-                    message.success('Edit project successful');
-                }).catch(() => {
-                    message.warning('Updated data fetch fail please reload');
-                })
-                setEditData(false);
-                toggleModal();
-            })
+        const index = projectsData.findIndex(sec => sec.name === newProjectData.name);
+
+        if (!newProjectData.name) {
+            message.error("project name cannot be empty");
+        } else if (index > -1 && !editData) {
+            message.error("project name already exists");
+            return;
         } else {
-            addNewProject(newProjectData).then(() => {
-                getAllProjects().then(result => {
-                    setProjectsData(result);
-                    message.success('Create project successful');
-                }).catch(() => {
-                    message.warning('Updated data fetch fail please reload');
+            if (editData) {
+                editProject(newProjectData.id, newProjectData).then(() => {
+                    getAllProjects().then(result => {
+                        setProjectsData(result);
+                        message.success('Edit project successful');
+                    }).catch(() => {
+                        message.warning('Updated data fetch fail please reload');
+                    })
+                    toggleModal();
                 })
-                toggleModal();
-            }).catch(() => {
-                message.error('Create project failed please try again');
-            })
+            } else {
+                addNewProject(newProjectData).then(() => {
+                    getAllProjects().then(result => {
+                        setProjectsData(result);
+                        message.success('Create project successful');
+                    }).catch(() => {
+                        message.warning('Updated data fetch fail please reload');
+                    })
+                    toggleModal();
+                }).catch(() => {
+                    message.error('Create project failed please try again');
+                })
+            }
         }
     };
 
@@ -154,12 +161,10 @@ const Projects = () => {
     };
 
     const onContactSelect = (value, option) => {
-        setSelectedContact(option);
         setNewProjectData({ ...newProjectData, responsible: value });
     };
 
     const onContactChange = (data) => {
-        setContactName(data);
         setNewProjectData({ ...newProjectData, responsible: data });
     };
 

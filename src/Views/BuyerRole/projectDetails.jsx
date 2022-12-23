@@ -193,6 +193,7 @@ const SectionView = (props) => {
     const toggleModal = () => {
         setModalVisible(!modalVisible);
         setNewSectionData({});
+        setEditData(false);
     };
 
     const handleOk = () => {
@@ -201,7 +202,7 @@ const SectionView = (props) => {
 
         if (!newSectionData.name) {
             message.error("Section name cannot be empty");
-        } else if (index > -1) {
+        } else if (index > -1 && !editData) {
             message.error("Section name already exists");
             return;
         } else {
@@ -216,7 +217,6 @@ const SectionView = (props) => {
                             .catch(() => {
                                 message.warning("Updated data fetch fail please reload");
                             });
-                        setEditData(false);
                         toggleModal();
                     })
                     .catch(() => {

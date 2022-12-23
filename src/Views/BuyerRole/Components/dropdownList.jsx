@@ -79,7 +79,7 @@ const DropdownList = ({
             setSelectedMarketHierarchy(newSelectedMarketHierarchy)
         }
 
-        apiCalls(value.country, codeLevel);
+        apiCalls(value.country, codeLevel, value.code);
         setMarketLastSelectedCodeLvl(codeLevel)
     }
 

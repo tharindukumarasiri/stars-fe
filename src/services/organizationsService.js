@@ -43,6 +43,11 @@ export async function removeSearchAccumulateNace(searchId, params) {
     return data;
 }
 
+export async function removeSearchAccumulateUNSPSC(searchId, params) {
+    const { data } = await http.post(`${process.env.SDC_SEARCH_API + config.REMOVE_SEARCH_ACCUMULATE_UNSPSC}${searchId}`, params);
+    return data;
+}
+
 export async function removeSearchAccumulateMunicipality(searchId, params) {
     const { data } = await http.post(`${process.env.SDC_SEARCH_API + config.REMOVE_SEARCH_ACCUMULATE_MUNICIPALITY}${searchId}`, params);
     return data;
@@ -159,6 +164,10 @@ export async function getAllNutsCountries() {
 }
 export async function getNutsCodes(countryCode, level) {
     const { data } = await http.get(`${process.env.SDC_SEARCH_API + config.GET_NUTS_COUNTRIES}/${countryCode}/level/${level}`);
+    return data;
+}
+export async function getNutsCodesByParent(countryCode, parent) {
+    const { data } = await http.get(`${process.env.SDC_SEARCH_API + config.GET_NUTS_COUNTRIES}/${countryCode}/parent/${parent}`);
     return data;
 }
 export async function updateNutsCodes(id, params) {

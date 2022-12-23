@@ -8,6 +8,7 @@ import { NAVIGATION_PAGES } from "../../utils/enums";
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import {
     getNutsCodes,
+    getNutsCodesByParent,
     searchOrganization,
     getUnspscCodes,
     getCpvCodes,
@@ -21,6 +22,7 @@ import {
     deleteSearch,
     removeSearchAccumulateCpv,
     removeSearchAccumulateNace,
+    removeSearchAccumulateUNSPSC,
     removeAllOrganizationIds,
     getOrganizationTypes,
     removeSearchAccumulateMunicipality,
@@ -102,22 +104,10 @@ export default function Search(props) {
 
             setLoading(true);
             const removalReq = {
-                "searchCriteria": {
-                    "name": searchResultsSet?.searchFilter.name || "",
-                    "countries": searchResultsSet?.searchFilter.countries || null,
-                    "regions": searchResultsSet?.searchFilter.regions || null,
-                    "cities": searchResultsSet?.searchFilter.cities || null,
-                    "municipalities": searchResultsSet?.searchFilter.municipalities || null,
-                    "cpvs": searchResultsSet?.searchFilter.cpvs || null,
-                    "naces": searchResultsSet?.searchFilter.naces || null,
-                    "unspscs": searchResultsSet?.searchFilter.unspscs || null,
-                    "pageSize": pageSize,
-                    "pageNo": 1,
-                },
-                "removeCritieria": {
-                    "organizationIds": props?.searchResults[1]?.removeCriteria?.organizationIds || null
-                }
+                "searchCriteria": props?.searchResults[0]?.searchFilter || {},
+                "removeCritieria": props?.searchResults[1]?.removeCriteria || {}
             }
+            removalReq.searchCriteria.pageNo = 1;
 
             setSelectedResults(searchResultsSet?.removeCriteria?.organizationIds || [])
 
@@ -138,7 +128,7 @@ export default function Search(props) {
     }, [selectedGrouping.accumulation]);
 
     //API calls
-    const getCountryCodes = (country, level) => {
+    const getCountryCodes = (country, level, parent) => {
         const getCountryName = (lvl) => {
             switch (lvl) {
                 case 1:
@@ -152,9 +142,28 @@ export default function Search(props) {
             }
         }
 
-        getNutsCodes(country, level + 1).then(result => {
-            setMarketInformationData({ ...marketInformationData, [getCountryName(level + 1)]: result })
-        })
+        if (level > 0) {
+            getNutsCodesByParent(country, parent).then(result => {
+                const uniqueResult = result.filter(item => {
+                    const ind = marketInformationData[getCountryName(level + 1)].findIndex(res => {
+                        return res.code === item.code
+                    })
+                    if (ind === -1) {
+                        return true
+                    } else {
+                        return false
+                    }
+                })
+
+                const newResult = marketInformationData[getCountryName(level + 1)].concat(uniqueResult)
+
+                setMarketInformationData({ ...marketInformationData, [getCountryName(level + 1)]: newResult })
+            })
+        } else {
+            getNutsCodes(country, level + 1).then(result => {
+                setMarketInformationData({ ...marketInformationData, regions: result, cities: [], municipalities: [] })
+            })
+        }
     }
 
     const getUnspscCodesData = (title, level) => {
@@ -355,7 +364,7 @@ export default function Search(props) {
                             setLoading(false);
                             setGrouping(convertStringObject(result.grouping));
                             setOrganizations(result.organizations);
-                            setPageCount(result.total);
+                            setPageCount(result.groupTotal);
                         }).catch(error => {
                             noSearchResults = true;
                             setLoading(false);
@@ -366,29 +375,29 @@ export default function Search(props) {
                             setLoading(false);
                             setGrouping(convertStringObject(result.grouping));
                             setOrganizations(result.organizations);
-                            setPageCount(result.total);
+                            setPageCount(result.groupTotal);
                         }).catch(error => {
                             noSearchResults = true;
                             setLoading(false);
                         });
                         break;
                     case 'UNSPSC Code':
-                        // searchOrganizationByUNSPSC(getSearchRequest(pageNo)).then(result => {
-                        //     setLoading(false);
-                        //     setGrouping(convertStringObject(result.grouping));
-                        //     setOrganizations(result.organizations);
-                        //     setPageCount(result.total);
-                        // }).catch(error => {
-                        //     noSearchResults = true;
-                        //     setLoading(false);
-                        // });
+                        removeSearchAccumulateUNSPSC(props.searchResults[0]?.id, removeRequest).then(result => {
+                            setLoading(false);
+                            setGrouping(convertStringObject(result.grouping));
+                            setOrganizations(result.organizations);
+                            setPageCount(result.groupTotal);
+                        }).catch(error => {
+                            noSearchResults = true;
+                            setLoading(false);
+                        });
                         break;
                     case 'Municipality':
                         removeSearchAccumulateMunicipality(props.searchResults[0]?.id, removeRequest).then(result => {
                             setLoading(false);
                             setGrouping(convertStringObject(result.grouping));
                             setOrganizations(result.organizations);
-                            setPageCount(result.total);
+                            setPageCount(result.groupTotal);
                         }).catch(error => {
                             noSearchResults = true;
                             setLoading(false);
@@ -398,7 +407,7 @@ export default function Search(props) {
                         removeSearch(props.searchResults[0]?.id, removeRequest).then(result => {
                             setLoading(false);
                             setOrganizations(result.organizations);
-                            setPageCount(result.total);
+                            setPageCount(result.groupTotal);
                         }).catch(error => {
                             noSearchResults = true;
                             setLoading(false);
@@ -420,44 +429,44 @@ export default function Search(props) {
                     });
                     break;
                 case 'CPV Code':
-                    removeSearchAccumulateCpv(props.searchResults[0]?.id, getRemovalRequest(pageNo)).then(result => {
+                    removeSearchAccumulateCpv(props.searchResults[0]?.id, getRemovalRequest(pageNo, "cpvs")).then(result => {
                         setLoading(false);
                         setGrouping(convertStringObject(result.grouping));
                         setOrganizations(result.organizations);
-                        setPageCount(result.total);
+                        setPageCount(result.groupTotal);
                     }).catch(error => {
                         noSearchResults = true;
                         setLoading(false);
                     });
                     break;
                 case 'NACE Code':
-                    removeSearchAccumulateNace(props.searchResults[0]?.id, getRemovalRequest(pageNo)).then(result => {
+                    removeSearchAccumulateNace(props.searchResults[0]?.id, getRemovalRequest(pageNo, "naces")).then(result => {
                         setLoading(false);
                         setGrouping(convertStringObject(result.grouping));
                         setOrganizations(result.organizations);
-                        setPageCount(result.total);
+                        setPageCount(result.groupTotal);
                     }).catch(error => {
                         noSearchResults = true;
                         setLoading(false);
                     });
                     break;
                 case 'UNSPSC Code':
-                    // searchOrganizationByUNSPSC(getSearchRequest(pageNo)).then(result => {
-                    //     setLoading(false);
-                    //     setGrouping(convertStringObject(result.grouping));
-                    //     setOrganizations(result.organizations);
-                    //     setPageCount(result.total);
-                    // }).catch(error => {
-                    //     noSearchResults = true;
-                    //     setLoading(false);
-                    // });
-                    break;
-                case 'Municipality':
-                    removeSearchAccumulateMunicipality(props.searchResults[0]?.id, getRemovalRequest(pageNo)).then(result => {
+                    removeSearchAccumulateUNSPSC(props.searchResults[0]?.id, getRemovalRequest(pageNo, "unspscs")).then(result => {
                         setLoading(false);
                         setGrouping(convertStringObject(result.grouping));
                         setOrganizations(result.organizations);
-                        setPageCount(result.total);
+                        setPageCount(result.groupTotal);
+                    }).catch(error => {
+                        noSearchResults = true;
+                        setLoading(false);
+                    });
+                    break;
+                case 'Municipality':
+                    removeSearchAccumulateMunicipality(props.searchResults[0]?.id, getRemovalRequest(pageNo, "municipalities")).then(result => {
+                        setLoading(false);
+                        setGrouping(convertStringObject(result.grouping));
+                        setOrganizations(result.organizations);
+                        setPageCount(result.groupTotal);
                     }).catch(error => {
                         noSearchResults = true;
                         setLoading(false);
@@ -467,7 +476,7 @@ export default function Search(props) {
                     removeSearch(props.searchResults[0]?.id, getRemovalRequest(pageNo)).then(result => {
                         setLoading(false);
                         setOrganizations(result.organizations);
-                        setPageCount(result.total);
+                        setPageCount(result.groupTotal);
                     }).catch(error => {
                         noSearchResults = true;
                         setLoading(false);
@@ -497,7 +506,7 @@ export default function Search(props) {
                     setLoading(false);
                     setGrouping(convertStringObject(result.grouping));
                     setOrganizations(result.organizations);
-                    setPageCount(result.total);
+                    setPageCount(result.groupTotal);
                 }).catch(error => {
                     noSearchResults = true;
                     setLoading(false);
@@ -508,7 +517,7 @@ export default function Search(props) {
                     setLoading(false);
                     setGrouping(convertStringObject(result.grouping));
                     setOrganizations(result.organizations);
-                    setPageCount(result.total);
+                    setPageCount(result.groupTotal);
                 }).catch(error => {
                     noSearchResults = true;
                     setLoading(false);
@@ -519,7 +528,7 @@ export default function Search(props) {
                     setLoading(false);
                     setGrouping(convertStringObject(result.grouping));
                     setOrganizations(result.organizations);
-                    setPageCount(result.total);
+                    setPageCount(result.groupTotal);
                 }).catch(error => {
                     noSearchResults = true;
                     setLoading(false);
@@ -530,7 +539,7 @@ export default function Search(props) {
                     setLoading(false);
                     setGrouping(convertStringObject(result.grouping));
                     setOrganizations(result.organizations);
-                    setPageCount(result.total);
+                    setPageCount(result.groupTotal);
                 }).catch(error => {
                     noSearchResults = true;
                     setLoading(false);
@@ -741,7 +750,7 @@ export default function Search(props) {
         })
     }
 
-    const getRemovalRequest = (pageNumber) => {
+    const getRemovalRequest = (pageNumber, removeCritieria = "organizationIds") => {
         if (getAllSelectedCriteriaLength() === 0) {
             const searchResultsSet = props?.searchResults[props?.searchResults?.length - 1]
 
@@ -770,7 +779,7 @@ export default function Search(props) {
                     "pageNo": pageNumber,
                 },
                 "removeCritieria": {
-                    "organizationIds": selectedResults
+                    [removeCritieria]: selectedResults
                 }
             })
         } else {
@@ -799,7 +808,7 @@ export default function Search(props) {
                     "pageNo": pageNumber,
                 },
                 "removeCritieria": {
-                    "organizationIds": selectedResults
+                    [removeCritieria]: selectedResults
                 }
             })
         }
@@ -1299,7 +1308,7 @@ export default function Search(props) {
             </div >
         )
     }
-    console.log(grouping)
+
     return (
         <>
             <div className="g-col-6">
@@ -1348,8 +1357,16 @@ export default function Search(props) {
                     {Object.values(grouping).length !== 0 &&
                         <>
                             <div className={props?.sectionSearch ? 'section-search-results-container' : 'search-results-container'}>
+                                {props.removeSearch &&
+                                    <>
+                                        <div className="fr selectAll-checkbox">
+                                            Select All Records
+                                            <input type="checkbox" checked={removeAllResultsChecked} className="check-box m-l-20" onChange={() => { setRemoveAllResultsChecked(prev => !prev) }} />
+                                        </div>
+                                    </>
+                                }
                                 <div className="g-row">
-                                    <div className="g-col-4">{t("Search Criteria")}</div>
+                                    <div className="g-col-3">{t("Search Criteria")}</div>
                                     <div className="g-col-2">{t("Criteria Codes")}</div>
                                     <div className="g-col-3">{t("Criteria Name")}</div>
                                     <div className="g-col-2">{t("Companies")}</div>
@@ -1358,8 +1375,8 @@ export default function Search(props) {
                                 {Object.entries(grouping).map(([key, value]) => {
                                     return (
                                         <div className="search-result-row g-row" key={key}>
-                                            <div className="g-col-4 body-text-bold blue">{key}</div>
-                                            <div className="g-col-8" >
+                                            <div className="g-col-3 body-text-bold blue">{key}</div>
+                                            <div className="g-col-9" >
                                                 {
                                                     value.map((group, index) => {
                                                         return (
@@ -1367,14 +1384,15 @@ export default function Search(props) {
                                                                 {typeof group._id === 'object' ?
                                                                     <div className="g-row">
                                                                         <div className="g-col-3 body-text blue">{Object.values(group._id)[0]}</div>
-                                                                        <div className="g-col-4 body-text blue">{Object.values(group._id)[1]}</div>
+                                                                        <div className="g-col-3 body-text blue">{Object.values(group._id)[1]}</div>
                                                                         <div className="g-col-1 body-text blue">{Object.values(group._id)[2]}</div>
-                                                                        <div className="g-col-4 body-text blue">{group.count}</div>
+                                                                        <div className="g-col-4 body-text blue">{group?.count}</div>
+                                                                        <input className="g-col-1 check-box" type="checkbox" onChange={onCheckBox} value={Object.values(group._id)[0]} checked={selectedResults?.includes(Object.values(group._id)[0])} />
                                                                     </div>
                                                                     : <>
                                                                         <div className="g-col-4 body-text blue">{group._id}</div>
                                                                         <div className="g-col-4 body-text blue">XXX</div>
-                                                                        <div className="g-col-4 body-text blue">{group.count}</div>
+                                                                        <div className="g-col-4 body-text blue">{group?.count}</div>
                                                                     </>
                                                                 }
                                                             </div>
