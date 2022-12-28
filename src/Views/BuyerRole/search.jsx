@@ -1387,7 +1387,9 @@ export default function Search(props) {
                                                                         <div className="g-col-3 body-text blue">{Object.values(group._id)[1]}</div>
                                                                         <div className="g-col-1 body-text blue">{Object.values(group._id)[2]}</div>
                                                                         <div className="g-col-4 body-text blue">{group?.count}</div>
-                                                                        <input className="g-col-1 check-box" type="checkbox" onChange={onCheckBox} value={Object.values(group._id)[0]} checked={selectedResults?.includes(Object.values(group._id)[0])} />
+                                                                        {props.removeSearch &&
+                                                                            <input className="g-col-1 check-box" type="checkbox" onChange={onCheckBox} value={Object.values(group._id)[0]} checked={selectedResults?.includes(Object.values(group._id)[0])} />
+                                                                        }
                                                                     </div>
                                                                     : <>
                                                                         <div className="g-col-4 body-text blue">{group._id}</div>
