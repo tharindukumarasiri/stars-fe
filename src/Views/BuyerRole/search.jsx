@@ -646,16 +646,17 @@ export default function Search(props) {
                     "cpvs": getFilterdCodes(selectedCPVValues),
                     "naces": getFilterdCodes(selectedNACValues),
                     "unspscs": getFilterdCodes(selectedUNSPValues),
+                    "peppol": getSelectedPepolTypes(),
                     "active": getActiveStatus(),
                     "registrationDateFrom": selectedCompanyInfo.registrationFromDate,
                     "registrationDateTo": selectedCompanyInfo.registrationToDate,
                     "inCorporationDateFrom": selectedCompanyInfo.incorpFromDate,
                     "inCorporationDateTo": selectedCompanyInfo.incorpToDate,
-                    "noOfEmployeesFrom": null,
-                    "noOfEmployeesTo": null,
+                    "noOfEmployeesFrom": getNoOfEmployees().from,
+                    "noOfEmployeesTo": getNoOfEmployees().to,
                     "organizationTypeCode": selectedCompanyInfo.organizationType?.code || "",
-                    "organizationId": "",
-                    "peppol": getSelectedPepolTypes()
+                    "organizationId": selectedCompanyInfo.organizationId,
+                    "sectorCode": selectedCompanyInfo.sectorCode,
                 },
                 "removeCriteria": {
                     "organizationIds": selectedResults
@@ -675,16 +676,17 @@ export default function Search(props) {
                     "cpvs": getFilterdCodes(selectedCPVValues),
                     "naces": getFilterdCodes(selectedNACValues),
                     "unspscs": getFilterdCodes(selectedUNSPValues),
+                    "peppol": getSelectedPepolTypes(),
                     "active": getActiveStatus(),
                     "registrationDateFrom": selectedCompanyInfo.registrationFromDate,
                     "registrationDateTo": selectedCompanyInfo.registrationToDate,
                     "inCorporationDateFrom": selectedCompanyInfo.incorpFromDate,
                     "inCorporationDateTo": selectedCompanyInfo.incorpToDate,
-                    "noOfEmployeesFrom": null,
-                    "noOfEmployeesTo": null,
+                    "noOfEmployeesFrom": getNoOfEmployees().from,
+                    "noOfEmployeesTo": getNoOfEmployees().to,
                     "organizationTypeCode": selectedCompanyInfo.organizationType?.code || "",
-                    "organizationId": "",
-                    "peppol": getSelectedPepolTypes()
+                    "organizationId": selectedCompanyInfo.organizationId,
+                    "sectorCode": selectedCompanyInfo.sectorCode,
                 },
             })
         }
