@@ -817,3 +817,117 @@ export const searchTendersTableHeadersExpanded = [
         width: 80,
     },
 ];
+
+export const usersTableHeaders = [
+    {
+        title: 'User ID',
+        dataIndex: 'id',
+        fixed: 'left',
+        width: 100,
+    },
+    {
+        title: 'Title',
+        dataIndex: 'title',
+        width: 60,
+    },
+    {
+        title: 'User Name',
+        dataIndex: 'userName',
+        width: 110,
+    },
+    {
+        title: 'First Name',
+        dataIndex: 'firstName',
+        width: 110,
+    },
+    {
+        title: 'Last Name',
+        dataIndex: 'lastName',
+        width: 110,
+    },
+    {
+        title: 'Country',
+        dataIndex: 'country',
+        width: 100,
+    },
+    {
+        title: 'Email',
+        dataIndex: 'email',
+        width: 170,
+    },
+    {
+        title: 'Phone',
+        width: 135,
+        dataIndex: 'phone',
+    },
+    {
+        title: 'Assigned Companies',
+        dataIndex: 'companies',
+        width: 200,
+        ellipsis: {
+            showTitle: false,
+        },
+        render: (companies) => (
+            <Tooltip placement="topLeft" title={companies.map(item => { return item + ', ' })}>
+                {companies.map(item => { return item + ', ' })}
+            </Tooltip>
+        ),
+    },
+    {
+        title: 'Assigned Roles',
+        dataIndex: 'roles',
+        width: 150,
+        ellipsis: {
+            showTitle: false,
+        },
+        render: (roles) => (
+            <Tooltip placement="topLeft" title={roles.map(item => { return item + ', ' })}>
+                {roles.map(item => { return item + ', ' })}
+            </Tooltip>
+        ),
+    },
+    {
+        title: 'Culture ID',
+        dataIndex: 'cId',
+        width: 110,
+    },
+    {
+        title: 'Status',
+        dataIndex: 'status',
+        width: 100,
+        render: (status) => (
+            <>
+                {status === 'Active' ?
+                    <div>
+                        <a className="green">&#x25CF;</a> Active
+                    </div> :
+                    <div>
+                        <a className="grey">&#x25CF;</a> Inactive
+                    </div>
+                }
+            </>
+        ),
+    },
+]
+
+export const companiesHeaders = [
+    {
+        title: 'Company Name/s',
+        dataIndex: '',
+    },
+    {
+        title: 'Country',
+        dataIndex: 'lastName',
+    },
+    {
+        title: 'Role/s',
+        dataIndex: 'lastName',
+    },
+    {
+        title: '',
+        render: (_) => (
+            <i className="icon-edit hover-hand"></i>
+
+        ),
+    },
+]

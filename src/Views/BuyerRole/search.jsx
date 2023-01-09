@@ -118,6 +118,8 @@ export default function Search(props) {
             }).catch(() => {
                 setLoading(false);
             });
+        } else if (!props?.removeSearch && props?.searchResults?.length === 0) {
+            setOrganizations([]);
         }
     }, [props]);
 
@@ -338,6 +340,36 @@ export default function Search(props) {
                 }
             }
         }
+    }
+
+    const onReset = () => {
+        confirm({
+            title: <>{t("If you want to do a fresh search")} <strong className="red">{t('delete')}</strong> {t("your saved Criteria and results")}</>,
+            icon: <ExclamationCircleOutlined />,
+            okText: t('Yes'),
+            okType: 'danger',
+            cancelText: t('No'),
+            onOk() {
+                deleteSearch(props?.searchResults[0]).then(() => {
+                    setOrganizations([]);
+                    if (props?.searchResults.length === 2) {
+                        deleteSearch(props?.searchResults[1]).then(() => {
+                            message.success("Delete results successful")
+                            props.resetSearchResults();
+                            props.changeTab("1")
+                        }).catch(() => {
+                            message.error("Delete results fail")
+                        })
+                    } else {
+                        message.success("Delete results successful")
+                        props.resetSearchResults();
+                        props.changeTab("1")
+                    }
+                }).catch(() => {
+                    message.error("Delete results fail")
+                })
+            },
+        });
     }
 
     const callremoveOrganization = (pageNo) => {
@@ -1342,7 +1374,7 @@ export default function Search(props) {
                     </form>
                 </div>
             </div>
-            <div className="g-col-6" style={{ height: '100%', paddingBottom: 10 }}>
+            <div className="" style={{ height: '100%', paddingBottom: 10 }}>
                 <div className="page-container" style={{ height: '100%' }}>
                     <div className="title-txt text-center">{t("Results")}</div>
                     {getGroupingCriteria()}
@@ -1359,14 +1391,14 @@ export default function Search(props) {
                     {Object.values(grouping).length !== 0 &&
                         <>
                             <div className={props?.sectionSearch ? 'section-search-results-container' : 'search-results-container'}>
-                                {props.removeSearch &&
+                                {/* {props.removeSearch &&
                                     <>
                                         <div className="fr selectAll-checkbox">
                                             Select All Records
                                             <input type="checkbox" checked={removeAllResultsChecked} className="check-box m-l-20" onChange={() => { setRemoveAllResultsChecked(prev => !prev) }} />
                                         </div>
                                     </>
-                                }
+                                } */}
                                 <div className="g-row">
                                     <div className="g-col-3">{t("Search Criteria")}</div>
                                     <div className="g-col-2">{t("Criteria Codes")}</div>
@@ -1425,10 +1457,6 @@ export default function Search(props) {
                                             Select Page
                                             <input type="checkbox" key={'SelectAllCheckBox2'} className="check-box m-l-20" onChange={onSelectAllCheckBox} />
                                         </div>
-                                        <div className="fr selectAll-checkbox">
-                                            Select All Records
-                                            <input type="checkbox" checked={removeAllResultsChecked} className="check-box m-l-20" onChange={() => { setRemoveAllResultsChecked(prev => !prev) }} />
-                                        </div>
                                     </>
                                 }
                                 {organizations.map(organization => {
@@ -1453,7 +1481,10 @@ export default function Search(props) {
                         </>
                     }
                     {props.removeSearch &&
-                        <button className="primary-btn remove-button m-r-20" onClick={onShowResults} disabled={selectedResults?.length === 0 && !removeAllResultsChecked} >{t("Remove")}</button>
+                        <>
+                            <button className="primary-btn reset-button m-r-20" onClick={onReset} >Refresh</button>
+                            <button className="primary-btn remove-button m-r-20" onClick={onShowResults} disabled={selectedResults?.length === 0 && !removeAllResultsChecked} >{t("Remove")}</button>
+                        </>
                     }
                     <button className="primary-btn save-button" onClick={onSaveResults} disabled={disableSaveBtn} >{t(saveButtonText)}</button>
                     {props.removeSearch &&

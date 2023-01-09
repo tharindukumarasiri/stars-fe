@@ -1,0 +1,166 @@
+@import '../../assets/css/colors.scss';
+
+.editor-name {
+    position: absolute;
+    right: 20px;
+    bottom: 110px;
+    width: 430px;
+    height: 60px;
+    background-color: $white;
+    z-index: 999;
+}
+
+.top-container {
+    display: flex;
+    flex-direction: row;
+    height: 50px;
+}
+
+.add-btn {
+    background-color: $light-dark-blue;
+    border-color: transparent;
+    color: $white;
+    cursor: pointer;
+
+    &:hover {
+        background-color: $dark-blue;
+    }
+}
+
+.search-input-container {
+    margin-left: 11px;
+    width: 350px;
+}
+
+.modal-input-container {
+    width: 200px;
+}
+
+.arrow-icon-lg {
+    font-size: x-large;
+
+}
+
+.user-input-box {
+    input[type="text"] {
+        border: 1px solid #999999;
+        height: 40px;
+    }
+
+    .dropdown-list {
+
+        border: 1px solid #999999;
+    }
+}
+
+.toggle-container {
+    flex-direction: column;
+}
+
+.toggle-btn {
+    width: 70px;
+}
+
+.search-item {
+    display: flex;
+    align-items: center;
+    border-bottom: 2px solid $body-color;
+}
+
+.actions-btn {
+    position: absolute;
+    right: 50px;
+    bottom: 20px;
+}
+
+.table-container {
+    height: 80vh;
+    margin-top: 10px;
+}
+
+.user-details-main-container {
+    background-color: $white;
+    margin: 60px;
+    display: flex;
+    flex-direction: row;
+    min-height: 75vh;
+}
+
+.user-data-container {
+    width: 50vw;
+    height: 75vh;
+    border-right: 3px solid $body-color;
+    display: flex;
+    flex-direction: row;
+    padding-right: 60px;
+}
+
+.user-details-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.user-image {
+    width: 87px;
+    height: 87px;
+    border-radius: 87px;
+}
+
+.upload-image-container {
+    margin-right: 60px;
+    position: relative;
+}
+
+.upload-image-btn {
+    position: absolute;
+    right: 0;
+    background-color: white;
+    font-size: large;
+}
+
+.role-container {
+    margin-top: 140px;
+}
+
+.roles-box {
+    width: 267px;
+    height: 169px;
+    border: 1.5px solid $body-color;
+    padding: 13px;
+}
+
+.role-box-header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.role-box-item {
+    border: 1px solid $body-color;
+    height: 30px;
+    margin-top: 9px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.tablele-width {
+    width: 100vw;
+}
+
+.user-data-table-container {
+    padding-left: 43px;
+    padding-right: 33px;
+    width: 45vw;
+}
+
+.details-btn-container {
+    position: absolute;
+    right: 80px;
+    bottom: 10px;
+    display: flex;
+    flex-direction: row;
+}

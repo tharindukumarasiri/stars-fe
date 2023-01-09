@@ -10,16 +10,26 @@ const { TabPane } = Tabs;
 
 const SectionSearch = ({ params }) => {
     const [searchResults, setSearchResults] = useState([]);
+    const [activeKey, setActiveKey] = useState("1");
+
     const { t } = useTranslation();
 
     useEffect(() => {
         getSearchResults();
     }, []);
 
+    const onChange = (key) => {
+        setActiveKey(key);
+    };
+
     const getSearchResults = () => {
         getSearchResultsByProjAndSec(params.proId, params.sectionId).then(data => {
             setSearchResults(data)
         })
+    }
+
+    const resetSearchResults = () => {
+        setSearchResults([])
     }
 
     return (
@@ -29,12 +39,15 @@ const SectionSearch = ({ params }) => {
                 <div className="g-col-3 fl body-text">{t("Name")}: <strong>{params.projectName}</strong></div>
             </div>
             <div className="custom-tab-container">
-                <Tabs type="card" >
+                <Tabs type="card"
+                    onChange={onChange}
+                    activeKey={activeKey}
+                >
                     <TabPane tab={t("SEARCH")} key="1">
                         <Search sectionSearch={true} projectId={params.proId} searchResults={searchResults} sectionId={params.sectionId} getSearchResults={getSearchResults} projectStatus={params.projectStatus} sectionStatus={params.sectionStatus} />
                     </TabPane>
                     <TabPane tab={t("REMOVAL CRITERIA")} key="2">
-                        <Search removeSearch={true} sectionSearch={true} searchResults={searchResults} projectId={params.proId} sectionId={params.sectionId} getSearchResults={getSearchResults} projectStatus={params.projectStatus} sectionStatus={params.sectionStatus} />
+                        <Search removeSearch={true} sectionSearch={true} searchResults={searchResults} projectId={params.proId} sectionId={params.sectionId} getSearchResults={getSearchResults} projectStatus={params.projectStatus} sectionStatus={params.sectionStatus} changeTab={onChange} resetSearchResults={resetSearchResults} />
                     </TabPane>
                     <TabPane tab={t("RESULT LIST")} key="3">
                         <SearchResultList searchResults={searchResults} projectId={params.proId} sectionId={params.sectionId} />

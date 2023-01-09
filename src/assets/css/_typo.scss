@@ -41,7 +41,7 @@ h3 {
 
 h4 {
     font-size: 1.3em;
-    padding:1em 0.2em;
+    padding: 1em 0.2em;
 }
 
 h5 {
@@ -55,4 +55,9 @@ h6 {
 .body-text-bold {
     font-size: 1.3em;
     font-weight: bold;
+}
+
+.error-text {
+    font-size: 0.8em;
+    color: $red;
 }

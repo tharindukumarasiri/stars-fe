@@ -3,11 +3,13 @@ import Tabs from "../../common/tabComponent";
 import { TabContext } from '../../utils/contextStore';
 import { NAVIGATION_PAGES } from '../../utils/enums';
 import Templates from './templates';
-import "./styles.scss"
+import Users from './allUsers';
+import UserDetails from './userDetails';
+import "./adminRole.styles.scss"
 
-const AdminRole = () => {
-    const [activeTab, setActiveTab] = useState(NAVIGATION_PAGES.ADMIN_TEMPLATES);
-    const [openTabs, setOpenTabs] = useState([NAVIGATION_PAGES.ADMIN_TEMPLATES]);
+const AdminRole = ({ openTab = NAVIGATION_PAGES.ADMIN_TEMPLATES }) => {
+    const [activeTab, setActiveTab] = useState(openTab);
+    const [openTabs, setOpenTabs] = useState([openTab]);
     const [params, setParams] = useState({})
 
     const changeActiveTab = (tab, params = null) => {
@@ -36,8 +38,11 @@ const AdminRole = () => {
                 <div label={"TEMPLATES"} id={NAVIGATION_PAGES.ADMIN_TEMPLATES} >
                     <Templates />
                 </div>
-                <div label={"LL"} id={"LL"} >
-
+                <div label={"USERS"} id={NAVIGATION_PAGES.ALL_USERS} >
+                    <Users />
+                </div>
+                <div label={"USER DETAILED VIEW"} id={NAVIGATION_PAGES.ALL_USER_DETAILS} >
+                    <UserDetails props={params[NAVIGATION_PAGES.ALL_USER_DETAILS]} />
                 </div>
             </Tabs>
         </TabContext.Provider >

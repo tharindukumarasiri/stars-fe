@@ -14,6 +14,8 @@ import SupplireRole from "./Views/SupplierRole";
 import SellerRole from "./Views/SellerRole";
 import AdminRole from "./Views/AdminRole";
 
+import { NAVIGATION_PAGES } from './utils/enums';
+
 i18next
     .use(HttpApi)
     .use(LanguageDetector)
@@ -46,6 +48,9 @@ const NavBar = () => {
             <br />
             <br />
             <NavLink className="navbar-brand" to="/admin">Admin</NavLink>
+            <br />
+            <br />
+            <NavLink className="navbar-brand" to="/users">Users</NavLink>
         </nav>
     )
 }
@@ -57,7 +62,8 @@ function App() {
             <Route path='/buyer' element={<BuyerRole />} />
             <Route path='/supplier' element={<SupplireRole />} />
             <Route path='/seller' element={<SellerRole />} />
-            <Route path='/admin' element={<AdminRole />} />
+            <Route path='/admin' element={<AdminRole openTab={NAVIGATION_PAGES.ADMIN_TEMPLATES} />} />
+            <Route path='/users' element={<AdminRole openTab={NAVIGATION_PAGES.ALL_USERS} />} />
         </Routes>
     )
 }
