@@ -123,7 +123,7 @@ const CreateTemplate = ({ closeModal }) => {
     }
 
     return (
-        <div>
+        <div className={loading && 'loading-overlay'}>
             {loading &&
                 <div className="loading center-loading">
                     <div></div>

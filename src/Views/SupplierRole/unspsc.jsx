@@ -344,7 +344,7 @@ const Unspsc = () => {
     }
 
     return (
-        <>
+        <div className={loading && 'loading-overlay'}>
             <div className="g-row m-l-10">
                 <i className="icon-cubes-1 header-icon m-t-10 m-r-15 fl" />
                 <h3 className="m-t-20">{t("(United Nations Standard Products and Services Code)")}</h3>
@@ -404,7 +404,7 @@ const Unspsc = () => {
                 </div>
             </div>
             <button className="primary-btn update-btn" onClick={onUpdate} >{t("Update")}</button>
-        </>
+        </div>
     )
 }
 

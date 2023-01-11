@@ -345,7 +345,7 @@ const Nace = () => {
     }
 
     return (
-        <>
+        <div className={loading && 'loading-overlay'}>
             <div className="page-container">
                 {loading &&
                     <div className="loading center-loading">
@@ -402,7 +402,7 @@ const Nace = () => {
 
             </div>
             <button className="primary-btn update-btn" onClick={onUpdate} >{t("Update")}</button>
-        </>
+        </div>
     )
 }
 

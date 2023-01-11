@@ -508,7 +508,7 @@ const Market = () => {
     }
 
     return (
-        <>
+        <div className={loading && 'loading-overlay'}>
             <div className="g-row m-t-20 m-l-15">
                 <div className="g-col-3 country-dropdown-container m-r-20">
                     <Dropdown values={countries} selected={JSON.stringify(selectedCountry)} dataName='name' keyName='code' onChange={(e) => onCountrySelect(e)} />
@@ -528,7 +528,7 @@ const Market = () => {
                 </Tabs>
 
             </div>
-        </>
+        </div>
 
 
     )

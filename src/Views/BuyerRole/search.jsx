@@ -1344,7 +1344,7 @@ export default function Search(props) {
     }
 
     return (
-        <>
+        <div className={loading && 'loading-overlay'} >
             <div className="g-col-6">
                 <div className="page-container m-r-0">
                     <form onSubmit={onShowResults}>
@@ -1496,7 +1496,7 @@ export default function Search(props) {
                 </div>
             </div>
             <Model visible={showModel} onCloseModel={onCloseModel} searchCriteria={searchText} />
-        </>
+        </div>
     )
 }
 

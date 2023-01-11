@@ -68,12 +68,12 @@ const GetNotified = () => {
                 setLoading(false);
             }).catch(() => setLoading(false))
 
-            getSubscribedPartyTsByTenantId(selectedCompany?.tenantId).then( result => {
+            getSubscribedPartyTsByTenantId(selectedCompany?.tenantId).then(result => {
                 setSelectedUsers(result)
                 console.log(result)
             })
 
-            getNotSubscribedPartyTsByTenantId(selectedCompany?.tenantId).then( result => {
+            getNotSubscribedPartyTsByTenantId(selectedCompany?.tenantId).then(result => {
                 setUsers(result);
                 console.log(result)
             })
@@ -463,7 +463,7 @@ const GetNotified = () => {
     }
 
     return (
-        <>
+        <div className={loading && 'loading-overlay'}>
             {loading &&
                 <div className="loading center-loading">
                     <div></div>
@@ -510,7 +510,7 @@ const GetNotified = () => {
                 </div>
             </div>
             <button className="primary-btn update-btn" onClick={onUpdate} >Update</button>
-        </>
+        </div>
     )
 }
 

@@ -116,7 +116,7 @@ const MatchingTenders = () => {
     }
 
     return (
-        <>
+        <div className={loading && 'loading-overlay'}>
             {loading &&
                 <div className="loading center-loading">
                     <div></div>
@@ -144,7 +144,7 @@ const MatchingTenders = () => {
                 }}
             />
             <Pagination size="small" className="fr m-t-20 m-b-20" current={pageNumber} onChange={onChangePage} total={pageCount} showSizeChanger={false} />
-        </>
+        </div>
     )
 
 }

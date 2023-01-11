@@ -67,7 +67,7 @@ const SearchResultsList = (props) => {
     }
 
     return (
-        <>
+        <div className={loading && 'loading-overlay'}>
             {loading &&
                 <div className="loading center-loading">
                     <div></div>
@@ -85,7 +85,7 @@ const SearchResultsList = (props) => {
             <div className="flex-center-middle m-t-20">
                 <Pagination size="small" current={actPage} onChange={(pageNum) => { onChangePage(pageNum) }} total={pageCount} showSizeChanger={false} />
             </div>
-        </>
+        </div>
     )
 }
 
