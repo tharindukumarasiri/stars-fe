@@ -51,7 +51,7 @@ const GetNotified = () => {
                 if (result?.cpvs?.length > 0) {
                     setTenderCpvs(result?.cpvs)
                     const formattedUserList = result?.contactUsers.map(val => {
-                        return { UserName: val?.name, Email: val?.email }
+                        return { Value: val?.name, Key: val?.userId }
                     })
                     setSelectedUsers(formattedUserList)
 
@@ -70,12 +70,10 @@ const GetNotified = () => {
 
             getSubscribedPartyTsByTenantId(selectedCompany?.tenantId).then(result => {
                 setSelectedUsers(result)
-                console.log(result)
             })
 
             getNotSubscribedPartyTsByTenantId(selectedCompany?.tenantId).then(result => {
                 setUsers(result);
-                console.log(result)
             })
         }
     }, [selectedCompany]);
@@ -269,10 +267,10 @@ const GetNotified = () => {
         setHaveUnsavedDataRef(true);
         setTenderCpvs(newCpvs)
     }
-
+console.log(selectedUsers)
     const getFormattedUserList = () => {
         return selectedUsers?.map(val => {
-            return { name: val?.UserName, email: val?.Email }
+            return { name: val?.Value, userId: val?.Key }
         })
     }
 
@@ -506,7 +504,7 @@ const GetNotified = () => {
                         <div className="body-text">View the new tender notices. </div>
                     </div> */}
                     <h6 className="m-t-20 text-left">Select user(s)</h6>
-                    <DropdownMultiSelect placeholder="Users" dataList={users} dataName='UserName' keyName="Email" selectedList={selectedUsers} setSelectedState={setSelectedUsers} />
+                    <DropdownMultiSelect placeholder="Users" dataList={users} dataName='Value' keyName="Key" selectedList={selectedUsers} setSelectedState={setSelectedUsers} />
                 </div>
             </div>
             <button className="primary-btn update-btn" onClick={onUpdate} >Update</button>

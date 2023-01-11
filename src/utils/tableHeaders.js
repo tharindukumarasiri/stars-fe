@@ -204,24 +204,24 @@ export const searchResultsTableHeaders = [
         dataIndex: ['searchFilter', 'removeCriteria', 'parentSearchId'],
         render: (_, { searchFilter, removeCriteria, parentSearchId }) => (
             <>
-                {
+                {                    
                     (searchFilter.countries.length > 0 || removeCriteria?.countries?.length > 0) &&
                     <div className="g-row m-b-5 table-separate">
                         <div className={searchFilter.countries.length === 0 || parentSearchId ? "red g-col-4" : "blue g-col-4"} >Country</div>
                         <div className="g-col-8">
-                            {searchFilter.countries.map((country, index) => {
+                            {searchFilter._countries?.map((country, index) => {
                                 return (
                                     <div key={index}>
-                                        <div className={parentSearchId ? "red g-col-6" : "blue g-col-6"} >XXX</div>
-                                        <div className={parentSearchId ? "red g-col-6" : "blue g-col-6"} >{country}</div>
+                                        <div className={parentSearchId ? "red g-col-6" : "blue g-col-6"} >{country.code}</div>
+                                        <div className={parentSearchId ? "red g-col-6" : "blue g-col-6"} >{country.name}</div>                                        
                                     </div>
                                 )
                             })}
-                            {removeCriteria?.countries?.map((country, index) => {
+                            {removeCriteria?._countries?.map((country, index) => {
                                 return (
                                     <div key={index}>
-                                        <div className="red g-col-6" >XXX</div>
-                                        <div className="red g-col-6" >{country}</div>
+                                        <div className="red g-col-6" >{country.code}</div>
+                                        <div className="red g-col-6" >{country.name}</div>                                        
                                     </div>
                                 )
                             })}
@@ -233,19 +233,19 @@ export const searchResultsTableHeaders = [
                     <div className="g-row m-b-5 table-separate">
                         <div className={searchFilter.regions.length === 0 || parentSearchId ? "red g-col-4" : "blue g-col-4"} >Region</div>
                         <div className="g-col-8">
-                            {searchFilter.regions.map((region, index) => {
+                            {searchFilter._regions?.map((region, index) => {
                                 return (
                                     <div key={index}>
-                                        <div className={parentSearchId ? "red g-col-6" : "blue g-col-6"} >XXX</div>
-                                        <div className={parentSearchId ? "red g-col-6" : "blue g-col-6"} >{region}</div>
+                                        <div className={parentSearchId ? "red g-col-6" : "blue g-col-6"} >{region.code}</div>
+                                        <div className={parentSearchId ? "red g-col-6" : "blue g-col-6"} >{region.name}</div>                                        
                                     </div>
                                 )
                             })}
                             {removeCriteria?.regions?.map((region, index) => {
                                 return (
                                     <div key={index}>
-                                        <div className="red g-col-6" >XXX</div>
-                                        <div className="red g-col-6" >{region}</div>
+                                        <div className="red g-col-6" >{region.name}</div>     
+                                        <div className="red g-col-6" >{region.code}</div>                                                                           
                                     </div>
                                 )
                             })}
@@ -257,19 +257,19 @@ export const searchResultsTableHeaders = [
                     <div className="g-row m-b-5 table-separate">
                         <div className={searchFilter.cities.length === 0 || parentSearchId ? "red g-col-4" : "blue g-col-4"} >City</div>
                         <div className="g-col-8">
-                            {searchFilter.cities.map((city, index) => {
+                            {searchFilter._cities?.map((city, index) => {
                                 return (
                                     <div key={index}>
-                                        <div className={parentSearchId ? "red g-col-6" : "blue g-col-6"} >XXX</div>
-                                        <div className={parentSearchId ? "red g-col-6" : "blue g-col-6"} >{city}</div>
+                                        <div className={parentSearchId ? "red g-col-6" : "blue g-col-6"} >{city.code}</div>
+                                        <div className={parentSearchId ? "red g-col-6" : "blue g-col-6"} >{city.name}</div>                                        
                                     </div>
                                 )
                             })}
-                            {removeCriteria?.cities?.map((city, index) => {
+                            {removeCriteria?._cities?.map((city, index) => {
                                 return (
                                     <div key={index}>
-                                        <div className="red g-col-6" >XXX</div>
-                                        <div className="red g-col-6" >{city}</div>
+                                        <div className="red g-col-6" >{city.code}</div>
+                                        <div className="red g-col-6" >{city.name}</div>                                        
                                     </div>
                                 )
                             })}
@@ -281,19 +281,19 @@ export const searchResultsTableHeaders = [
                     <div className="g-row m-b-5 table-separate">
                         <div className={searchFilter.municipalities.length === 0 || parentSearchId ? "red g-col-4" : "blue g-col-4"} >Municipality</div>
                         <div className="g-col-8">
-                            {searchFilter.municipalities.map((municipality, index) => {
+                            {searchFilter._municipalities?.map((municipality, index) => {
                                 return (
                                     <div key={index}>
-                                        <div className={parentSearchId ? "red g-col-6" : "blue g-col-6"} >XXX</div>
-                                        <div className={parentSearchId ? "red g-col-6" : "blue g-col-6"} >{municipality}</div>
+                                        <div className={parentSearchId ? "red g-col-6" : "blue g-col-6"} >{municipality.code}</div>
+                                        <div className={parentSearchId ? "red g-col-6" : "blue g-col-6"} >{municipality.name}</div>                                        
                                     </div>
                                 )
                             })}
                             {removeCriteria?.municipalities?.map((municipality, index) => {
                                 return (
                                     <div key={index}>
-                                        <div className="red g-col-6" >XXX</div>
-                                        <div className="red g-col-6" >{municipality}</div>
+                                        <div className="red g-col-6" >{municipality.code}</div>
+                                        <div className="red g-col-6" >{municipality.name}</div>                                        
                                     </div>
                                 )
                             })}
@@ -305,19 +305,19 @@ export const searchResultsTableHeaders = [
                     <div className="g-row m-b-5 table-separate">
                         <div className={searchFilter.cpvs.length === 0 || parentSearchId ? "red g-col-4" : "blue g-col-4"} >CPV</div>
                         <div className="g-col-8">
-                            {searchFilter.cpvs.map((cpv, index) => {
+                            {searchFilter._cpvs?.map((cpv, index) => {
                                 return (
                                     <div key={index}>
-                                        <div className={parentSearchId ? "red g-col-6" : "blue g-col-6"} >{cpv}</div>
-                                        <div className={parentSearchId ? "red g-col-6" : "blue g-col-6"} >XXX</div>
+                                        <div className={parentSearchId ? "red g-col-6" : "blue g-col-6"} >{cpv.code}</div>
+                                        <div className={parentSearchId ? "red g-col-6" : "blue g-col-6"} >{cpv.name}</div>
                                     </div>
                                 )
                             })}
-                            {removeCriteria?.cpvs?.map((cpv, index) => {
+                            {removeCriteria?._cpvs?.map((cpv, index) => {
                                 return (
                                     <div key={index}>
-                                        <div className="red g-col-6" >{cpv}</div>
-                                        <div className="red g-col-6" >XXX</div>
+                                        <div className="red g-col-6" >{cpv.code}</div>
+                                        <div className="red g-col-6" >{cpv.name}</div>
                                     </div>
                                 )
                             })}
@@ -329,19 +329,19 @@ export const searchResultsTableHeaders = [
                     <div className="g-row m-b-5 table-separate">
                         <div className={searchFilter.naces.length === 0 || parentSearchId ? "red g-col-4" : "blue g-col-4"} >NACE</div>
                         <div className="g-col-8">
-                            {searchFilter.naces.map((nace, index) => {
+                            {searchFilter._naces?.map((nace, index) => {
                                 return (
                                     <div key={index}>
-                                        <div className={parentSearchId ? "red g-col-6" : "blue g-col-6"} >{nace}</div>
-                                        <div className={parentSearchId ? "red g-col-6" : "blue g-col-6"} >XXX</div>
+                                        <div className={parentSearchId ? "red g-col-6" : "blue g-col-6"} >{nace.code}</div>
+                                        <div className={parentSearchId ? "red g-col-6" : "blue g-col-6"} >{nace.name}</div>
                                     </div>
                                 )
                             })}
-                            {removeCriteria?.naces?.map((nace, index) => {
+                            {removeCriteria?._naces?.map((nace, index) => {
                                 return (
                                     <div key={index}>
-                                        <div className="red g-col-6" >{nace}</div>
-                                        <div className="red g-col-6" >XXX</div>
+                                        <div className="red g-col-6" >{nace.code}</div>
+                                        <div className="red g-col-6" >{nace.name}</div>
                                     </div>
                                 )
                             })}
@@ -353,19 +353,19 @@ export const searchResultsTableHeaders = [
                     <div className="g-row m-b-5 table-separate">
                         <div className={searchFilter.unspscs.length === 0 || parentSearchId ? "red g-col-4" : "blue g-col-4"} >UNSPSC</div>
                         <div className="g-col-8">
-                            {searchFilter.unspscs.map((unspsc, index) => {
+                            {searchFilter._unspscs?.map((unspsc, index) => {
                                 return (
                                     <div key={index}>
-                                        <div className={parentSearchId ? "red g-col-6" : "blue g-col-6"} >{unspsc}</div>
-                                        <div className={parentSearchId ? "red g-col-6" : "blue g-col-6"} >XXX</div>
+                                        <div className={parentSearchId ? "red g-col-6" : "blue g-col-6"} >{unspsc.code}</div>
+                                        <div className={parentSearchId ? "red g-col-6" : "blue g-col-6"} >{unspsc.name}</div>
                                     </div>
                                 )
                             })}
-                            {removeCriteria?.unspscs?.map((unspsc, index) => {
+                            {removeCriteria?._unspscs?.map((unspsc, index) => {
                                 return (
                                     <div key={index}>
-                                        <div className="red g-col-6" >{unspsc}</div>
-                                        <div className="red g-col-6" >XXX</div>
+                                        <div className="red g-col-6" >{unspsc.code}</div>
+                                        <div className="red g-col-6" >{unspsc.name}</div>
                                     </div>
                                 )
                             })}
@@ -929,5 +929,35 @@ export const companiesHeaders = [
             <i className="icon-edit hover-hand"></i>
 
         ),
+    },
+]
+
+export const TemplateTableHeaders = [
+    {
+        title: 'ID',
+        dataIndex: 'Id',
+    },
+    {
+        title: 'Name',
+        dataIndex: 'Name',
+    },
+    {
+        title: 'Date Created',
+        dataIndex: 'CreatedDateTime',
+        render: (_, { CreatedDateTime }) => (
+            formatDate(CreatedDateTime)
+        )
+    },
+    {
+        title: 'Default Language',
+        dataIndex: 'LanguageMessageTemplates',
+    },
+    {
+        title: 'Trigger Point',
+        dataIndex: 'MessageTriggerPoint',
+    },
+    {
+        title: 'Message Medium',
+        dataIndex: 'MessageMedium',
     },
 ]

@@ -374,10 +374,10 @@ export default function Search(props) {
 
     const callremoveOrganization = (pageNo) => {
         if (removeAllResultsChecked) {
-            removeAllOrganizationIds(getRemovalRequest(1).searchCriteria).then(result => {
+            //removeAllOrganizationIds(getRemovalRequest(1).searchCriteria).then(result => {
                 const removeRequest = getRemovalRequest(pageNo)
-                removeRequest.removeCritieria.organizationIds = result
-                setSelectedResults(result);
+                //removeRequest.removeCritieria.organizationIds = result
+                //setSelectedResults(result);
 
                 switch (selectedGrouping.accumulation) {
                     case '':
@@ -446,7 +446,7 @@ export default function Search(props) {
                         });
                         break;
                 }
-            })
+            //})
         } else {
             switch (selectedGrouping.accumulation) {
                 case '':
@@ -636,6 +636,7 @@ export default function Search(props) {
             })
         } else {
             const searchReq = getSearchRequest(1);
+            console.log(searchReq)
             if (isAllCriteriaEmpty(searchReq) && !props?.removeSearch) {
                 message.warning('Please select criteria to save');
             } else if (props?.sectionSearch && (props?.projectStatus?.toUpperCase() === "CLOSE" || props?.sectionStatus?.toUpperCase() === "CLOSE")) {
@@ -656,9 +657,15 @@ export default function Search(props) {
         }
     }
 
-    const getMarketCodes = (marketList) => {
+    const getMarketCodes = (marketList) => {        
         return marketList.map((val) => {
             return val.code
+        })
+    }
+
+    const getMarketCodeObjs = (marketList) => {
+        return marketList.map((val) => {
+            return { code: val.code, name: val.name }
         })
     }
 
@@ -671,7 +678,7 @@ export default function Search(props) {
                 "sectionId": props.sectionId,
                 "createdDate": new Date(),
                 "searchFilter": {
-                    "countries": getMarketCodes(selectedMarketCriteria.selectedCountries),
+                    "countries": getMarketCodes(selectedMarketCriteria.selectedCountries),                    
                     "regions": getMarketCodes(selectedMarketCriteria.selectedRegions),
                     "cities": getMarketCodes(selectedMarketCriteria.selectedCities),
                     "municipalities": getMarketCodes(selectedMarketCriteria.selectedMunicipalities),
@@ -689,9 +696,18 @@ export default function Search(props) {
                     "organizationTypeCode": selectedCompanyInfo.organizationType?.code || "",
                     "organizationId": selectedCompanyInfo.organizationId,
                     "sectorCode": selectedCompanyInfo.sectorCode,
+
+                    "_countries": selectedMarketCriteria.selectedCountries,                    
+                    "_regions": selectedMarketCriteria.selectedRegions,
+                    "_cities": selectedMarketCriteria.selectedCities,
+                    "_municipalities": selectedMarketCriteria.selectedMunicipalities,
+                    "_cpvs": getFilterdCodesObj(selectedCPVValues),
+                    "_naces": getFilterdCodesObj(selectedNACValues),
+                    "_unspscs": getFilterdCodesObj(selectedUNSPValues),
                 },
                 "removeCriteria": {
-                    "organizationIds": selectedResults
+                    "organizationIds": selectedResults,
+                    "isRemoveAll": removeAllResultsChecked
                 }
             })
         } else {
@@ -719,6 +735,15 @@ export default function Search(props) {
                     "organizationTypeCode": selectedCompanyInfo.organizationType?.code || "",
                     "organizationId": selectedCompanyInfo.organizationId,
                     "sectorCode": selectedCompanyInfo.sectorCode,
+
+                    "_countries": selectedMarketCriteria.selectedCountries,                    
+                    "_regions": selectedMarketCriteria.selectedRegions,
+                    "_cities": selectedMarketCriteria.selectedCities,
+                    "_municipalities": selectedMarketCriteria.selectedMunicipalities,
+                    "_cpvs": getFilterdCodesObj(selectedCPVValues),
+                    "_naces": getFilterdCodesObj(selectedNACValues),
+                    "_unspscs": getFilterdCodesObj(selectedUNSPValues),
+
                 },
             })
         }
@@ -781,6 +806,14 @@ export default function Search(props) {
             "pageSize": pageSize,
             "pageNo": pageNumber,
 
+            "_countries": selectedMarketCriteria.selectedCountries,                    
+            "_regions": selectedMarketCriteria.selectedRegions,
+            "_cities": selectedMarketCriteria.selectedCities,
+            "_municipalities": selectedMarketCriteria.selectedMunicipalities,
+            "_cpvs": getFilterdCodesObj(selectedCPVValues),
+            "_naces": getFilterdCodesObj(selectedNACValues),
+            "_unspscs": getFilterdCodesObj(selectedUNSPValues),
+
         })
     }
 
@@ -811,9 +844,19 @@ export default function Search(props) {
                     "peppol": getSelectedPepolTypes(),
                     "pageSize": pageSize,
                     "pageNo": pageNumber,
+                    
+                    "_countries": searchResultsSet?.searchFilter.__countries || null,
+                    "_regions": searchResultsSet?.searchFilter._regions || null,
+                    "_cities": searchResultsSet?.searchFilter._cities || null,
+                    "_municipalities": searchResultsSet?.searchFilter._municipalities || null,
+                    "_cpvs": searchResultsSet?.searchFilter._cpvs || null,
+                    "_naces": searchResultsSet?.searchFilter._naces || null,
+                    "_unspscs": searchResultsSet?.searchFilter._unspscs || null,
+                    
                 },
                 "removeCritieria": {
-                    [removeCritieria]: selectedResults
+                    [removeCritieria]: selectedResults,
+                    IsRemoveAll: removeAllResultsChecked
                 }
             })
         } else {
@@ -840,9 +883,18 @@ export default function Search(props) {
                     "peppol": getSelectedPepolTypes(),
                     "pageSize": pageSize,
                     "pageNo": pageNumber,
+
+                    "_countries": selectedMarketCriteria.selectedCountries,
+                    "_regions": selectedMarketCriteria.selectedRegions,
+                    "_cities": selectedMarketCriteria.selectedCities,
+                    "_municipalities": selectedMarketCriteria.selectedMunicipalities,
+                    "_cpvs": getFilterdCodesObj(selectedCPVValues),
+                    "_naces": getFilterdCodesObj(selectedNACValues),
+                    "_unspscs": getFilterdCodesObj(selectedUNSPValues),
                 },
                 "removeCritieria": {
-                    [removeCritieria]: selectedResults
+                    [removeCritieria]: selectedResults,
+                    IsRemoveAll: removeAllResultsChecked
                 }
             })
         }
@@ -878,6 +930,27 @@ export default function Search(props) {
             }
             if (tempCodeList.length === 0 && selectedValues[mainRowIndex][0].code != undefined) {
                 filterdCodeList.push(selectedValues[mainRowIndex][0].code)
+            } else {
+                filterdCodeList = filterdCodeList.concat(tempCodeList)
+            }
+        }
+        return filterdCodeList;
+    }
+
+    const getFilterdCodesObj = (selectedValues) => {
+        let filterdCodeList = [];
+
+        for (let mainRowIndex = 0; selectedValues.length > mainRowIndex; mainRowIndex++) {
+            const secondArr = selectedValues[mainRowIndex];
+            let tempCodeList = [];
+            for (let secondRowIndex = 1; secondArr.length > secondRowIndex; secondRowIndex++) {
+                const valuesArr = selectedValues[mainRowIndex][secondRowIndex];
+                if (typeof valuesArr[valuesArr.length - 1].code === 'string') {
+                    tempCodeList.push({ code: valuesArr[valuesArr.length - 1].code, name: valuesArr[valuesArr.length - 1].value })
+                }
+            }
+            if (tempCodeList.length === 0 && selectedValues[mainRowIndex][0].code != undefined) {
+                filterdCodeList.push({ code: selectedValues[mainRowIndex][0].code, name: selectedValues[mainRowIndex][0].value })
             } else {
                 filterdCodeList = filterdCodeList.concat(tempCodeList)
             }
@@ -1006,7 +1079,7 @@ export default function Search(props) {
                     </div>
                     <div className="g-col-4">
                         <DropdownSelect
-                            values={['None', 'CPV Code', 'NACE Code', 'UNSPSC Code', 'Municipality']}
+                            values={['None', 'CPV Code', 'NACE Code', 'UNSPSC Code', 'Municipality(Market)']}
                             placeholder="Accumulation"
                             selected={selectedGrouping.accumulation}
                             onChange={onChangeAccumulation}

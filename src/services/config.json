@@ -64,5 +64,6 @@
     "GET_SUBSCRIBED_USERS": "/actionapi/PersonTs/GetSubscribedPartyTsByTenantId?tenantId=",
     "GET_NOT_SUBSCRIBED_USERS": "/actionapi/PersonTs/GetNotSubscribedPartyTsByTenantId?tenantId=",
 
-    "UPDATE_MESSAGE_TEMPLATE": "/actionapi/MessageTemplates/Post?userPartyId="
+    "UPDATE_MESSAGE_TEMPLATE": "/actionapi/MessageTemplates/Post?userPartyId=",
+    "GET_MESSAGE_TEMPLATE": "/actionapi/MessageTemplates/Get"
 }

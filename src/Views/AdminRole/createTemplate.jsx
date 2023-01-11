@@ -24,7 +24,7 @@ const CreateTemplate = ({ closeModal }) => {
                 "MessageMediumId": 1,
                 "MessageTypeId": 2,
                 "Name": templateName,
-                "MessageSubject": "tenderNotification",
+                "MessageSubject": getMessageSubject(),
                 "MessageBody": html,
                 "LanguageId": 2057,
                 "TenantId": selectedCompany?.tenantId,
@@ -52,11 +52,20 @@ const CreateTemplate = ({ closeModal }) => {
             console.log('export JSON:');
             console.log(design)
         });
-
-
-
-
     };
+
+    const getMessageSubject = () => {
+        switch (selectedTemplateType) {
+            case 'Notification':
+                return 'tenderNotification';
+            case 'Landing':
+                return 'tenderNotification';
+            case 'Business':
+                return 'tenderNotification';
+            default:
+                return 'tenderNotification';
+        }
+    }
 
     const onLoad = () => {
         // editor instance is created
@@ -136,7 +145,7 @@ const CreateTemplate = ({ closeModal }) => {
                 <input type="radio" id="Landing" name="Landing" checked={selectedTemplateType === 'Landing'} className="m-l-20" onChange={onTemplateTypeChange} /> <label className="p-r-20 p-l-20" htmlFor="Landing">Landing Page Template</label>
                 <input type="radio" id="Business" name="Business" checked={selectedTemplateType === 'Business'} className="m-l-20" onChange={onTemplateTypeChange} /> <label className="p-l-20" htmlFor="Business">Business Communication Template</label>
             </div>
-            <EmailEditor ref={emailEditorRef} onLoad={onLoad} onReady={onReady} displayMode="email" minHeight={'70vh'}
+            <EmailEditor ref={emailEditorRef} onLoad={onLoad} onReady={onReady} displayMode="email" minHeight={'65vh'}
                 projectId={108663}
                 options={{
                     mergeTags: dynamicParameters
@@ -144,6 +153,9 @@ const CreateTemplate = ({ closeModal }) => {
                 tools={
                     {
                         menu: {
+                            enabled: false
+                        },
+                        html: {
                             enabled: false
                         }
                     }

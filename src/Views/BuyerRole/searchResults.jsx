@@ -4,6 +4,7 @@ import { searchResultsTableHeaders } from '../../utils/tableHeaders'
 import { deleteSearch } from '../../services/organizationsService'
 
 const SearchResults = (props) => {
+    
     const onDelete = (e) => {
         e.preventDefault();
         deleteSearch(props?.searchResults[0]).then(() => {

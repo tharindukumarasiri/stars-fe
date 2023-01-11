@@ -1,6 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Table, Modal } from 'antd';
 import CreateTemplate from "./createTemplate";
+import { TemplateTableHeaders } from "../../utils/tableHeaders";
+import { getMessageTemplates } from "../../services/templateService";
 import Input from "../../common/input";
 import { Tabs } from 'antd';
 
@@ -51,37 +53,19 @@ const Templates = () => {
 }
 
 const NotificationTemplates = () => {
-    const columns = [
-        {
-            title: 'ID',
-            dataIndex: 'ID',
-        },
-        {
-            title: 'Name',
-            dataIndex: 'ID',
-        },
-        {
-            title: 'Date Created',
-            dataIndex: 'ID',
-        },
-        {
-            title: 'Default Language',
-            dataIndex: 'ID',
-        },
-        {
-            title: 'Trigger Point',
-            dataIndex: 'ID',
-        },
-        {
-            title: 'Message Medium',
-            dataIndex: 'ID',
-        },
-    ]
+    const [savedTemplates, setSavedTemplates] = useState([]);
+
+    useEffect(() => {
+        getMessageTemplates().then(result => {
+            setSavedTemplates(result)
+        })
+    }, [])
+
     return (
         <Table
             rowKey={(record) => record?.id}
-            dataSource={[]}
-            columns={columns}
+            dataSource={savedTemplates}
+            columns={TemplateTableHeaders}
             pagination={false}
         />
     )
