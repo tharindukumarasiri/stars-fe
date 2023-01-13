@@ -304,7 +304,7 @@ const AllUsers = () => {
             <div className="top-container">
                 <button className="add-btn m-r-20" onClick={toggleModal} ><i className="icon-plus-circled m-r-10" />Add New User</button>
                 <div className="search-input-container" >
-                    <Input placeholder="Search By Name or Org. ID" value={searchText} onChange={onChangeSearchText} endImage='icon-search-1' />
+                    <Input placeholder="Search By Name or Org. Name" value={searchText} onChange={onChangeSearchText} endImage='icon-search-1' />
                 </div>
                 <button className="add-btn" >Filters</button>
             </div>

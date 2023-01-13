@@ -25,7 +25,7 @@ const Templates = () => {
             <div className="n-float"></div>
             <div className="page-container">
                 <div className="custom-tab-container">
-                    <Tabs type="card" >
+                    <Tabs type="card" style={{ width: '90vw' }} >
                         <TabPane tab="Notification templates" key="1">
                             <NotificationTemplates />
                         </TabPane>

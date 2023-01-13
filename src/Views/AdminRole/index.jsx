@@ -1,16 +1,21 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Tabs from "../../common/tabComponent";
 import { TabContext } from '../../utils/contextStore';
 import { NAVIGATION_PAGES } from '../../utils/enums';
 import Templates from './templates';
 import Users from './allUsers';
 import UserDetails from './userDetails';
+import Communications from './communications';
 import "./adminRole.styles.scss"
 
 const AdminRole = ({ openTab = NAVIGATION_PAGES.ADMIN_TEMPLATES }) => {
     const [activeTab, setActiveTab] = useState(openTab);
     const [openTabs, setOpenTabs] = useState([openTab]);
     const [params, setParams] = useState({})
+
+    useEffect(() => {
+        setActiveTab(openTab)
+    }, [openTab])
 
     const changeActiveTab = (tab, params = null) => {
         if (openTabs.indexOf(tab) < 0) {
@@ -43,6 +48,9 @@ const AdminRole = ({ openTab = NAVIGATION_PAGES.ADMIN_TEMPLATES }) => {
                 </div>
                 <div label={"USER DETAILED VIEW"} id={NAVIGATION_PAGES.ALL_USER_DETAILS} >
                     <UserDetails props={params[NAVIGATION_PAGES.ALL_USER_DETAILS]} />
+                </div>
+                <div label={"COMMUNICATIONS"} id={NAVIGATION_PAGES.COMMUNICATIONS} >
+                    <Communications />
                 </div>
             </Tabs>
         </TabContext.Provider >

@@ -204,7 +204,7 @@ export const searchResultsTableHeaders = [
         dataIndex: ['searchFilter', 'removeCriteria', 'parentSearchId'],
         render: (_, { searchFilter, removeCriteria, parentSearchId }) => (
             <>
-                {                    
+                {
                     (searchFilter.countries.length > 0 || removeCriteria?.countries?.length > 0) &&
                     <div className="g-row m-b-5 table-separate">
                         <div className={searchFilter.countries.length === 0 || parentSearchId ? "red g-col-4" : "blue g-col-4"} >Country</div>
@@ -213,7 +213,7 @@ export const searchResultsTableHeaders = [
                                 return (
                                     <div key={index}>
                                         <div className={parentSearchId ? "red g-col-6" : "blue g-col-6"} >{country.code}</div>
-                                        <div className={parentSearchId ? "red g-col-6" : "blue g-col-6"} >{country.name}</div>                                        
+                                        <div className={parentSearchId ? "red g-col-6" : "blue g-col-6"} >{country.name}</div>
                                     </div>
                                 )
                             })}
@@ -221,7 +221,7 @@ export const searchResultsTableHeaders = [
                                 return (
                                     <div key={index}>
                                         <div className="red g-col-6" >{country.code}</div>
-                                        <div className="red g-col-6" >{country.name}</div>                                        
+                                        <div className="red g-col-6" >{country.name}</div>
                                     </div>
                                 )
                             })}
@@ -237,15 +237,15 @@ export const searchResultsTableHeaders = [
                                 return (
                                     <div key={index}>
                                         <div className={parentSearchId ? "red g-col-6" : "blue g-col-6"} >{region.code}</div>
-                                        <div className={parentSearchId ? "red g-col-6" : "blue g-col-6"} >{region.name}</div>                                        
+                                        <div className={parentSearchId ? "red g-col-6" : "blue g-col-6"} >{region.name}</div>
                                     </div>
                                 )
                             })}
                             {removeCriteria?.regions?.map((region, index) => {
                                 return (
                                     <div key={index}>
-                                        <div className="red g-col-6" >{region.name}</div>     
-                                        <div className="red g-col-6" >{region.code}</div>                                                                           
+                                        <div className="red g-col-6" >{region.name}</div>
+                                        <div className="red g-col-6" >{region.code}</div>
                                     </div>
                                 )
                             })}
@@ -261,7 +261,7 @@ export const searchResultsTableHeaders = [
                                 return (
                                     <div key={index}>
                                         <div className={parentSearchId ? "red g-col-6" : "blue g-col-6"} >{city.code}</div>
-                                        <div className={parentSearchId ? "red g-col-6" : "blue g-col-6"} >{city.name}</div>                                        
+                                        <div className={parentSearchId ? "red g-col-6" : "blue g-col-6"} >{city.name}</div>
                                     </div>
                                 )
                             })}
@@ -269,7 +269,7 @@ export const searchResultsTableHeaders = [
                                 return (
                                     <div key={index}>
                                         <div className="red g-col-6" >{city.code}</div>
-                                        <div className="red g-col-6" >{city.name}</div>                                        
+                                        <div className="red g-col-6" >{city.name}</div>
                                     </div>
                                 )
                             })}
@@ -285,7 +285,7 @@ export const searchResultsTableHeaders = [
                                 return (
                                     <div key={index}>
                                         <div className={parentSearchId ? "red g-col-6" : "blue g-col-6"} >{municipality.code}</div>
-                                        <div className={parentSearchId ? "red g-col-6" : "blue g-col-6"} >{municipality.name}</div>                                        
+                                        <div className={parentSearchId ? "red g-col-6" : "blue g-col-6"} >{municipality.name}</div>
                                     </div>
                                 )
                             })}
@@ -293,7 +293,7 @@ export const searchResultsTableHeaders = [
                                 return (
                                     <div key={index}>
                                         <div className="red g-col-6" >{municipality.code}</div>
-                                        <div className="red g-col-6" >{municipality.name}</div>                                        
+                                        <div className="red g-col-6" >{municipality.name}</div>
                                     </div>
                                 )
                             })}
@@ -959,5 +959,83 @@ export const TemplateTableHeaders = [
     {
         title: 'Message Medium',
         dataIndex: 'MessageMedium',
+    },
+]
+
+export const CommunicationsTableHeaders = [
+    {
+        title: 'Communication ID',
+        dataIndex: 'Id',
+        width: 200
+    },
+    {
+        title: 'Link ID',
+        dataIndex: 'Id',
+        width: 100
+
+    },
+    {
+        title: 'Type',
+        dataIndex: 'Id',
+        width: 150
+    },
+    {
+        title: 'From',
+        dataIndex: 'Id',
+    },
+    {
+        title: 'To',
+        dataIndex: 'Id',
+    },
+    {
+        title: 'Date',
+        dataIndex: 'Id',
+    },
+    {
+        title: 'Description',
+        dataIndex: 'Id',
+    },
+    {
+        title: 'Notification Type',
+        dataIndex: 'Id',
+    },
+    {
+        title: 'Workflow Status',
+        dataIndex: 'Id',
+    },
+    {
+        title: 'Distribution Status',
+        dataIndex: 'Id',
+    },
+]
+
+export const CommunicationsSubTableHeaders = [
+    {
+        title: 'From',
+        dataIndex: 'Id',
+    },
+    {
+        title: 'To',
+        dataIndex: 'Id',
+    },
+    {
+        title: 'Date',
+        dataIndex: 'Id',
+    },
+    {
+        title: 'Description',
+        dataIndex: 'Id',
+    },
+    {
+        title: 'Notification Type',
+        dataIndex: 'Id',
+    },
+    {
+        title: 'Workflow Status',
+        dataIndex: 'Id',
+    },
+    {
+        title: 'Distribution Status',
+        dataIndex: 'Id',
     },
 ]

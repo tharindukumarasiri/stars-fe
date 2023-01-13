@@ -5,7 +5,7 @@ import { companiesHeaders } from '../../utils/tableHeaders'
 import image_thumb from "../../assets/images/image_thumb.png"
 
 const UserDetails = ({ props }) => {
-    const [status, setStatus] = useState(props.status);
+    const [status, setStatus] = useState(props?.status);
     const [selectedFile, setSelectedFile] = useState()
     const [preview, setPreview] = useState()
 
@@ -58,25 +58,25 @@ const UserDetails = ({ props }) => {
                         <div>
                             <div className="m-b-20">
                                 User ID
-                                <div className="bold">{props.id}</div>
+                                <div className="bold">{props?.id}</div>
                             </div>
                             <div className="m-b-20 p-t-10">
                                 FIrst Name
-                                <div className="bold">{props.firstName}</div>
+                                <div className="bold">{props?.firstName}</div>
                             </div>
                             <div className="p-t-10">
                                 Last Name
-                                <div className="bold">{props.lastName}</div>
+                                <div className="bold">{props?.lastName}</div>
                             </div>
                         </div>
                         <div>
                             <div className="m-b-20">
                                 User Name
-                                <div className="bold">{props.userName}</div>
+                                <div className="bold">{props?.userName}</div>
                             </div>
                             <div className="p-t-10">
                                 Country
-                                <div className="bold">{props.country}</div>
+                                <div className="bold">{props?.country}</div>
                             </div>
                         </div>
                         <div>
@@ -132,7 +132,7 @@ const UserDetails = ({ props }) => {
                     <div>Assigned company/ies to this user</div>
                     <Table
                         rowKey={(record) => record?.id}
-                        dataSource={props.companies}
+                        dataSource={props?.companies}
                         columns={companiesHeaders}
                         pagination={false}
                     />
