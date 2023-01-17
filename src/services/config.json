@@ -65,5 +65,11 @@
     "GET_NOT_SUBSCRIBED_USERS": "/actionapi/PersonTs/GetNotSubscribedPartyTsByTenantId?tenantId=",
 
     "UPDATE_MESSAGE_TEMPLATE": "/actionapi/MessageTemplates/Post?userPartyId=",
-    "GET_MESSAGE_TEMPLATE": "/actionapi/MessageTemplates/Get"
+    "GET_MESSAGE_TEMPLATE": "/actionapi/MessageTemplates/Get",
+
+    "GET_COMMUNICATIONS": " /actionapi/MessageQueues/GetCommunications",
+    "GET_COMMUNICATION_ENTITIES": " /actionapi/Entities/Get",
+    "GET_COMMUNICATION_MESSAGE_TYPES": " /actionapi/MessageTypes/Get",
+    "GET_COMMUNICATIONS_MESSAGE_STATUSES": " /actionapi/MessageStatuses/Get"
+
 }

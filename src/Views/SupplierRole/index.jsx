@@ -10,6 +10,7 @@ import Unspsc from './unspsc';
 import Cpv from './cpv';
 import Nace from './nace';
 import Market from './market';
+import { FetchCurrentCompany } from "../../hooks/index";
 
 const SupplireRole = () => {
     const [activeTab, setActiveTab] = useState(NAVIGATION_PAGES.SUPPLIER_HOME);
@@ -17,6 +18,7 @@ const SupplireRole = () => {
     const [organizationData, setOrganizationData] = useState({})
     const haveUnsavedDataRef = useRef(false);
     const shouldBeClosed = useRef({ state: false, tab: '' });
+    const [selectedCompany] = FetchCurrentCompany();
 
     const changeActiveTab = (tab) => {
         const openNotification = (placement = 'top') => {

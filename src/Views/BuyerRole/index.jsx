@@ -9,11 +9,13 @@ import { NAVIGATION_PAGES } from '../../utils/enums';
 import Projects from './projects';
 import ProjectDetails from './projectDetails';
 import SectionSearch from './sectionSearch'
+import { FetchCurrentCompany } from "../../hooks/index";
 
 const BuyerRole = () => {
     const [activeTab, setActiveTab] = useState(NAVIGATION_PAGES.BUYER_HOME);
     const [openTabs, setOpenTabs] = useState([NAVIGATION_PAGES.BUYER_HOME]);
     const [params, setParams] = useState({})
+    const [selectedCompany] = FetchCurrentCompany();
 
     const changeActiveTab = (tab, params = null) => {
         if (openTabs.indexOf(tab) < 0) {

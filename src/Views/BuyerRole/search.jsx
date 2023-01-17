@@ -82,6 +82,7 @@ export default function Search(props) {
 
     const [selectedResults, setSelectedResults] = useState([]);
     const [removeAllResultsChecked, setRemoveAllResultsChecked] = useState(false);
+    const [removeCriteriaObj, setRemoveCriteriaObj] = useState({});
 
     const [showModel, setShowModel] = useState(false);
     const { t } = useTranslation();
@@ -123,7 +124,7 @@ export default function Search(props) {
         }
     }, [props]);
 
-    useEffect(() => {
+    useEffect(() => {       
         if (selectedGrouping.accumulation && (getAllSelectedCriteriaLength() !== 0 || searchText !== '')) {
             onShowResults();
         }
@@ -817,9 +818,10 @@ export default function Search(props) {
         })
     }
 
-    const getRemovalRequest = (pageNumber, removeCritieria = "organizationIds") => {
+    const getRemovalRequest = (pageNumber, removeCritieria = "organizationIds") => {        
+        setRemoveCriteriaObj(removeCriteriaObj => ({...removeCriteriaObj, [removeCritieria]: selectedResults}))
         if (getAllSelectedCriteriaLength() === 0) {
-            const searchResultsSet = props?.searchResults[props?.searchResults?.length - 1]
+            const searchResultsSet = props?.searchResults[props?.searchResults?.length - 1]          
 
             return ({
                 "searchCriteria": {
@@ -854,10 +856,7 @@ export default function Search(props) {
                     "_unspscs": searchResultsSet?.searchFilter._unspscs || null,
                     
                 },
-                "removeCritieria": {
-                    [removeCritieria]: selectedResults,
-                    IsRemoveAll: removeAllResultsChecked
-                }
+                "removeCritieria": {...removeCriteriaObj, [removeCritieria]: selectedResults}
             })
         } else {
             return ({
@@ -892,10 +891,7 @@ export default function Search(props) {
                     "_naces": getFilterdCodesObj(selectedNACValues),
                     "_unspscs": getFilterdCodesObj(selectedUNSPValues),
                 },
-                "removeCritieria": {
-                    [removeCritieria]: selectedResults,
-                    IsRemoveAll: removeAllResultsChecked
-                }
+                "removeCritieria": {...removeCriteriaObj, [removeCritieria]: selectedResults}
             })
         }
 
@@ -1048,6 +1044,7 @@ export default function Search(props) {
     const onChangeResultListType = (e) => {
         e.preventDefault();
         if (e.target.value === 'Company') {
+            setSelectedResults([]);
             setSelectedGrouping({ ...selectedGrouping, resultType: e.target.value, accumulation: 'None' })
         } else {
             setSelectedGrouping({ ...selectedGrouping, resultType: e.target.value })
@@ -1057,6 +1054,7 @@ export default function Search(props) {
     const onChangeAccumulation = (e) => {
         e.preventDefault();
         setSelectedGrouping({ ...selectedGrouping, accumulation: e.target.value })
+        setSelectedResults([]);
     }
 
     const disableSaveBtn = useMemo(() => {

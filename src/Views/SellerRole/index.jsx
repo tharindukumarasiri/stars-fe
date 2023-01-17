@@ -9,6 +9,7 @@ import MatchingTenders from './matchingTenders';
 import TenderDetails from './tenderDetails';
 import GlobalTenderSearch from './globalTenderSearch';
 import { Button, notification } from 'antd';
+import { FetchCurrentCompany } from "../../hooks/index";
 
 const SellerRole = () => {
     const [activeTab, setActiveTab] = useState(NAVIGATION_PAGES.SELLER_HOME);
@@ -16,6 +17,7 @@ const SellerRole = () => {
     const [params, setParams] = useState({})
     const haveUnsavedDataRef = useRef(false);
     const shouldBeClosed = useRef({ state: false, tab: '' });
+    const [selectedCompany] = FetchCurrentCompany();
 
     const changeActiveTab = (tab, params = null) => {
         const openNotification = (placement = 'top') => {

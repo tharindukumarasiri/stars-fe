@@ -6,7 +6,7 @@ import Input from '../../common/input'
 import { updateMessageTemplates } from "../../services/templateService";
 import { FetchCurrentCompany } from "../../hooks/index"
 
-const CreateTemplate = ({ closeModal }) => {
+const CreateTemplate = ({ closeModal, getSavedTemplates }) => {
     const [loading, setLoading] = useState(true);
     const [selectedTemplateType, setSelectedTemplateType] = useState('Notification');
     const [templateName, setTemplateName] = useState('');
@@ -41,6 +41,7 @@ const CreateTemplate = ({ closeModal }) => {
             }
 
             updateMessageTemplates(selectedCompany?.tenantId, params).then(result => {
+                getSavedTemplates();
                 message.success('Template saved!');
                 console.log(result)
             }).catch(err => {

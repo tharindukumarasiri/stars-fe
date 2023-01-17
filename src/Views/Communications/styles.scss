@@ -1,0 +1,189 @@
+@import '../../assets/css/colors.scss';
+
+// Start Search Page Styles ---*>
+.gray-container {
+    background-color: $lighter-grey;
+    width: 100%;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    padding-left: 15px;
+    padding-right: 15px;
+    margin-top: 10px;
+    display: inline-block;
+}
+
+.result-item {
+    min-height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 5px;
+    padding-left: 5px;
+}
+
+.results-box {
+    background-color: $white;
+    padding: 10px;
+}
+
+.results-group {
+    border: 1px solid $lighter-grey;
+    margin-bottom: 10px;
+    padding: 5px;
+}
+
+.selected-group {
+    border: 1px solid black;
+}
+
+.flag-icon {
+    max-width: 10px;
+    max-height: 15px;
+}
+
+.flag-image {
+    max-width: 30px;
+    max-height: 20px;
+}
+
+.logo-thumb {
+    width: 44px;
+    height: 44px;
+    display: block;
+}
+
+.search-btn {
+    position: absolute;
+    right: 4px;
+    padding-top: 6px;
+    font-size: 2em;
+    cursor: pointer;
+    transition: all 1s;
+    color: $blue-color;
+
+    &:hover {
+        color: $green-lite
+    }
+}
+
+.search-bar {
+    position: relative;
+
+}
+
+.search-result-row {
+    margin-top: 15px;
+    width: 100%;
+    display: flex;
+    align-items: 'flex-start';
+    padding-bottom: 10px;
+    border-bottom: 2px solid $super-light-grey;
+
+    img {
+        max-width: 80px
+    }
+}
+
+.line-seperator {
+    height: 2px;
+    float: right;
+}
+
+.save-button {
+    position: absolute;
+    right: 20px;
+    bottom: 50px;
+}
+
+.remove-button {
+    position: absolute;
+    right: 150px;
+    bottom: 50px;
+}
+
+.reset-button {
+    position: absolute;
+    right: 330px;
+    bottom: 50px;
+}
+
+.hint-text {
+    position: absolute;
+    right: 20px;
+    bottom: 20px;
+}
+
+.search-result-pagination-container {
+    position: absolute;
+    bottom: 20px;
+}
+
+// End Search Page Styles ---*>
+
+// Start Projects Page Styles ---*>
+.table-icon {
+    font-size: 22px;
+    margin-right: 8px;
+    cursor: pointer;
+}
+
+.grid-view-icon {
+    font-size: 22px;
+    margin-top: -40px;
+    margin-right: 40px;
+    color: $blue-color;
+}
+
+.list-view-icon {
+    font-size: 22px;
+    margin-top: -40px;
+    color: $orange;
+}
+
+.detail-edit-icon {
+    font-size: 22px;
+    margin-right: 8px;
+    cursor: pointer;
+    color: $blue-color;
+    position: absolute;
+    right: 30px;
+}
+
+.border-blue {
+    border-radius: 5px;
+    border-style: solid;
+    border-width: 1px;
+}
+
+.serch-table-icon {
+    font-size: 15px;
+}
+
+.section-search-results-container {
+    overflow-y: scroll;
+    position: absolute;
+    top: 330px;
+    background-color: $white;
+    // display: grid;
+    height: calc(78% - 240px);
+    width: 47%;
+}
+
+.selectAll-checkbox {
+    padding-bottom: 30px;
+}
+
+.member-section-dropdown {
+    max-height: 200px;
+    overflow-y: scroll;
+}
+
+.criteria-table-box {
+    width: 140px
+}
+
+.table-separate {
+    border-bottom: 0.5px solid $blue-color;
+}
+
+// End Projects Page Styles ---*>

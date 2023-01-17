@@ -972,40 +972,45 @@ export const CommunicationsTableHeaders = [
         title: 'Link ID',
         dataIndex: 'Id',
         width: 100
-
     },
     {
         title: 'Type',
-        dataIndex: 'Id',
+        dataIndex: 'MessageType',
         width: 150
     },
     {
         title: 'From',
-        dataIndex: 'Id',
+        dataIndex: 'From',
     },
     {
         title: 'To',
-        dataIndex: 'Id',
+        dataIndex: 'To',
     },
     {
         title: 'Date',
-        dataIndex: 'Id',
+        dataIndex: 'CreatedDateTime',
+        render: (_, { CreatedDateTime }) => (
+            formatDate(CreatedDateTime)
+        )
     },
     {
         title: 'Description',
-        dataIndex: 'Id',
+        dataIndex: 'MessageTemplate',
+        render: (_, { MessageTemplate }) => (
+            MessageTemplate.MessageBody
+        )
     },
     {
         title: 'Notification Type',
-        dataIndex: 'Id',
+        dataIndex: 'MessageSubject',
     },
     {
         title: 'Workflow Status',
-        dataIndex: 'Id',
+        dataIndex: 'WorkflowStatus',
     },
     {
         title: 'Distribution Status',
-        dataIndex: 'Id',
+        dataIndex: 'MessageStatus',
     },
 ]
 
