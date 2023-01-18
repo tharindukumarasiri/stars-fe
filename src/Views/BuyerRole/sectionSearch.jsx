@@ -46,13 +46,13 @@ const SectionSearch = ({ params }) => {
                     <TabPane tab={t("SEARCH")} key="1">
                         <Search sectionSearch={true} projectId={params.proId} searchResults={searchResults} sectionId={params.sectionId} getSearchResults={getSearchResults} projectStatus={params.projectStatus} sectionStatus={params.sectionStatus} />
                     </TabPane>
-                    <TabPane tab={t("REMOVAL CRITERIA")} key="2">
+                    <TabPane tab={t("REMOVAL CRITERIA")} key="2" disabled={searchResults.length < 1}>
                         <Search removeSearch={true} sectionSearch={true} searchResults={searchResults} projectId={params.proId} sectionId={params.sectionId} getSearchResults={getSearchResults} projectStatus={params.projectStatus} sectionStatus={params.sectionStatus} changeTab={onChange} resetSearchResults={resetSearchResults} />
                     </TabPane>
-                    <TabPane tab={t("RESULT LIST")} key="3">
+                    <TabPane tab={t("RESULT LIST")} key="3"  disabled={searchResults.length < 1}>
                         <SearchResultList searchResults={searchResults} projectId={params.proId} sectionId={params.sectionId} />
                     </TabPane>
-                    <TabPane tab={t("ALL CRITERIA")} key="4">
+                    <TabPane tab={t("ALL CRITERIA")} key="4"  disabled={searchResults.length < 1}>
                         <SearchResults searchResults={searchResults} getSearchResults={getSearchResults} projectId={params.proId} sectionId={params.sectionId} />
                     </TabPane>
                 </Tabs>
