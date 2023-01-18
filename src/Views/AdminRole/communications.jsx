@@ -35,7 +35,7 @@ const Communications = () => {
         e.preventDefault();
         setSearchText(e.target.value)
     }
-console.log(filterTypes)
+
     const onChangeFilterType = (e, elementName) => {
         e.preventDefault();
         setFilterTypes({ ...filterTypes, [elementName]: JSON.parse(e.target.value) });
@@ -79,7 +79,7 @@ console.log(filterTypes)
 
     return (
         <>
-            <div className="com-top-container">
+            <div className="com-top-container user-input-box">
                 {loading &&
                     <div className="loading center-loading">
                         <div></div>

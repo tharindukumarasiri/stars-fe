@@ -267,7 +267,7 @@ const GetNotified = () => {
         setHaveUnsavedDataRef(true);
         setTenderCpvs(newCpvs)
     }
-console.log(selectedUsers)
+
     const getFormattedUserList = () => {
         return selectedUsers?.map(val => {
             return { name: val?.Value, userId: val?.Key }

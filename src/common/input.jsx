@@ -6,7 +6,7 @@ const Input = ({ value, placeholder = '', onChange, lines = 1, endImage = '', di
 
     const hintTextStyle = value ? 'input-hint-text-visible' : 'input-hint-text-hidden';
     return (
-        <div className="input-container m-b-10" >
+        <div className="input-container" >
             <div className={hintTextStyle}>{t(placeholder)}</div>
             {lines > 1 ?
                 <textarea rows={lines} placeholder={t(placeholder)} value={value} onChange={onChange} />

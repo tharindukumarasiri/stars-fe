@@ -1,6 +1,8 @@
-import React from "react";
+import React, { useState } from "react";
 import ReactDOM from "react-dom/client";
-import { BrowserRouter, Routes, Route, NavLink } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useNavigate, useLocation } from "react-router-dom";
+import { Button, Menu } from 'antd';
+import { MenuFoldOutlined, MenuUnfoldOutlined } from '@ant-design/icons';
 import i18next from 'i18next'
 import { initReactI18next } from 'react-i18next'
 import LanguageDetector from 'i18next-browser-languagedetector'
@@ -34,37 +36,99 @@ i18next
         },
     })
 
-
-const NavBar = () => {
-    return (
-        <nav >
-            <NavLink className="navbar-brand" to="/buyer">Buyer</NavLink>
-            <br />
-            <br />
-            <NavLink className="navbar-brand" to="/supplier">Supplier</NavLink>
-            <br />
-            <br />
-            <NavLink className="navbar-brand" to="/seller">Seller</NavLink>
-            <br />
-            <br />
-            <NavLink className="navbar-brand" to="/admin">Admin</NavLink>
-            <br />
-            <br />
-            <NavLink className="navbar-brand" to="/users">Users</NavLink>
-        </nav>
-    )
+const getItem = (label, key, icon) => {
+    return {
+        key,
+        label,
+        icon
+    };
 }
 
-function App() {
+const menuItems = [
+    getItem('Buyer', '/buyer'),
+    getItem('Supplier', '/supplier'),
+    getItem('Seller', '/seller'),
+    getItem('eConnect', '/eConnect'),
+    getItem('Users', '/users'),
+    getItem('Templates', '/template'),
+];
+
+const AppRouter = () => {
     return (
         <Routes>
-            <Route path='/' element={<NavBar />} />
             <Route path='/buyer' element={<BuyerRole />} />
             <Route path='/supplier' element={<SupplireRole />} />
             <Route path='/seller' element={<SellerRole />} />
-            <Route path='/admin' element={<AdminRole openTab={NAVIGATION_PAGES.ADMIN_TEMPLATES} />} />
+            <Route path='/eConnect' element={<AdminRole openTab={NAVIGATION_PAGES.E_CONNECT_HOME} />} />
             <Route path='/users' element={<AdminRole openTab={NAVIGATION_PAGES.ALL_USERS} />} />
+            <Route path='/template' element={<AdminRole openTab={NAVIGATION_PAGES.ADMIN_TEMPLATES} />} />
         </Routes>
+    )
+}
+
+const NavHeader = () => {
+    const navigate = useNavigate();
+    const location = useLocation();
+
+    return (
+        <Menu
+            theme="dark"
+            mode="horizontal"
+            defaultSelectedKeys={['/buyer']}
+            style={{ height: 50, flex: "auto", alignItems: 'center' }}
+            selectedKeys={[location.pathname]}
+            items={menuItems}
+            onClick={({ key }) => {
+                navigate(key)
+            }}
+        />
+    )
+}
+
+const SideMenu = () => {
+    const [collapsed, setCollapsed] = useState(true);
+
+    const navigate = useNavigate();
+    const location = useLocation();
+
+    const toggleCollapsed = () => {
+        setCollapsed(!collapsed);
+    };
+
+    return (
+        <div style={{ display: 'flex', flexDirection: 'column' }}>
+            <Button
+                type="primary"
+                onClick={toggleCollapsed}
+
+            >
+                {collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
+            </Button>
+            <Menu
+                style={{ width: collapsed ? 48 : 250, flex: "auto" }}
+                onClick={({ key }) => {
+                    navigate(key)
+                }}
+                defaultSelectedKeys={['/buyer']}
+                selectedKeys={[location.pathname]}
+                mode="inline"
+                theme="dark"
+                inlineCollapsed={collapsed}
+                items={menuItems}
+            />
+        </div>
+    )
+}
+
+const App = () => {
+    return (
+        <>
+            <NavHeader />
+            <div style={{ display: 'flex', flexDirection: 'row' }} >
+                <SideMenu />
+                <AppRouter />
+            </div>
+        </>
     )
 }
 

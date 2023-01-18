@@ -637,7 +637,7 @@ export default function Search(props) {
             })
         } else {
             const searchReq = getSearchRequest(1);
-            console.log(searchReq)
+
             if (isAllCriteriaEmpty(searchReq) && !props?.removeSearch) {
                 message.warning('Please select criteria to save');
             } else if (props?.sectionSearch && (props?.projectStatus?.toUpperCase() === "CLOSE" || props?.sectionStatus?.toUpperCase() === "CLOSE")) {
