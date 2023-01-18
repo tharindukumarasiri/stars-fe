@@ -6,16 +6,13 @@ import Dropdown from "../../common/dropdown";
 import DatePickerInput from "../../common/datePickerInput";
 import Input from '../../common/input'
 import { getCommunicationsList, getCommunicationEntities, getCommunicationMessageTypes, getCommunicationMessageStatuses } from "../../services/communicationService";
-import { FetchCurrentCompany } from "../../hooks/index"
 
 const Communications = () => {
     const [dropDownData, setDropDownData] = useState({ entity: [], status: [], type: [] })
-    const [filterTypes, setFilterTypes] = useState({ entity: {}, status: {}, type: {}, fromDate: null, toDate: null })
+    const [filterTypes, setFilterTypes] = useState({ entity: null, status: null, type: null, fromDate: null, toDate: null })
     const [searchText, setSearchText] = useState('');
     const [communicationsData, setCommunicationsData] = useState([])
     const [loading, setLoading] = useState(true);
-
-    const [selectedCompany] = FetchCurrentCompany();
 
     useEffect(() => {
         getCommunicationsList({}).then(result => {
@@ -38,10 +35,10 @@ const Communications = () => {
         e.preventDefault();
         setSearchText(e.target.value)
     }
-
+console.log(filterTypes)
     const onChangeFilterType = (e, elementName) => {
         e.preventDefault();
-        setFilterTypes({ ...filterTypes, [elementName]: e.target.value });
+        setFilterTypes({ ...filterTypes, [elementName]: JSON.parse(e.target.value) });
     }
 
     const onFilterTypeDateChange = (date, elementName) => {
@@ -65,7 +62,7 @@ const Communications = () => {
         setLoading(true)
 
         const params = {
-            "TenantId": selectedCompany?.tenantId,
+            "TenantId": filterTypes?.entity?.Id,
             "DistributionStatusId": filterTypes?.status?.Id,
             "MessageTypeId": filterTypes?.type?.Id,
             "FromDate": filterTypes.fromDate,
@@ -95,16 +92,16 @@ const Communications = () => {
                     <Dropdown
                         values={dropDownData.entity}
                         onChange={e => onChangeFilterType(e, 'entity')}
-                        selected={filterTypes.entity}
+                        selected={JSON.stringify(filterTypes.entity)}
                         dataName="Name"
-                        placeholder="Entity"
+                        placeholder="Entity(Tenant/Client)"
                     />
                 </div>
                 <div className="com-drop-down-width">
                     <Dropdown
                         values={dropDownData.status}
                         onChange={e => onChangeFilterType(e, 'status')}
-                        selected={filterTypes.status}
+                        selected={JSON.stringify(filterTypes.status)}
                         dataName="Name"
                         placeholder="Status"
                     />
@@ -113,7 +110,7 @@ const Communications = () => {
                     <Dropdown
                         values={dropDownData.type}
                         onChange={e => onChangeFilterType(e, 'type')}
-                        selected={filterTypes.type}
+                        selected={JSON.stringify(filterTypes.type)}
                         dataName="Name"
                         placeholder="Type"
                     />

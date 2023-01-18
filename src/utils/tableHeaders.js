@@ -966,16 +966,14 @@ export const CommunicationsTableHeaders = [
     {
         title: 'Communication ID',
         dataIndex: 'Id',
-        width: 200
     },
     {
         title: 'Link ID',
-        dataIndex: 'Id',
-        width: 100
+        dataIndex: 'CorrelationId',
     },
     {
         title: 'Type',
-        dataIndex: 'MessageType',
+        dataIndex: 'MessageMedium',
         width: 150
     },
     {
@@ -985,6 +983,7 @@ export const CommunicationsTableHeaders = [
     {
         title: 'To',
         dataIndex: 'To',
+        width: 150
     },
     {
         title: 'Date',
