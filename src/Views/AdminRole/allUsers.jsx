@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useContext } from "react";
+import React, { useState, useMemo, useContext, useEffect } from "react";
 import { Table, Modal, Switch, Dropdown, Menu, message } from 'antd';
 
 import { TabContext } from "../../utils/contextStore";
@@ -6,6 +6,7 @@ import { NAVIGATION_PAGES } from "../../utils/enums";
 import { usersTableHeaders } from '../../utils/tableHeaders'
 import StarDropdown from "../../common/dropdown";
 import Input from '../../common/input'
+import { getAllUsers } from "../../services/userService";
 
 const emaiRegEx =
     /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
@@ -21,179 +22,29 @@ const actions = (
 
 const newUserDataObj = { firstName: '', lastName: '', country: 'Norway', telephone: '', email: '', role: 'Client Admin', sendInvitation: false, template: '' }
 
-const usersData = [ //remove
-    {
-        id: 'UA111',
-        title: 'Mr',
-        userName: 'Xxxxxx',
-        firstName: 'Xxxxxx',
-        lastName: 'Xxxxxx',
-        country: 'Norway',
-        email: 'some@gmail.com',
-        phone: '+63 4547758',
-        companies: ['ABC', 'Element Logic', 'AS', 'GGEoff', 'Apple', 'Samsung', 'Toshiba'],
-        roles: ['Client Admin', 'Admin', 'User', 'User Admin'],
-        cId: 'Xxxxxx',
-        status: 'Active',
-    },
-    {
-        id: 'UA112',
-        title: 'Mr',
-        userName: 'Xxxxxx',
-        firstName: 'Xxxxxx',
-        lastName: 'Xxxxxx',
-        country: 'Norway',
-        email: 'some@gmail.com',
-        phone: '+63 4547758',
-        companies: ['ABC', 'Element Logic', 'AS', 'GGEoff', 'Apple', 'Samsung', 'Toshiba'],
-        roles: ['Client Admin', 'Admin', 'User', 'User Admin'],
-        cId: 'Xxxxxx',
-        status: 'Inactive',
-    },
-    {
-        id: 'UA113',
-        title: 'Mr',
-        userName: 'Xxxxxx',
-        firstName: 'Xxxxxx',
-        lastName: 'Xxxxxx',
-        country: 'Norway',
-        email: 'some@gmail.com',
-        phone: '+63 4547758',
-        companies: ['ABC', 'Element Logic', 'AS', 'GGEoff', 'Apple', 'Samsung', 'Toshiba'],
-        roles: ['Client Admin', 'Admin', 'User', 'User Admin'],
-        cId: 'Xxxxxx',
-        status: 'Inactive',
-    },
-    {
-        id: 'UA114',
-        title: 'Mr',
-        userName: 'Xxxxxx',
-        firstName: 'Xxxxxx',
-        lastName: 'Xxxxxx',
-        country: 'Norway',
-        email: 'some@gmail.com',
-        phone: '+63 4547758',
-        companies: ['ABC', 'Element Logic', 'AS', 'GGEoff', 'Apple', 'Samsung', 'Toshiba'],
-        roles: ['Client Admin', 'Admin', 'User', 'User Admin'],
-        cId: 'Xxxxxx',
-        status: 'Active',
-    },
-    {
-        id: 'UA115',
-        title: 'Mr',
-        userName: 'Xxxxxx',
-        firstName: 'Xxxxxx',
-        lastName: 'Xxxxxx',
-        country: 'Norway',
-        email: 'some@gmail.com',
-        phone: '+63 4547758',
-        companies: ['ABC', 'Element Logic', 'AS', 'GGEoff', 'Apple', 'Samsung', 'Toshiba'],
-        roles: ['Client Admin', 'Admin', 'User', 'User Admin'],
-        cId: 'Xxxxxx',
-        status: 'Inactive',
-    },
-    {
-        id: 'UA116',
-        title: 'Mr',
-        userName: 'Xxxxxx',
-        firstName: 'Xxxxxx',
-        lastName: 'Xxxxxx',
-        country: 'Norway',
-        email: 'some@gmail.com',
-        phone: '+63 4547758',
-        companies: ['ABC', 'Element Logic', 'AS', 'GGEoff', 'Apple', 'Samsung', 'Toshiba'],
-        roles: ['Client Admin', 'Admin', 'User', 'User Admin'],
-        cId: 'Xxxxxx',
-        status: 'Active',
-    },
-    {
-        id: 'UA117443',
-        title: 'Mr',
-        userName: 'Xxxxxx',
-        firstName: 'Xxxxxx',
-        lastName: 'Xxxxxx',
-        country: 'Norway',
-        email: 'some@gmail.com',
-        phone: '+63 4547758',
-        companies: ['ABC', 'Element Logic', 'AS', 'GGEoff', 'Apple', 'Samsung', 'Toshiba'],
-        roles: ['Client Admin', 'Admin', 'User', 'User Admin'],
-        cId: 'Xxxxxx',
-        status: 'Active',
-    },
-    {
-        id: 'UA118',
-        title: 'Mr',
-        userName: 'Xxxxxx',
-        firstName: 'Xxxxxx',
-        lastName: 'Xxxxxx',
-        country: 'Norway',
-        email: 'some@gmail.com',
-        phone: '+63 4547758',
-        companies: ['ABC', 'Element Logic', 'AS', 'GGEoff', 'Apple', 'Samsung', 'Toshiba'],
-        roles: ['Client Admin', 'Admin', 'User', 'User Admin'],
-        cId: 'Xxxxxx',
-        status: 'Active',
-    },
-    {
-        id: 'UA1144',
-        title: 'Mr',
-        userName: 'Xxxxxx',
-        firstName: 'Xxxxxx',
-        lastName: 'Xxxxxx',
-        country: 'Norway',
-        email: 'some@gmail.com',
-        phone: '+63 4547758',
-        companies: ['ABC', 'Element Logic', 'AS', 'GGEoff', 'Apple', 'Samsung', 'Toshiba'],
-        roles: ['Client Admin', 'Admin', 'User', 'User Admin'],
-        cId: 'Xxxxxx',
-        status: 'Active',
-    },
-    {
-        id: 'UA1173t',
-        title: 'Mr',
-        userName: 'Xxxxxx',
-        firstName: 'Xxxxxx',
-        lastName: 'Xxxxxx',
-        country: 'Norway',
-        email: 'some@gmail.com',
-        phone: '+63 4547758',
-        companies: ['ABC', 'Element Logic', 'AS', 'GGEoff', 'Apple', 'Samsung', 'Toshiba'],
-        roles: ['Client Admin', 'Admin', 'User', 'User Admin'],
-        cId: 'Xxxxxx',
-        status: 'Active',
-    },
-    {
-        id: 'UA1183',
-        title: 'Mr',
-        userName: 'Xxxxxx',
-        firstName: 'Xxxxxx',
-        lastName: 'Xxxxxx',
-        country: 'Norway',
-        email: 'some@gmail.com',
-        phone: '+63 4547758',
-        companies: ['ABC', 'Element Logic', 'AS', 'GGEoff', 'Apple', 'Samsung', 'Toshiba'],
-        roles: ['Client Admin', 'Admin', 'User', 'User Admin'],
-        cId: 'Xxxxxx',
-        status: 'Active',
-    },
-
-]
-
 const clients = ['ABC.AS', 'Trond', 'Hetti', '']
 
 const AllUsers = () => {
     const [modalVisible, setModalVisible] = useState(false);
-    const [users, setUsers] = useState(usersData)
+    const [users, setUsers] = useState([])
     const [searchText, setSearchText] = useState('');
     const [searchClientsText, setSearchClientsText] = useState('');
     const [newUserFirstPage, setNewUserFirstPage] = useState(true);
     const [newUserData, setNewUserData] = useState(newUserDataObj);
     const [newUserErrors, setNewUserErrors] = useState(newUserDataObj)
+    const [loading, setLoading] = useState(true);
 
     const { changeActiveTab } = useContext(TabContext);
 
+    useEffect(() => {
+        getAllUsers().then(result => {
+            setLoading(false)
+            setUsers(result)
+        }).catch(() => setLoading(false))
+    }, []);
+
     const tableHeaders = useMemo(() => {
-        const headers = usersTableHeaders.map(a => { return { ...a, title: a.title } })
+        const headers = usersTableHeaders?.map(a => { return { ...a, title: a.title } })
         headers.push({
             title: '',
             fixed: 'right',
@@ -213,6 +64,14 @@ const AllUsers = () => {
             return filterdList
         } else return []
     }, [searchClientsText])
+
+    const onSearch = () => {
+        setLoading(true)
+        getAllUsers(searchText).then(result => {
+            setLoading(false)
+            setUsers(result)
+        }).catch(() => setLoading(false))
+    }
 
     const toggleModal = () => {
         setModalVisible(pre => !pre)
@@ -301,16 +160,23 @@ const AllUsers = () => {
 
     return (
         <div className="page-container">
+            {loading &&
+                <div className="loading center-loading">
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                </div>
+            }
             <div className="top-container">
                 <button className="add-btn m-r-20" onClick={toggleModal} ><i className="icon-plus-circled m-r-10" />Add New User</button>
                 <div className="search-input-container" >
                     <Input placeholder="Search By Name or Org. Name" value={searchText} onChange={onChangeSearchText} endImage='icon-search-1' />
                 </div>
-                <button className="add-btn" >Filters</button>
+                <button className="add-btn" onClick={onSearch} >Filters</button>
             </div>
             <div className="tablele-width">
                 <Table
-                    rowKey={(record) => record?.id}
+                    rowKey={(record) => record?.UserId}
                     dataSource={users}
                     scroll={{
                         y: '60vh',
@@ -403,7 +269,7 @@ const AllUsers = () => {
                                 <button className="add-btn" >Filters</button>
                             </div>
 
-                            {filterdClients.map(client => {
+                            {filterdClients?.map(client => {
                                 return (
                                     <div className="g-row m-t-20 search-item">
                                         <div className="g-col-4 m-l-20 m-r-20 blue flex-center-middle">

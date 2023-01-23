@@ -821,85 +821,85 @@ export const searchTendersTableHeadersExpanded = [
 export const usersTableHeaders = [
     {
         title: 'User ID',
-        dataIndex: 'id',
+        dataIndex: 'UserId',
         fixed: 'left',
         width: 100,
     },
     {
         title: 'Title',
-        dataIndex: 'title',
+        dataIndex: 'TitleName',
         width: 60,
     },
     {
         title: 'User Name',
-        dataIndex: 'userName',
-        width: 110,
+        dataIndex: 'UserName',
+        width: 170,
     },
     {
         title: 'First Name',
-        dataIndex: 'firstName',
+        dataIndex: 'FirstName',
         width: 110,
     },
     {
         title: 'Last Name',
-        dataIndex: 'lastName',
+        dataIndex: 'LastName',
         width: 110,
     },
     {
         title: 'Country',
-        dataIndex: 'country',
+        dataIndex: 'CountryName',
         width: 100,
     },
     {
         title: 'Email',
-        dataIndex: 'email',
+        dataIndex: 'Email',
         width: 170,
     },
     {
         title: 'Phone',
         width: 135,
-        dataIndex: 'phone',
+        dataIndex: 'PhoneNumber',
     },
     {
         title: 'Assigned Companies',
-        dataIndex: 'companies',
+        dataIndex: 'Companies',
         width: 200,
         ellipsis: {
             showTitle: false,
         },
-        render: (companies) => (
-            <Tooltip placement="topLeft" title={companies.map(item => { return item + ', ' })}>
-                {companies.map(item => { return item + ', ' })}
+        render: (Companies) => (
+            <Tooltip placement="topLeft" title={Companies?.map(item => { return item?.Value + ', ' })}>
+                {Companies?.map(item => { return item?.Value + ', ' })}
             </Tooltip>
         ),
     },
     {
         title: 'Assigned Roles',
-        dataIndex: 'roles',
+        dataIndex: 'UserRoles',
         width: 150,
         ellipsis: {
             showTitle: false,
         },
-        render: (roles) => (
-            <Tooltip placement="topLeft" title={roles.map(item => { return item + ', ' })}>
-                {roles.map(item => { return item + ', ' })}
+        render: (UserRoles) => (
+            <Tooltip placement="topLeft" title={UserRoles?.map(item => { return item?.RoleName + ', ' })}>
+                {UserRoles?.map(item => { return item?.RoleName + ', ' })}
             </Tooltip>
         ),
     },
     {
         title: 'Culture ID',
-        dataIndex: 'cId',
+        dataIndex: 'CultureCode',
         width: 110,
     },
     {
         title: 'Status',
-        dataIndex: 'status',
+        dataIndex: 'IsActive',
         width: 100,
-        render: (status) => (
+        render: (IsActive) => (
             <>
-                {status === 'Active' ?
+                {IsActive ?
                     <div>
-                        <a className="green">&#x25CF;</a> Active
+                        <a style={{color: 'green'}}>&#x25CF;</a> Active
                     </div> :
                     <div>
                         <a className="grey">&#x25CF;</a> Inactive

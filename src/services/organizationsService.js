@@ -215,3 +215,8 @@ export async function getNotSubscribedPartyTsByTenantId(id) {
     const { data } = await http.get(`${config.GET_NOT_SUBSCRIBED_USERS}${id}`);
     return data;
 }
+
+export async function SaveSubscriptions(params) {
+    const { data } = await http.post(config.SAVE_SUBSCRIPTIONS, params);
+    return data;
+}

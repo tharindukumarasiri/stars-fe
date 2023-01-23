@@ -54,6 +54,7 @@
     "GET_COMPANY_USERS": "actionapi/users/GetCompanyUsers",
     "GET_COMPANY_MEMBERS": "sessionbridge/GetMembersByCompany",
     "GET_LANGUAGE": "sessionbridge/GetCurrentLanguage",
+    "GET_ALL_USERS": "actionapi/Users/GetUsers?searchText=",
 
     "GET_ALL_TENDERS": "getAllTenders?language=",
     "GET_TENDERS": "getTenders/",
@@ -63,6 +64,7 @@
     "UPDATE_TENENT_TENDER_MARKER": "updateTenantTenderMarker",
     "GET_SUBSCRIBED_USERS": "/actionapi/PersonTs/GetSubscribedPartyTsByTenantId?tenantId=",
     "GET_NOT_SUBSCRIBED_USERS": "/actionapi/PersonTs/GetNotSubscribedPartyTsByTenantId?tenantId=",
+    "SAVE_SUBSCRIPTIONS": "/actionapi/MessageTypeSubscriptions/SaveSubscriptions",
 
     "UPDATE_MESSAGE_TEMPLATE": "/actionapi/MessageTemplates/Post?userPartyId=",
     "GET_MESSAGE_TEMPLATE": "/actionapi/MessageTemplates/Get",

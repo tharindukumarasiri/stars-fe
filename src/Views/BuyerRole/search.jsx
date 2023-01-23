@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext, useMemo } from "react";
-import { message, Pagination, Modal } from 'antd';
+import { message, Pagination, Modal, Tooltip } from 'antd';
 import { levelOneReq, nacSectionReq, numberOfEmployeesList } from "../../utils/constants";
 import gb_flag from "../../assets/images/gb_flag.png"
 import Model from "../../common/model";
@@ -1028,9 +1028,9 @@ export default function Search(props) {
         return (
             <div className="text-left sub-title-txt hover-hand" onClick={() => onClickHeader()}>
                 {header}
-                <span className="tooltip-toggle" aria-label={tooltip}>
+                <Tooltip title={tooltip}>
                     <i className="icon-question color-black m-l-5" />
-                </span>
+                </Tooltip>
                 <i className={expandIcon} />
             </div>
 
@@ -1094,7 +1094,7 @@ export default function Search(props) {
     const getCompanyInfoCriteria = () => {
         return (
             <div className="gray-container">
-                {getCriteriaHeader(t("Company Info"), "xxx", () => toggleOpenCriteria('CompanyInfo'), openCriteria.CompanyInfo)}
+                {getCriteriaHeader(t("Company Info"), "Filter by basic company information", () => toggleOpenCriteria('CompanyInfo'), openCriteria.CompanyInfo)}
                 {openCriteria.CompanyInfo &&
                     <>
                         <div className="g-row">
@@ -1204,7 +1204,7 @@ export default function Search(props) {
     const getMarketCriteria = () => {
         return (
             <div className="gray-container">
-                {getCriteriaHeader(t("Market Information"), "xxx", () => toggleOpenCriteria('Market'), openCriteria.Market)}
+                {getCriteriaHeader(t("Market Information"), "Filter according to the NUTS codes of the business address", () => toggleOpenCriteria('Market'), openCriteria.Market)}
                 {openCriteria.Market &&
                     <div className="g-row">
                         <div className="g-col-3">
@@ -1276,7 +1276,7 @@ export default function Search(props) {
         return (
             <div className="g-col-12">
                 <div className="gray-container">
-                    {getCriteriaHeader(t("Product Groups (UNSPSC/ CPV Codes)"), "xxx", () => toggleOpenCriteria('ProductGroups'), openCriteria.ProductGroups)}
+                    {getCriteriaHeader(t("Product Groups (UNSPSC/ CPV Codes)"), "Filter according to the products manufactured/rented or raw materials provided by the companies", () => toggleOpenCriteria('ProductGroups'), openCriteria.ProductGroups)}
                     {openCriteria.ProductGroups &&
                         <>
                             <div className="m-t-5">{t("UNSPSC Codes")}</div>
@@ -1324,7 +1324,7 @@ export default function Search(props) {
     const getProfessionCriteria = () => {
         return (
             <div className="gray-container">
-                {getCriteriaHeader(t("Profession (NACE Codes)"), "xxx", () => toggleOpenCriteria('Profession'), openCriteria.Profession)}
+                {getCriteriaHeader(t("Profession (NACE Codes)"), "Filter according to the services provided by the companies", () => toggleOpenCriteria('Profession'), openCriteria.Profession)}
                 {openCriteria.Profession &&
                     <div>
                         <div className="g-row m-b-10">
@@ -1398,7 +1398,7 @@ export default function Search(props) {
     const getPeppolCriteria = () => {
         return (
             <div className="gray-container">
-                {getCriteriaHeader(t("Peppol Documents"), "xxx", () => toggleOpenCriteria('Peppol'), openCriteria.Peppol)}
+                {getCriteriaHeader(t("Peppol Documents"), "Filter according to the documents companies have subscribed", () => toggleOpenCriteria('Peppol'), openCriteria.Peppol)}
                 {openCriteria.Peppol &&
                     <div>
                         <div className="p-y-30">{t("Peppol Documents Post award")}</div>

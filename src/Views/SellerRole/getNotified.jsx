@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useEffect, useContext } from "react";
 import { message } from 'antd';
-import { getCpvCodes, searchCpvCodes, updateTenementCPV, getTenementCPV, getSubscribedPartyTsByTenantId, getNotSubscribedPartyTsByTenantId } from "../../services/organizationsService";
+import { getCpvCodes, searchCpvCodes, updateTenementCPV, getTenementCPV, getSubscribedPartyTsByTenantId, getNotSubscribedPartyTsByTenantId, SaveSubscriptions } from "../../services/organizationsService";
 import { levelOneReq } from "../../utils/constants";
 import { TabContext } from "../../utils/contextStore";
 import { useTranslation } from 'react-i18next'
@@ -50,10 +50,10 @@ const GetNotified = () => {
             getTenementCPV(selectedCompany.companyRegistrationId, 'NO').then(result => {
                 if (result?.cpvs?.length > 0) {
                     setTenderCpvs(result?.cpvs)
-                    const formattedUserList = result?.contactUsers.map(val => {
-                        return { Value: val?.name, Key: val?.userId }
-                    })
-                    setSelectedUsers(formattedUserList)
+                    // const formattedUserList = result?.contactUsers.map(val => {
+                    //     return { Value: val?.name, Key: val?.userId }
+                    // })
+                    // setSelectedUsers(formattedUserList)
 
                     let newAllCpvCodes = [];
                     for (let i = 0; i < result.cpvs.length; i++) {
@@ -286,6 +286,10 @@ const GetNotified = () => {
             contactUsers: getFormattedUserList(),
         }
 
+        const userParams = selectedUsers.map(user => {
+            return({TenantId: selectedCompany?.tenantId, MessageTypeId: 2, PartyTId: user?.Key})
+        })
+
         updateTenementCPV(params).then(result => {
             setLoading(false);
             setHaveUnsavedDataRef(false);
@@ -298,6 +302,8 @@ const GetNotified = () => {
             setLoading(false);
             message.error('Update failed please try again');
         })
+
+        SaveSubscriptions(userParams)
     }
 
     const handleSearch = (e) => {

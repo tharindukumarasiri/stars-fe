@@ -47,3 +47,9 @@ export async function getLanguage() {
     const { data } = await http.get(url, getAuthHeader());
     return data;
 }
+
+export async function getAllUsers(searchText = '') {
+    const url = process.env.LOCAL_API + config.GET_ALL_USERS + searchText;
+    const { data } = await http.get(url, getAuthHeader());
+    return data;
+}

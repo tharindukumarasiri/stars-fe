@@ -32,13 +32,13 @@ const EConnectHome = () => {
                     name={"COMMUNICATIONS"}
                     cardColour={"bg-green"}
                     imageName={"icon-projects"}
-                    onClick={() => onClickCard(NAVIGATION_PAGES.COMMUNICATIONS)}
+                    // onClick={() => onClickCard(NAVIGATION_PAGES.COMMUNICATIONS)}
                 />
                 <NavigationCard
-                    name={"TRANSACTION LOGS"}
+                    name={"COMMUNICATIONS LOGS"}
                     cardColour={"bg-green-lite"}
                     imageName={"icon-projects"}
-                // onClick={() => onClickCard(NAVIGATION_PAGES.BUYER_PROJECTS)}
+                    onClick={() => onClickCard(NAVIGATION_PAGES.COMMUNICATIONS)}
                 />
             </div>
         </div>
