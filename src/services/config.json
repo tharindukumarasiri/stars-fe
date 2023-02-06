@@ -68,6 +68,7 @@
 
     "UPDATE_MESSAGE_TEMPLATE": "/actionapi/MessageTemplates/Post?userPartyId=",
     "GET_MESSAGE_TEMPLATE": "/actionapi/MessageTemplates/Get",
+    "GET_TENANT_MESSAGE_TEMPLATE": "/actionapi/MessageTemplates/GetMessageTemplatesByTenant?tenantId=",
 
     "GET_COMMUNICATIONS": " /actionapi/MessageQueues/GetCommunications",
     "GET_COMMUNICATION_ENTITIES": " /actionapi/Entities/Get",

@@ -13,7 +13,8 @@ axios.interceptors.response.use(null, error => {
 });
 
 axios.interceptors.request.use((config) => {
-    config.headers.common['tenant-id'] = localStorage.getItem('database_name');
+    config.headers.common['tenant-id'] = localStorage.getItem('tenant-id');
+    config.headers.common['tenant-db'] = localStorage.getItem('tenant-db');
     return config;
 }, (error) => {
     return Promise.reject(error);

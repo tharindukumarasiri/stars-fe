@@ -17,8 +17,9 @@ export async function getPerson() {
 export async function getSelectedCompany() {
     const url = process.env.LOCAL_API + config.GET_SELECTED_COMPANY;
     const { data } = await http.get(url, getAuthHeader());
-    if (data) {
-        localStorage.setItem('database_name', data.databaseName)
+    if (data) {        
+        localStorage.setItem('tenant-id', data.tenantId);
+        localStorage.setItem('tenant-db', data.databaseName)
     }
     return data;
 }

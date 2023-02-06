@@ -12,3 +12,8 @@ export async function getMessageTemplates() {
     const { data } = await http.get(config.GET_MESSAGE_TEMPLATE);
     return data;
 }
+
+export async function getTenantMessageTemplates(tenantId) {
+    const { data } = await http.get(config.GET_TENANT_MESSAGE_TEMPLATE + tenantId);
+    return data;
+}

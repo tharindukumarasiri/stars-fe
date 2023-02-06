@@ -22,7 +22,7 @@ const CreateTemplate = ({ closeModal, getSavedTemplates }) => {
             const params = {
                 "MessageTriggerPointId": 3,
                 "MessageMediumId": 1,
-                "MessageTypeId": 2,
+                "MessageTypeId": getMessageType(),
                 "Name": templateName,
                 "MessageSubject": getMessageSubject(),
                 "MessageBody": html,
@@ -36,8 +36,8 @@ const CreateTemplate = ({ closeModal, getSavedTemplates }) => {
                 "Id": 1,
                 "CreatedDateTime": new Date(),
                 "CreatedUserPartyId": selectedCompany?.tenantId,
-                "DeletedDateTime": "2022-12-16T04:35:08.112Z",
-                "DeletedUserPartyId": 0
+                "DeletedDateTime": null,
+                "DeletedUserPartyId": null
             }
 
             updateMessageTemplates(selectedCompany?.tenantId, params).then(result => {
@@ -58,13 +58,26 @@ const CreateTemplate = ({ closeModal, getSavedTemplates }) => {
     const getMessageSubject = () => {
         switch (selectedTemplateType) {
             case 'Notification':
-                return 'tenderNotification';
+                return 'Notificaiton';
             case 'Landing':
-                return 'tenderNotification';
+                return 'Landing page';
             case 'Business':
-                return 'tenderNotification';
+                return 'Business communication';
             default:
-                return 'tenderNotification';
+                return '';
+        }
+    }
+
+    const getMessageType = () => {
+        switch (selectedTemplateType) {
+            case 'Notification':
+                return 2;
+            case 'Landing':
+                return 1;
+            case 'Business':
+                return 3;
+            default:
+                return 2;
         }
     }
 
