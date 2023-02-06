@@ -899,35 +899,13 @@ export const usersTableHeaders = [
             <>
                 {IsActive ?
                     <div>
-                        <a style={{color: 'green'}}>&#x25CF;</a> Active
+                        <a style={{ color: 'green' }}>&#x25CF;</a> Active
                     </div> :
                     <div>
                         <a className="grey">&#x25CF;</a> Inactive
                     </div>
                 }
             </>
-        ),
-    },
-]
-
-export const companiesHeaders = [
-    {
-        title: 'Company Name/s',
-        dataIndex: '',
-    },
-    {
-        title: 'Country',
-        dataIndex: 'lastName',
-    },
-    {
-        title: 'Role/s',
-        dataIndex: 'lastName',
-    },
-    {
-        title: '',
-        render: (_) => (
-            <i className="icon-edit hover-hand"></i>
-
         ),
     },
 ]
@@ -962,7 +940,7 @@ export const TemplateTableHeaders = [
     },
 ]
 
-export const CommunicationsTableHeaders = [
+export const CommunicationsLogTableHeaders = [
     {
         title: 'Communication ID',
         dataIndex: 'Id',
@@ -1041,5 +1019,44 @@ export const CommunicationsSubTableHeaders = [
     {
         title: 'Distribution Status',
         dataIndex: 'Id',
+    },
+]
+
+export const CommunicationsTableHeaders = [
+    {
+        title: 'From',
+        dataIndex: 'From',
+    },
+    {
+        title: 'To',
+        dataIndex: 'To',
+        width: 150
+    },
+    {
+        title: 'ID',
+        dataIndex: 'Id',
+    },
+    {
+        title: 'Sent on Date',
+        dataIndex: 'CreatedDateTime',
+        render: (_, { CreatedDateTime }) => (
+            formatDate(CreatedDateTime)
+        )
+    },
+    {
+        title: 'Invitation Type',
+        dataIndex: 'MessageSubject',
+    },
+    {
+        title: 'Description',
+        dataIndex: 'MessageTemplate',
+    },
+    {
+        title: 'Company/ies Representing',
+        dataIndex: 'WorkflowStatus',
+    },
+    {
+        title: 'Status',
+        dataIndex: 'MessageStatus',
     },
 ]

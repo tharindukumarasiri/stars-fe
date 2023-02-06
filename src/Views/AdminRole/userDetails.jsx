@@ -1,8 +1,9 @@
 import React, { useRef, useState, useEffect } from "react";
-import { Switch, Table } from 'antd';
+import { Switch, Collapse } from 'antd';
 import Dropdown from "../../common/dropdown"
-import { companiesHeaders } from '../../utils/tableHeaders'
 import image_thumb from "../../assets/images/image_thumb.png"
+
+const { Panel } = Collapse;
 
 const UserDetails = ({ props }) => {
     const [status, setStatus] = useState(props?.status);
@@ -40,6 +41,55 @@ const UserDetails = ({ props }) => {
         setSelectedFile(e.target.files[0])
     }
 
+    const getPanel = (header, key) => {
+        return (
+            <Panel header={header} key={key} extra={panelSwitch()}>
+                <div className="m-b-20">Role/s</div>
+                <div className="user-details-pannerl-container">
+                    <div className="user-details-item">
+                        <input type="checkbox" className="check-box" onClick={(e) => { e.stopPropagation() }} /> Client Admin
+                    </div>
+                    <div className="user-details-item">
+                        <input type="checkbox" className="check-box" onClick={(e) => { e.stopPropagation() }} /> Seller
+                    </div>
+                    <div className="user-details-item">
+                        <input type="checkbox" className="check-box" onClick={(e) => { e.stopPropagation() }} /> Free User 1
+                    </div>
+                    <div className="user-details-item">
+                        <input type="checkbox" className="check-box" onClick={(e) => { e.stopPropagation() }} /> Advanced 1
+                    </div>
+                </div>
+                <div className="user-details-pannerl-container">
+                    <div className="user-details-item">
+                        <input type="checkbox" className="check-box" onClick={(e) => { e.stopPropagation() }} /> Buyer
+                    </div>
+                    <div className="user-details-item">
+                        <input type="checkbox" className="check-box" onClick={(e) => { e.stopPropagation() }} /> Supplier
+                    </div>
+                    <div className="user-details-item">
+                        <input type="checkbox" className="check-box" onClick={(e) => { e.stopPropagation() }} /> Free User 2
+                    </div>
+                    <div className="user-details-item">
+                        <input type="checkbox" className="check-box" onClick={(e) => { e.stopPropagation() }} /> Advanced 2
+                    </div>
+                </div>
+            </Panel>
+        )
+    }
+
+    const panelSwitch = () => {
+        return (
+            <div onClick={(event) => {
+                event.stopPropagation();
+            }}>
+                <Switch
+                    checkedChildren="Active"
+                    unCheckedChildren="Inactive"
+                />
+            </div>
+        )
+    }
+
     return (
         <>
             <div className="user-details-main-container" >
@@ -70,7 +120,7 @@ const UserDetails = ({ props }) => {
                             </div>
                         </div>
                         <div>
-                            <div className="m-b-20">
+                            <div className="m-b-20 m-t-20">
                                 User Name
                                 <div className="bold">{props?.userName}</div>
                             </div>
@@ -80,7 +130,7 @@ const UserDetails = ({ props }) => {
                             </div>
                         </div>
                         <div>
-                            <div>
+                            <div className="m-t-20">
                                 Change Status
                                 <Dropdown
                                     values={["Active", "Inactive"]}
@@ -89,7 +139,7 @@ const UserDetails = ({ props }) => {
                                     placeholder="Status"
                                 />
                             </div>
-                            <div className="role-container">
+                            {/* <div className="role-container">
                                 Change Role
                                 <div className="roles-box">
                                     <div className="role-box-header">
@@ -124,23 +174,22 @@ const UserDetails = ({ props }) => {
                                         </div>
                                     </div>
                                 </div>
-                            </div>
+                            </div> */}
                         </div>
                     </div>
                 </div>
                 <div className="user-data-table-container">
-                    <div>Assigned company/ies to this user</div>
-                    <Table
-                        rowKey={(record) => record?.id}
-                        dataSource={props?.companies}
-                        columns={companiesHeaders}
-                        pagination={false}
-                    />
+                    <div className="m-b-20">Assigned company/ies</div>
+                    <Collapse
+                        defaultActiveKey={['1']}
+                    >
+                        {getPanel('ABC Company', '1')}
+                    </Collapse>
                 </div>
             </div>
             <div className="details-btn-container">
-                <button className="primary-btn m-r-20" >Delete</button>
-                <button className="primary-btn" >Update</button>
+                <button className="primary-btn m-r-20" >Cancel</button>
+                <button className="primary-btn" >Delete</button>
             </div>
         </>
     )

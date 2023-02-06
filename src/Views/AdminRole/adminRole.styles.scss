@@ -87,17 +87,17 @@
 }
 
 .user-data-container {
-    width: 50vw;
+    width: 20vw;
     height: 75vh;
     border-right: 3px solid $body-color;
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     padding-right: 60px;
 }
 
 .user-details-container {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     justify-content: space-between;
     width: 100%;
 }
@@ -109,13 +109,15 @@
 }
 
 .upload-image-container {
-    margin-right: 60px;
     position: relative;
+    display: flex;
+    justify-content: center;
+    margin-bottom: 33px;
 }
 
 .upload-image-btn {
     position: absolute;
-    right: 0;
+    right: 70px;
     background-color: white;
     font-size: large;
 }
@@ -154,12 +156,12 @@
 .user-data-table-container {
     padding-left: 43px;
     padding-right: 33px;
-    width: 45vw;
+    width: 70vw;
 }
 
 .details-btn-container {
     position: absolute;
-    right: 150px;
+    right: 100px;
     bottom: 50px;
     display: flex;
     flex-direction: row;
@@ -193,4 +195,16 @@
 
 .sub-table-padding {
     margin-left: 480px;
+}
+
+.user-details-pannerl-container {
+    margin-bottom: 15px;
+    display: flex;
+    flex-direction: row;
+}
+
+.user-details-item {
+    width: 250px;
+    display: flex;
+    align-items: center;
 }

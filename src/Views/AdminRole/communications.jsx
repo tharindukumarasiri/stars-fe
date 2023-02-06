@@ -1,35 +1,16 @@
 import React, { useState, useEffect } from "react";
 import { Table } from 'antd';
 
-import { CommunicationsTableHeaders, CommunicationsSubTableHeaders } from '../../utils/tableHeaders'
 import Dropdown from "../../common/dropdown";
-import DatePickerInput from "../../common/datePickerInput";
 import Input from '../../common/input'
-import { getCommunicationsList, getCommunicationEntities, getCommunicationMessageTypes, getCommunicationMessageStatuses } from "../../services/communicationService";
+import { CommunicationsTableHeaders, } from '../../utils/tableHeaders'
 
 const Communications = () => {
-    const [dropDownData, setDropDownData] = useState({ entity: [], status: [], type: [] })
-    const [filterTypes, setFilterTypes] = useState({ entity: null, status: null, type: null, fromDate: null, toDate: null })
+    const [dropDownData, setDropDownData] = useState({ status: [], category: [], type: [] })
+    const [dropDownSelected, setDropDownSelected] = useState({ status: null, category: null, type: null })
     const [searchText, setSearchText] = useState('');
-    const [communicationsData, setCommunicationsData] = useState([])
+    const [communicationsData, setCommunicationsData] = useState([{}])
     const [loading, setLoading] = useState(true);
-
-    useEffect(() => {
-        getCommunicationsList({}).then(result => {
-            setCommunicationsData(result);
-            setLoading(false);
-        });
-        getCommunicationEntities().then(result => {
-            setDropDownData(pre => ({ ...pre, entity: result }))
-        })
-        getCommunicationMessageTypes().then(result => {
-            setDropDownData(pre => ({ ...pre, type: result }))
-        })
-        getCommunicationMessageStatuses().then(result => {
-            setDropDownData(pre => ({ ...pre, status: result }))
-        })
-
-    }, []);
 
     const onChangeSearchText = (e) => {
         e.preventDefault();
@@ -38,43 +19,11 @@ const Communications = () => {
 
     const onChangeFilterType = (e, elementName) => {
         e.preventDefault();
-        setFilterTypes({ ...filterTypes, [elementName]: JSON.parse(e.target.value) });
+        setDropDownSelected({ ...dropDownSelected, [elementName]: JSON.parse(e.target.value) });
     }
 
-    const onFilterTypeDateChange = (date, elementName) => {
-        setFilterTypes({ ...filterTypes, [elementName]: date });
-    };
-
-    const expandedRowRender = () => {
-        return (
-            <div className="sub-table-padding">
-                <Table
-                    columns={CommunicationsSubTableHeaders}
-                    dataSource={communicationsData}
-                    pagination={false}
-                    showHeader={false}
-                />
-            </div>
-        );
-    };
-
-    const onFilter = () => {
-        setLoading(true)
-
-        const params = {
-            "TenantId": filterTypes?.entity?.Id,
-            "DistributionStatusId": filterTypes?.status?.Id,
-            "MessageTypeId": filterTypes?.type?.Id,
-            "FromDate": filterTypes.fromDate,
-            "ToDate": filterTypes.toDate,
-            "SearchText": searchText
-        }
-
-        getCommunicationsList(params).then(result => {
-            setCommunicationsData(result);
-            setLoading(false);
-        });
-
+    const onFilter = (e) => {
+        setLoading(false)
     }
 
     return (
@@ -90,46 +39,31 @@ const Communications = () => {
                 <div className="filter-by-text">Filter By:</div>
                 <div className="com-drop-down-width">
                     <Dropdown
-                        values={dropDownData.entity}
-                        onChange={e => onChangeFilterType(e, 'entity')}
-                        selected={JSON.stringify(filterTypes.entity)}
-                        dataName="Name"
-                        placeholder="Entity(Tenant/Client)"
-                    />
-                </div>
-                <div className="com-drop-down-width">
-                    <Dropdown
                         values={dropDownData.status}
                         onChange={e => onChangeFilterType(e, 'status')}
-                        selected={JSON.stringify(filterTypes.status)}
+                        selected={JSON.stringify(dropDownSelected.status)}
                         dataName="Name"
                         placeholder="Status"
                     />
                 </div>
                 <div className="com-drop-down-width">
                     <Dropdown
+                        values={dropDownData.category}
+                        onChange={e => onChangeFilterType(e, 'category')}
+                        selected={JSON.stringify(dropDownSelected.category)}
+                        dataName="Name"
+                        placeholder="Category"
+                    />
+                </div>
+                <div className="com-drop-down-width">
+                    <Dropdown
                         values={dropDownData.type}
                         onChange={e => onChangeFilterType(e, 'type')}
-                        selected={JSON.stringify(filterTypes.type)}
+                        selected={JSON.stringify(dropDownSelected.type)}
                         dataName="Name"
                         placeholder="Type"
                     />
                 </div>
-                <div className="com-drop-down-width">
-                    <DatePickerInput
-                        placeholder='From Date'
-                        value={filterTypes.fromDate}
-                        onChange={(date) => onFilterTypeDateChange(date, "fromDate")}
-                        isClearable
-                    />
-                </div>
-                <div className="com-drop-down-width">
-                    <DatePickerInput
-                        placeholder='To Date'
-                        value={filterTypes.toDate}
-                        onChange={(date) => onFilterTypeDateChange(date, "toDate")}
-                        isClearable
-                    />                </div>
                 <div className="com-search-input-container">
                     <div className="search-input-container" >
                         <Input placeholder="Search By Name or Org. ID" value={searchText} onChange={onChangeSearchText} endImage='icon-search-1' />
@@ -148,15 +82,10 @@ const Communications = () => {
                         }}
                         columns={CommunicationsTableHeaders}
                         pagination={false}
-                        expandable={{
-                            expandedRowRender,
-                            defaultExpandedRowKeys: ['0'],
-                        }}
                     />
                 </div>
             </div>
         </>
-
     )
 }
 

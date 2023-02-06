@@ -6,6 +6,7 @@ import Templates from './templates';
 import Users from './allUsers';
 import UserDetails from './userDetails';
 import Communications from './communications';
+import CommunicationsLog from './communicationsLog';
 import EConnectHome from './eConnectHome';
 import { FetchCurrentCompany } from "../../hooks/index";
 import "./adminRole.styles.scss";
@@ -57,8 +58,11 @@ const AdminRole = ({ openTab = NAVIGATION_PAGES.ADMIN_TEMPLATES }) => {
                 <div label={"ECONNECT"} id={NAVIGATION_PAGES.E_CONNECT_HOME} >
                     <EConnectHome />
                 </div>
-                <div label={"COMMUNICATION LOGS"} id={NAVIGATION_PAGES.COMMUNICATIONS} >
+                <div label={"COMMUNICATIONS"} id={NAVIGATION_PAGES.COMMUNICATIONS} >
                     <Communications />
+                </div>
+                <div label={"COMMUNICATIONS LOG"} id={NAVIGATION_PAGES.COMMUNICATIONS_LOG} >
+                    <CommunicationsLog />
                 </div>
             </Tabs>
         </TabContext.Provider >
