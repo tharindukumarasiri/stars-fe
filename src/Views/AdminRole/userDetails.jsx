@@ -6,7 +6,7 @@ import image_thumb from "../../assets/images/image_thumb.png"
 const { Panel } = Collapse;
 
 const UserDetails = ({ props }) => {
-    const [status, setStatus] = useState(props?.status);
+    const [status, setStatus] = useState(props?.IsActive ? "Active" : "Inactive");
     const [selectedFile, setSelectedFile] = useState()
     const [preview, setPreview] = useState()
 
@@ -102,31 +102,31 @@ const UserDetails = ({ props }) => {
                             onChange={onSelectFile}
                         />
                         <i type="file" className="icon-edit upload-image-btn hover-hand" onClick={handleImageUpload} />
-                        <img src={selectedFile ? preview : image_thumb} className="logo-thumb user-image hover-hand" alt="img" onClick={handleImageUpload} />
+                        <img src={selectedFile ? preview : image_thumb} className="user-image hover-hand" alt="img" onClick={handleImageUpload} />
                     </div>
                     <div className="user-details-container">
                         <div>
                             <div className="m-b-20">
                                 User ID
-                                <div className="bold">{props?.id}</div>
+                                <div className="bold">{props?.UserId}</div>
                             </div>
                             <div className="m-b-20 p-t-10">
                                 FIrst Name
-                                <div className="bold">{props?.firstName}</div>
+                                <div className="bold">{props?.FirstName}</div>
                             </div>
                             <div className="p-t-10">
                                 Last Name
-                                <div className="bold">{props?.lastName}</div>
+                                <div className="bold">{props?.LastName}</div>
                             </div>
                         </div>
                         <div>
                             <div className="m-b-20 m-t-20">
                                 User Name
-                                <div className="bold">{props?.userName}</div>
+                                <div className="bold">{props?.UserName}</div>
                             </div>
                             <div className="p-t-10">
                                 Country
-                                <div className="bold">{props?.country}</div>
+                                <div className="bold">{props?.CountryName}</div>
                             </div>
                         </div>
                         <div>
@@ -183,7 +183,9 @@ const UserDetails = ({ props }) => {
                     <Collapse
                         defaultActiveKey={['1']}
                     >
-                        {getPanel('ABC Company', '1')}
+                        {props?.Companies.map( company => {
+                            return getPanel(company.Value, company.Key)
+                        })}
                     </Collapse>
                 </div>
             </div>

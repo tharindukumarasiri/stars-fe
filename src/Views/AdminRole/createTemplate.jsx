@@ -1,31 +1,43 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { message } from 'antd';
 import EmailEditor from 'react-email-editor';
 
 import Input from '../../common/input'
-import { updateMessageTemplates } from "../../services/templateService";
+import { updateMessageTemplates, insertMessageTemplates } from "../../services/templateService";
 import { FetchCurrentCompany } from "../../hooks/index"
 
-const CreateTemplate = ({ closeModal, getSavedTemplates }) => {
+const CreateTemplate = ({ closeModal, getSavedTemplates, editTemplate }) => {
     const [loading, setLoading] = useState(true);
     const [selectedTemplateType, setSelectedTemplateType] = useState('Notification');
     const [templateName, setTemplateName] = useState('');
-
     const [selectedCompany] = FetchCurrentCompany();
-
     const emailEditorRef = useRef(null);
+
+    useEffect(() => {
+        if(editTemplate){
+            setTemplateName(editTemplate.Name);           
+        } 
+        else {
+            setTemplateName("");  
+        }  
+        onLoad();                
+    }, [editTemplate]);
 
     const onSave = () => {
         emailEditorRef.current.editor.exportHtml((data) => {
             const { design, html } = data;
 
-            const params = {
+            const params = editTemplate ? { ...editTemplate, 
+                                            "Name": templateName, 
+                                            "MessageBody": html,
+                                            "MessageBodyJson": JSON.stringify(design) }  : {
                 "MessageTriggerPointId": 3,
                 "MessageMediumId": 1,
                 "MessageTypeId": getMessageType(),
                 "Name": templateName,
                 "MessageSubject": getMessageSubject(),
                 "MessageBody": html,
+                "MessageBodyJson": JSON.stringify(design),
                 "LanguageId": 2057,
                 "TenantId": selectedCompany?.tenantId,
                 "IsSubTemplate": false,
@@ -33,27 +45,41 @@ const CreateTemplate = ({ closeModal, getSavedTemplates }) => {
                 "MessageMedium": null,
                 "MessageType": null,
                 "LanguageMessageTemplates": [],
-                "Id": 1,
+                "Id": 0,
                 "CreatedDateTime": new Date(),
                 "CreatedUserPartyId": selectedCompany?.tenantId,
                 "DeletedDateTime": null,
                 "DeletedUserPartyId": null
             }
 
-            updateMessageTemplates(selectedCompany?.tenantId, params).then(result => {
-                getSavedTemplates();
-                message.success('Template saved!');
-                console.log(result)
-            }).catch(err => {
-                console.log(err)
-            })
-
+            saveTemplate(selectedCompany?.tenantId, params);
             console.log('export HTML:');
             console.log({ html })
             console.log('export JSON:');
             console.log(design)
         });
     };
+
+    const saveTemplate = (tenantId, params) => {
+        if(params.Id > 0){
+            updateMessageTemplates(params).then(result => {
+                getSavedTemplates();
+                message.success('Template saved!');           
+                closeModal();
+            }).catch(err => {
+                console.log(err)
+            });
+        }
+        else{
+            insertMessageTemplates(tenantId, params).then(result => {
+                getSavedTemplates();
+                message.success('Template saved!');           
+                closeModal();
+            }).catch(err => {
+                console.log(err)
+            });
+        }       
+    }
 
     const getMessageSubject = () => {
         switch (selectedTemplateType) {
@@ -84,8 +110,13 @@ const CreateTemplate = ({ closeModal, getSavedTemplates }) => {
     const onLoad = () => {
         // editor instance is created
         // you can load your template here;
-        // const templateJson = {};
-        // emailEditorRef.current.editor.loadDesign(templateJson);
+        // const templateJson = {};        
+        if(emailEditorRef.current && emailEditorRef.current.editor){
+            if(editTemplate && editTemplate.MessageBodyJson)
+                emailEditorRef.current.editor.loadDesign(JSON.parse(editTemplate.MessageBodyJson));
+            else
+                emailEditorRef.current.editor.loadBlank();
+        }       
     }
 
     const onReady = () => {
