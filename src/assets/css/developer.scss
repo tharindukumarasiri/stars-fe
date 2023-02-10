@@ -120,6 +120,23 @@
     }
 }
 
+.star {
+    visibility: hidden;
+    cursor: pointer;
+}
+
+.star:before {
+    content: "\2606";
+    position: absolute;
+    visibility: visible;
+    color: $blue-color;
+}
+
+.star:checked:before {
+    content: "\2605";
+    position: absolute;
+}
+
 .dropdown-list {
     color: $base-gray;
     font-family: $bod-font;

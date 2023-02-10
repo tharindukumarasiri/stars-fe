@@ -15,19 +15,20 @@ const CommunicationsLog = () => {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        getCommunicationsList({}).then(result => {
-            setCommunicationsData(result);
-            setLoading(false);
-        });
-        getCommunicationEntities().then(result => {
-            setDropDownData(pre => ({ ...pre, entity: result }))
-        })
-        getCommunicationMessageTypes().then(result => {
-            setDropDownData(pre => ({ ...pre, type: result }))
-        })
-        getCommunicationMessageStatuses().then(result => {
-            setDropDownData(pre => ({ ...pre, status: result }))
-        })
+        Promise.all([
+            getCommunicationsList({}).then(result => {
+                setCommunicationsData(result);
+            }),
+            getCommunicationEntities().then(result => {
+                setDropDownData(pre => ({ ...pre, entity: result }))
+            }),
+            getCommunicationMessageTypes().then(result => {
+                setDropDownData(pre => ({ ...pre, type: result }))
+            }),
+            getCommunicationMessageStatuses().then(result => {
+                setDropDownData(pre => ({ ...pre, status: result }))
+            })
+        ]).finally(() => setLoading(false));
 
     }, []);
 
@@ -92,7 +93,7 @@ const CommunicationsLog = () => {
                     <Dropdown
                         values={dropDownData.entity}
                         onChange={e => onChangeFilterType(e, 'entity')}
-                        selected={JSON.stringify(filterTypes.entity)}
+                        selected={JSON.stringify(filterTypes.entity || undefined)}
                         dataName="Name"
                         placeholder="Entity(Tenant/Client)"
                     />
@@ -101,7 +102,7 @@ const CommunicationsLog = () => {
                     <Dropdown
                         values={dropDownData.status}
                         onChange={e => onChangeFilterType(e, 'status')}
-                        selected={JSON.stringify(filterTypes.status)}
+                        selected={JSON.stringify(filterTypes.status || undefined)}
                         dataName="Name"
                         placeholder="Status"
                     />
@@ -110,7 +111,7 @@ const CommunicationsLog = () => {
                     <Dropdown
                         values={dropDownData.type}
                         onChange={e => onChangeFilterType(e, 'type')}
-                        selected={JSON.stringify(filterTypes.type)}
+                        selected={JSON.stringify(filterTypes.type || undefined)}
                         dataName="Name"
                         placeholder="Type"
                     />
@@ -129,7 +130,8 @@ const CommunicationsLog = () => {
                         value={filterTypes.toDate}
                         onChange={(date) => onFilterTypeDateChange(date, "toDate")}
                         isClearable
-                    />                </div>
+                    />
+                </div>
                 <div className="com-search-input-container">
                     <div className="search-input-container" >
                         <Input placeholder="Search By Name or Org. ID" value={searchText} onChange={onChangeSearchText} endImage='icon-search-1' />

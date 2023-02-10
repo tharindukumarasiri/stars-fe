@@ -47,8 +47,11 @@
         height: 40px;
     }
 
-    .dropdown-list {
+    textarea {
+        border: 1px solid #999999;
+    }
 
+    .dropdown-list {
         border: 1px solid #999999;
     }
 }
@@ -71,6 +74,12 @@
     position: absolute;
     right: 50px;
     bottom: 20px;
+}
+
+.select-actions-btn {
+    position: absolute;
+    right: 50px;
+    bottom: 100px;
 }
 
 .table-container {
@@ -103,13 +112,13 @@
 }
 
 .user-image {
+    position: relative;
     width: 87px;
     height: 87px;
     border-radius: 87px;
 }
 
 .upload-image-container {
-    position: relative;
     display: flex;
     justify-content: center;
     margin-bottom: 33px;
@@ -117,7 +126,7 @@
 
 .upload-image-btn {
     position: absolute;
-    right: 130px;
+    right: 0;
     background-color: white;
     font-size: large;
 }
@@ -207,4 +216,90 @@
     width: 250px;
     display: flex;
     align-items: center;
+}
+
+.create-new-btn {
+    width: 80%;
+}
+
+.basket-table-icon {
+    font-size: 25px;
+}
+
+.create-basket-container {
+    padding-left: 65px;
+    padding-right: 65px;
+}
+
+.group-hint-text {
+    font-size: 10px;
+}
+
+.newsletter-img {
+    width: 217px;
+    height: 444px;
+}
+
+.basket-details-container {
+    padding-top: 90px;
+    padding-bottom: 125px;
+    padding-left: 100px;
+    padding-right: 100px;
+    display: flex;
+    flex-direction: row;
+}
+
+.basket-geneal-txt-container {
+    width: 315px;
+    margin-left: 50px;
+}
+
+.general-btns-container {
+    display: flex;
+    flex-direction: row;
+}
+
+.general-content-container {
+    margin-left: 30px;
+}
+
+.general-type-container {
+    margin: 40px;
+    margin-left: 200px;
+    width: 220px;
+}
+
+.time-picker-width {
+    width: 100px;
+}
+
+.time-picker-container {
+    display: flex;
+    flex-direction: row;
+}
+
+.time-picker-btn {
+    font-size: 25px;
+    color: $blue-color;
+    margin-left: 10px;
+    cursor: pointer;
+}
+
+.closable-time-item-container {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+.closable-time-item {
+    height: 40px;
+    border: 1px solid #CCCCCC;
+    margin-top: 10px;
+    display: flex;
+    align-items: center;
+    width: fit-content;
+    padding-left: 10px;
+    padding-right: 10px;
+    margin-right: 10px;
+    white-space: nowrap;
 }

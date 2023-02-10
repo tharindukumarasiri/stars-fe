@@ -5,7 +5,7 @@ import "./datePickerInput.scss"
 import { formatDate } from "../utils";
 import { useTranslation } from 'react-i18next'
 
-const DatePickerInput = ({ value, onChange, placeholder, minDate = false, maxDate = false, isClearable = false } = {}) => {
+const DatePickerInput = ({ value, onChange, placeholder, dateFormat = "MM/dd/yyyy", minDate = false, maxDate = false, isClearable = false, timePicker = false } = {}) => {
     const { t } = useTranslation();
 
     const years = (startYear) => {
@@ -52,6 +52,9 @@ const DatePickerInput = ({ value, onChange, placeholder, minDate = false, maxDat
             customInput={<InputView />}
             placeholderText={t(placeholder)}
             isClearable={isClearable}
+            showTimeInput={timePicker}
+            showTimeSelectOnly={timePicker}
+            dateFormat={dateFormat}
 
             renderCustomHeader={({
                 date,
@@ -63,7 +66,7 @@ const DatePickerInput = ({ value, onChange, placeholder, minDate = false, maxDat
                 nextMonthButtonDisabled,
             }) => (
                 <div className="flex-justify-center">
-                    <button onClick={(e) => {e.preventDefault(); decreaseMonth() }} disabled={prevMonthButtonDisabled}>
+                    <button onClick={(e) => { e.preventDefault(); decreaseMonth() }} disabled={prevMonthButtonDisabled}>
                         {"<"}
                     </button>
                     <select
@@ -91,7 +94,7 @@ const DatePickerInput = ({ value, onChange, placeholder, minDate = false, maxDat
                         ))}
                     </select>
 
-                    <button onClick={(e) => {e.preventDefault(); increaseMonth() }} disabled={nextMonthButtonDisabled}>
+                    <button onClick={(e) => { e.preventDefault(); increaseMonth() }} disabled={nextMonthButtonDisabled}>
                         {">"}
                     </button>
                 </div>

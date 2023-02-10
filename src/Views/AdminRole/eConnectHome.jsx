@@ -25,19 +25,25 @@ const EConnectHome = () => {
                 <NavigationCard
                     name={"COMMUNICATION TYPES/TEMPLATES"}
                     cardColour={"bg-green-dark"}
-                    imageName={"icon-search-module"}
+                    imageName={"icon-templates"}
                 // onClick={() => onClickCard(NAVIGATION_PAGES.BUYER_SEARCH)}
+                />
+                <NavigationCard
+                    name={"COMMUNICATION BASKET"}
+                    cardColour={"bg-green-dark"}
+                    imageName={"icon-baskets"}
+                    onClick={() => onClickCard(NAVIGATION_PAGES.COMMUNICATIONS_BASKET)}
                 />
                 <NavigationCard
                     name={"COMMUNICATIONS"}
                     cardColour={"bg-green"}
-                    imageName={"icon-projects"}
+                    imageName={"icon-communications"}
                     onClick={() => onClickCard(NAVIGATION_PAGES.COMMUNICATIONS)}
                 />
                 <NavigationCard
                     name={"COMMUNICATIONS LOGS"}
                     cardColour={"bg-green-lite"}
-                    imageName={"icon-projects"}
+                    imageName={"icon-log"}
                     onClick={() => onClickCard(NAVIGATION_PAGES.COMMUNICATIONS_LOG)}
                 />
             </div>

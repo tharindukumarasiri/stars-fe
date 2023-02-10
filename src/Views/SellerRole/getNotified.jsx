@@ -47,34 +47,35 @@ const GetNotified = () => {
 
     useEffect(() => {
         if (selectedCompany.companyRegistrationId && tenderCpvs.length === 0) {
-            getTenementCPV(selectedCompany.companyRegistrationId, 'NO').then(result => {
-                if (result?.cpvs?.length > 0) {
-                    setTenderCpvs(result?.cpvs)
-                    // const formattedUserList = result?.contactUsers.map(val => {
-                    //     return { Value: val?.name, Key: val?.userId }
-                    // })
-                    // setSelectedUsers(formattedUserList)
+            Promise.all([
+                getTenementCPV(selectedCompany.companyRegistrationId, 'NO').then(result => {
+                    if (result?.cpvs?.length > 0) {
+                        setTenderCpvs(result?.cpvs)
+                        // const formattedUserList = result?.contactUsers.map(val => {
+                        //     return { Value: val?.name, Key: val?.userId }
+                        // })
+                        // setSelectedUsers(formattedUserList)
 
-                    let newAllCpvCodes = [];
-                    for (let i = 0; i < result.cpvs.length; i++) {
-                        const parentCodelist = result.cpvs[i].description[0].parent.map(val => { return val.code })
-                        newAllCpvCodes = newAllCpvCodes.concat(parentCodelist);
-                        newAllCpvCodes.push(result.cpvs[i].code);
+                        let newAllCpvCodes = [];
+                        for (let i = 0; i < result.cpvs.length; i++) {
+                            const parentCodelist = result.cpvs[i].description[0].parent.map(val => { return val.code })
+                            newAllCpvCodes = newAllCpvCodes.concat(parentCodelist);
+                            newAllCpvCodes.push(result.cpvs[i].code);
+                        }
+
+                        setAllCpvCodes(newAllCpvCodes)
                     }
 
-                    setAllCpvCodes(newAllCpvCodes)
-                }
+                }),
 
-                setLoading(false);
-            }).catch(() => setLoading(false))
+                getSubscribedPartyTsByTenantId(selectedCompany?.tenantId).then(result => {
+                    setSelectedUsers(result)
+                }),
 
-            getSubscribedPartyTsByTenantId(selectedCompany?.tenantId).then(result => {
-                setSelectedUsers(result)
-            })
-
-            getNotSubscribedPartyTsByTenantId(selectedCompany?.tenantId).then(result => {
-                setUsers(result);
-            })
+                getNotSubscribedPartyTsByTenantId(selectedCompany?.tenantId).then(result => {
+                    setUsers(result);
+                })
+            ]).finally(() => setLoading(false));
         }
     }, [selectedCompany]);
 
@@ -287,7 +288,7 @@ const GetNotified = () => {
         }
 
         const userParams = selectedUsers.map(user => {
-            return({TenantId: selectedCompany?.tenantId, MessageTypeId: 2, PartyTId: user?.Key})
+            return ({ TenantId: selectedCompany?.tenantId, MessageTypeId: 2, PartyTId: user?.Key })
         })
 
         updateTenementCPV(params).then(result => {

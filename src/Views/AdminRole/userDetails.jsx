@@ -101,8 +101,11 @@ const UserDetails = ({ props }) => {
                             ref={UPLOAD_BTN_REF}
                             onChange={onSelectFile}
                         />
-                        <i type="file" className="icon-edit upload-image-btn hover-hand" onClick={handleImageUpload} />
-                        <img src={selectedFile ? preview : image_thumb} className="user-image hover-hand" alt="img" onClick={handleImageUpload} />
+                        <div className="user-image">
+                            <i type="file" className="icon-edit upload-image-btn hover-hand" onClick={handleImageUpload} />
+                            <img src={selectedFile ? preview : image_thumb} className=" hover-hand" alt="img" onClick={handleImageUpload} />
+                        </div>
+
                     </div>
                     <div className="user-details-container">
                         <div>
@@ -183,7 +186,7 @@ const UserDetails = ({ props }) => {
                     <Collapse
                         defaultActiveKey={['1']}
                     >
-                        {props?.Companies.map( company => {
+                        {props?.Companies.map(company => {
                             return getPanel(company.Value, company.Key)
                         })}
                     </Collapse>

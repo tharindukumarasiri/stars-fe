@@ -7,6 +7,8 @@ import Users from './allUsers';
 import UserDetails from './userDetails';
 import Communications from './communications';
 import CommunicationsLog from './communicationsLog';
+import CommunicationBaskets from './communicationBaskets';
+import CommunicationBasketDetails from './communicationBasketDetails';
 import EConnectHome from './eConnectHome';
 import { FetchCurrentCompany } from "../../hooks/index";
 import "./adminRole.styles.scss";
@@ -63,6 +65,12 @@ const AdminRole = ({ openTab = NAVIGATION_PAGES.ADMIN_TEMPLATES }) => {
                 </div>
                 <div label={"COMMUNICATIONS LOG"} id={NAVIGATION_PAGES.COMMUNICATIONS_LOG} >
                     <CommunicationsLog />
+                </div>
+                <div label={"COMMUNICATION BASKETS"} id={NAVIGATION_PAGES.COMMUNICATIONS_BASKET} >
+                    <CommunicationBaskets />
+                </div>
+                <div label={`BASKET: ${params[NAVIGATION_PAGES.COMMUNICATIONS_BASKET_DETAILS]?.Id} ${params[NAVIGATION_PAGES.COMMUNICATIONS_BASKET_DETAILS]?.Name}`} id={NAVIGATION_PAGES.COMMUNICATIONS_BASKET_DETAILS} >
+                    <CommunicationBasketDetails props={params[NAVIGATION_PAGES.COMMUNICATIONS_BASKET_DETAILS]} />
                 </div>
             </Tabs>
         </TabContext.Provider >

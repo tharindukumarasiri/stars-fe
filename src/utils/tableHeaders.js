@@ -961,6 +961,7 @@ export const CommunicationsLogTableHeaders = [
     {
         title: 'To',
         dataIndex: 'To',
+        sorter: true,
         width: 150
     },
     {
@@ -968,7 +969,13 @@ export const CommunicationsLogTableHeaders = [
         dataIndex: 'CreatedDateTime',
         render: (_, { CreatedDateTime }) => (
             formatDate(CreatedDateTime)
-        )
+        ),
+        sorter: (a, b) => {
+            if (getDateDiff(a.CreatedDateTime, b.CreatedDateTime) > 0)
+                return 1
+            else
+                return -1
+        },
     },
     {
         title: 'Description',
@@ -988,6 +995,7 @@ export const CommunicationsLogTableHeaders = [
     {
         title: 'Distribution Status',
         dataIndex: 'MessageStatus',
+        sorter: true,
     },
 ]
 
@@ -1024,39 +1032,94 @@ export const CommunicationsSubTableHeaders = [
 
 export const CommunicationsTableHeaders = [
     {
-        title: 'From',
+        title: 'Message ID',
         dataIndex: 'From',
+        sorter: true,
+    },
+    {
+        title: 'Subject',
+        dataIndex: 'To',
     },
     {
         title: 'To',
         dataIndex: 'To',
-        width: 150
+        sorter: true,
     },
     {
-        title: 'ID',
-        dataIndex: 'Id',
-    },
-    {
-        title: 'Sent on Date',
+        title: 'Date',
         dataIndex: 'CreatedDateTime',
         render: (_, { CreatedDateTime }) => (
             formatDate(CreatedDateTime)
-        )
+        ),
+        sorter: (a, b) => {
+            if (getDateDiff(a.CreatedDateTime, b.CreatedDateTime) > 0)
+                return 1
+            else
+                return -1
+        },
     },
     {
-        title: 'Invitation Type',
-        dataIndex: 'MessageSubject',
+        title: 'Message Type',
+        dataIndex: 'BasketType',
+        sorter: true,
     },
     {
-        title: 'Description',
-        dataIndex: 'MessageTemplate',
+        title: 'Email',
+        dataIndex: 'CommunicationType',
     },
     {
-        title: 'Company/ies Representing',
-        dataIndex: 'WorkflowStatus',
+        title: 'Message method',
+        dataIndex: 'StartDate',
+        sorter: true,
+    },
+    {
+        title: 'Attachments',
+        dataIndex: 'EndDate',
+    },
+]
+
+export const CommunicationBasketsTableHeaders = [
+    {
+        title: 'Basket ID',
+        dataIndex: 'Id',
+    },
+    {
+        title: 'Basket Name',
+        dataIndex: 'To',
+        sorter: true,
+    },
+    {
+        title: 'Created Date',
+        dataIndex: 'CreatedDateTime',
+        render: (_, { CreatedDateTime }) => (
+            formatDate(CreatedDateTime)
+        ),
+        sorter: (a, b) => {
+            if (getDateDiff(a.CreatedDateTime, b.CreatedDateTime) > 0)
+                return 1
+            else
+                return -1
+        },
+    },
+    {
+        title: 'Basket Type',
+        dataIndex: 'BasketType',
+    },
+    {
+        title: 'Communication Type',
+        dataIndex: 'CommunicationType',
+    },
+    {
+        title: 'Start Date',
+        dataIndex: 'StartDate',
+    },
+    {
+        title: 'End Date',
+        dataIndex: 'EndDate',
     },
     {
         title: 'Status',
-        dataIndex: 'MessageStatus',
+        dataIndex: 'Status',
+        sorter: true,
     },
 ]
