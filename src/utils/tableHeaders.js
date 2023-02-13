@@ -952,6 +952,9 @@ export const CommunicationsLogTableHeaders = [
     {
         title: 'Type',
         dataIndex: 'MessageMedium',
+        render: (_, { MessageMedium }) => (
+            MessageMedium?.Name
+        ),
         width: 150
     },
     {
@@ -1033,12 +1036,12 @@ export const CommunicationsSubTableHeaders = [
 export const CommunicationsTableHeaders = [
     {
         title: 'Message ID',
-        dataIndex: 'From',
-        sorter: true,
+        dataIndex: 'Id',
+        sorter: (a, b) => a.Id - b.Id,
     },
     {
         title: 'Subject',
-        dataIndex: 'To',
+        dataIndex: 'MessageSubject',
     },
     {
         title: 'To',
@@ -1060,21 +1063,24 @@ export const CommunicationsTableHeaders = [
     },
     {
         title: 'Message Type',
-        dataIndex: 'BasketType',
+        dataIndex: 'MessageType',
         sorter: true,
     },
     {
         title: 'Email',
-        dataIndex: 'CommunicationType',
+        dataIndex: 'From',
     },
     {
         title: 'Message method',
-        dataIndex: 'StartDate',
+        dataIndex: 'MessageTemplate',
+        render: (_, { MessageTemplate }) => (
+            MessageTemplate?.MessageMedium?.Name
+        ),
         sorter: true,
     },
     {
         title: 'Attachments',
-        dataIndex: 'EndDate',
+        dataIndex: 'MessageLinks',
     },
 ]
 

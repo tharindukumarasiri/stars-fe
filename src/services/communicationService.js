@@ -6,6 +6,11 @@ export async function getCommunicationsList(params) {
     return data;
 }
 
+export async function getCommunicationLogs(params) {
+    const { data } = await http.post(config.GET_COMMUNICATION_LOGS, params);
+    return data;
+}
+
 export async function getCommunicationEntities() {
     const { data } = await http.get(config.GET_COMMUNICATION_ENTITIES);
     return data;

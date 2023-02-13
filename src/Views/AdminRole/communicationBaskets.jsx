@@ -161,7 +161,7 @@ const CommunicationBaskets = () => {
                 <div className="user-input-box create-basket-container" >
                     <div className="m-b-10">Basket ID: </div>
                     <div className="m-b-10">
-                        <Input placeholder="Basket Name" value={newGroupData.firstName} onChange={(e) => onChangeNewGroupField(e, 'firstName')} />
+                        <Input placeholder="Basket Name" value={newGroupData.name} onChange={(e) => onChangeNewGroupField(e, 'name')} />
                     </div>
                     <div className="m-b-10">Basket Type</div>
                     <div className="m-b-10">
@@ -182,7 +182,7 @@ const CommunicationBaskets = () => {
                         />
                     </div>
                     <div className="m-b-10">
-                        <Input placeholder="Description" value={newGroupData.firstName} onChange={(e) => onChangeNewGroupField(e, 'firstName')} lines={5} />
+                        <Input placeholder="Description" value={newGroupData.description} onChange={(e) => onChangeNewGroupField(e, 'description')} lines={5} />
                     </div>
 
                     <div className="n-float" />

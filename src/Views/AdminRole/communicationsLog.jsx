@@ -5,7 +5,7 @@ import { CommunicationsLogTableHeaders, CommunicationsSubTableHeaders } from '..
 import Dropdown from "../../common/dropdown";
 import DatePickerInput from "../../common/datePickerInput";
 import Input from '../../common/input'
-import { getCommunicationsList, getCommunicationEntities, getCommunicationMessageTypes, getCommunicationMessageStatuses } from "../../services/communicationService";
+import { getCommunicationLogs, getCommunicationEntities, getCommunicationMessageTypes, getCommunicationMessageStatuses } from "../../services/communicationService";
 
 const CommunicationsLog = () => {
     const [dropDownData, setDropDownData] = useState({ entity: [], status: [], type: [] })
@@ -16,7 +16,7 @@ const CommunicationsLog = () => {
 
     useEffect(() => {
         Promise.all([
-            getCommunicationsList({}).then(result => {
+            getCommunicationLogs({}).then(result => {
                 setCommunicationsData(result);
             }),
             getCommunicationEntities().then(result => {
@@ -71,7 +71,7 @@ const CommunicationsLog = () => {
             "SearchText": searchText
         }
 
-        getCommunicationsList(params).then(result => {
+        getCommunicationLogs(params).then(result => {
             setCommunicationsData(result);
             setLoading(false);
         });

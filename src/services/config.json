@@ -72,6 +72,7 @@
     "GET_TENANT_MESSAGE_TEMPLATE": "/actionapi/MessageTemplates/GetMessageTemplatesByTenant?tenantId=",
 
     "GET_COMMUNICATIONS": " /actionapi/MessageQueues/GetCommunications",
+    "GET_COMMUNICATION_LOGS": " /actionapi/MessageQueues/GetCommunicationLogs",
     "GET_COMMUNICATION_ENTITIES": " /actionapi/Entities/Get",
     "GET_COMMUNICATION_MESSAGE_TYPES": " /actionapi/MessageTypes/Get",
     "GET_COMMUNICATIONS_MESSAGE_STATUSES": " /actionapi/MessageStatuses/Get"
