@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo, useContext } from "react";
-import { Modal, Table, Tooltip, Switch } from 'antd';
+import { Modal, Table, Tooltip, Switch, message } from 'antd';
 
 import { CommunicationBasketsTableHeaders } from '../../utils/tableHeaders'
 import StarDropdown from "../../common/dropdown";
@@ -7,19 +7,36 @@ import DatePickerInput from "../../common/datePickerInput";
 import Input from '../../common/input'
 import { NAVIGATION_PAGES } from "../../utils/enums";
 import { TabContext } from "../../utils/contextStore";
+import { getCommunicationBasket, getCommunicationBasketTypes, getCommunicationBasketStatuses, addCommunicationBasket, getCommunicationMessageTypes } from "../../services/communicationService";
+
+const pageSize = 10
 
 const CommunicationBaskets = () => {
-    const [dropDownData, setDropDownData] = useState({ type: [], status: [] })
+    const [dropDownData, setDropDownData] = useState({ type: [], status: [], comType: [] })
     const [filterTypes, setFilterTypes] = useState({ startDate: null, endDate: null, type: null, status: null })
-    const [communicationsData, setCommunicationsData] = useState([{ Id: 0 }])
+    const [communicationsData, setCommunicationsData] = useState([])
     const [loading, setLoading] = useState(true);
     const [modalVisible, setModalVisible] = useState(false);
-    const [newGroupData, setNewGroupData] = useState({ name: '', basketType: 'ONE_TIME', communicationType: '', description: '' });
+    const [newGroupData, setNewGroupData] = useState({ name: '', basketType: true, communicationType: null, description: '' });
+    const [pageNumber, setpageNumber] = useState(0)
 
     const { changeActiveTab } = useContext(TabContext);
 
     useEffect(() => {
-        setLoading(false)
+        Promise.all([
+            getCommunicationBasket({}).then(result => {
+                setCommunicationsData(result);
+            }),
+            getCommunicationBasketTypes().then(result => {
+                setDropDownData(pre => ({ ...pre, type: result }))
+            }),
+            getCommunicationBasketStatuses().then(result => {
+                setDropDownData(pre => ({ ...pre, status: result }))
+            }),
+            getCommunicationMessageTypes().then(result => {
+                setDropDownData(pre => ({ ...pre, comType: result }))
+            }),
+        ]).finally(() => setLoading(false));
     }, []);
 
     const tableHeaders = useMemo(() => {
@@ -59,7 +76,19 @@ const CommunicationBaskets = () => {
 
     const onFilter = () => {
         setLoading(true)
+        const params = {
+            "BasketStatusId": filterTypes?.status?.Id,
+            "BasketTypeId": filterTypes?.type?.Id,
+            "FromDate": filterTypes.startDate,
+            "ToDate": filterTypes.endDate,
+            "SearchText": searchText,
+            "PageSize": pageSize,
+            "PageCount": pageNumber
+        }
 
+        getCommunicationBasket(params).then(result => {
+            setCommunicationsData(result);
+        }).finally(() => setLoading(false));
     }
 
     const toggleModal = () => {
@@ -67,12 +96,33 @@ const CommunicationBaskets = () => {
     }
 
     const onOk = () => {
-        toggleModal()
+        setLoading(true);
+        const params = {
+            "Name": newGroupData.name,
+            "BasketTypeId": newGroupData.basketType ? 1 : 2,
+            "MessageTypeId": JSON.parse(newGroupData?.communicationType)?.Id,
+            "Description": newGroupData.description
+        }
+
+        addCommunicationBasket(params).then(() => {
+            toggleModal();
+            message.success("Create basket successful");
+            getCommunicationBasket(params).then(result => {
+                setCommunicationsData(result);
+            }).finally(() => setLoading(false));
+        }).catch(() => {
+            message.error("Create basket failed please try again");
+            setLoading(false);
+        })
     }
 
     const onChangeNewGroupField = (e, fieldName) => {
         e.preventDefault();
         setNewGroupData({ ...newGroupData, [fieldName]: e.target.value })
+    }
+
+    const onToggle = (val) => {
+        setNewGroupData({ ...newGroupData, basketType: val })
     }
 
     const onClickRow = (params) => {
@@ -168,15 +218,17 @@ const CommunicationBaskets = () => {
                         <Switch
                             checkedChildren='One Time'
                             unCheckedChildren='Recurrning'
+                            checked={newGroupData.basketType}
+                            onChange={onToggle}
                         />
                     </div>
 
                     <div className="group-hint-text m-b-10">You can set configuration once basket is created</div>
                     <div className="m-b-10">
                         <StarDropdown
-                            values={dropDownData.type}
-                            onChange={e => onChangeFilterType(e, 'type')}
-                            selected={JSON.stringify(filterTypes.type || undefined)}
+                            values={dropDownData.comType}
+                            onChange={(e) => onChangeNewGroupField(e, 'communicationType')}
+                            selected={newGroupData.communicationType}
                             dataName="Name"
                             placeholder="Communication Type"
                         />

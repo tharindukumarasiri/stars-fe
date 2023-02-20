@@ -675,7 +675,7 @@ export default function Search(props) {
             return ({
                 "id": props?.searchResults[1]?.id || null,
                 "parentSearchId": props?.searchResults[0]?.id,
-                "operationId": props.projectId,
+                "projectId": props.projectId,
                 "sectionId": props.sectionId,
                 "createdDate": new Date(),
                 "searchFilter": {
@@ -713,7 +713,7 @@ export default function Search(props) {
             })
         } else {
             return ({
-                "operationId": props.projectId,
+                "projectId": props.projectId,
                 "sectionId": props.sectionId,
                 "createdDate": new Date(),
                 "searchFilter": {

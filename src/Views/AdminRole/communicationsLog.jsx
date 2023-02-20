@@ -5,13 +5,14 @@ import { CommunicationsLogTableHeaders, CommunicationsSubTableHeaders } from '..
 import Dropdown from "../../common/dropdown";
 import DatePickerInput from "../../common/datePickerInput";
 import Input from '../../common/input'
-import { getCommunicationLogs, getCommunicationEntities, getCommunicationMessageTypes, getCommunicationMessageStatuses } from "../../services/communicationService";
+import { getCommunicationLogs, getCommunicationEntities, getCommunicationMessageTypes, getCommunicationMessageStatuses, getCommunicationLogsSubLvl } from "../../services/communicationService";
 
 const CommunicationsLog = () => {
     const [dropDownData, setDropDownData] = useState({ entity: [], status: [], type: [] })
     const [filterTypes, setFilterTypes] = useState({ entity: null, status: null, type: null, fromDate: null, toDate: null })
     const [searchText, setSearchText] = useState('');
     const [communicationsData, setCommunicationsData] = useState([])
+    const [communicationsDataExpanded, setCommunicationsDataExpanded] = useState([])
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -46,12 +47,14 @@ const CommunicationsLog = () => {
         setFilterTypes({ ...filterTypes, [elementName]: date });
     };
 
-    const expandedRowRender = () => {
+    const expandedRowRender = (parentRow) => {
+        const dataObj = communicationsDataExpanded.find(row => row?.id === parentRow?.Id )
+
         return (
             <div className="sub-table-padding">
                 <Table
                     columns={CommunicationsSubTableHeaders}
-                    dataSource={communicationsData}
+                    dataSource={dataObj?.data}
                     pagination={false}
                     showHeader={false}
                 />
@@ -64,7 +67,7 @@ const CommunicationsLog = () => {
 
         const params = {
             "TenantId": filterTypes?.entity?.Id,
-            "DistributionStatusId": filterTypes?.status?.Id,
+            "StatusId": filterTypes?.status?.Id,
             "MessageTypeId": filterTypes?.type?.Id,
             "FromDate": filterTypes.fromDate,
             "ToDate": filterTypes.toDate,
@@ -76,6 +79,18 @@ const CommunicationsLog = () => {
             setLoading(false);
         });
 
+    }
+
+    const onExpand = (expanded, rowData) => {
+        const index = communicationsDataExpanded.findIndex( row => row.id === rowData?.Id )
+        if (expanded && index < 0) {
+            setLoading(true)
+            getCommunicationLogsSubLvl(rowData?.Id).then(result => {
+                const newData = [...communicationsDataExpanded];
+                newData.push({id: rowData?.Id, data: result});
+                setCommunicationsDataExpanded(newData);
+            }).finally(() => setLoading(false))
+        }
     }
 
     return (
@@ -153,6 +168,7 @@ const CommunicationsLog = () => {
                         expandable={{
                             expandedRowRender,
                             defaultExpandedRowKeys: ['0'],
+                            onExpand,
                         }}
                     />
                 </div>

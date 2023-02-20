@@ -1,29 +1,23 @@
 import React, { useState, useEffect, useMemo } from "react";
-import { Table, Tabs, Dropdown, Menu } from 'antd';
+import { Table, Tabs, Dropdown, Menu, message } from 'antd';
 
 import StarDropdown from "../../common/dropdown";
 import Input from '../../common/input'
 import { CommunicationsTableHeaders } from '../../utils/tableHeaders'
 import DatePickerInput from "../../common/datePickerInput";
-import { getCommunicationsList, getCommunicationMessageTypes, getCommunicationMessageStatuses } from "../../services/communicationService";
+import { getCommunicationsList, getCommunicationMessageTypes, getCommunicationMessageStatuses, deleteCommunicationLogs } from "../../services/communicationService";
+import { FetchCurrentUser } from "../../hooks/index"
 
 const { TabPane } = Tabs;
-
-const actions = (
-    <Menu>
-        <Menu.Item>Remind</Menu.Item>
-        <Menu.Item>Manage</Menu.Item>
-        <Menu.Item>Archive</Menu.Item>
-        <Menu.Item>Delete</Menu.Item>
-    </Menu>
-);
 
 const Communications = () => {
     const [dropDownData, setDropDownData] = useState({ status: [], type: [] })
     const [dropDownSelected, setDropDownSelected] = useState({ status: null, type: null, fromDate: null, toDate: null })
     const [searchText, setSearchText] = useState('');
-    const [communicationsData, setCommunicationsData] = useState([])
+    const [communicationsData, setCommunicationsData] = useState([]);
+    const [selectedRows, setSelectedRows] = useState([])
     const [loading, setLoading] = useState(true);
+    const [currentUser] = FetchCurrentUser();
 
     useEffect(() => {
         Promise.all([
@@ -49,15 +43,53 @@ const Communications = () => {
             )
         }, {
             title: '',
-            render: (_, record) => (
-                <input type="checkbox" className="check-box" />
+            dataIndex: 'Id',
+            render: (_, { Id }) => (
+                <input type="checkbox" className="check-box" onChange={(e) => onCheckBox(e, Id)} />
             )
         },
         )
 
         return headers
 
-    }, [communicationsData])
+    }, [communicationsData, selectedRows]);
+
+    const onCheckBox = (e, value) => {
+        const newSelectedRows = [...selectedRows];
+
+        if(e.target.checked){
+            newSelectedRows.push(value);
+        } else {
+            const index = selectedRows.indexOf(value);
+            newSelectedRows.splice(index, 1);
+        }
+
+        setSelectedRows(newSelectedRows);
+    }
+
+    const onDelete = () => {
+        const deleteList = [currentUser?.Id, ...selectedRows]
+        setLoading(true);
+
+        deleteCommunicationLogs(deleteList).then(() => {
+            getCommunicationsList({}).then(result => {
+                setCommunicationsData(result);
+                message.success("Delete successful");
+            }).finally(() => setLoading(false))
+        }).catch(() => {
+            setLoading(false);
+            message.error("Delete unsuccessful");
+        })
+    }
+
+    const actions = (
+        <Menu>
+            <Menu.Item disabled>Remind</Menu.Item>
+            <Menu.Item disabled>Manage</Menu.Item>
+            <Menu.Item disabled>Archive</Menu.Item>
+            <Menu.Item onClick={onDelete}>Delete</Menu.Item>
+        </Menu>
+    );
 
     const onChangeSearchText = (e) => {
         e.preventDefault();
@@ -77,7 +109,7 @@ const Communications = () => {
         setLoading(true)
 
         const params = {
-            "DistributionStatusId": dropDownSelected?.status?.Id,
+            "StatusId": dropDownSelected?.status?.Id,
             "MessageTypeId": dropDownSelected?.type?.Id,
             "FromDate": dropDownSelected.fromDate,
             "ToDate": dropDownSelected.toDate,

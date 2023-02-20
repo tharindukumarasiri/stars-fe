@@ -1,74 +1,78 @@
 import React from "react";
-import { formatDate, getDateDiff, getCountryFlag } from "../utils"
+import { formatDate, getDateDiff, getCountryFlag, projectCodeFormat } from "../utils"
 import { Badge, Tooltip } from "antd";
 import logo_thumb from "../assets/images/logo_thumb.png"
 
 export const projectScreenTableHeaders = [
     {
-        title: 'Project ID',
-        dataIndex: 'operationId',
+        title: 'Project Code',
+        dataIndex: 'Id',
+             render: (_, { Id }) => (
+                projectCodeFormat(Id)
+        ),
+        
     },
     {
         title: 'Name',
-        dataIndex: 'name',
+        dataIndex: 'Name',
     },
-    {
-        title: 'Company ID',
-        dataIndex: 'compId',
-        render: (_, record) => (
-            '9732154'
-        ),
-    },
+    // {
+    //     title: 'Company ID',
+    //     dataIndex: 'compId',
+    //     render: (_, record) => (
+    //         '9732154'
+    //     ),
+    // },
     {
         title: 'OperationType',
-        dataIndex: 'type',
+        dataIndex: 'TypeCode',
     },
     {
         title: 'From Date',
-        dataIndex: 'fromDate',
+        dataIndex: 'FromDate',
         sorter: (a, b) => {
-            if (getDateDiff(a.fromDate, b.fromDate) > 0)
+            if (getDateDiff(a.FromDate, b.FromDate) > 0)
                 return 1
             else
                 return -1
         },
-        render: (_, { fromDate }) => (
-            formatDate(fromDate)
+        render: (_, { FromDate }) => (
+            formatDate(FromDate)
         ),
     },
     {
         title: 'Due Date',
-        dataIndex: 'toDate',
+        dataIndex: 'ToDate',
         sorter: (a, b) => {
-            if (getDateDiff(a.toDate, b.toDate) > 0)
+            if (getDateDiff(a.ToDate, b.ToDate) > 0)
                 return 1
             else
                 return -1
-        }, render: (_, { toDate }) => (
-            formatDate(toDate)
+        }, render: (_, { ToDate }) => (
+            formatDate(ToDate)
         ),
     },
     {
         title: 'Closed Date',
-        dataIndex: 'closedDate',
+        dataIndex: 'ClosedDate',
         sorter: (a, b) => {
-            if (getDateDiff(a.closedDate, b.closedDate) > 0)
+            if (getDateDiff(a.ClosedDate, b.ClosedDate) > 0)
                 return 1
             else
                 return -1
-        }, render: (_, { closedDate }) => (
-            formatDate(closedDate)
+        }, render: (_, { ClosedDate }) => (
+            formatDate(ClosedDate)
         ),
     },
     {
         title: 'Responsible',
-        dataIndex: 'responsible',
+        dataIndex: 'Responsible',
     },
     {
         title: 'Status',
-        dataIndex: 'status',
-        render: (_, { status }) => (
-            <Badge status={status?.toUpperCase() === 'OPEN' ? "success" : "default"} text={status?.toUpperCase() === 'OPEN' ? "Open" : "Close"} />
+        dataIndex: 'Status',
+        render: (_, { Status }) => (
+            <Badge status={Status?.toUpperCase() === 'OPEN' ? "success" : "default"} text={Status?.toUpperCase() === 'OPEN' ? "Open" : "Close"} />
         )
     },
 ];
@@ -76,59 +80,59 @@ export const projectScreenTableHeaders = [
 export const sectionTableHeaders = [
     {
         title: 'Name',
-        dataIndex: 'name',
+        dataIndex: 'Name',
     },
     {
         title: 'Desription',
-        dataIndex: 'description',
+        dataIndex: 'Description',
 
     },
     {
         title: 'Purpose',
-        dataIndex: 'purpose',
+        dataIndex: 'Purpose',
     },
     {
         title: 'From Date',
-        dataIndex: 'fromDate',
+        dataIndex: 'FromDate',
         sorter: (a, b) => {
-            if (getDateDiff(a.fromDate, b.fromDate) > 0)
+            if (getDateDiff(a.FromDate, b.FromDate) > 0)
                 return 1
             else
                 return -1
         },
-        render: (_, { fromDate }) => (
-            formatDate(fromDate)
+        render: (_, { FromDate }) => (
+            formatDate(FromDate)
         ),
     },
     {
         title: 'To Date',
-        dataIndex: 'toDate',
+        dataIndex: 'ToDate',
         sorter: (a, b) => {
-            if (getDateDiff(a.toDate, b.toDate) > 0)
+            if (getDateDiff(a.ToDate, b.ToDate) > 0)
                 return 1
             else
                 return -1
-        }, render: (_, { toDate }) => (
-            formatDate(toDate)
+        }, render: (_, { ToDate }) => (
+            formatDate(ToDate)
         ),
     },
     {
         title: 'Status',
-        dataIndex: 'status',
-        render: (_, { status }) => (
-            <Badge status={status?.toUpperCase() === 'OPEN' ? "success" : "default"} text={status?.toUpperCase() === 'OPEN' ? "Open" : "Close"} />
+        dataIndex: 'Status',
+        render: (_, { Status }) => (
+            <Badge status={Status?.toUpperCase() === 'OPEN' ? "success" : "default"} text={Status?.toUpperCase() === 'OPEN' ? "Open" : "Close"} />
         )
     },
     {
         title: 'Closed Date',
-        dataIndex: 'closedDate',
+        dataIndex: 'ClosedDate',
         sorter: (a, b) => {
-            if (getDateDiff(a.closedDate, b.closedDate) > 0)
+            if (getDateDiff(a.ClosedDate, b.ClosedDate) > 0)
                 return 1
             else
                 return -1
-        }, render: (_, { closedDate }) => (
-            formatDate(closedDate)
+        }, render: (_, { ClosedDate }) => (
+            formatDate(ClosedDate)
         ),
     },
 ];
@@ -146,43 +150,43 @@ export const membersTableHeaders = [
     },
     {
         title: 'Name',
-        dataIndex: 'name',
+        dataIndex: 'Name',
     },
     {
         title: 'Email',
-        dataIndex: 'email',
+        dataIndex: 'Email',
     },
     {
         title: 'Assigned Date',
-        dataIndex: 'fromDate',
+        dataIndex: 'FromDate',
         sorter: (a, b) => {
-            if (getDateDiff(a.fromDate, b.fromDate) > 0)
+            if (getDateDiff(a.FromDate, b.FromDate) > 0)
                 return 1
             else
                 return -1
         },
-        render: (_, { fromDate }) => (
-            formatDate(fromDate)
+        render: (_, { FromDate }) => (
+            formatDate(FromDate)
         ),
     },
     {
         title: 'Last Date',
-        dataIndex: 'toDate',
+        dataIndex: 'ToDate',
         sorter: (a, b) => {
-            if (getDateDiff(a.toDate, b.toDate) > 0)
+            if (getDateDiff(a.ToDate, b.ToDate) > 0)
                 return 1
             else
                 return -1
-        }, render: (_, { toDate }) => (
-            formatDate(toDate)
+        }, render: (_, { ToDate }) => (
+            formatDate(ToDate)
         ),
     },
 
     {
         title: 'Status',
-        dataIndex: 'status',
-        render: (_, { status }) => (
-            <Badge status={status === 'active' || status === 'Open' ? "success" : "default"} text={status === 'active' || status === 'Open' ? "Open" : "Close"} />
+        dataIndex: 'Status',
+        render: (_, { Status }) => (
+            <Badge status={Status === 'active' || Status === 'Open' ? "success" : "default"} text={Status === 'active' || Status === 'Open' ? "Open" : "Close"} />
         )
     },
 ];
@@ -895,6 +899,7 @@ export const usersTableHeaders = [
         title: 'Status',
         dataIndex: 'IsActive',
         width: 100,
+        fixed: 'right',
         render: (IsActive) => (
             <>
                 {IsActive ?
@@ -951,9 +956,9 @@ export const CommunicationsLogTableHeaders = [
     },
     {
         title: 'Type',
-        dataIndex: 'MessageMedium',
-        render: (_, { MessageMedium }) => (
-            MessageMedium?.Name
+        dataIndex: 'MessageTemplate',
+        render: (_, { MessageTemplate }) => (
+            MessageTemplate?.MessageMedium?.Name
         ),
         width: 150
     },
@@ -982,22 +987,28 @@ export const CommunicationsLogTableHeaders = [
     },
     {
         title: 'Description',
-        dataIndex: 'MessageTemplate',
-        render: (_, { MessageTemplate }) => (
-            MessageTemplate.MessageBody
-        )
+        dataIndex: 'MessageSubject',
     },
     {
         title: 'Notification Type',
-        dataIndex: 'MessageSubject',
+        dataIndex: 'MessageType',
+        render: (_, { MessageType }) => (
+            MessageType?.Name
+        )
     },
     {
         title: 'Workflow Status',
         dataIndex: 'WorkflowStatus',
+        render: (_, { WorkflowStatus }) => (
+            WorkflowStatus?.Name
+        ),
     },
     {
         title: 'Distribution Status',
         dataIndex: 'MessageStatus',
+        render: (_, { MessageStatus }) => (
+            MessageStatus?.Name
+        ),
         sorter: true,
     },
 ]
@@ -1005,31 +1016,43 @@ export const CommunicationsLogTableHeaders = [
 export const CommunicationsSubTableHeaders = [
     {
         title: 'From',
-        dataIndex: 'Id',
+        dataIndex: 'From',
     },
     {
         title: 'To',
-        dataIndex: 'Id',
+        dataIndex: 'To',
     },
     {
         title: 'Date',
-        dataIndex: 'Id',
+        dataIndex: 'CreatedDateTime',
+        render: (_, { CreatedDateTime }) => (
+            formatDate(CreatedDateTime)
+        ),
     },
     {
         title: 'Description',
-        dataIndex: 'Id',
+        dataIndex: 'MessageSubject',
     },
     {
         title: 'Notification Type',
-        dataIndex: 'Id',
+        dataIndex: 'MessageType',
+        render: (_, { MessageType }) => (
+            MessageType?.Name
+        )
     },
     {
         title: 'Workflow Status',
-        dataIndex: 'Id',
+        dataIndex: 'WorkflowStatus',
+        render: (_, { WorkflowStatus }) => (
+            WorkflowStatus?.Name
+        ),
     },
     {
         title: 'Distribution Status',
-        dataIndex: 'Id',
+        dataIndex: 'MessageStatus',
+        render: (_, { MessageStatus }) => (
+            MessageStatus?.Name
+        ),
     },
 ]
 
@@ -1064,11 +1087,14 @@ export const CommunicationsTableHeaders = [
     {
         title: 'Message Type',
         dataIndex: 'MessageType',
+        render: (_, { MessageType }) => (
+            MessageType?.Name
+        ),
         sorter: true,
     },
     {
         title: 'Email',
-        dataIndex: 'From',
+        dataIndex: 'FromName',
     },
     {
         title: 'Message method',

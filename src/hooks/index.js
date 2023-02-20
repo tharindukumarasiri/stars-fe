@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { getSelectedCompany, getCompanyUsers, getLanguage } from "../services/userService";
+import { getSelectedCompany, getCompanyUsers, getLanguage, getUser } from "../services/userService";
 
 export const FetchCurrentCompany = () => {
     const [selectedCompany, setSelectedCompany] = useState({ name: '', companyRegistrationId: '' });
@@ -15,6 +15,22 @@ export const FetchCurrentCompany = () => {
     };
 
     return [selectedCompany];
+}
+
+export const FetchCurrentUser = () => {
+    const [loggedUser, setLoggedUser] = useState(null);
+
+    useEffect(() => {
+        getCurrentUser();
+    }, []);
+
+    const getCurrentUser = async () => {
+        getUser().then((user) => {
+            setLoggedUser(user);
+        });       
+    };
+
+    return [loggedUser];
 }
 
 

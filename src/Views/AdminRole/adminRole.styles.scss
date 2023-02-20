@@ -70,6 +70,11 @@
     border-bottom: 2px solid $body-color;
 }
 
+.search-res-conatainer {
+    height: 200px;
+    overflow: scroll;
+}
+
 .actions-btn {
     position: absolute;
     right: 50px;
@@ -111,8 +116,14 @@
     width: 100%;
 }
 
-.user-image {
+.user-image-container {
     position: relative;
+    width: 87px;
+    height: 87px;
+    border-radius: 87px;
+}
+
+.user-image {
     width: 87px;
     height: 87px;
     border-radius: 87px;
@@ -212,12 +223,14 @@
     margin-bottom: 15px;
     display: flex;
     flex-direction: row;
+    flex-wrap: wrap;
 }
 
 .user-details-item {
     width: 250px;
     display: flex;
     align-items: center;
+    margin-bottom: 20px;
 }
 
 .create-new-btn {

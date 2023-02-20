@@ -9,13 +9,15 @@ import { NAVIGATION_PAGES } from '../../utils/enums';
 import Projects from './projects';
 import ProjectDetails from './projectDetails';
 import SectionSearch from './sectionSearch'
-import { FetchCurrentCompany } from "../../hooks/index";
+import { FetchCurrentCompany, FetchCurrentUser } from "../../hooks/index";
+
 
 const BuyerRole = () => {
     const [activeTab, setActiveTab] = useState(NAVIGATION_PAGES.BUYER_HOME);
     const [openTabs, setOpenTabs] = useState([NAVIGATION_PAGES.BUYER_HOME]);
     const [params, setParams] = useState({})
     const [selectedCompany] = FetchCurrentCompany();
+    const [currentUser] = FetchCurrentUser();    
 
     const changeActiveTab = (tab, params = null) => {
         if (openTabs.indexOf(tab) < 0) {
@@ -55,11 +57,11 @@ const BuyerRole = () => {
                 </div>
                 <div label={"PROJECTS"} id={NAVIGATION_PAGES.BUYER_PROJECTS}>
                     <div className="page-container">
-                        <Projects />
+                        <Projects loggedUser={currentUser} />
                     </div>
                 </div>
-                <div label={`PROJECT: ${params[NAVIGATION_PAGES.BUYER_PROJECT_DETAILS]?.name}`} id={NAVIGATION_PAGES.BUYER_PROJECT_DETAILS}>
-                    <ProjectDetails params={params[NAVIGATION_PAGES.BUYER_PROJECT_DETAILS]} />
+                <div label={`PROJECT: ${params[NAVIGATION_PAGES.BUYER_PROJECT_DETAILS]?.Name}`} id={NAVIGATION_PAGES.BUYER_PROJECT_DETAILS}>
+                    <ProjectDetails params={params[NAVIGATION_PAGES.BUYER_PROJECT_DETAILS]} loggedUser={currentUser} />
                 </div>
                 <div label={`${params[NAVIGATION_PAGES.BUYER_PROJECT_SEARCH]?.projectName} > SECTION: ${params[NAVIGATION_PAGES.BUYER_PROJECT_SEARCH]?.sectionName}`} id={NAVIGATION_PAGES.BUYER_PROJECT_SEARCH}>
                     <SectionSearch params={params[NAVIGATION_PAGES.BUYER_PROJECT_SEARCH]} />

@@ -26,7 +26,7 @@ const EConnectHome = () => {
                     name={"COMMUNICATION TYPES/TEMPLATES"}
                     cardColour={"bg-green-dark"}
                     imageName={"icon-templates"}
-                // onClick={() => onClickCard(NAVIGATION_PAGES.BUYER_SEARCH)}
+                    onClick={() => onClickCard(NAVIGATION_PAGES.ADMIN_TEMPLATES)}
                 />
                 <NavigationCard
                     name={"COMMUNICATION BASKET"}

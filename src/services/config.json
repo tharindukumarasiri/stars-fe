@@ -33,18 +33,14 @@
     "UPDATE_NUTS": "updateNuts/",
     "GET_ORGANIZATION_TYPES": "getOrganizationTypes/",
 
-    "OPERATIONS": "operations",
-    "ADD_OPERATION": "addNewOperation",
-    "EDIT_OPERATION": "updateOperation?opId=",
-    "DELETE_OPERATION": "deleteOperation?opId=",
-
-    "SECTIONS": "getSections?opId=",
-    "ADD_SECTION": "addSection?opId=",
-    "EDIT_SECTION": "updateSections?opId=",
-
-    "MEMBERS": "getMembers?opId=",
-    "ADD_MEMBER": "addMember?opId=",
+    "OPERATIONS": "todelete",
+    "ADD_OPERATION": "todelete",
+    "EDIT_OPERATION": "todelete",
+    "DELETE_OPERATION": "todelete",
+    "SECTIONS": "todelete",    
+    "MEMBERS": "todelete",   
     "ADD_MEMBERS": "addMembers?opId=",
+    
     "SEARCH_UNSPSC_CODES": "findUnspsc",
     
     "GET_USER": "actionapi/bridge/getuser",
@@ -55,6 +51,12 @@
     "GET_COMPANY_MEMBERS": "sessionbridge/GetMembersByCompany",
     "GET_LANGUAGE": "sessionbridge/GetCurrentLanguage",
     "GET_ALL_USERS": "actionapi/Users/GetUsers?searchText=",
+    "ADD_USER": "actionapi/Users/AddUser",
+    "UPDATE_USER": "actionapi/Users/UpdateUser",
+    "ACTIVATE_USERS": "actionapi/Users/Activate",
+    "DEACTIVATE_USERS": "actionapi/Users/Deactivate",
+    "ACTIVATE_ROLES_USER": "actionapi/UserRoles/Activate",
+    "DEACTIVATE_ROLES_USER": "actionapi/UserRoles/Deactivate",
 
     "GET_ALL_TENDERS": "getAllTenders?language=",
     "GET_TENDERS": "getTenders/",
@@ -73,8 +75,29 @@
 
     "GET_COMMUNICATIONS": " /actionapi/MessageQueues/GetCommunications",
     "GET_COMMUNICATION_LOGS": " /actionapi/MessageQueues/GetCommunicationLogs",
-    "GET_COMMUNICATION_ENTITIES": " /actionapi/Entities/Get",
+    "GET_COMMUNICATION_LOGS_SUB_LVL": " /actionapi/MessageQueues/GetSubLevelCommunicationLogs?correlationId=",
+    "DELETE_COMMUNICATION_LOGS": "/actionapi/MessageQueues/DeleteCommunications",
+    "GET_COMMUNICATION_ENTITIES": "/actionapi/Entities/Get",
+    "GET_COMMUNICATION_ENTITIES_WITH_ROLES": "/actionapi/Entities/GetEntities",
     "GET_COMMUNICATION_MESSAGE_TYPES": " /actionapi/MessageTypes/Get",
-    "GET_COMMUNICATIONS_MESSAGE_STATUSES": " /actionapi/MessageStatuses/Get"
+    "GET_COMMUNICATIONS_MESSAGE_STATUSES": " /actionapi/MessageStatuses/Get",
+    "GET_COMMUNICATION_BASKET": " /actionapi/CommunicationBaskets/GetCommunicationBaskets",
+    "ADD_COMMUNICATION_BASKET": " /actionapi/CommunicationBaskets/AddCommunicationBasket",
+    "GET_COMMUNICATION_BASKET_TYPES": " /actionapi/BasketTypes/Get",
+    "GET_COMMUNICATION_BASKET_STATUSES": " /actionapi/BasketStatuses/Get",
+
+    "GET_PROJECTS": "actionapi/Projects/GetAll",
+    "ADD_PROJECT": "actionapi/Projects/AddProject?userId=",
+    "UPDATE_PROJECT": "actionapi/Projects/UpdateProject?userId=",
+    "DELETE_PROJECT": "actionapi/Projects/DeleteProject?userId=",
+
+    "GET_SECTIONS": "actionapi/ProjectSections/GetByProject?projectId=",    
+    "ADD_SECTION": "actionapi/ProjectSections/AddSection?userId=",
+    "UPDATE_SECTION": "actionapi/ProjectSections/UpdateSection?userId=",
+    "DELETE_SECTION": "actionapi/ProjectSections/UpdateSection?userId=",
+
+    "GET_MEMBERS": "actionapi/ProjectMembers/GetByProject?projectId=",    
+    "ADD_MEMBER": "actionapi/ProjectMembers/AddMember?userId=",
+    "DELETE_MEMBER": "actionapi/ProjectMembers/DeleteMember?userId="
 
 }

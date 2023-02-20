@@ -9,7 +9,7 @@ const Dropdown = ({ values, selected = '', onChange, placeholder, disabled = fal
     return (
         <div className={containerStyle}>
             <div className={hintTextStyle}>{t(placeholder)}</div>
-            <select className="dropdown-list" onChange={onChange} value={selected || '0'} disabled={disabled}>
+            <select className="dropdown-list mt-2" onChange={onChange} value={selected || '0'} disabled={disabled}>
                 {placeholder &&
                     <option value="0" disabled defaultValue="selected" hidden={true} className="disable-option" >{t(placeholder)}</option>
                 }

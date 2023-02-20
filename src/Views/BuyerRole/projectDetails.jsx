@@ -1,21 +1,13 @@
 import React, { useState, useMemo, useContext, useEffect } from "react";
 import { Tabs, Tooltip, Table, Modal, message, AutoComplete } from "antd";
-import { formatDate } from "../../utils";
+import { formatDate, projectCodeFormat } from "../../utils";
 import Dropdown from "../../common/dropdown";
 import Input from "../../common/input";
 import DatePickerInput from "../../common/datePickerInput";
 import NavigationCard from "../../common/navigationCard";
 import EmptyTableView from "../../Views/SupplierRole/Components/emptyTableView";
 import { sectionTableHeaders, membersTableHeaders } from "../../utils/tableHeaders";
-import {
-    addNewSection,
-    getAllMembers,
-    addNewMember,
-    addMembers,
-    editProject,
-    getSections,
-    editSection,
-} from "../../services/operationsService";
+import { getSections, addNewSection, updateSection, getMembers, addNewMember, deleteMember, updateProject} from "../../services/projectService";
 import { TabContext } from "../../utils/contextStore";
 import { NAVIGATION_PAGES } from "../../utils/enums";
 import { getCompanyMembers } from "../../services/userService";
@@ -25,26 +17,26 @@ import { useTranslation } from "react-i18next";
 
 const { TabPane } = Tabs;
 
-const ProjectDetails = ({ params }) => {
+const ProjectDetails = ({ params, loggedUser }) => {
     const [editable, setEditable] = useState(false);
-    const [status, setStatus] = useState(params.status);
-    const [closedDate, setClosedDate] = useState(params.closedDate);
-    const [sectionData, setSectionData] = useState([]);
+    const [status, setStatus] = useState(params.Status);
+    const [closedDate, setClosedDate] = useState(params.ClosedDate);
+    const [sectionData, setSectionData] = useState([]);    
     const { t } = useTranslation();
 
     const changeStateOfProject = (e) => {
         const newProjectData = { ...params };
-        newProjectData.status = e.target.value;
+        newProjectData.Status = e.target.value;
         if (e.target.value.toUpperCase() === "OPEN") {
-            newProjectData.closedDate = "0001-01-01T00:00:00Z";
-            setClosedDate("0001-01-01T00:00:00Z");
+            newProjectData.closedDate = null;
+            setClosedDate(null);
         } else {
-            const currentdate = new Date();
-            newProjectData.closedDate = currentdate;
+            const currentdate = moment().format('YYYY-MM-DD');
+            newProjectData.ClosedDate = currentdate;
             setClosedDate(currentdate);
         }
         setStatus(e.target.value);
-        editProject(newProjectData.id, newProjectData)
+        updateProject(newProjectData, loggedUser.PartyId )
             .then(() => {
                 setStatus(e.target.value);
                 message.success("Change status successful");
@@ -52,16 +44,16 @@ const ProjectDetails = ({ params }) => {
             .catch(() => {
                 message.error("Change status faild please try again");
             });
-    };
+    };   
 
     return (
         <>
             <div className="g-row m-t-20 m-b-20 m-l-20">
                 <div className="g-col-3 fl body-text">
-                    {t("Project ID")}: <strong>{params.operationId}</strong>
+                    {t("Project ID")}: <strong>{projectCodeFormat(params.Id)}</strong>
                 </div>
                 <div className="g-col-3 fl body-text">
-                    {t("Name")}: <strong>{params.name}</strong>
+                    {t("Name")}: <strong>{params.Name}</strong>
                 </div>
             </div>
             <div className="custom-tab-container">
@@ -70,17 +62,17 @@ const ProjectDetails = ({ params }) => {
                         <div className="g-row m-l-20 m-r-20 p-a-20">
                             <div className="g-col-2">
                                 <div className="body-text-bold">{t("Type")}</div>
-                                <div className="body-text">{params.type}</div>
+                                <div className="body-text">{params.TypeCode}</div>
                             </div>
                             <div className="g-col-2">
                                 <div className="body-text-bold">{t("Description")}</div>
-                                <div className="body-text">{params.description}</div>
+                                <div className="body-text">{params.Description}</div>
                             </div>
                             <div className="g-col-2">
                                 <div className="body-text-bold">{t("From Date")}</div>
-                                <div className="body-text m-b-20">{formatDate(params.fromDate)}</div>
+                                <div className="body-text m-b-20">{formatDate(params.FromDate)}</div>
                                 <div className="body-text-bold m-t-20 p-t-20">{t("Due Date")}</div>
-                                <div className="body-text">{formatDate(params.toDate)}</div>
+                                <div className="body-text">{formatDate(params.ToDate)}</div>
                             </div>
                             <div className="g-col-2">
                                 <div className="body-text-bold">{t("Closed Date")}</div>
@@ -88,9 +80,9 @@ const ProjectDetails = ({ params }) => {
                             </div>
                             <div className="g-col-2">
                                 <div className="body-text-bold">{t("Permission Type")}</div>
-                                <div className="body-text m-b-20">{params.permission}</div>
+                                <div className="body-text m-b-20">{params.Permission}</div>
                                 <div className="body-text-bold m-t-20 p-t-20">{t("Responsible")}</div>
-                                <div className="body-text">{params.responsible}</div>
+                                <div className="body-text">{params.Responsible}</div>
                             </div>
                             <div className="g-col-2">
                                 <div className="body-text-bold">{t("Status")}</div>
@@ -106,21 +98,24 @@ const ProjectDetails = ({ params }) => {
                     </TabPane>
                     <TabPane tab={t("SECTION")} key="2">
                         <SectionView
-                            projectName={params.name}
-                            projectId={params.operationId}
-                            id={params.id}
-                            projectToDate={params.toDate}
+                            projectName={params.Name}
+                            projectId={projectCodeFormat(params.Id)}
+                            id={params.Id}
+                            projectToDate={params.ToDate}
                             sectionData={sectionData}
                             setSectionData={setSectionData}
                             projectStatus={status}
+                            loggedUser={loggedUser}
                         />
                     </TabPane>
                     <TabPane tab={t("MEMBERS")} key="3">
                         <MembersView
-                            id={params.id}
-                            sectionId={params.sections[0]?.id || ""}
+                            id={params.Id}
+                            sectionId={params.Sections && params.Sections[0]?.id || ""}
                             sectionData={sectionData}
                             setSectionData={setSectionData}
+                            loggedUser={loggedUser}
+                            projectStatus={status}
                         />
                     </TabPane>
                 </Tabs>
@@ -134,15 +129,19 @@ const SectionView = (props) => {
     const [tableView, setTableView] = useState(true);
     const [modalVisible, setModalVisible] = useState(false);
     const [newSectionData, setNewSectionData] = useState({
-        name: "",
-        description: "",
-        purpose: "",
-        fromDate: "",
-        toDate: "",
-        responsible: "",
-        status: "",
+        Name: "",
+        Description: "",
+        Purpose: "",
+        FromDate: "",
+        ToDate: "",
+        Responsible: "",
+        Status: "",
+        ProjectId: 0,
+        ProjectTId: 0
     });
     const [editData, setEditData] = useState(false);
+    const {loggedUser} = props;
+    const projectId = props.id;
     const { t } = useTranslation();
 
     useEffect(() => {
@@ -197,17 +196,17 @@ const SectionView = (props) => {
     };
 
     const handleOk = () => {
-        const newSectionDataUpdate = { ...newSectionData, closedDate: newSectionData.status?.toUpperCase() === "CLOSE" ? new Date() : '0001-01-01T00:00:00Z' };
-        const index = props.sectionData.findIndex(sec => sec.name === newSectionData.name);
+        const newSectionDataUpdate = { ...newSectionData, ClosedDate: newSectionData.Status?.toUpperCase() === "CLOSE" ? moment().format('YYYY-MM-DD') : null };
+        const index = props.sectionData.findIndex(sec => sec.Name === newSectionData.Name);
 
-        if (!newSectionData.name) {
+        if (!newSectionData.Name) {
             message.error("Section name cannot be empty");
         } else if (index > -1 && !editData) {
             message.error("Section name already exists");
             return;
         } else {
             if (editData) {
-                editSection(props.id, newSectionData.id, newSectionDataUpdate)
+                updateSection(newSectionDataUpdate, loggedUser.PartyId)
                     .then(() => {
                         getSections(props.id)
                             .then((result) => {
@@ -223,7 +222,7 @@ const SectionView = (props) => {
                         message.error("Edit section failed please try again");
                     });
             } else {
-                addNewSection(props.id, newSectionDataUpdate)
+                addNewSection({ ...newSectionDataUpdate, ProjectTId: projectId }, loggedUser.PartyId)
                     .then(() => {
                         getSections(props.id)
                             .then((result) => {
@@ -247,10 +246,10 @@ const SectionView = (props) => {
             proId: props.id,
             projectId: props.projectId,
             projectName: props.projectName,
-            sectionId: section.id,
-            sectionName: section.name,
+            sectionId: section.Id,
+            sectionName: section.Name,
             projectStatus: props.projectStatus,
-            sectionStatus: section.status,
+            sectionStatus: section.Status,
         });
     };
 
@@ -260,7 +259,7 @@ const SectionView = (props) => {
     };
 
     const onNewElementDateChange = (date, elementName) => {
-        setNewSectionData({ ...newSectionData, [elementName]: date });
+        setNewSectionData({ ...newSectionData, [elementName]:  moment(date).local().format('YYYY-MM-DD') });
     };
 
     const onAddSection = () => {
@@ -304,7 +303,7 @@ const SectionView = (props) => {
                             return (
                                 <div key={index}>
                                     <NavigationCard
-                                        name={section.name}
+                                        name={section.Name}
                                         cardColour={"bg-blue-purple"}
                                         value={section.id}
                                         onClick={() => onClickSection(section)}
@@ -318,7 +317,7 @@ const SectionView = (props) => {
                 </div>
             )}
             <Modal
-                title={t("Add Section")}
+                title={editData ? "Update Section" :  "Add Section" }
                 visible={modalVisible}
                 onOk={handleOk}
                 okText={t("Save")}
@@ -331,39 +330,39 @@ const SectionView = (props) => {
                     <div className="g-col-6">
                         <Input
                             placeholder="Name (Eg: Furniture, PC, etc...)"
-                            value={newSectionData.name || ""}
-                            onChange={(e) => onNewElementChange(e, "name")}
+                            value={newSectionData.Name || ""}
+                            onChange={(e) => onNewElementChange(e, "Name")}
                         />
                         <Input
                             lines={3}
                             placeholder="Description"
-                            value={newSectionData.description || ""}
-                            onChange={(e) => onNewElementChange(e, "description")}
+                            value={newSectionData.Description || ""}
+                            onChange={(e) => onNewElementChange(e, "Description")}
                         />
                         <Input
                             placeholder="Purpose"
-                            value={newSectionData.purpose || ""}
-                            onChange={(e) => onNewElementChange(e, "purpose")}
+                            value={newSectionData.Purpose || ""}
+                            onChange={(e) => onNewElementChange(e, "Purpose")}
                         />
                     </div>
                     <div className="g-col-6">
                         <DatePickerInput
                             placeholder={"From Date"}
-                            value={newSectionData.fromDate ? new Date(newSectionData.fromDate) : ""}
-                            onChange={(date) => onNewElementDateChange(date, "fromDate")}
+                            value={newSectionData.FromDate ? new Date(newSectionData.FromDate) : ""}
+                            onChange={(date) => onNewElementDateChange(date, "FromDate")}
                             minDate={new Date()}
                         />
                         <DatePickerInput
                             placeholder={"Due Date"}
-                            value={newSectionData.toDate ? new Date(newSectionData.toDate) : ""}
-                            onChange={(date) => onNewElementDateChange(date, "toDate")}
+                            value={newSectionData.ToDate ? new Date(newSectionData.ToDate) : ""}
+                            onChange={(date) => onNewElementDateChange(date, "ToDate")}
                             minDate={new Date()}
-                            maxDate={props.projectToDate !== "0001-01-01T00:00:00Z" ? new Date(props.projectToDate) : false}
+                            maxDate={props.projectToDate !== null ? new Date(props.projectToDate) : false}
                         />
                         <Dropdown
                             values={["Open", "Close"]}
-                            onChange={(e) => onNewElementChange(e, "status")}
-                            selected={newSectionData.status || ""}
+                            onChange={(e) => onNewElementChange(e, "Status")}
+                            selected={newSectionData.Status || ""}
                             placeholder="Status"
                         />
                     </div>
@@ -379,14 +378,14 @@ const MembersView = (props) => {
     const [membersData, setMembersData] = useState([]);
     const [modalVisible, setModalVisible] = useState(false);
     const [addMemberData, setAddMemberData] = useState({
-        name: "",
-        sections: [],
-        responsible: "",
-        email: "",
-        toDate: null,
-        phone: "",
-        company: "",
-        status: "active",
+        Name: "",
+        Sections: [],
+        Responsible: "",
+        Email: "",
+        ToDate: null,
+        Phone: "",
+        Company: "",
+        Status: "active",
     });
 
     const [companyUsers, setCompanyUsers] = useState([]);
@@ -394,6 +393,8 @@ const MembersView = (props) => {
     const [filterdUsers, setFilteredUsers] = useState([]);
     const [text, setText] = useState("");
     const [selectedCompany] = FetchCurrentCompany();
+    const {loggedUser} = props;
+    const projectId = props.id;
 
     const { t } = useTranslation();
 
@@ -431,7 +432,7 @@ const MembersView = (props) => {
                         className="icon-delete table-icon"
                         onClick={(e) => {
                             e.stopPropagation();
-                            deleteMember(record);
+                            deleteProjectMember(record);
                         }}
                     />
                 </>
@@ -445,34 +446,38 @@ const MembersView = (props) => {
         getSections(props.id).then((data) => {
             props.setSectionData(data || []);
         });
-        getAllMembers(props.id).then((data) => setMembersData(data));
+        getMembers(props.id).then((data) => setMembersData(data));
     }, []);
 
     const toggleModal = () => {
         setAddMemberData({
-            name: "",
-            sections: [],
-            responsible: "",
-            email: "",
-            toDate: null,
-            phone: "",
-            company: "",
-            status: "active",
-            partyId: "",
+            Name: "",
+            Sections: [],
+            Responsible: "",
+            Email: "",
+            ToDate: null,
+            Phone: "",
+            Company: "",
+            Status: "active",
+            PartyId: "",            
+            ProjectTId: projectId
         });
         setModalVisible(!modalVisible);
     };
 
     const addMember = () => {
-        toggleModal();
+        if (props.projectStatus?.toUpperCase() === "CLOSE") {
+            message.error('Cannot edit closed Projects')
+        } else {
+            toggleModal();
+        }
     };
 
-    const deleteMember = (member) => {
-        let members = membersData.filter((m) => m.partyId !== member.partyId);
+    const deleteProjectMember = (member) => {       
 
-        addMembers(props.id, members)
+        deleteMember(member, loggedUser.PartyId)
             .then(() => {
-                getAllMembers(props.id)
+                getMembers(props.id)
                     .then((result) => {
                         setMembersData(result);
                         message.success("Delete member successful");
@@ -488,36 +493,34 @@ const MembersView = (props) => {
     };
 
     const handleOk = () => {
-        const sectionIds = [];
-        addMemberData.sections.map((val) => sectionIds.push(val.id));
+        //const sectionIds = [];
+        //addMemberData.sections.map((val) => sectionIds.push(val.id));
 
         if (!selectedUser || Object.keys(selectedUser).length === 0) {
             message.warning("Please select a user");
             return;
         }
 
-        const membersWithId = {
-            ...addMemberData,
-            sections: sectionIds,
-            name: selectedUser?.value,
-            fromDate: moment().toISOString(),
-            email: selectedUser?.email,
-            company: selectedCompany.name,
-            partyId: selectedUser?.key,
+        const member = {
+            ...addMemberData,            
+            Name: selectedUser?.value,
+            FromDate: moment().toISOString(),
+            ToDate: null,
+            Email: selectedUser?.email,
+            Company: selectedCompany.name,
+            PartyId: selectedUser?.key,
+            ProjectTId: projectId
         };
-
-        let member = membersData.find((m) => m.partyId === selectedUser?.key);
-        if (!member) {
-            let members = [...membersData, membersWithId];
-
-            addMembers(props.id, members)
+       
+        console.log(member)
+        addNewMember(member, loggedUser.PartyId)
                 .then(() => {
-                    getAllMembers(props.id)
+                    getMembers(props.id)
                         .then((result) => {
                             setMembersData(result);
                             setSelectedUser({});
                             setText("");
-                            setAddMemberData({ sections: [], responsible: "", fromDate: "", toDate: "", name: "", partyId: "", email: "" });
+                            setAddMemberData({ Sections: [], Responsible: "", FromDate: "", ToDate: null, Name: "", PartyId: "", Email: "" });
                             message.success(t("Add member successful"));
                         })
                         .catch(() => {
@@ -528,9 +531,7 @@ const MembersView = (props) => {
                 .catch(() => {
                     message.error("Add member failed please try again");
                 });
-        } else {
-            message.warning("Member already added");
-        }
+       
     };
 
     const onUserSelect = (value, option) => {
@@ -590,7 +591,7 @@ const MembersView = (props) => {
                         membersData.map((member, index) => {
                             return (
                                 <div key={index}>
-                                    <NavigationCard name={member.name} cardColour={"bg-blue-purple"} value={"name"} />
+                                    <NavigationCard name={member.Name} cardColour={"bg-blue-purple"} value={"name"} />
                                 </div>
                             );
                         })

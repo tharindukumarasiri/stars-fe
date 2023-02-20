@@ -4,7 +4,7 @@ import { ExclamationCircleOutlined } from '@ant-design/icons';
 import Input from "../../common/input";
 import Dropdown from "../../common/dropdown";
 import DatePickerInput from "../../common/datePickerInput";
-import { getAllProjects, addNewProject, editProject, deleteProject } from "../../services/operationsService"
+import {getAllProjects, addNewProject, updateProject, deleteProject } from "../../services/projectService";
 import { getContacts } from "../../services/userService";
 import { projectScreenTableHeaders } from "../../utils/tableHeaders"
 import NavigationCard from "../../common/navigationCard"
@@ -12,16 +12,19 @@ import { NAVIGATION_PAGES } from "../../utils/enums";
 import { TabContext } from "../../utils/contextStore";
 import EmptyTableView from "../../Views/SupplierRole/Components/emptyTableView";
 import { useTranslation } from "react-i18next";
+import moment from "moment";
+import { projectCodeFormat } from "../../utils";
 const { confirm } = Modal;
 
-const Projects = () => {
+const Projects = (props) => {
     const { changeActiveTab } = useContext(TabContext)
     const [projectsData, setProjectsData] = useState([])
     const [modalVisible, setModalVisible] = useState(false);
     const [tableView, setTableView] = useState(true)
-    const [newProjectData, setNewProjectData] = useState({ name: '', type: '', description: '', permission: '', fromDate: '', toDate: '', responsible: '', status: '' });
+    const [newProjectData, setNewProjectData] = useState({ Name: '', TypeCode: 'Research project', Description: '', Permission: 'Private', FromDate: '', ToDate: '', Responsible: '', Status: '' });
     const [editData, setEditData] = useState(false);
     const [loading, setLoading] = useState(false);
+    const { loggedUser } = props;
 
     const [companyContacts, setCompanyContacts] = useState([]);
     const [filterdContacts, setFilteredContacts] = useState([]);
@@ -35,7 +38,7 @@ const Projects = () => {
                 <>
                     <i className="icon-edit table-icon" onClick={(e) => {
                         e.stopPropagation();
-                        if (record.status === "Open") {
+                        if (record.Status === "Open") {
                             toggleModal();
                             setNewProjectData(record);
                             setEditData(true);
@@ -58,11 +61,13 @@ const Projects = () => {
     }, [projectsData])
 
     useEffect(() => {
-        setLoading(true);
+        setLoading(true);       
+
         getAllProjects().then(result => {
             setProjectsData(result);
             setLoading(false);
         });
+
         getContactsList();
     }, []);
 
@@ -72,21 +77,21 @@ const Projects = () => {
             icon: <ExclamationCircleOutlined />,
             content: <div>
                 <div className="body-text">{t("All data will be lost on")}</div>
-                <div className="body-text">{t("Project ID")}: <strong>{data.operationId}</strong></div>
-                <div className="body-text">{t("Name")}: <strong>{data.name}</strong></div>
+                <div className="body-text">{t("Project ID")}: <strong>{projectCodeFormat(data.Id)}</strong></div>
+                <div className="body-text">{t("Name")}: <strong>{data.Name}</strong></div>
             </div>,
             okText: t('Yes'),
             okType: 'danger',
             cancelText: t('No'),
 
             onOk() {
-                deleteProject(data.id).then(() => {
+                deleteProject(data, loggedUser.PartyId).then(() => {
                     getAllProjects().then(result => {
                         setProjectsData(result);
                         message.success(t('Delete project successful'));
                     }).catch(() => {
                         message.warning('Updated data fetch fail please reload');
-                    })
+                    });                   
                 })
             },
 
@@ -95,21 +100,22 @@ const Projects = () => {
 
     const toggleModal = () => {
         setModalVisible(!modalVisible);
-        setNewProjectData({})
+        setNewProjectData({ Name: '', TypeCode: 'Research project', Description: '', Permission: 'Private', FromDate: '', ToDate: '', Responsible: '', Status: '' })
         setEditData(false)
     };
 
     const handleOk = () => {
-        const index = projectsData.findIndex(sec => sec.name === newProjectData.name);
+        const index = projectsData.findIndex(sec => sec.name === newProjectData.Name);
 
-        if (!newProjectData.name) {
+        if (!newProjectData.Name) {
             message.error("project name cannot be empty");
         } else if (index > -1 && !editData) {
             message.error("project name already exists");
             return;
         } else {
             if (editData) {
-                editProject(newProjectData.id, newProjectData).then(() => {
+                
+                updateProject(newProjectData, loggedUser.PartyId).then(() => {
                     getAllProjects().then(result => {
                         setProjectsData(result);
                         message.success('Edit project successful');
@@ -118,14 +124,15 @@ const Projects = () => {
                     })
                     toggleModal();
                 })
-            } else {
-                addNewProject(newProjectData).then(() => {
+            } else {                           
+                
+                addNewProject(newProjectData, loggedUser.PartyId).then(() => {
                     getAllProjects().then(result => {
                         setProjectsData(result);
                         message.success('Create project successful');
                     }).catch(() => {
                         message.warning('Updated data fetch fail please reload');
-                    })
+                    })    
                     toggleModal();
                 }).catch(() => {
                     message.error('Create project failed please try again');
@@ -140,7 +147,7 @@ const Projects = () => {
     }
 
     const onNewElementDateChange = (date, elementName) => {
-        setNewProjectData({ ...newProjectData, [elementName]: date })
+        setNewProjectData({ ...newProjectData, [elementName]: moment(date).local().format('YYYY-MM-DD') })
     }
 
     const onClickProject = (params) => {
@@ -161,11 +168,11 @@ const Projects = () => {
     };
 
     const onContactSelect = (value, option) => {
-        setNewProjectData({ ...newProjectData, responsible: value });
+        setNewProjectData({ ...newProjectData, Responsible: value });
     };
 
     const onContactChange = (data) => {
-        setNewProjectData({ ...newProjectData, responsible: data });
+        setNewProjectData({ ...newProjectData, Responsible: data });
     };
 
     const onContactSearch = (searchText) => {
@@ -225,7 +232,7 @@ const Projects = () => {
                         projectsData.map((project, index) => {
                             return (
                                 <div key={index}>
-                                    <NavigationCard name={project.name} cardColour={"bg-blue-purple"} value={project.operationId} onClick={() => onClickProject(project)} />
+                                    <NavigationCard name={project.Name} cardColour={"bg-blue-purple"} value={project.Id} onClick={() => onClickProject(project)} />
                                 </div>
                             )
                         }) : <EmptyTableView tableName="Projects" onButtonClick={toggleModal} />
@@ -244,16 +251,16 @@ const Projects = () => {
             >
                 <div className="g-row">
                     <div className="g-col-6">
-                        <Input placeholder="Name (Eg: Furniture, PC, etc...)" value={newProjectData.name || ''} onChange={(e) => onNewElementChange(e, 'name')} />
-                        <Dropdown values={['Resarch project', 'Procurement project']} onChange={(e) => onNewElementChange(e, 'type')} selected={newProjectData.type || ''} placeholder="Type" />
-                        <Input lines={3} placeholder="Description" value={newProjectData.description || ''} onChange={(e) => onNewElementChange(e, 'description')} />
-                        <Dropdown values={['Public', 'Private']} onChange={(e) => onNewElementChange(e, 'permission')} selected={newProjectData.permission || ''} placeholder="Permission Type" />
+                        <Input placeholder="Name (Eg: Furniture, PC, etc...)" value={newProjectData.Name || ''} onChange={(e) => onNewElementChange(e, 'Name')} />
+                        <Dropdown values={['Research project', 'Procurement project']} onChange={(e) => onNewElementChange(e, 'TypeCode')} selected={newProjectData.TypeCode || 'Research project'} placeholder="Type" />
+                        <Input lines={3} placeholder="Description" value={newProjectData.Description || ''} onChange={(e) => onNewElementChange(e, 'Description')} />
+                        <Dropdown values={['Public', 'Private']} onChange={(e) => onNewElementChange(e, 'Permission')} selected={newProjectData.Permission || 'Private'} placeholder="Permission Type" />
                     </div>
                     <div className="g-col-6">
-                        <DatePickerInput placeholder={'From Date'} value={newProjectData.fromDate ? new Date(newProjectData.fromDate) : ''} minDate={new Date()} onChange={(date) => onNewElementDateChange(date, 'fromDate')} />
-                        <DatePickerInput placeholder={'Due Date'} value={newProjectData.toDate ? new Date(newProjectData.toDate) : ''} minDate={new Date()} onChange={(date) => onNewElementDateChange(date, 'toDate')} />
+                        <DatePickerInput placeholder={'From Date'} value={newProjectData.FromDate ? new Date(newProjectData.FromDate) : ''} minDate={new Date()} onChange={(date) => onNewElementDateChange(date, 'FromDate')} />
+                        <DatePickerInput placeholder={'Due Date'} value={newProjectData.ToDate ? new Date(newProjectData.ToDate) : ''} minDate={new Date()} onChange={(date) => onNewElementDateChange(date, 'ToDate')} />
                         <AutoComplete
-                            value={newProjectData.responsible || ''}
+                            value={newProjectData.Responsible || ''}
                             options={filterdContacts}
                             onSelect={onContactSelect}
                             onSearch={onContactSearch}
@@ -261,7 +268,7 @@ const Projects = () => {
                             style={{ width: '100%', marginBottom: 10 }}
                             className='mb-2'
                             placeholder={t("Responsible (Users for this Tenant)")} />
-                        <Dropdown values={['Open', 'Close']} onChange={(e) => onNewElementChange(e, 'status')} selected={newProjectData.status || ''} placeholder="Status" />
+                        <Dropdown values={['Open', 'Close']} onChange={(e) => onNewElementChange(e, 'Status')} selected={newProjectData.Status || ''} placeholder="Status" />
                     </div>
                 </div>
                 <div className="n-float" />

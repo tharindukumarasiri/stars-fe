@@ -64,16 +64,16 @@ export async function updateOrganization(organization) {
 }
 
 export async function getSearchResults() {
-    const { data } = await http.get(process.env.SDC_PROJECT_API + config.GET_SEARCH_RESULT);
+    const { data } = await http.get(process.env.SDC_SEARCH_API + config.GET_SEARCH_RESULT);
     return data;
 }
 export async function getSearchResultsByProjAndSec(proId, secId) {
-    const { data } = await http.get(`${process.env.SDC_PROJECT_API + config.GET_SEARCH_RESULT_BY_PROID_SECID}${proId}&secId=${secId}`);
+    const { data } = await http.get(`${process.env.SDC_SEARCH_API + config.GET_SEARCH_RESULT_BY_PROID_SECID}${proId}&secId=${secId}`);
     return data;
 }
 export async function addNewSearchResult(params) {
     //await http.post(process.env.SDC_SEARCH_API + config.ADD_SEARCH_RESULT, params);
-    const { data } = await http.post(process.env.SDC_PROJECT_API + config.ADD_SEARCH_RESULT, params);
+    const { data } = await http.post(process.env.SDC_SEARCH_API + config.ADD_SEARCH_RESULT, params);
     return data;
 }
 
@@ -84,7 +84,7 @@ export async function getOrganizationTypes(countryCode, languageCode) {
 
 export async function deleteSearch(params) {
     //await http.delete(process.env.SDC_SEARCH_API + config.DELETE_SEARCH, { data: params });
-    const { data } = await http.delete(process.env.SDC_PROJECT_API + config.DELETE_SEARCH, { data: params });
+    const { data } = await http.delete(process.env.SDC_SEARCH_API + config.DELETE_SEARCH, { data: params });
     return data;
 }
 

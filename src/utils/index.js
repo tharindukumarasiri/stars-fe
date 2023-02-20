@@ -35,3 +35,10 @@ export const getCountryFlag = (countryCode) => {
         return ''
     }
 }
+
+export const projectCodeFormat = (id) => {
+    if(id)
+        return 'P' + id.toString().padStart(5, '0');
+    else
+        return '';
+}

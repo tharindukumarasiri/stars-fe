@@ -49,8 +49,43 @@ export async function getLanguage() {
     return data;
 }
 
-export async function getAllUsers(searchText = '') {
-    const url = process.env.LOCAL_API + config.GET_ALL_USERS + searchText;
+export async function getAllUsers(searchText = '', pageNumber = '0') {
+    const url = process.env.LOCAL_API + config.GET_ALL_USERS + searchText + '&pageNo=' + pageNumber + '&pageSize=10';
     const { data } = await http.get(url, getAuthHeader());
+    return data;
+}
+
+export async function addUser(params) {
+    const url = process.env.LOCAL_API + config.ADD_USER;
+    const { data } = await http.post(url, params, getAuthHeader());
+    return data;
+}
+
+export async function updateUser(params) {
+    const url = process.env.LOCAL_API + config.UPDATE_USER;
+    const { data } = await http.put(url, params, getAuthHeader());
+    return data;
+}
+
+export async function activateUsers(params) {
+    const url = process.env.LOCAL_API + config.ACTIVATE_USERS;
+    const { data } = await http.put(url, params, getAuthHeader());
+    return data;
+}
+
+export async function deActivateUsers(params) {
+    const url = process.env.LOCAL_API + config.DEACTIVATE_USERS;
+    const { data } = await http.put(url, params, getAuthHeader());
+    return data;
+}
+export async function activateRoleUser(params) {
+    const url = process.env.LOCAL_API + config.ACTIVATE_ROLES_USER;
+    const { data } = await http.post(url, params, getAuthHeader());
+    return data;
+}
+
+export async function deActivateRoleUser(params) {
+    const url = process.env.LOCAL_API + config.DEACTIVATE_ROLES_USER;
+    const { data } = await http.put(url, params, getAuthHeader());
     return data;
 }

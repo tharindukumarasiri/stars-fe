@@ -513,6 +513,7 @@ const GlobalTenderSearch = () => {
                             pagination={false}
                             scroll={{
                                 x: '43vw',
+                                y: '60vh',
                             }}
                             onRow={(record, rowIndex) => {
                                 return {

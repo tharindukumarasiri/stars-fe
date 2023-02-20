@@ -151,6 +151,11 @@ const CreateTemplate = ({ closeModal, getSavedTemplates, editTemplate }) => {
             sample: "Company Name"
         },
         {
+            name: "Custom Forms",
+            value: "{{custom_forms}}",
+            sample: "Custom Forms"
+        },
+        {
             name: "Codes",
             mergeTags: [
                 {

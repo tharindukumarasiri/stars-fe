@@ -48,6 +48,9 @@ const AdminRole = ({ openTab = NAVIGATION_PAGES.ADMIN_TEMPLATES }) => {
     return (
         <TabContext.Provider value={{ activeTab: activeTab, changeActiveTab: changeActiveTab, closeTab: closeTab, openTabs: openTabs }}>
             <Tabs>
+                <div label={"ECONNECT"} id={NAVIGATION_PAGES.E_CONNECT_HOME} >
+                    <EConnectHome />
+                </div>
                 <div label={"TEMPLATES"} id={NAVIGATION_PAGES.ADMIN_TEMPLATES} >
                     <Templates />
                 </div>
@@ -56,9 +59,6 @@ const AdminRole = ({ openTab = NAVIGATION_PAGES.ADMIN_TEMPLATES }) => {
                 </div>
                 <div label={"USER DETAILED VIEW"} id={NAVIGATION_PAGES.ALL_USER_DETAILS} >
                     <UserDetails props={params[NAVIGATION_PAGES.ALL_USER_DETAILS]} />
-                </div>
-                <div label={"ECONNECT"} id={NAVIGATION_PAGES.E_CONNECT_HOME} >
-                    <EConnectHome />
                 </div>
                 <div label={"COMMUNICATIONS"} id={NAVIGATION_PAGES.COMMUNICATIONS} >
                     <Communications />
