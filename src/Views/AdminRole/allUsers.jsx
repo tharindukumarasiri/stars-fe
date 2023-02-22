@@ -76,7 +76,6 @@ const AllUsers = () => {
                 setLoading(false)
                 setUsers(result?.Value)
                 setTotalResults(result?.Key)
-                setSelectedUsers([]);
             }).catch(() => setLoading(false))
         }).catch(() => {
             message.error("Users activaion failed")
@@ -94,7 +93,6 @@ const AllUsers = () => {
                 setLoading(false)
                 setUsers(result?.Value)
                 setTotalResults(result?.Key)
-                setSelectedUsers([]);
             }).catch(() => setLoading(false))
         }).catch(() => {
             message.error("Users deactivaion failed")
@@ -206,6 +204,7 @@ const AllUsers = () => {
                     "UserPartyId": currentUser?.PartyId,
                     "UserId": currentUser?.Id,
                     "RoleId": role?.value,
+                    "RoleName": role?.label,
                     "IsActive": true
                 }
                 newAdditions.push(params)
@@ -293,7 +292,7 @@ const AllUsers = () => {
                     "FirstName": newUserData.firstName,
                     "LastName": newUserData.lastName,
                     "PhoneNumber": newUserData.telephone,
-                    "CreatedUserPartyId": selectedCompany?.tenantId,
+                    "CreatedUserPartyId": currentUser?.PartyId,
                     "CountryId": currentUser?.CountryId,
                     "CountryCode": currentUser?.CountryCode,
                 }
@@ -319,7 +318,8 @@ const AllUsers = () => {
                 "CountryId": newCreatedUserData?.CountryId,
                 "PictureFileId": '',
                 "LoggedInUserPartyId": currentUser?.PartyId,
-                "UserRoles": selecteduserRoles
+                "UserRoles": selecteduserRoles,
+                "IsSendEmail": newUserData.sendInvitation
             }
 
             updateUser(params).then(() => {

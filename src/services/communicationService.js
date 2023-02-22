@@ -11,6 +11,11 @@ export async function getCommunicationLogs(params) {
     return data;
 }
 
+export async function getCommunicationLogsByBasket(params) {
+    const { data } = await http.post(config.GET_COMMUNICATION_LOGS_BY_BASKET, params);
+    return data;
+}
+
 export async function getCommunicationLogsSubLvl(correlationId) {
     const { data } = await http.get(`${config.GET_COMMUNICATION_LOGS_SUB_LVL}${correlationId}`);
     return data;
@@ -62,5 +67,12 @@ export async function getCommunicationBasketStatuses() {
     return data;
 }
 
+export async function configureCommunicationBasket(params) {
+    const { data } = await http.put(config.CONFIG_COMMUNICATION_BASKET, params);
+    return data;
 
-//Communication basket
+}
+export async function deleteCommunicationBasket(params) {
+    const { data } = await http.put(config.DELETE_COMMUNICATION_BASKET, params);
+    return data;
+}

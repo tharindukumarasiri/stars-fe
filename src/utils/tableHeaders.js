@@ -922,7 +922,7 @@ export const TemplateTableHeaders = [
     },
     {
         title: 'Name',
-        dataIndex: 'Name',
+        dataIndex: 'DisplayName',
     },
     {
         title: 'Date Created',
@@ -1117,7 +1117,7 @@ export const CommunicationBasketsTableHeaders = [
     },
     {
         title: 'Basket Name',
-        dataIndex: 'To',
+        dataIndex: 'Name',
         sorter: true,
     },
     {
@@ -1136,22 +1136,44 @@ export const CommunicationBasketsTableHeaders = [
     {
         title: 'Basket Type',
         dataIndex: 'BasketType',
+        render: (_, { BasketType }) => (
+            BasketType?.Name
+        ),
     },
     {
         title: 'Communication Type',
         dataIndex: 'CommunicationType',
+        render: (_, { CommunicationType }) => (
+            CommunicationType?.Name
+        ),
+    },
+    {
+        title: 'Basket Type',
+        dataIndex: 'BasketType',
+        render: (_, { BasketType }) => (
+            BasketType?.Name
+        ),
     },
     {
         title: 'Start Date',
-        dataIndex: 'StartDate',
+        dataIndex: 'FromDateTime',
+        render: (_, { FromDateTime }) => (
+            formatDate(FromDateTime)
+        ),
     },
     {
         title: 'End Date',
-        dataIndex: 'EndDate',
+        dataIndex: 'ToDateTime',
+        render: (_, { ToDateTime }) => (
+            formatDate(ToDateTime)
+        ),
     },
     {
         title: 'Status',
-        dataIndex: 'Status',
+        dataIndex: 'BasketStatus',
+        render: (_, { BasketStatus }) => (
+            BasketStatus?.Name
+        ),
         sorter: true,
     },
 ]

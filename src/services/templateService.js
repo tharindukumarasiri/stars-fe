@@ -23,3 +23,8 @@ export async function getTenantMessageTemplates(tenantId) {
     const { data } = await http.get(config.GET_TENANT_MESSAGE_TEMPLATE + tenantId);
     return data;
 }
+
+export async function deleteMessageTemplate(id, userId) {
+    const { data } = await http.delete(config.DELETE_TENANT_MESSAGE_TEMPLATE + id + "&userPartyId=" + userId);
+    return data;
+}

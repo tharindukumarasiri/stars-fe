@@ -5,17 +5,19 @@ import EmailEditor from 'react-email-editor';
 import Input from '../../common/input'
 import { updateMessageTemplates, insertMessageTemplates } from "../../services/templateService";
 import { FetchCurrentCompany } from "../../hooks/index"
+import { FetchCurrentUser } from "../../hooks/index"
 
 const CreateTemplate = ({ closeModal, getSavedTemplates, editTemplate }) => {
     const [loading, setLoading] = useState(true);
     const [selectedTemplateType, setSelectedTemplateType] = useState('Notification');
     const [templateName, setTemplateName] = useState('');
     const [selectedCompany] = FetchCurrentCompany();
+    const [currentUser] = FetchCurrentUser();
     const emailEditorRef = useRef(null);
 
     useEffect(() => {
         if(editTemplate){
-            setTemplateName(editTemplate.Name);           
+            setTemplateName(editTemplate.DisplayName || '');           
         } 
         else {
             setTemplateName("");  
@@ -28,13 +30,14 @@ const CreateTemplate = ({ closeModal, getSavedTemplates, editTemplate }) => {
             const { design, html } = data;
 
             const params = editTemplate ? { ...editTemplate, 
-                                            "Name": templateName, 
+                                            "DisplayName": templateName, 
                                             "MessageBody": html,
                                             "MessageBodyJson": JSON.stringify(design) }  : {
                 "MessageTriggerPointId": 3,
                 "MessageMediumId": 1,
                 "MessageTypeId": getMessageType(),
-                "Name": templateName,
+                "Name": "Custom",
+                "DisplayName": templateName, 
                 "MessageSubject": getMessageSubject(),
                 "MessageBody": html,
                 "MessageBodyJson": JSON.stringify(design),
@@ -47,7 +50,7 @@ const CreateTemplate = ({ closeModal, getSavedTemplates, editTemplate }) => {
                 "LanguageMessageTemplates": [],
                 "Id": 0,
                 "CreatedDateTime": new Date(),
-                "CreatedUserPartyId": selectedCompany?.tenantId,
+                "CreatedUserPartyId": currentUser?.PartyId,
                 "DeletedDateTime": null,
                 "DeletedUserPartyId": null
             }

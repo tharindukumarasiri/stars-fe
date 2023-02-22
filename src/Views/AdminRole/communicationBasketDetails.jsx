@@ -1,35 +1,40 @@
 import React, { useState } from "react";
-import { Tabs, Dropdown, Menu } from 'antd';
+import { Tabs, Select, message } from 'antd';
 
 import newsletter from "../../assets/images/newsletter.png"
 import DatePickerInput from "../../common/datePickerInput";
 import StarDropdown from "../../common/dropdown";
 import { formatDate } from "../../utils";
-import Input from '../../common/input'
+import { configureCommunicationBasket } from "../../services/communicationService";
 
 const { TabPane } = Tabs;
 
 const recurringTypes = [
-    { key: 'MON_TO_FRI', Name: 'Monday to Friday' },
-    { key: 'DAILY', Name: 'Daily' },
-    { key: 'WEEKLY', Name: 'Weekly' },
-    { key: 'MONTHLY', Name: 'Monthly' },
-    { key: 'YEARLY', Name: 'Yearly' },
-    { key: 'CUSTOM', Name: 'Custom' },
+    { key: 1, Name: 'Monday to Friday' },
+    { key: 2, Name: 'Daily' },
+    { key: 3, Name: 'Weekly' },
+    { key: 4, Name: 'Monthly' },
+    { key: 5, Name: 'Yearly' },
+    { key: 6, Name: 'Custom' },
 ]
 
-const actions = (
-    <Menu>
-        <Menu.Item>Act 1</Menu.Item>
-    </Menu>
-);
+const DaysOfTheWeek = [
+    { value: '1', label: 'Monday' },
+    { value: '2', label: 'Tuesday' },
+    { value: '3', label: 'Wednesday' },
+    { value: '4', label: 'Thursday' },
+    { value: '5', label: 'Friday' },
+    { value: '6', label: 'Saturday' },
+    { value: '7', label: 'Sunday' },
+]
 
-const CommunicationBasketDetails = (props) => {
+const CommunicationBasketDetails = ({ props }) => {
     const [oneTimeType, setOneTimeType] = useState(true);
     const [oneTimeData, setoneTimeData] = useState({ date: null, time: null });
     const [recurringeData, setRecurringeData] = useState({ startDate: null, endDate: null, time: null, week: '' });
     const [timesList, setTimesList] = useState([]);
-    const [customRecurringDate, setCustomRecurringDate] = useState('')
+    const [customRecurringDate, setCustomRecurringDate] = useState([])
+    const [loading, setLoading] = useState(false);
 
     const onOneTimeDataChange = (value, type) => {
         setoneTimeData({ ...oneTimeData, [type]: value })
@@ -53,12 +58,62 @@ const CommunicationBasketDetails = (props) => {
         setTimesList(newTimesList);
     }
 
-    const onChangeCustomDateInput = (e) => {
-        setCustomRecurringDate(e.target.value);
+    const onChangeDayOfTheWeek = (value) => {
+        setCustomRecurringDate(value)
+    }
+
+    const getFormatedTimeList = () => {
+        if (oneTimeType) {
+            return [formatDate(oneTimeData.time, 'HH.mm')];
+        } else {
+            const newList = [];
+
+            timesList.map(time => {
+                newList.push(formatDate(time, 'HH.mm'))
+            })
+
+            return newList;
+        }
+    }
+
+    const onUpdate = () => {
+        setLoading(true);
+        const params = {
+            "Id": props?.Id,
+            "FromDateTime": oneTimeType ? oneTimeData.date : recurringeData.startDate,
+            "ToDateTime": recurringeData.endDate,
+            "BasketTypeId": oneTimeType ? 1 : 2,
+            "Times": getFormatedTimeList(),
+            "BasketRecurringTypeId": recurringeData.week?.key,
+            "CustomConfiguration": customRecurringDate.toString()
+        }
+
+        configureCommunicationBasket(params).then(() => {
+            setLoading(false);
+            message.success('Configuration Success')
+        }).catch(() => {
+            setLoading(false);
+            message.error('Configuration Failed')
+        })
+    }
+
+    const changeConfigType = () => {
+        setoneTimeData({ date: null, time: null });
+        setRecurringeData({ startDate: null, endDate: null, time: null, week: '' });
+        setTimesList([]);
+        setCustomRecurringDate([]);
+        setOneTimeType(pre => !pre);
     }
 
     return (
         <>
+            {loading &&
+                <div className="loading center-loading">
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                </div>
+            }
             <div className="com-top-container">
                 <div className="com-drop-down-width m-l-20">
                     Basket ID
@@ -66,23 +121,23 @@ const CommunicationBasketDetails = (props) => {
                 </div>
                 <div className="com-drop-down-width">
                     Basket Name
-                    <div className="body-text-bold">{props?.Id}</div>
+                    <div className="body-text-bold">{props?.Name}</div>
                 </div>
                 <div className="com-drop-down-width">
                     Created Date
-                    <div className="body-text-bold">{props?.Id}</div>
+                    <div className="body-text-bold">{formatDate(props?.CreatedDateTime)}</div>
                 </div>
                 <div className="com-drop-down-width">
                     Basket Type
-                    <div className="body-text-bold">{props?.Id}</div>
+                    <div className="body-text-bold">{props?.BasketType?.Name}</div>
                 </div>
                 <div className="com-drop-down-width">
                     Communication Type
-                    <div className="body-text-bold">{props?.Id}</div>
+                    <div className="body-text-bold">{props?.CommunicationType}</div>
                 </div>
                 <div className="com-drop-down-width">
                     Status
-                    <div className="body-text-bold">{props?.Id}</div>
+                    <div className="body-text-bold">{props?.BasketStatus?.Name}</div>
                 </div>
 
             </div>
@@ -113,12 +168,12 @@ const CommunicationBasketDetails = (props) => {
                                             <input
                                                 type="radio" id="OneTime" name="OneTime"
                                                 checked={oneTimeType} className="m-l-20"
-                                                onChange={() => { setOneTimeType(pre => !pre) }} />
+                                                onChange={changeConfigType} />
                                             <label className="p-r-20 p-l-20" htmlFor="OneTime">One Time</label>
                                             <input
                                                 type="radio" id="Recurring" name="Recurring"
                                                 checked={!oneTimeType} className="m-l-20"
-                                                onChange={() => { setOneTimeType(pre => !pre) }} />
+                                                onChange={changeConfigType} />
                                             <label className="p-r-20 p-l-20" htmlFor="Recurring">Recurring</label>
                                         </div>
                                         {oneTimeType ?
@@ -135,7 +190,7 @@ const CommunicationBasketDetails = (props) => {
                                                     onChange={(time) => onOneTimeDataChange(time, 'time')}
                                                     isClearable
                                                     timePicker={true}
-                                                    dateFormat="h:mm aa"
+                                                    dateFormat="HH.mm"
                                                 />
                                             </div> :
                                             <div className="m-t-20">
@@ -160,7 +215,7 @@ const CommunicationBasketDetails = (props) => {
                                                             onChange={(time) => onRecurringDataChange(time, 'time')}
                                                             isClearable
                                                             timePicker={true}
-                                                            dateFormat="h:mm aa"
+                                                            dateFormat="HH.mm"
                                                         />
                                                     </div>
                                                     <i className="icon-plus-circled time-picker-btn" onClick={onAddTime} />
@@ -171,7 +226,7 @@ const CommunicationBasketDetails = (props) => {
                                                             return (
                                                                 <div className="closable-time-item">
                                                                     <i className="icon-close-small-x blue hover-hand" onClick={() => onDeleteTime(time)} />
-                                                                    {formatDate(time, "h:mm a")}
+                                                                    {formatDate(time, 'HH.mm')}
                                                                 </div>
                                                             )
                                                         })}
@@ -187,21 +242,28 @@ const CommunicationBasketDetails = (props) => {
                                                         placeholder="Repeat"
                                                     />
                                                 </div>
-                                                {recurringeData.week?.key === 'CUSTOM' &&
+                                                {recurringeData.week?.key === 6 &&
                                                     <div className="user-input-box m-t-15">
-                                                        <Input placeholder="Dates" value={customRecurringDate} onChange={onChangeCustomDateInput} />
+                                                        <Select
+                                                            mode="multiple"
+                                                            allowClear
+                                                            placeholder="Select Dates"
+                                                            onChange={onChangeDayOfTheWeek}
+                                                            options={DaysOfTheWeek}
+                                                            showArrow
+                                                            style={{ width: '100%' }}
+                                                        />
                                                     </div>
                                                 }
                                             </div>
                                         }
-
                                     </div>
                                 </div>
-                                <Dropdown
+                                {/* <Dropdown
                                     overlay={actions} placement="topRight" arrow
-                                >
-                                    <button className="primary-btn select-actions-btn" >Seletct Action</button>
-                                </Dropdown>
+                                > */}
+                                <button className="primary-btn select-actions-btn" onClick={onUpdate} >Update</button>
+                                {/* </Dropdown> */}
                             </div>
                         </TabPane>
                         <TabPane tab="RECEVERS" key="2">

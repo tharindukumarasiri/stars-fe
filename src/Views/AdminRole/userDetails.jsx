@@ -35,7 +35,7 @@ const UserDetails = ({ props }) => {
             "Email": props?.Email,
             "CountryId": props?.CountryId,
             "PictureFileId": selectedFile,
-            "LoggedInUserPartyId": e.target.value === "Active" ? null : currentUser?.Id
+            "LoggedInUserPartyId": e.target.value === "Active" ? null : currentUser?.PartyId
         }
 
         updateUser(params).then(() => {
@@ -70,7 +70,7 @@ const UserDetails = ({ props }) => {
                 "Email": props?.Email,
                 "CountryId": props?.CountryId,
                 "PictureFileId": reader.result,
-                "LoggedInUserPartyId": status === "Active" ? null : currentUser?.Id
+                "LoggedInUserPartyId": status === "Active" ? null : currentUser?.PartyId
             }
 
             updateUser(params).then(() => {

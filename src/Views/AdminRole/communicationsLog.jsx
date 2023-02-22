@@ -5,9 +5,9 @@ import { CommunicationsLogTableHeaders, CommunicationsSubTableHeaders } from '..
 import Dropdown from "../../common/dropdown";
 import DatePickerInput from "../../common/datePickerInput";
 import Input from '../../common/input'
-import { getCommunicationLogs, getCommunicationEntities, getCommunicationMessageTypes, getCommunicationMessageStatuses, getCommunicationLogsSubLvl } from "../../services/communicationService";
+import { getCommunicationLogs, getCommunicationLogsByBasket, getCommunicationEntities, getCommunicationMessageTypes, getCommunicationMessageStatuses, getCommunicationLogsSubLvl } from "../../services/communicationService";
 
-const CommunicationsLog = () => {
+const CommunicationsLog = ({props}) => {
     const [dropDownData, setDropDownData] = useState({ entity: [], status: [], type: [] })
     const [filterTypes, setFilterTypes] = useState({ entity: null, status: null, type: null, fromDate: null, toDate: null })
     const [searchText, setSearchText] = useState('');
@@ -15,9 +15,22 @@ const CommunicationsLog = () => {
     const [communicationsDataExpanded, setCommunicationsDataExpanded] = useState([])
     const [loading, setLoading] = useState(true);
 
+    const getBasketApi = () => {
+        if (props?.basketId) {
+            const params = {
+                "CommunicationBasketId": props?.basketId,
+                "PageSize": 50,
+                "PageCount": 0
+            }
+            return getCommunicationLogsByBasket(params)
+        } else {
+            return getCommunicationLogs({})
+        }
+    }
+
     useEffect(() => {
         Promise.all([
-            getCommunicationLogs({}).then(result => {
+            getBasketApi().then(result => {
                 setCommunicationsData(result);
             }),
             getCommunicationEntities().then(result => {
@@ -48,7 +61,7 @@ const CommunicationsLog = () => {
     };
 
     const expandedRowRender = (parentRow) => {
-        const dataObj = communicationsDataExpanded.find(row => row?.id === parentRow?.Id )
+        const dataObj = communicationsDataExpanded?.find(row => row?.id === parentRow?.Id)
 
         return (
             <div className="sub-table-padding">
@@ -82,12 +95,12 @@ const CommunicationsLog = () => {
     }
 
     const onExpand = (expanded, rowData) => {
-        const index = communicationsDataExpanded.findIndex( row => row.id === rowData?.Id )
+        const index = communicationsDataExpanded.findIndex(row => row.id === rowData?.Id)
         if (expanded && index < 0) {
             setLoading(true)
             getCommunicationLogsSubLvl(rowData?.Id).then(result => {
                 const newData = [...communicationsDataExpanded];
-                newData.push({id: rowData?.Id, data: result});
+                newData.push({ id: rowData?.Id, data: result });
                 setCommunicationsDataExpanded(newData);
             }).finally(() => setLoading(false))
         }

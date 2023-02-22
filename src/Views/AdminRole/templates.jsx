@@ -1,13 +1,14 @@
 import React, { useState, useEffect, useMemo } from "react";
-import { Table, Modal } from 'antd';
+import { Table, Modal, message } from 'antd';
 import CreateTemplate from "./createTemplate";
 import { TemplateTableHeaders } from "../../utils/tableHeaders";
-import { getTenantMessageTemplates } from "../../services/templateService";
-import { FetchCurrentCompany } from "../../hooks/index";
+import { getTenantMessageTemplates, deleteMessageTemplate } from "../../services/templateService";
+import { FetchCurrentCompany, FetchCurrentUser } from "../../hooks/index";
 import Input from "../../common/input";
 import { Tabs } from 'antd';
 import { useTranslation } from "react-i18next";
-
+import { ExclamationCircleOutlined } from '@ant-design/icons';
+const { confirm } = Modal;
 const { TabPane } = Tabs;
 
 const Templates = () => {
@@ -19,6 +20,7 @@ const Templates = () => {
     const [landingPageTemplates, setLandingPageTemplates] = useState([]);
     const [communicationTemplates, setCommunicationTemplates] = useState([]);
     const [editTemplate, setEditTemplate] = useState(null);
+    const [currentUser] = FetchCurrentUser();    
     const { t } = useTranslation();
 
     const tableHeaders = useMemo(() => {
@@ -35,7 +37,7 @@ const Templates = () => {
                     }}></i>
                     <i className="icon-delete table-icon" onClick={(e) => {
                         e.stopPropagation();
-                        //showDeleteConfirm(record)
+                        showDeleteConfirm(record, currentUser)
                     }}></i>                  
                 </>
             )
@@ -43,7 +45,7 @@ const Templates = () => {
 
         return headers
 
-    }, [])
+    }, [currentUser])
 
     const getSavedTemplates = () => {
         getTenantMessageTemplates(selectedCompany.tenantId).then(result => {
@@ -67,6 +69,31 @@ const Templates = () => {
         toggaleTemplateCreater();
         setEditTemplate(null);
     }
+
+    const showDeleteConfirm = (record, user) => {
+        confirm({
+            title: <>{t("Are you sure")} <strong className="red">{t('delete')}</strong> {t("this template?")}</>,
+            icon: <ExclamationCircleOutlined />,
+            content: <div>
+                <div className="body-text">{t("All data will be lost on")}</div>
+                <div className="body-text">{t("Template name: ")}: <strong>{record.DisplayName}</strong></div>               
+            </div>,
+            okText: t('Yes'),
+            okType: 'danger',
+            cancelText: t('No'),
+
+            onOk() {
+                console.log(user);
+                deleteMessageTemplate(record.Id, user.PartyId).then(() => {
+                    getSavedTemplates();     
+                    message.success(t('Delete template successful'));   
+                }).catch(() => {
+                    message.warning('Delete template failed');
+                });  
+            },
+
+        });
+    };
 
     return (
         <>
