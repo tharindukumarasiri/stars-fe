@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Table } from 'antd';
+import { Table, Pagination } from 'antd';
 
 import { CommunicationsLogTableHeaders, CommunicationsSubTableHeaders } from '../../utils/tableHeaders'
 import Dropdown from "../../common/dropdown";
@@ -7,31 +7,40 @@ import DatePickerInput from "../../common/datePickerInput";
 import Input from '../../common/input'
 import { getCommunicationLogs, getCommunicationLogsByBasket, getCommunicationEntities, getCommunicationMessageTypes, getCommunicationMessageStatuses, getCommunicationLogsSubLvl } from "../../services/communicationService";
 
-const CommunicationsLog = ({props}) => {
+const pageSize = 10;
+
+const CommunicationsLog = ({ props }) => {
     const [dropDownData, setDropDownData] = useState({ entity: [], status: [], type: [] })
     const [filterTypes, setFilterTypes] = useState({ entity: null, status: null, type: null, fromDate: null, toDate: null })
     const [searchText, setSearchText] = useState('');
     const [communicationsData, setCommunicationsData] = useState([])
-    const [communicationsDataExpanded, setCommunicationsDataExpanded] = useState([])
+    const [communicationsDataExpanded, setCommunicationsDataExpanded] = useState([]);
+    const [pageNumber, setPageNumber] = useState(0);
+    const [totalResults, setTotalResults] = useState(0);
     const [loading, setLoading] = useState(true);
 
     const getBasketApi = () => {
         if (props?.basketId) {
             const params = {
                 "CommunicationBasketId": props?.basketId,
-                "PageSize": 50,
+                "PageSize": pageSize,
                 "PageCount": 0
             }
             return getCommunicationLogsByBasket(params)
         } else {
-            return getCommunicationLogs({})
+            const params = {
+                "PageSize": pageSize,
+                "PageCount": 0
+            }
+            return getCommunicationLogs(params)
         }
     }
 
     useEffect(() => {
         Promise.all([
             getBasketApi().then(result => {
-                setCommunicationsData(result);
+                setCommunicationsData(result?.Value);
+                setTotalResults(result?.Key);
             }),
             getCommunicationEntities().then(result => {
                 setDropDownData(pre => ({ ...pre, entity: result }))
@@ -84,14 +93,41 @@ const CommunicationsLog = ({props}) => {
             "MessageTypeId": filterTypes?.type?.Id,
             "FromDate": filterTypes.fromDate,
             "ToDate": filterTypes.toDate,
-            "SearchText": searchText
+            "SearchText": searchText,
+            "PageSize": pageSize,
+            "PageCount": 0
         }
 
         getCommunicationLogs(params).then(result => {
-            setCommunicationsData(result);
+            setCommunicationsData(result?.Value);
+            setTotalResults(result?.Key);
             setLoading(false);
+            setPageNumber(0);
         });
 
+    }
+
+    const onChangePage = (page) => {
+        const pageNumb = page - 1
+        setLoading(true);
+
+        const params = {
+            "TenantId": filterTypes?.entity?.Id,
+            "StatusId": filterTypes?.status?.Id,
+            "MessageTypeId": filterTypes?.type?.Id,
+            "FromDate": filterTypes.fromDate,
+            "ToDate": filterTypes.toDate,
+            "SearchText": searchText,
+            "PageSize": pageSize,
+            "PageCount": pageNumb
+        }
+
+        getCommunicationLogs(params).then(result => {
+            setCommunicationsData(result?.Value);
+            setTotalResults(result?.Key);
+            setLoading(false);
+            setPageNumber(pageNumb);
+        });
     }
 
     const onExpand = (expanded, rowData) => {
@@ -185,6 +221,9 @@ const CommunicationsLog = ({props}) => {
                         }}
                     />
                 </div>
+                <div className="flex-center-middle m-t-20">
+                            <Pagination size="small" current={pageNumber + 1} onChange={onChangePage} total={totalResults} showSizeChanger={false} />
+                        </div>
             </div>
         </>
 

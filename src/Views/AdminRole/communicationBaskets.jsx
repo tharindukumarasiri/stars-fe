@@ -18,7 +18,7 @@ import {
 import { FetchCurrentUser } from "../../hooks/index"
 import TimeConfig from "./Components/timeConfig";
 
-const pageSize = 10
+const pageSize = 10;
 const firstReqParams = {
     "PageSize": pageSize,
     "PageCount": 0
@@ -27,7 +27,7 @@ const firstReqParams = {
 const CommunicationBaskets = () => {
     const [dropDownData, setDropDownData] = useState({ type: [], status: [], comType: [] })
     const [filterTypes, setFilterTypes] = useState({ startDate: null, endDate: null, type: null, status: null })
-    const [communicationsData, setCommunicationsData] = useState([{ Id: 12 }])
+    const [communicationsData, setCommunicationsData] = useState([])
     const [loading, setLoading] = useState(true);
     const [modalVisible, setModalVisible] = useState(false);
     const [configModalVisible, setConfigModalVisible] = useState(false);
@@ -134,7 +134,7 @@ const CommunicationBaskets = () => {
 
         return headers
 
-    }, [communicationsData])
+    }, [communicationsData, currentUser])
 
     const onChangeFilterType = (e, elementName) => {
         e.preventDefault();
@@ -154,11 +154,13 @@ const CommunicationBaskets = () => {
             "FromDate": filterTypes.startDate,
             "ToDate": filterTypes.endDate,
             "PageSize": pageSize,
-            "PageCount": pageNumber
+            "PageCount": 0
         }
 
         getCommunicationBasket(params).then(result => {
-            setCommunicationsData(result);
+            setCommunicationsData(result?.Value);
+            setTotalResults(result?.Key);
+            setPageNumber(0);
         }).finally(() => setLoading(false));
     }
 
@@ -197,8 +199,10 @@ const CommunicationBaskets = () => {
             addCommunicationBasket(params).then(() => {
                 toggleModal();
                 message.success("Create basket successful");
+                setNewGroupData({ name: '', basketType: true, communicationType: null, description: '' })
                 getCommunicationBasket(firstReqParams).then(result => {
-                    setCommunicationsData(result);
+                    setCommunicationsData(result?.Value);
+                    setTotalResults(result?.Key);
                 }).finally(() => setLoading(false));
             }).catch(() => {
                 message.error("Create basket failed please try again");

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from "react";
-import { Table, Modal, message } from 'antd';
+import { Table, Modal, message, Pagination } from 'antd';
 import CreateTemplate from "./createTemplate";
 import { TemplateTableHeaders } from "../../utils/tableHeaders";
 import { getTenantMessageTemplates, deleteMessageTemplate } from "../../services/templateService";
@@ -8,11 +8,11 @@ import Input from "../../common/input";
 import { Tabs } from 'antd';
 import { useTranslation } from "react-i18next";
 import { ExclamationCircleOutlined } from '@ant-design/icons';
+import * as constants from "../../utils/constants";
 const { confirm } = Modal;
 const { TabPane } = Tabs;
 
-const Templates = () => {
-    const [savedTemplates, setSavedTemplates] = useState([]);  
+const Templates = () => {   
     const [modalVisible, setModalVisible] = useState(false);
     const [loading, setLoading] = useState(true);
     const [selectedCompany] = FetchCurrentCompany();    
@@ -22,6 +22,14 @@ const Templates = () => {
     const [editTemplate, setEditTemplate] = useState(null);
     const [currentUser] = FetchCurrentUser();    
     const { t } = useTranslation();
+
+    const pageSize = 10;
+    const [ntCurrentPageNo, setntCurrentPageNo] = useState(1);    
+    const [lpCurrentPageNo, setlpCurrentPageNo] = useState(1);
+    const [bdCurrentPageNo, setbdCurrentPageNo] = useState(1);
+    const [ntTotal, setntTotal] = useState(0);
+    const [lpTotal, setlpTotal] = useState(0);
+    const [bdTotal, setbdTotal] = useState(0);
 
     const tableHeaders = useMemo(() => {
         const headers = TemplateTableHeaders.map(a => { return { ...a, title: t(a.title) } })
@@ -48,20 +56,33 @@ const Templates = () => {
     }, [currentUser])
 
     const getSavedTemplates = () => {
-        getTenantMessageTemplates(selectedCompany.tenantId).then(result => {
-            setSavedTemplates(result);
-            setNotificationTemplates(result.filter(i => i.MessageTypeId === 2));
-            setLandingPageTemplates(result.filter(i => i.MessageTypeId === 1));
-            setCommunicationTemplates(result.filter(i => i.MessageTypeId === 3));
-            setLoading(false);
+
+        setLoading(true);       
+
+        getTenantMessageTemplates(selectedCompany.tenantId, constants.templateType.Notification, ntCurrentPageNo, pageSize).then(result => {            
+            setNotificationTemplates(result.Value); 
+            setntTotal(result.Key);            
         }).catch(() => setLoading(false))
+
+        getTenantMessageTemplates(selectedCompany.tenantId, constants.templateType.LandingPage, lpCurrentPageNo, pageSize).then(result => { 
+            setLandingPageTemplates(result.Value);
+            setlpTotal(result.Key)
+        }).catch(() => setLoading(false))
+
+        getTenantMessageTemplates(selectedCompany.tenantId, constants.templateType.Communication, bdCurrentPageNo, pageSize).then(result => {  
+            setCommunicationTemplates(result.Value);
+            setbdTotal(result.Key);
+        }).catch(() => setLoading(false))
+
+        setLoading(false);
     }
 
     useEffect(() => {
-        if(selectedCompany && selectedCompany.tenantId)
-            getSavedTemplates()
-    }, [selectedCompany]);
-
+        if(selectedCompany && selectedCompany.tenantId){
+            getSavedTemplates();
+        }
+            
+    }, [selectedCompany, ntCurrentPageNo, lpCurrentPageNo, bdCurrentPageNo]);
 
     const toggaleTemplateCreater = () => { setModalVisible(prev => !prev) }
 
@@ -95,6 +116,33 @@ const Templates = () => {
         });
     };
 
+    const onChangePage = (pageNumber, type) => {
+       
+        let setActPage = (p) => {};
+        switch(type) {
+            case constants.templateType.Notification:                 
+                setActPage = setntCurrentPageNo;
+                break;
+            case constants.templateType.LandingPage:                 
+                setActPage = setlpCurrentPageNo;
+                break;
+            case constants.templateType.Communication:                 
+                setActPage = setbdCurrentPageNo;
+                break;
+        }
+        switch (pageNumber) {
+            case 'prev':                
+                setActPage((cur) => cur - 1);
+                break;
+            case 'next':               
+                setActPage((cur) => cur + 1);
+                break;
+            default:                
+                setActPage(pageNumber);
+        }
+    }
+
+
     return (
         <>
             {loading &&
@@ -122,6 +170,13 @@ const Templates = () => {
                                 columns={tableHeaders}
                                 pagination={false}
                             />
+                            <div className="flex-center-middle m-t-20">
+                                <Pagination size="small" 
+                                    pageSize={pageSize}
+                                    current={ntCurrentPageNo} 
+                                    onChange={(pageNum) => { onChangePage(pageNum, constants.templateType.Notification) }} 
+                                    total={ntTotal} showSizeChanger={false} />
+                            </div>
                         </TabPane>
                         <TabPane tab="landing pages templates" key="2">
                             <Table
@@ -130,6 +185,13 @@ const Templates = () => {
                                 columns={tableHeaders}
                                 pagination={false}
                             />
+                            <div className="flex-center-middle m-t-20">
+                                <Pagination size="small" 
+                                    pageSize={pageSize}
+                                    current={lpCurrentPageNo} 
+                                    onChange={(pageNum) => { onChangePage(pageNum, constants.templateType.LandingPage) }} 
+                                    total={lpTotal} showSizeChanger={false} />
+                            </div>
                         </TabPane>
                         <TabPane tab="Business Communication Template" key="3">
                             <Table
@@ -138,6 +200,13 @@ const Templates = () => {
                                 columns={tableHeaders}
                                 pagination={false}
                             />
+                            <div className="flex-center-middle m-t-20">
+                                <Pagination size="small" 
+                                    pageSize={pageSize}
+                                    current={bdCurrentPageNo} 
+                                    onChange={(pageNum) => { onChangePage(pageNum, constants.templateType.Communication) }} 
+                                    total={bdTotal} showSizeChanger={false} />
+                            </div>
                         </TabPane>
                     </Tabs>
                 </div>

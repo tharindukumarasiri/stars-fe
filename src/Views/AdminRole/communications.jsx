@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo, useContext } from "react";
-import { Table, Tabs, Dropdown, Menu, message } from 'antd';
+import { Table, Tabs, Dropdown, Menu, message, Pagination } from 'antd';
 
 import StarDropdown from "../../common/dropdown";
 import Input from '../../common/input'
@@ -12,6 +12,12 @@ import { TabContext } from "../../utils/contextStore";
 
 const { TabPane } = Tabs;
 
+const pageSize = 10;
+const initialPayload = {
+    "PageSize": pageSize,
+    "PageCount": 0
+}
+
 const Communications = () => {
     const { changeActiveTab } = useContext(TabContext);
     const [dropDownData, setDropDownData] = useState({ status: [], type: [] })
@@ -21,11 +27,14 @@ const Communications = () => {
     const [selectedRows, setSelectedRows] = useState([])
     const [loading, setLoading] = useState(true);
     const [currentUser] = FetchCurrentUser();
+    const [pageNumber, setPageNumber] = useState(0);
+    const [totalResults, setTotalResults] = useState(0);
 
     useEffect(() => {
         Promise.all([
-            getCommunicationsList({}).then(result => {
-                setCommunicationsData(result);
+            getCommunicationsList(initialPayload).then(result => {
+                setCommunicationsData(result?.Value);
+                setTotalResults(result?.Key);
             }),
             getCommunicationMessageTypes().then(result => {
                 setDropDownData(pre => ({ ...pre, type: result }))
@@ -40,9 +49,9 @@ const Communications = () => {
     const tableHeaders = useMemo(() => {
         const headers = CommunicationsTableHeaders?.map(a => { return { ...a, title: a.title } })
         headers.push({
-            title: <input class="star" type="checkbox" disabled />,
+            title: <input className="star" type="checkbox" disabled />,
             render: (_, record) => (
-                <input class="star" type="checkbox" />
+                <input className="star" type="checkbox" />
             )
         }, {
             title: '',
@@ -73,10 +82,19 @@ const Communications = () => {
     const onDelete = () => {
         const deleteList = [currentUser?.Id, ...selectedRows]
         setLoading(true);
-
+        const params = {
+            "StatusId": dropDownSelected?.status?.Id,
+            "MessageTypeId": dropDownSelected?.type?.Id,
+            "FromDate": dropDownSelected.fromDate,
+            "ToDate": dropDownSelected.toDate,
+            "SearchText": searchText,
+            "PageSize": pageSize,
+            "PageCount": pageNumber
+        }
         deleteCommunicationLogs(deleteList).then(() => {
-            getCommunicationsList({}).then(result => {
-                setCommunicationsData(result);
+            getCommunicationsList(params).then(result => {
+                setCommunicationsData(result?.Value);
+                setTotalResults(result?.Key);
                 message.success("Delete successful");
             }).finally(() => setLoading(false))
         }).catch(() => {
@@ -116,17 +134,43 @@ const Communications = () => {
             "MessageTypeId": dropDownSelected?.type?.Id,
             "FromDate": dropDownSelected.fromDate,
             "ToDate": dropDownSelected.toDate,
-            "SearchText": searchText
+            "SearchText": searchText,
+            "PageSize": pageSize,
+            "PageCount": 0
         }
 
         getCommunicationsList(params).then(result => {
-            setCommunicationsData(result);
+            setCommunicationsData(result?.Value);
+            setTotalResults(result?.Value);
             setLoading(false);
+            setPageNumber(0);
         });
     }
 
     const createNew = () => {
         changeActiveTab(NAVIGATION_PAGES.NEW_COMMUNICATION)
+    }
+
+    const onChangePage = (page) => {
+        const pageNumb = page - 1
+        setLoading(true);
+
+        const params = {
+            "StatusId": dropDownSelected?.status?.Id,
+            "MessageTypeId": dropDownSelected?.type?.Id,
+            "FromDate": dropDownSelected.fromDate,
+            "ToDate": dropDownSelected.toDate,
+            "SearchText": searchText,
+            "PageSize": pageSize,
+            "PageCount": pageNumb
+        }
+
+        getCommunicationsList(params).then(result => {
+            setLoading(false)
+            setPageNumber(pageNumb)
+            setCommunicationsData(result?.Value);
+            setTotalResults(result?.Key);
+        }).catch(() => setLoading(false))
     }
 
     return (
@@ -196,6 +240,9 @@ const Communications = () => {
                                 columns={tableHeaders}
                                 pagination={false}
                             />
+                        </div>
+                        <div className="flex-center-middle m-t-20">
+                            <Pagination size="small" current={pageNumber + 1} onChange={onChangePage} total={totalResults} showSizeChanger={false} />
                         </div>
                     </TabPane>
                     <TabPane tab="DRAFTS" key="2">

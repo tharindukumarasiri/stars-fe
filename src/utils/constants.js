@@ -73,3 +73,9 @@ export const organizationTypes = [
     'UTLA',
     'VPFO'
 ]
+
+export const templateType = {
+    Notification: 1,
+    LandingPage: 2,
+    Communication: 3
+}
