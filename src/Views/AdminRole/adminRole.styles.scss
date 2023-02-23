@@ -42,6 +42,7 @@
 }
 
 .user-input-box {
+
     input[type="time"],
     input[type="text"] {
         border: 1px solid #999999;
@@ -56,14 +57,14 @@
         border: 1px solid #999999;
     }
 
-    .ant-select:not(.ant-select-customize-input) .ant-select-selector{
+    .ant-select:not(.ant-select-customize-input) .ant-select-selector {
         border: 1px solid #999999;
         min-height: 40px;
     }
 
     .ant-select-selection-placeholder {
         color: #999999;
-      }
+    }
 }
 
 .toggle-container {
@@ -327,4 +328,93 @@
     padding-right: 10px;
     margin-right: 10px;
     white-space: nowrap;
+}
+
+.new-com-page {
+    display: flex;
+    flex-direction: row;
+    width: 95vw;
+    justify-content: space-around;
+}
+
+.new-com-sub-container {
+    display: flex;
+    flex-direction: column;
+    margin-top: 70px;
+    align-items: center;
+}
+
+.step-numb-container {
+    display: flex;
+    width: 40px;
+    height: 40px;
+    background-color: $bluish-green;
+    border-radius: 40px;
+    justify-content: center;
+    align-items: center;
+    color: $white;
+}
+
+.step-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.new-com-input-container {
+    width: 300px;
+}
+
+.new-com-drop-down-container {
+    width: 395px;
+}
+
+.receivers-header {
+    align-self: flex-start;
+    font-weight: bolder;
+    font-size: 14px;
+    color: #999999;
+    margin-top: 20px;
+}
+
+.companies-search-input-containers {
+    width: 300px;
+}
+
+.receivers-tablele-width {
+    width: 90vw;
+}
+
+.recivers-sub-table-padding {
+    margin-left: 100px;
+    margin-right: 100px;
+}
+
+.recivers-user-footer {
+    margin-left: 150px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.recivers-top-container {
+    display: flex;
+    flex-direction: row;
+    height: 40px;
+}
+
+.sub-table-nav {
+    .ant-tabs>.ant-tabs-nav .ant-tabs-nav-wrap {
+        background-color: #F0F0F0
+    }
+
+    .ant-tabs-card>.ant-tabs-nav .ant-tabs-tab {
+        background-color: #F0F0F0;
+        border-color: #F0F0F0;
+    }
+}
+
+.time-config-Container {
+    display: flex;
+    flex-direction: column;
 }

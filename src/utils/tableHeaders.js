@@ -7,10 +7,10 @@ export const projectScreenTableHeaders = [
     {
         title: 'Project Code',
         dataIndex: 'Id',
-             render: (_, { Id }) => (
-                projectCodeFormat(Id)
+        render: (_, { Id }) => (
+            projectCodeFormat(Id)
         ),
-        
+
     },
     {
         title: 'Name',
@@ -1175,5 +1175,146 @@ export const CommunicationBasketsTableHeaders = [
             BasketStatus?.Name
         ),
         sorter: true,
+    },
+]
+
+export const ReceversCompaniesTableHeaders = [
+    {
+        title: 'Company',
+        children: [
+            {
+                title: 'Organization ID',
+                dataIndex: 'Id',
+            },
+            {
+                title: 'ID',
+                dataIndex: 'ID',
+            },
+            {
+                title: 'Name',
+                dataIndex: 'Name',
+            },
+            {
+                title: 'Country',
+                dataIndex: 'Country',
+            },
+            {
+                title: 'Email',
+                dataIndex: 'Email',
+            },
+            {
+                title: 'Phone',
+                dataIndex: 'Phone',
+            },
+            {
+                title: 'Source',
+                dataIndex: 'Source',
+            },
+        ]
+    }
+]
+
+export const ReceversCompaniesSubTableHeaders = [
+    {
+        title: 'Users',
+        children: [
+            {
+                title: 'ID',
+                dataIndex: 'Id',
+                width: 120
+            },
+            {
+                title: 'Name',
+                dataIndex: 'Name',
+                width: 200
+            },
+            {
+                title: 'Title',
+                dataIndex: 'Title',
+                width: 100
+            },
+            {
+                title: 'Email',
+                dataIndex: 'Email',
+                width: 200
+            },
+            {
+                title: 'Mobile Number',
+                dataIndex: 'Mobile Number',
+                width: 200
+            },
+        ]
+    }
+]
+
+export const ReceversPersonsTableHeaders = [
+    {
+        title: 'ID',
+        dataIndex: 'Id',
+        width: 120
+    },
+    {
+        title: 'Name',
+        dataIndex: 'Name',
+    },
+    {
+        title: 'Position',
+        dataIndex: 'Position',
+    },
+    {
+        title: 'Country',
+        dataIndex: 'Country',
+    },
+    {
+        title: 'Email',
+        dataIndex: 'Email',
+    },
+    {
+        title: 'Mobile Number',
+        dataIndex: 'Mobile Number',
+    },
+    {
+        title: 'Company ID',
+        dataIndex: 'Company ID',
+    },
+    {
+        title: 'Company Name',
+        dataIndex: 'Company Name',
+    },
+    {
+        title: '',
+        width: 50,
+        dataIndex: '',
+    },
+]
+
+export const SearchProjectSectionTableHeaders = [
+    {
+        title: 'Search Project ID',
+        dataIndex: 'Id',
+    },
+    {
+        title: 'Project Name',
+        dataIndex: 'Name',
+    },
+    {
+        title: 'Section',
+        dataIndex: 'Position',
+    },
+    {
+        title: 'Companies',
+        dataIndex: 'Companies',
+    },
+    {
+        title: 'Country',
+        dataIndex: 'Country',
+    },
+    {
+        title: 'Email',
+        dataIndex: 'Email',
+    },
+    {
+        title: 'Phone',
+        dataIndex: 'Phone',
     },
 ]

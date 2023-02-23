@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useContext } from "react";
 import { Table, Tabs, Dropdown, Menu, message } from 'antd';
 
 import StarDropdown from "../../common/dropdown";
@@ -7,10 +7,13 @@ import { CommunicationsTableHeaders } from '../../utils/tableHeaders'
 import DatePickerInput from "../../common/datePickerInput";
 import { getCommunicationsList, getCommunicationMessageTypes, getCommunicationMessageStatuses, deleteCommunicationLogs } from "../../services/communicationService";
 import { FetchCurrentUser } from "../../hooks/index"
+import { NAVIGATION_PAGES } from "../../utils/enums";
+import { TabContext } from "../../utils/contextStore";
 
 const { TabPane } = Tabs;
 
 const Communications = () => {
+    const { changeActiveTab } = useContext(TabContext);
     const [dropDownData, setDropDownData] = useState({ status: [], type: [] })
     const [dropDownSelected, setDropDownSelected] = useState({ status: null, type: null, fromDate: null, toDate: null })
     const [searchText, setSearchText] = useState('');
@@ -57,7 +60,7 @@ const Communications = () => {
     const onCheckBox = (e, value) => {
         const newSelectedRows = [...selectedRows];
 
-        if(e.target.checked){
+        if (e.target.checked) {
             newSelectedRows.push(value);
         } else {
             const index = selectedRows.indexOf(value);
@@ -122,6 +125,10 @@ const Communications = () => {
         });
     }
 
+    const createNew = () => {
+        changeActiveTab(NAVIGATION_PAGES.NEW_COMMUNICATION)
+    }
+
     return (
         <>
             <div className="com-top-container user-input-box">
@@ -132,7 +139,7 @@ const Communications = () => {
                         <div></div>
                     </div>
                 }
-                <button className="add-btn m-r-20 com-drop-down-width" >Create New</button>
+                <button className="add-btn m-r-20 com-drop-down-width" onClick={createNew} >Create New</button>
                 <div className="filter-by-text m-l-20">Filter By:</div>
                 <div className="com-drop-down-width">
                     <StarDropdown

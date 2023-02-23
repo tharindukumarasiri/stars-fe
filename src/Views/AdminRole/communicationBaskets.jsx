@@ -16,6 +16,7 @@ import {
     deleteCommunicationBasket
 } from "../../services/communicationService";
 import { FetchCurrentUser } from "../../hooks/index"
+import TimeConfig from "./Components/timeConfig";
 
 const pageSize = 10
 const firstReqParams = {
@@ -26,13 +27,15 @@ const firstReqParams = {
 const CommunicationBaskets = () => {
     const [dropDownData, setDropDownData] = useState({ type: [], status: [], comType: [] })
     const [filterTypes, setFilterTypes] = useState({ startDate: null, endDate: null, type: null, status: null })
-    const [communicationsData, setCommunicationsData] = useState([])
+    const [communicationsData, setCommunicationsData] = useState([{ Id: 12 }])
     const [loading, setLoading] = useState(true);
     const [modalVisible, setModalVisible] = useState(false);
+    const [configModalVisible, setConfigModalVisible] = useState(false);
     const [newGroupData, setNewGroupData] = useState({ name: '', basketType: true, communicationType: null, description: '' });
     const [newGroupDataErrors, setNewGroupDataErrors] = useState({ name: '' });
     const [pageNumber, setPageNumber] = useState(0);
     const [totalResults, setTotalResults] = useState(0);
+    const [configBasketId, setConfigBasketId] = useState('');
 
     const [currentUser] = FetchCurrentUser();
     const { changeActiveTab } = useContext(TabContext);
@@ -86,6 +89,12 @@ const CommunicationBaskets = () => {
         })
     }
 
+    const onConfig = (e, id) => {
+        e.stopPropagation();
+        toggleConfigModal();
+        setConfigBasketId(id)
+    }
+
     const tableHeaders = useMemo(() => {
         const headers = CommunicationBasketsTableHeaders?.map(a => { return { ...a, title: a.title } })
         headers.push({
@@ -98,9 +107,10 @@ const CommunicationBaskets = () => {
 
         }, {
             title: 'Config.',
-            dataIndex: ['FromDateTime', 'ToDateTime'],
-            render: (_, { FromDateTime, ToDateTime }) => (
-                <i className={(FromDateTime || ToDateTime) ? 'icon-config basket-table-icon hover-hand green' : 'icon-config basket-table-icon hover-hand  blue'} />
+            dataIndex: ['FromDateTime', 'ToDateTime', 'Id'],
+            render: (_, { FromDateTime, ToDateTime, Id }) => (
+                <i className={(FromDateTime || ToDateTime) ? 'icon-config basket-table-icon hover-hand green' : 'icon-config basket-table-icon hover-hand  blue'}
+                    onClick={(e) => onConfig(e, Id)} />
             ),
             width: 80,
         }, {
@@ -154,6 +164,10 @@ const CommunicationBaskets = () => {
 
     const toggleModal = () => {
         setModalVisible(pre => !pre)
+    }
+
+    const toggleConfigModal = () => {
+        setConfigModalVisible(pre => !pre)
     }
 
     const validateFields = () => {
@@ -299,6 +313,18 @@ const CommunicationBaskets = () => {
                     <Pagination size="small" current={pageNumber + 1} onChange={onChangePage} total={totalResults} showSizeChanger={false} />
                 </div>
             </div>
+
+            <Modal title={"Basket Config."}
+                visible={configModalVisible}
+                onCancel={toggleConfigModal}
+                centered={true}
+                footer={null}
+                width={470} >
+                <div className="user-input-box create-basket-container" >
+                    <TimeConfig Id={configBasketId} />
+                    <div className="n-float" />
+                </div>
+            </Modal>
 
             <Modal title={"Create New Group"}
                 visible={modalVisible}

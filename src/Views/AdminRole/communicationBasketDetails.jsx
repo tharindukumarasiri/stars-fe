@@ -1,108 +1,124 @@
 import React, { useState } from "react";
-import { Tabs, Select, message } from 'antd';
+import { Tabs, Table } from 'antd';
 
 import newsletter from "../../assets/images/newsletter.png"
-import DatePickerInput from "../../common/datePickerInput";
-import StarDropdown from "../../common/dropdown";
+import Input from '../../common/input'
 import { formatDate } from "../../utils";
-import { configureCommunicationBasket } from "../../services/communicationService";
+import { ReceversCompaniesTableHeaders, ReceversCompaniesSubTableHeaders, ReceversPersonsTableHeaders, SearchProjectSectionTableHeaders } from '../../utils/tableHeaders'
+import TimeConfig from "./Components/timeConfig";
 
 const { TabPane } = Tabs;
 
-const recurringTypes = [
-    { key: 1, Name: 'Monday to Friday' },
-    { key: 2, Name: 'Daily' },
-    { key: 3, Name: 'Weekly' },
-    { key: 4, Name: 'Monthly' },
-    { key: 5, Name: 'Yearly' },
-    { key: 6, Name: 'Custom' },
-]
-
-const DaysOfTheWeek = [
-    { value: '1', label: 'Monday' },
-    { value: '2', label: 'Tuesday' },
-    { value: '3', label: 'Wednesday' },
-    { value: '4', label: 'Thursday' },
-    { value: '5', label: 'Friday' },
-    { value: '6', label: 'Saturday' },
-    { value: '7', label: 'Sunday' },
-]
-
 const CommunicationBasketDetails = ({ props }) => {
-    const [oneTimeType, setOneTimeType] = useState(true);
-    const [oneTimeData, setoneTimeData] = useState({ date: null, time: null });
-    const [recurringeData, setRecurringeData] = useState({ startDate: null, endDate: null, time: null, week: '' });
-    const [timesList, setTimesList] = useState([]);
-    const [customRecurringDate, setCustomRecurringDate] = useState([])
+    const [searchCompaniesText, setsearchCompaniesText] = useState('');
+    const [companiesData, setCompaniesData] = useState([{ Id: 122 }]);
+    const [usersData, setUsersData] = useState([{ Id: 10 }]);
+    const [newUserData, setnewUserData] = useState({ name: '', title: '', email: '', mobileNumb: '' })
+
+    const [searchPersonsText, setSearchPersonsText] = useState('');
+    const [personsData, setPersonsData] = useState([{ Id: 122 }]);
+    const [newPersonData, setnewPersonData] = useState({ name: '', position: '', country: '', email: '', mobileNumb: '', companyId: '', companyName: '' })
+
+    const [projectSearchText, setProjectSearchText] = useState('');
+    const [projectData, setProjectData] = useState([{ Id: 122 }]);
+
     const [loading, setLoading] = useState(false);
 
-    const onOneTimeDataChange = (value, type) => {
-        setoneTimeData({ ...oneTimeData, [type]: value })
+    const onChangesearchCompaniesText = (e) => {
+        e.preventDefault();
+        setsearchCompaniesText(e.target.value);
     }
 
-    const onRecurringDataChange = (value, type) => {
-        setRecurringeData({ ...recurringeData, [type]: value })
+    const onSearchCompanies = () => {
+
     }
 
-    const onAddTime = () => {
-        const newTimesList = [...timesList];
-        if (recurringeData.time && !timesList.includes(recurringeData.time)) {
-            newTimesList.push(recurringeData.time)
-        }
-        setTimesList(newTimesList);
+    const onExpand = (expanded, rowData) => {
+
     }
 
-    const onDeleteTime = (time) => {
-        const newTimesList = [...timesList];
-        newTimesList.splice(timesList.indexOf(time), 1)
-        setTimesList(newTimesList);
+    const onChangeNewUserData = (e, type) => {
+        e.preventDefault();
+        setnewUserData(pre => ({ ...pre, [type]: e.target.value }))
     }
 
-    const onChangeDayOfTheWeek = (value) => {
-        setCustomRecurringDate(value)
-    }
-
-    const getFormatedTimeList = () => {
-        if (oneTimeType) {
-            return [formatDate(oneTimeData.time, 'HH.mm')];
-        } else {
-            const newList = [];
-
-            timesList.map(time => {
-                newList.push(formatDate(time, 'HH.mm'))
-            })
-
-            return newList;
-        }
-    }
-
-    const onUpdate = () => {
-        setLoading(true);
-        const params = {
-            "Id": props?.Id,
-            "FromDateTime": oneTimeType ? oneTimeData.date : recurringeData.startDate,
-            "ToDateTime": recurringeData.endDate,
-            "BasketTypeId": oneTimeType ? 1 : 2,
-            "Times": getFormatedTimeList(),
-            "BasketRecurringTypeId": recurringeData.week?.key,
-            "CustomConfiguration": customRecurringDate.toString()
+    const expandedRowRender = (parentRow) => {
+        const addNewMember = () => {
+            return (
+                <div className="recivers-user-footer user-input-box">
+                    <div style={{ width: 200 }}>
+                        <Input placeholder="Xxx" value={newUserData.name} onChange={(e) => onChangeNewUserData(e, 'name')} />
+                    </div>
+                    <div style={{ width: 100 }}>
+                        <Input placeholder="Xxx" value={newUserData.title} onChange={(e) => onChangeNewUserData(e, 'title')} />
+                    </div>
+                    <div style={{ width: 200 }}>
+                        <Input placeholder="Xxx" value={newUserData.email} onChange={(e) => onChangeNewUserData(e, 'email')} />
+                    </div>
+                    <div style={{ width: 200 }}>
+                        <Input placeholder="Xxx" value={newUserData.mobileNumb} onChange={(e) => onChangeNewUserData(e, 'mobileNumb')} />
+                    </div>
+                    <i className="icon-plus-circled blue basket-table-icon hover-hand" />
+                </div>
+            )
         }
 
-        configureCommunicationBasket(params).then(() => {
-            setLoading(false);
-            message.success('Configuration Success')
-        }).catch(() => {
-            setLoading(false);
-            message.error('Configuration Failed')
-        })
+        return (
+            <div className="recivers-sub-table-padding">
+                <Table
+                    columns={ReceversCompaniesSubTableHeaders}
+                    dataSource={usersData}
+                    pagination={false}
+                    footer={addNewMember}
+                />
+            </div>
+        );
+    };
+
+    const onChangesearchPersonsText = (e) => {
+        e.preventDefault();
+        setSearchPersonsText(e.target.value);
     }
 
-    const changeConfigType = () => {
-        setoneTimeData({ date: null, time: null });
-        setRecurringeData({ startDate: null, endDate: null, time: null, week: '' });
-        setTimesList([]);
-        setCustomRecurringDate([]);
-        setOneTimeType(pre => !pre);
+    const onChangeNewPersonData = (e, type) => {
+        e.preventDefault();
+        setnewPersonData(pre => ({ ...pre, [type]: e.target.value }))
+    }
+
+    const addNewPerson = () => {
+        return (
+            <div className="recivers-user-footer user-input-box" style={{ marginLeft: 120 }}>
+                <div style={{ width: 150 }}>
+                    <Input placeholder="Xxx" value={newPersonData.name} onChange={(e) => onChangeNewPersonData(e, 'name')} />
+                </div>
+                <div style={{ width: 150 }}>
+                    <Input placeholder="Xxx" value={newPersonData.position} onChange={(e) => onChangeNewPersonData(e, 'position')} />
+                </div>
+                <div style={{ width: 150 }}>
+                    <Input placeholder="Xxx" value={newPersonData.country} onChange={(e) => onChangeNewPersonData(e, 'country')} />
+                </div>
+                <div style={{ width: 150 }}>
+                    <Input placeholder="Xxx" value={newPersonData.email} onChange={(e) => onChangeNewPersonData(e, 'email')} />
+                </div>
+                <div style={{ width: 150 }}>
+                    <Input placeholder="Xxx" value={newPersonData.mobileNumb} onChange={(e) => onChangeNewPersonData(e, 'mobileNumb')} />
+                </div>
+                <div style={{ width: 150 }}>
+                    <Input placeholder="Xxx" value={newPersonData.companyId} onChange={(e) => onChangeNewPersonData(e, 'companyId')} />
+                </div>
+                <div style={{ width: 150 }}>
+                    <Input placeholder="Xxx" value={newPersonData.companyName} onChange={(e) => onChangeNewPersonData(e, 'companyName')} />
+                </div>
+                <div style={{ width: 20 }}>
+                    <i className="icon-plus-circled blue basket-table-icon hover-hand" />
+                </div>
+            </div>
+        )
+    }
+
+    const onChangesearchProjectText = (e) => {
+        e.preventDefault();
+        setProjectSearchText(e.target.value);
     }
 
     return (
@@ -164,117 +180,98 @@ const CommunicationBasketDetails = ({ props }) => {
                                     </div>
                                     <div className="general-type-container">
                                         <div className="text-center">Type</div>
-                                        <div className="m-t-20">
-                                            <input
-                                                type="radio" id="OneTime" name="OneTime"
-                                                checked={oneTimeType} className="m-l-20"
-                                                onChange={changeConfigType} />
-                                            <label className="p-r-20 p-l-20" htmlFor="OneTime">One Time</label>
-                                            <input
-                                                type="radio" id="Recurring" name="Recurring"
-                                                checked={!oneTimeType} className="m-l-20"
-                                                onChange={changeConfigType} />
-                                            <label className="p-r-20 p-l-20" htmlFor="Recurring">Recurring</label>
-                                        </div>
-                                        {oneTimeType ?
-                                            <div className="m-t-20">
-                                                <DatePickerInput
-                                                    placeholder='Date'
-                                                    value={oneTimeData.date}
-                                                    onChange={(date) => onOneTimeDataChange(date, 'date')}
-                                                    isClearable
-                                                />
-                                                <DatePickerInput
-                                                    placeholder='Time'
-                                                    value={oneTimeData.time}
-                                                    onChange={(time) => onOneTimeDataChange(time, 'time')}
-                                                    isClearable
-                                                    timePicker={true}
-                                                    dateFormat="HH.mm"
-                                                />
-                                            </div> :
-                                            <div className="m-t-20">
-                                                <DatePickerInput
-                                                    placeholder='Start Date'
-                                                    value={recurringeData.startDate}
-                                                    onChange={(date) => onRecurringDataChange(date, 'startDate')}
-                                                    isClearable
-                                                />
-                                                <DatePickerInput
-                                                    placeholder='End Date'
-                                                    value={recurringeData.endDate}
-                                                    onChange={(date) => onRecurringDataChange(date, 'endDate')}
-                                                    isClearable
-                                                />
-                                                <div className="m-t-20">Time</div>
-                                                <div className="time-picker-container">
-                                                    <div className="time-picker-width">
-                                                        <DatePickerInput
-                                                            placeholder='Time'
-                                                            value={recurringeData.time}
-                                                            onChange={(time) => onRecurringDataChange(time, 'time')}
-                                                            isClearable
-                                                            timePicker={true}
-                                                            dateFormat="HH.mm"
-                                                        />
-                                                    </div>
-                                                    <i className="icon-plus-circled time-picker-btn" onClick={onAddTime} />
-                                                </div>
-                                                {timesList.length > 0 &&
-                                                    <div className="closable-time-item-container">
-                                                        {timesList.map(time => {
-                                                            return (
-                                                                <div className="closable-time-item">
-                                                                    <i className="icon-close-small-x blue hover-hand" onClick={() => onDeleteTime(time)} />
-                                                                    {formatDate(time, 'HH.mm')}
-                                                                </div>
-                                                            )
-                                                        })}
-                                                    </div>
-                                                }
-
-                                                <div className="user-input-box m-t-15">
-                                                    <StarDropdown
-                                                        values={recurringTypes}
-                                                        onChange={e => onRecurringDataChange(JSON.parse(e.target.value), 'week')}
-                                                        selected={JSON.stringify(recurringeData.week || undefined)}
-                                                        dataName="Name"
-                                                        placeholder="Repeat"
-                                                    />
-                                                </div>
-                                                {recurringeData.week?.key === 6 &&
-                                                    <div className="user-input-box m-t-15">
-                                                        <Select
-                                                            mode="multiple"
-                                                            allowClear
-                                                            placeholder="Select Dates"
-                                                            onChange={onChangeDayOfTheWeek}
-                                                            options={DaysOfTheWeek}
-                                                            showArrow
-                                                            style={{ width: '100%' }}
-                                                        />
-                                                    </div>
-                                                }
-                                            </div>
-                                        }
+                                        <TimeConfig Id={props?.Id} />
                                     </div>
                                 </div>
                                 {/* <Dropdown
                                     overlay={actions} placement="topRight" arrow
                                 > */}
-                                <button className="primary-btn select-actions-btn" onClick={onUpdate} >Update</button>
+                                {/* <button className="primary-btn select-actions-btn" onClick={onUpdate} >Update</button> */}
                                 {/* </Dropdown> */}
                             </div>
                         </TabPane>
                         <TabPane tab="RECEVERS" key="2">
+                            <div className="custom-tab-container sub-table-nav">
+                                <Tabs type="card" style={{ width: '90vw' }} >
+                                    <TabPane tab="COMPANIES" key="3">
+                                        <div className="recivers-top-container m-b-20">
+                                            <div className="companies-search-input-containers user-input-box" >
+                                                <Input placeholder="Search" value={searchCompaniesText} onChange={onChangesearchCompaniesText} endImage='icon-search-1' />
+                                            </div>
+                                            <button className="add-btn m-r-10" onClick={onSearchCompanies} >Filters</button>
+                                            <button className="add-btn m-r-10 disable-div" >Add New</button>
+                                            <button className="add-btn m-r-10 disable-div" >Upload</button>
+                                        </div>
 
+                                        <div className="receivers-tablele-width">
+                                            <Table
+                                                rowKey={(record, index) => index}
+                                                dataSource={companiesData}
+                                                scroll={{
+                                                    y: '60vh',
+                                                    x: '70vw'
+                                                }}
+                                                columns={ReceversCompaniesTableHeaders}
+                                                pagination={false}
+                                                expandable={{
+                                                    expandedRowRender,
+                                                    onExpand,
+                                                }}
+                                            />
+                                        </div>
+                                    </TabPane>
+
+                                    <TabPane tab="PERSONS" key="4">
+                                        <div className="recivers-top-container m-b-20">
+                                            <div className="companies-search-input-containers user-input-box" >
+                                                <Input placeholder="Search" value={searchPersonsText} onChange={onChangesearchPersonsText} endImage='icon-search-1' />
+                                            </div>
+                                            <button className="add-btn m-r-10" onClick={onSearchCompanies} >Filters</button>
+                                            <button className="add-btn m-r-10 disable-div" >Add New</button>
+                                            <button className="add-btn m-r-10 disable-div" >Upload</button>
+                                        </div>
+
+                                        <div className="receivers-tablele-width">
+                                            <Table
+                                                rowKey={(record, index) => index}
+                                                dataSource={personsData}
+                                                scroll={{
+                                                    y: '60vh',
+                                                }}
+                                                columns={ReceversPersonsTableHeaders}
+                                                pagination={false}
+                                                footer={addNewPerson}
+                                            />
+                                        </div>
+                                    </TabPane>
+
+                                    <TabPane tab="SEARCH PROJECT SECTION LIST" key="5">
+                                        <div className="recivers-top-container m-b-20">
+                                            <div className="companies-search-input-containers user-input-box" >
+                                                <Input placeholder="Search" value={projectSearchText} onChange={onChangesearchProjectText} endImage='icon-search-1' />
+                                            </div>
+                                            <button className="add-btn m-r-10" onClick={onSearchCompanies} >Filters</button>
+                                            <button className="add-btn m-r-10" >Import</button>
+                                        </div>
+
+                                        <div className="receivers-tablele-width">
+                                            <Table
+                                                rowKey={(record, index) => index}
+                                                dataSource={projectData}
+                                                scroll={{
+                                                    y: '60vh',
+                                                }}
+                                                columns={SearchProjectSectionTableHeaders}
+                                                pagination={false}
+                                            />
+                                        </div>
+                                    </TabPane>
+                                </Tabs>
+                            </div>
                         </TabPane>
                     </Tabs>
                 </div>
-
             </div>
-
-
         </>
     )
 }
