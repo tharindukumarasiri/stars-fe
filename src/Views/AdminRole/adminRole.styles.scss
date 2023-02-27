@@ -332,15 +332,15 @@
 
 .new-com-page {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     width: 95vw;
-    justify-content: space-around;
+    justify-content: flex-start;
 }
 
 .new-com-sub-container {
     display: flex;
     flex-direction: column;
-    margin-top: 70px;
+    margin-top: 10px;
     align-items: center;
 }
 
@@ -355,14 +355,26 @@
     color: $white;
 }
 
-.step-container {
+.step-main-container {
     display: flex;
     flex-direction: row;
+    justify-content: space-around;
+    padding-left: 200px;
+    padding-right: 200px;
+}
+
+.step-container {
+    display: flex;
+    flex-direction: column;
     align-items: center;
 }
 
+.new-com-search-input-container {
+    width: 308px;
+}
+
 .new-com-input-container {
-    width: 300px;
+    width: 400px;
 }
 
 .new-com-drop-down-container {
@@ -370,7 +382,6 @@
 }
 
 .receivers-header {
-    align-self: flex-start;
     font-weight: bolder;
     font-size: 14px;
     color: #999999;
@@ -424,4 +435,62 @@
         height: 40px;
         margin-top: 0 !important
     }
+}
+
+.disable-step {
+    opacity: 0.3;
+}
+
+.next-btn-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 50px;
+}
+
+.user-cards-container {
+    height: 250px;
+    overflow: scroll;
+}
+
+.user-card-container {
+    width: 400px;
+    height: 180px;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    border: 1px solid #999999;
+    margin-bottom: 25px;
+    box-shadow: 2px 2px #CCCCCC
+}
+
+.user-card-image-container {
+    width: 68px;
+    height: 68px;
+}
+
+.user-card-header {
+    position: relative;
+    display: flex;
+    flex-direction: row;
+}
+
+.user-card-icon {
+    font-size: 20px;
+    color: $theme;
+}
+
+.user-card-close-icon {
+    right: -10px;
+    top: -10px;
+    position: absolute;
+    font-size: 25px;
+    color: $red;
+}
+
+.user-top-container {
+    margin-left: 10px;
+    min-height: 100px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
 }

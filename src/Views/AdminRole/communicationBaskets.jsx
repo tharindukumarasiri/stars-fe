@@ -255,14 +255,14 @@ const CommunicationBaskets = () => {
 
     return (
         <>
+            {loading &&
+                <div className="loading center-loading">
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                </div>
+            }
             <div className="com-top-container user-input-box">
-                {loading &&
-                    <div className="loading center-loading">
-                        <div></div>
-                        <div></div>
-                        <div></div>
-                    </div>
-                }
                 <div className="create-new-btn">
                     <button className="add-btn" onClick={toggleModal} >Create New</button>
                 </div>
