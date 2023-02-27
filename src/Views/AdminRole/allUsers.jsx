@@ -10,9 +10,7 @@ import { getAllUsers, addUser, updateUser, activateUsers, deActivateUsers } from
 import { getTenantMessageTemplates } from "../../services/templateService";
 import { getCommunicationEntitiesWithRoles } from "../../services/communicationService";
 import { FetchCurrentCompany, FetchCurrentUser } from "../../hooks/index"
-
-const emaiRegEx =
-    /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
+import { emailRegEx } from "../../utils/constants";
 
 const newUserDataObj = { firstName: '', lastName: '', telephone: '', email: '', role: '', sendInvitation: false, template: null }
 
@@ -272,7 +270,7 @@ const AllUsers = () => {
         if (!newUserData.email) {
             setNewUserErrors(pre => ({ ...pre, email: 'Email cannot be empty' }))
             validation = false
-        } else if (!emaiRegEx.test(newUserData.email)) {
+        } else if (!emailRegEx.test(newUserData.email)) {
             setNewUserErrors(pre => ({ ...pre, email: 'Invalid email adress' }))
             validation = false
         }

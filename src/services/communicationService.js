@@ -76,3 +76,18 @@ export async function deleteCommunicationBasket(params) {
     const { data } = await http.put(config.DELETE_COMMUNICATION_BASKET, params);
     return data;
 }
+
+export async function getCompanies(searchText = '', pageNumber = 0, pageSize = 10 ) {
+    const { data } = await http.get(`${config.GET_COMPANIES}${searchText}&pageNo=${pageNumber}&pageSize=${pageSize}`);
+    return data;
+}
+
+export async function getPersons(searchText = '', pageNumber = 0, pageSize = 10 ) {
+    const { data } = await http.get(`${config.GET_PERSONS}${searchText}&pageNo=${pageNumber}&pageSize=${pageSize}`);
+    return data;
+}
+
+export async function addPerson(params) {
+    const { data } = await http.post(config.ADD_PERSON, params);
+    return data;
+}

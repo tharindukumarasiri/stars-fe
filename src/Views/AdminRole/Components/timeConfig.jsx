@@ -25,7 +25,7 @@ const DaysOfTheWeek = [
     { value: '7', label: 'Sunday' },
 ]
 
-const TimeConfig = ({ props }) => {
+const TimeConfig = (props) => {
     const [oneTimeType, setOneTimeType] = useState(true);
     const [oneTimeData, setoneTimeData] = useState({ date: null, time: null });
     const [recurringeData, setRecurringeData] = useState({ startDate: null, endDate: null, time: null, week: '' });
@@ -87,7 +87,8 @@ const TimeConfig = ({ props }) => {
 
         configureCommunicationBasket(params).then(() => {
             setLoading(false);
-            message.success('Configuration Success')
+            message.success('Configuration Success');
+            props?.onUpdateSuccess()
         }).catch(() => {
             setLoading(false);
             message.error('Configuration Failed')

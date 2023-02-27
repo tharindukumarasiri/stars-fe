@@ -68,11 +68,12 @@
     "GET_NOT_SUBSCRIBED_USERS": "/actionapi/PersonTs/GetNotSubscribedPartyTsByTenantId?tenantId=",
     "SAVE_SUBSCRIPTIONS": "/actionapi/MessageTypeSubscriptions/SaveSubscriptions",
 
-    "INSERT_MESSAGE_TEMPLATE": "/actionapi/MessageTemplates/Post?userPartyId=",
+    "INSERT_MESSAGE_TEMPLATE": "/actionapi/MessageTemplates/InsertMessageTemplate?userPartyId=",
     "UPDATE_MESSAGE_TEMPLATE": "/actionapi/MessageTemplates/UpdateMessageTemplate",
     "GET_MESSAGE_TEMPLATE": "/actionapi/MessageTemplates/Get",
     "GET_TENANT_MESSAGE_TEMPLATE": "/actionapi/MessageTemplates/GetMessageTemplatesByTenant?tenantId=",
     "DELETE_TENANT_MESSAGE_TEMPLATE": "/actionapi/MessageTemplates/DeleteMessageTemplate?templateId=",
+    "GET_TRIGGER_POINTS": "/actionapi/MessageTemplates/GetMessageTriggerPointsByType?templateTypeId=",
 
     "GET_COMMUNICATIONS": "/actionapi/MessageQueues/GetCommunications",
     "GET_COMMUNICATION_LOGS": "/actionapi/MessageQueues/GetCommunicationLogs",
@@ -89,6 +90,9 @@
     "GET_COMMUNICATION_BASKET_STATUSES": "/actionapi/BasketStatuses/Get",
     "CONFIG_COMMUNICATION_BASKET": "/actionapi/CommunicationBaskets/Configure",
     "DELETE_COMMUNICATION_BASKET": "/actionApi/CommunicationBaskets/DeleteCommunicationBaskets",
+    "GET_COMPANIES": "/actionapi/Companies/GetCompanies?searchText=",
+    "GET_PERSONS": "/actionapi/Persons/GetPersons?searchText=",
+    "ADD_PERSON": "/actionapi/Persons/AddPerson",
 
     "GET_PROJECTS": "actionapi/Projects/GetAll",
     "ADD_PROJECT": "actionapi/Projects/AddProject?userId=",

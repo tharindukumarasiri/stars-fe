@@ -1,7 +1,7 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 
-const Dropdown = ({ values, selected = '', onChange, placeholder, disabled = false, dataName = '' }) => {
+const Dropdown = ({ values, selected = '', onChange, placeholder, disabled = false, dataName = '', valueName }) => {
     const { t } = useTranslation();
 
     const hintTextStyle = selected ? 'input-hint-text-visible' : 'input-hint-text-hidden';
@@ -15,7 +15,11 @@ const Dropdown = ({ values, selected = '', onChange, placeholder, disabled = fal
                 }
                 {
                     values?.map((item, index) => {
-                        return <option value={dataName ? JSON.stringify(item) : item} key={index}>{dataName ? t(item[dataName]) : t(item)}</option>
+                        if(valueName){
+                            return <option value={item[valueName]} key={index}>{dataName ? t(item[dataName]) : t(item)}</option>
+                        }
+                        else
+                            return <option value={dataName ? JSON.stringify(item) : item} key={index}>{dataName ? t(item[dataName]) : t(item)}</option>
                     })
                 }
             </select>

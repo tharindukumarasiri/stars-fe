@@ -172,6 +172,15 @@ const CommunicationBaskets = () => {
         setConfigModalVisible(pre => !pre)
     }
 
+    const onUpdateSuccess = () => {
+        toggleConfigModal();
+        setLoading(true)
+        getCommunicationBasket(firstReqParams).then(result => {
+            setCommunicationsData(result?.Value);
+            setTotalResults(result?.Key);
+        }).finally(() => setLoading(false))
+    }
+
     const validateFields = () => {
         let validation = true
         if (!newGroupData.name) {
@@ -325,7 +334,7 @@ const CommunicationBaskets = () => {
                 footer={null}
                 width={470} >
                 <div className="user-input-box create-basket-container" >
-                    <TimeConfig Id={configBasketId} />
+                    <TimeConfig Id={configBasketId} onUpdateSuccess={onUpdateSuccess} />
                     <div className="n-float" />
                 </div>
             </Modal>

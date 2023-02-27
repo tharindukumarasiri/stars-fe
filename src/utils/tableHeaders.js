@@ -938,6 +938,9 @@ export const TemplateTableHeaders = [
     {
         title: 'Trigger Point',
         dataIndex: 'MessageTriggerPoint',
+        render: (_, { MessageTriggerPoint }) => (
+            MessageTriggerPoint?.DisplayName
+        ),
     },
     {
         title: 'Message Medium',
@@ -1184,31 +1187,53 @@ export const ReceversCompaniesTableHeaders = [
         children: [
             {
                 title: 'Organization ID',
-                dataIndex: 'Id',
+                dataIndex: 'Company',
+                render: (_, { Company }) => (
+                    Company?.CompanyRegistrationID
+                ),
             },
             {
                 title: 'ID',
-                dataIndex: 'ID',
+                dataIndex: 'Company',
+                render: (_, { Company }) => (
+                    Company?.Id
+                ),
             },
             {
                 title: 'Name',
-                dataIndex: 'Name',
+                dataIndex: 'Company',
+                render: (_, { Company }) => (
+                    Company?.Name
+                ),
             },
             {
                 title: 'Country',
-                dataIndex: 'Country',
+                dataIndex: 'Company',
+                render: (_, { Company }) => (
+                    Company?.CountryName
+                ),
             },
             {
                 title: 'Email',
-                dataIndex: 'Email',
+                dataIndex: 'Company',
+                render: (_, { Company }) => (
+                    Company?.Email
+                ),
             },
             {
                 title: 'Phone',
-                dataIndex: 'Phone',
+                dataIndex: 'Company',
+                render: (_, { Company }) => (
+                    Company?.Phone
+                ),
             },
             {
                 title: 'Source',
-                dataIndex: 'Source',
+                dataIndex: 'Company',
+                render: (_, { Company }) => (
+                    Company?.Id
+                ),
+
             },
         ]
     }
@@ -1230,7 +1255,7 @@ export const ReceversCompaniesSubTableHeaders = [
             },
             {
                 title: 'Title',
-                dataIndex: 'Title',
+                dataIndex: 'TitleName',
                 width: 100
             },
             {
@@ -1240,7 +1265,7 @@ export const ReceversCompaniesSubTableHeaders = [
             },
             {
                 title: 'Mobile Number',
-                dataIndex: 'Mobile Number',
+                dataIndex: 'PhoneNumber',
                 width: 200
             },
         ]
@@ -1250,36 +1275,70 @@ export const ReceversCompaniesSubTableHeaders = [
 export const ReceversPersonsTableHeaders = [
     {
         title: 'ID',
-        dataIndex: 'Id',
+        dataIndex: 'Person',
+        render: (_, { Person }) => (
+            Person?.Id
+        ),
         width: 120
     },
     {
         title: 'Name',
-        dataIndex: 'Name',
+        dataIndex: 'Person',
+        render: (_, { Person }) => (
+            Person?.Name
+        ),
     },
     {
         title: 'Position',
-        dataIndex: 'Position',
+        dataIndex: 'Person',
+        render: (_, { Person }) => (
+            Person?.TitleName
+        ),
     },
     {
         title: 'Country',
-        dataIndex: 'Country',
+        dataIndex: 'Person',
+        render: (_, { Person }) => (
+            Person?.CountryName
+        ),
     },
     {
         title: 'Email',
-        dataIndex: 'Email',
+        dataIndex: 'Person',
+        render: (_, { Person }) => (
+            Person?.Email
+        ),
     },
     {
         title: 'Mobile Number',
-        dataIndex: 'Mobile Number',
+        dataIndex: 'Person',
+        render: (_, { Person }) => (
+            Person?.Phone
+        ),
     },
     {
         title: 'Company ID',
-        dataIndex: 'Company ID',
+        dataIndex: 'CompanyRegistrationIDs',
+        ellipsis: {
+            showTitle: false,
+        },
+        render: (_, { CompanyRegistrationIDs }) => (
+            <Tooltip placement="topLeft" title={CompanyRegistrationIDs?.toString()}>
+                {CompanyRegistrationIDs?.toString()}
+            </Tooltip>
+        ),
     },
     {
         title: 'Company Name',
-        dataIndex: 'Company Name',
+        dataIndex: 'CompanyNames',
+        ellipsis: {
+            showTitle: false,
+        },
+        render: (_, { CompanyNames }) => (
+            <Tooltip placement="topLeft" title={CompanyNames?.toString()}>
+                {CompanyNames?.toString()}
+            </Tooltip>
+        ),
     },
     {
         title: '',

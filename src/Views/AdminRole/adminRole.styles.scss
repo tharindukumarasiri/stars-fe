@@ -418,3 +418,10 @@
     display: flex;
     flex-direction: column;
 }
+
+.user-drop-down {
+    .dropdown-list {
+        height: 40px;
+        margin-top: 0 !important
+    }
+}

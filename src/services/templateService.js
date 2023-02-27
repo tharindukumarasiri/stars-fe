@@ -29,3 +29,8 @@ export async function deleteMessageTemplate(id, userId) {
     const { data } = await http.delete(config.DELETE_TENANT_MESSAGE_TEMPLATE + id + "&userPartyId=" + userId);
     return data;
 }
+
+export async function getTriggerPoints(type) {
+    const { data } = await http.get(config.GET_TRIGGER_POINTS + type);
+    return data;
+}

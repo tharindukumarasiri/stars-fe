@@ -1,5 +1,8 @@
 import React from "react";
 
+export const emailRegEx =
+    /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
+
 export const levelOneReq = {
     "level": 1,
     "code": ""
