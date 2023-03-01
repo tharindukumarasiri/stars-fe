@@ -15,7 +15,6 @@ const NewCommunication = () => {
     const [currentStep, setCurrentStep] = useState(1)
     const [template, setTemplate] = useState(true);
     const [templateList, setTemplateList] = useState([]);
-    const [searchTemplateText, setSearchTemplateText] = useState('');
     const [selectedTemplate, setSelectedTemplate] = useState()
     const [templateSubject, setTemplateSubject] = useState('');
     const [searchCompanyText, setSearchCompanyText] = useState('');
@@ -52,11 +51,6 @@ const NewCommunication = () => {
         setTemplate(pre => !pre)
     }
 
-    const onSearchTemplate = (e) => {
-        e.preventDefault();
-        setSearchTemplateText(e.target.value);
-    }
-
     const onSearchTemplateSubject = (e) => {
         e.preventDefault();
         setTemplateSubject(e.target.value);
@@ -83,7 +77,7 @@ const NewCommunication = () => {
     const validate = () => {
         let validation = true
         if (currentStep === 1) {
-            if (Object.keys(selectedTemplate).length === 0) {
+            if (!selectedTemplate) {
                 message.error('Please select a template');
                 validation = false;
             }
@@ -138,8 +132,8 @@ const NewCommunication = () => {
         )
     }
 
-    const onSelect = (value) => {
-        setSelectedTemplate(value);
+    const onSelect = (value, option) => {
+        setSelectedTemplate(option);
     };
 
     const getStepContent = () => {
@@ -147,44 +141,48 @@ const NewCommunication = () => {
             case 1:
                 return (
                     <div className="new-com-sub-container">
-                        <div className="m-t-20 m-b-20">
-                            <input type="radio" id="Email" name="Email" checked={true} /> <label className="p-r-20 p-l-20 m-r-20" htmlFor="Email">Email</label>
-                            <input type="radio" id="SMS" name="SMS" disabled /> <label className="p-r-20 p-l-20 m-r-20 btn-disabled" htmlFor="SMS">SMS</label>
-                            <input type="radio" id="Notification" name="Notification" disabled /> <label className="p-l-20 btn-disabled" htmlFor="Notification">Push Notification</label>
-                        </div>
-                        <div className="m-t-20 m-b-20">
-                            <input type="radio" id="Template" name="Template" checked={template} onChange={onTemplateTypeChange} /> <label className="p-r-20 p-l-20 m-r-20" htmlFor="Template">Template</label>
-                            <input type="radio" id="PlainHtml" name="PlainHtml" checked={!template} onChange={onTemplateTypeChange} /> <label className="p-l-20" htmlFor="PlainHtml">Plain (basic html)</label>
-                        </div>
-                        <div className="com-search-input-container m-t-20">
-                            <AutoComplete
-                                dropdownMatchSelectWidth={400}
-                                style={{
-                                    width: 308,
-                                }}
-                                options={templateList}
-                                filterOption={(inputValue, option) =>
-                                    option?.DisplayName?.toUpperCase().indexOf(inputValue.toUpperCase()) !== -1
-                                }
-                                onSelect={onSelect}
-                            >
-                                <Input placeholder="Search Template" value={searchTemplateText} onChange={onSearchTemplate} endImage='icon-search-1' />
-                            </AutoComplete>
-                            <button className="add-btn" onClick={onFilterTemplate} >Filters</button>
-                        </div>
-                        <div className="com-search-input-container m-t-20">
-                            <div className="new-com-input-container" >
-                                <Input placeholder="Subject" value={templateSubject} onChange={onSearchTemplateSubject} />
-                            </div>
-                        </div>
-                        <div className="new-com-drop-down-container m-t-20" >
-                            <Dropdown
-                                values={templateTypes}
-                                onChange={onChangeTemplateType}
-                                selected={templateType}
-                                placeholder="Template"
-                            />
-                        </div>
+                        {template &&
+                            <>
+                                <div className="m-t-20 m-b-20">
+                                    <input type="radio" id="Email" name="Email" checked={true} onChange={() => { }} /> <label className="p-r-20 p-l-20 m-r-20" htmlFor="Email">Email</label>
+                                    <input type="radio" id="SMS" name="SMS" disabled /> <label className="p-r-20 p-l-20 m-r-20 btn-disabled" htmlFor="SMS">SMS</label>
+                                    <input type="radio" id="Notification" name="Notification" disabled /> <label className="p-l-20 btn-disabled" htmlFor="Notification">Push Notification</label>
+                                </div>
+                                <div className="m-t-20 m-b-20">
+                                    <input type="radio" id="Template" name="Template" checked={template} onChange={onTemplateTypeChange} /> <label className="p-r-20 p-l-20 m-r-20" htmlFor="Template">Template</label>
+                                    <input type="radio" id="PlainHtml" name="PlainHtml" checked={!template} onChange={onTemplateTypeChange} /> <label className="p-l-20" htmlFor="PlainHtml">Plain (basic html)</label>
+                                </div>
+                                <div className="com-search-input-container m-t-20">
+                                    <AutoComplete
+                                        dropdownMatchSelectWidth={400}
+                                        placeholder="Search Template"
+                                        style={{
+                                            width: 308,
+                                        }}
+                                        options={templateList}
+                                        fieldNames={{ label: "DisplayName", value: "DisplayName" }}
+                                        filterOption={(inputValue, option) =>
+                                            option?.DisplayName?.toUpperCase().indexOf(inputValue.toUpperCase()) !== -1
+                                        }
+                                        onSelect={onSelect}
+                                    />
+                                    <button className="add-btn" onClick={onFilterTemplate} >Filters</button>
+                                </div>
+                                <div className="com-search-input-container m-t-20">
+                                    <div className="new-com-input-container" >
+                                        <Input placeholder="Subject" value={templateSubject} onChange={onSearchTemplateSubject} />
+                                    </div>
+                                </div>
+                                <div className="new-com-drop-down-container m-t-20" >
+                                    <Dropdown
+                                        values={templateTypes}
+                                        onChange={onChangeTemplateType}
+                                        selected={templateType}
+                                        placeholder="Template"
+                                    />
+                                </div>
+                            </>
+                        }
                     </div>
                 )
             case 2:
@@ -210,6 +208,12 @@ const NewCommunication = () => {
                                 return getUserCard()
                             })}
                         </div>
+                    </div>
+                )
+            case 3:
+                return (
+                    <div className="new-com-sub-container">
+                        <div dangerouslySetInnerHTML={{ __html: selectedTemplate?.MessageBody }} />
                     </div>
                 )
             default:

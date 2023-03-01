@@ -33,7 +33,7 @@ const CreateTemplate = ({ closeModal, getSavedTemplates, editTemplate }) => {
     }, [editTemplate]);
 
     useEffect(() => {
-        getTriggerPoints(getMessageTemplateType(selectedTemplateType)).then((t) => {           
+        getTriggerPoints(getMessageTemplateType(selectedTemplateType)).then((t) => {
             setTriggerPoints(t);
         });
     }, [selectedTemplateType]);
@@ -44,38 +44,38 @@ const CreateTemplate = ({ closeModal, getSavedTemplates, editTemplate }) => {
 
             const params = editTemplate
                 ? {
-                      ...editTemplate,
-                      DisplayName: templateName,
-                      MessageBody: html,
-                      MessageBodyJson: JSON.stringify(design),
-                      MessageTriggerPointId: triggerPoint,
-                      IsDefault: isDefault,
-                      Name: getTemplateName(),
-                      MessageTypeId: getMessageType()
-                  }
+                    ...editTemplate,
+                    DisplayName: templateName,
+                    MessageBody: html,
+                    MessageBodyJson: JSON.stringify(design),
+                    MessageTriggerPointId: triggerPoint,
+                    IsDefault: isDefault,
+                    Name: getTemplateName(),
+                    MessageTypeId: getMessageType()
+                }
                 : {
-                      MessageTriggerPointId: triggerPoint,
-                      MessageMediumId: 1,
-                      MessageTypeId: getMessageType(),
-                      Name: getTemplateName(),
-                      DisplayName: templateName,
-                      MessageSubject: getMessageSubject(),
-                      MessageBody: html,
-                      MessageBodyJson: JSON.stringify(design),
-                      LanguageId: 2057,
-                      TenantId: selectedCompany?.tenantId,
-                      IsSubTemplate: false,
-                      MessageMedium: null,
-                      MessageType: null,
-                      LanguageMessageTemplates: [],
-                      Id: 0,
-                      CreatedDateTime: new Date(),
-                      CreatedUserPartyId: currentUser?.PartyId,
-                      DeletedDateTime: null,
-                      DeletedUserPartyId: null,
-                      IsDefault: isDefault,
-                      MessageTemplateTypeId: getMessageTemplateType(),
-                  };
+                    MessageTriggerPointId: triggerPoint,
+                    MessageMediumId: 1,
+                    MessageTypeId: getMessageType(),
+                    Name: getTemplateName(),
+                    DisplayName: templateName,
+                    MessageSubject: getMessageSubject(),
+                    MessageBody: html,
+                    MessageBodyJson: JSON.stringify(design),
+                    LanguageId: 2057,
+                    TenantId: selectedCompany?.tenantId,
+                    IsSubTemplate: false,
+                    MessageMedium: null,
+                    MessageType: null,
+                    LanguageMessageTemplates: [],
+                    Id: 0,
+                    CreatedDateTime: new Date(),
+                    CreatedUserPartyId: currentUser?.PartyId,
+                    DeletedDateTime: null,
+                    DeletedUserPartyId: null,
+                    IsDefault: isDefault,
+                    MessageTemplateTypeId: getMessageTemplateType(),
+                };
 
             saveTemplate(selectedCompany?.tenantId, params);
             // console.log("export HTML:");
@@ -140,9 +140,9 @@ const CreateTemplate = ({ closeModal, getSavedTemplates, editTemplate }) => {
     };
 
     const getTemplateName = () => {
-        if(triggerPoint){
-            let tp = triggerPoints.find(t => t.Id === triggerPoint)           
-            if(tp)
+        if (triggerPoint) {
+            let tp = triggerPoints.find(t => t.Id === triggerPoint)
+            if (tp)
                 return tp.Name;
             else
                 return "";
@@ -151,19 +151,19 @@ const CreateTemplate = ({ closeModal, getSavedTemplates, editTemplate }) => {
     }
 
     const getMessageType = () => {
-        if(triggerPoint){
-            let tp = triggerPoints.find(t => t.Id === triggerPoint)           
-            if(tp){
-                if(tp.Name.toLowerCase().includes("user")){
+        if (triggerPoint) {
+            let tp = triggerPoints.find(t => t.Id === triggerPoint)
+            if (tp) {
+                if (tp.Name.toLowerCase().includes("user")) {
                     return 1;
                 }
-                else if(tp.Name.toLowerCase().includes("tender")){
+                else if (tp.Name.toLowerCase().includes("tender")) {
                     return 2;
                 }
-                else{
+                else {
                     return 3;
                 }
-            }                
+            }
             else
                 return 1;
         }
@@ -252,7 +252,12 @@ const CreateTemplate = ({ closeModal, getSavedTemplates, editTemplate }) => {
                     <div></div>
                 </div>
             )}
-            <div>
+            <div className="g-row user-input-box m-b-10">
+                <div className="g-col-5">
+                    <Input value={templateName} placeholder="Template Name" onChange={onChangeTemplateName} />
+                </div>
+            </div>
+            <div className="m-l-5">
                 <input
                     type="radio"
                     id="Notification"
@@ -286,12 +291,32 @@ const CreateTemplate = ({ closeModal, getSavedTemplates, editTemplate }) => {
                     Business Communication Template
                 </label>
             </div>
+            <div className="g-row user-input-box">
+                <div className="g-col-1">
+                    <DropdownSelect
+                        values={triggerPoints}
+                        placeholder="Trigger point"
+                        dataName="DisplayName"
+                        valueName="Id"
+                        selected={triggerPoint}
+                        onChange={(e) => {
+                            setTriggerPoint(e.target.value);
+                        }}
+                    />
+                </div>
+            </div>
+            <input type="checkbox" className="check-box m-t-10 m-l-5 m-b-20 fl"
+                checked={isDefault}
+                onChange={() => setIsDefault(pre => !pre)}
+            /> <div className="fl m-t-10 hover-hand " onClick={() => setIsDefault(pre => !pre)}>MARK AS DEFAULT</div>
+                            <div className="n-float" />
+
             <EmailEditor
                 ref={emailEditorRef}
                 onLoad={onLoad}
                 onReady={onReady}
                 displayMode="email"
-                minHeight={"65vh"}
+                minHeight={"55vh"}
                 projectId={108663}
                 options={{
                     mergeTags: dynamicParameters,
@@ -305,35 +330,6 @@ const CreateTemplate = ({ closeModal, getSavedTemplates, editTemplate }) => {
                     },
                 }}
             />
-            <div className="g-row">
-                <div className="g-col-4">
-                    <Input value={templateName} placeholder="Template Name" onChange={onChangeTemplateName} />
-                </div>
-            </div>
-            <div className="g-row">
-                <div className="g-col-4">
-                    <DropdownSelect
-                        values={triggerPoints}
-                        placeholder="Trigger point"
-                        dataName="DisplayName"
-                        valueName="Id"
-                        selected={triggerPoint}
-                        onChange={(e) => {
-                            setTriggerPoint(e.target.value);
-                        }}
-                    />
-                </div>
-            </div>
-            <div className="g-row">
-                <div className="g-col-4">
-                    <div className="m-t-20 toggle-container">
-                        <div className="m-t-10 m-b-10">Is default template</div>
-                        <div className="toggle-btn">
-                            <Switch checkedChildren="Yes" unCheckedChildren="No" checked={isDefault} onChange={(e) => { setIsDefault(e)}} />
-                        </div>
-                    </div>
-                </div>
-            </div>
             <div className="g-row">
                 <button className="primary-btn g-col-1 m-r-20" onClick={onSave}>
                     Save

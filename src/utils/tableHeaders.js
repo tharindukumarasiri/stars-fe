@@ -1137,13 +1137,6 @@ export const CommunicationBasketsTableHeaders = [
         },
     },
     {
-        title: 'Basket Type',
-        dataIndex: 'BasketType',
-        render: (_, { BasketType }) => (
-            BasketType?.Name
-        ),
-    },
-    {
         title: 'Communication Type',
         dataIndex: 'CommunicationType',
         render: (_, { CommunicationType }) => (
@@ -1231,7 +1224,7 @@ export const ReceversCompaniesTableHeaders = [
                 title: 'Source',
                 dataIndex: 'Company',
                 render: (_, { Company }) => (
-                    Company?.Id
+                    'Xxxx'
                 ),
 
             },

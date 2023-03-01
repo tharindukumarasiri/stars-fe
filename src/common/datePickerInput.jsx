@@ -9,7 +9,7 @@ const DatePickerInput = ({ value, onChange, placeholder, dateFormat = "MM/dd/yyy
     const { t } = useTranslation();
 
     const years = (startYear) => {
-        var currentYear = new Date().getFullYear() + 1, years = [];
+        var currentYear = new Date().getFullYear() + 5, years = [];
         startYear = startYear || 1980;
         while (startYear <= currentYear) {
             years.push(startYear++);

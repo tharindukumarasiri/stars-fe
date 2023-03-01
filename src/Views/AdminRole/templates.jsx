@@ -216,7 +216,7 @@ const Templates = () => {
                 visible={modalVisible}
                 footer={[]}
                 onCancel={toggaleTemplateCreater}
-                centered={true} width={2000}>
+                centered={true} width={'95vw'} style={{height: '86vh'}}>
                 <div className="g-row">
                     <CreateTemplate closeModal={toggaleTemplateCreater} getSavedTemplates={getSavedTemplates} editTemplate={editTemplate} />
                     <div className="editor-name" />

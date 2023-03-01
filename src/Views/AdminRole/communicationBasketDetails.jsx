@@ -16,7 +16,7 @@ import {
     getPersons,
     addPerson
 } from "../../services/communicationService";
-import { addUser } from "../../services/userService";
+import { addUser, activateRoleUser } from "../../services/userService";
 import { FetchCurrentUser } from "../../hooks/index"
 import Dropdown from "../../common/dropdown";
 import { emailRegEx } from "../../utils/constants";
@@ -205,7 +205,7 @@ const CompaniesPage = () => {
         return validation;
     }
 
-    const onAddUser = () => {
+    const onAddUser = (companyPartyId) => {
         if (validateFields()) {
             setLoading(true);
             const params = {
@@ -220,14 +220,21 @@ const CompaniesPage = () => {
                 "CountryCode": currentUser?.CountryCode,
             }
 
-            addUser(params).then(() => {
-                setnewUserData({ name: '', title: '', email: '', mobileNumb: '' });
-                message.success('User created');
-                setLoading(false)
-                // getCompanies().then(result => {
-                //     setCompaniesData(result?.Value)
-                //     setTotalResults(result?.Key)
-                // }).finally(() => setLoading(false))
+            addUser(params).then(result => {
+                const activateParams = {
+                    "UserId": result?.Id,
+                    "EntityPartyId": companyPartyId,
+                    "RoleId": 3, //User,
+                    "CreatedUserPartyId": currentUser?.PartyId,
+                }
+                activateRoleUser(activateParams).then(() => {
+                    setnewUserData({ name: '', title: '', email: '', mobileNumb: '' });
+                    message.success('User created');
+                    getCompanies().then(result => {
+                        setCompaniesData(result?.Value)
+                        setTotalResults(result?.Key)
+                    }).finally(() => setLoading(false))
+                })
             }).catch(() => message.error('Create user failed please try again'))
         }
     }
@@ -253,7 +260,7 @@ const CompaniesPage = () => {
                     <div style={{ width: 200 }}>
                         <Input placeholder="Xxx" value={newUserData.mobileNumb} onChange={(e) => onChangeNewUserData(e, 'mobileNumb')} />
                     </div>
-                    <i className="icon-plus-circled blue basket-table-icon hover-hand" onClick={onAddUser} />
+                    <i className="icon-plus-circled blue basket-table-icon hover-hand" onClick={() => onAddUser(parentRow?.Company?.PartyId)} />
                 </div>
             )
         }

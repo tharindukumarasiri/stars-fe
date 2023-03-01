@@ -425,7 +425,7 @@ export default function Search(props) {
                             setLoading(false);
                         });
                         break;
-                    case 'Municipality':
+                    case 'Municipality (Market)':
                         removeSearchAccumulateMunicipality(props.searchResults[0]?.id, removeRequest).then(result => {
                             setLoading(false);
                             setGrouping(convertStringObject(result.grouping));
@@ -494,7 +494,7 @@ export default function Search(props) {
                         setLoading(false);
                     });
                     break;
-                case 'Municipality':
+                case 'Municipality (Market)':
                     removeSearchAccumulateMunicipality(props.searchResults[0]?.id, getRemovalRequest(pageNo, "municipalities")).then(result => {
                         setLoading(false);
                         setGrouping(convertStringObject(result.grouping));
@@ -567,7 +567,7 @@ export default function Search(props) {
                     setLoading(false);
                 });
                 break;
-            case 'Municipality':
+            case 'Municipality (Market)':
                 searchOrganizationMunicipality(getSearchRequest(pageNo)).then(result => {
                     setLoading(false);
                     setGrouping(convertStringObject(result.grouping));
@@ -1077,14 +1077,14 @@ export default function Search(props) {
                     </div>
                     <div className="g-col-4">
                         <DropdownSelect
-                            values={['None', 'CPV Code', 'NACE Code', 'UNSPSC Code', 'Municipality(Market)']}
+                            values={['None', 'CPV Code', 'NACE Code', 'UNSPSC Code', 'Municipality (Market)']}
                             placeholder="Accumulation"
                             selected={selectedGrouping.accumulation}
                             onChange={onChangeAccumulation}
                             disabled={selectedGrouping.resultType !== 'No of accumulated'} />
                     </div>
                     <div className="g-col-4">
-                        <DropdownSelect values={[]} placeholder="Sorting" selected={''} onChange={() => { }} disabled />
+                        {/* <DropdownSelect values={[]} placeholder="Sorting" selected={''} onChange={() => { }} disabled /> */}
                     </div>
                 </div>
             </div>

@@ -351,6 +351,7 @@ const SectionView = (props) => {
                             value={newSectionData.FromDate ? new Date(newSectionData.FromDate) : ""}
                             onChange={(date) => onNewElementDateChange(date, "FromDate")}
                             minDate={new Date()}
+                            maxDate={props.projectToDate !== null ? new Date(props.projectToDate) : false}
                         />
                         <DatePickerInput
                             placeholder={"Due Date"}

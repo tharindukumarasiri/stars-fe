@@ -12,7 +12,7 @@ import { getCommunicationEntitiesWithRoles } from "../../services/communicationS
 import { FetchCurrentCompany, FetchCurrentUser } from "../../hooks/index"
 import { emailRegEx } from "../../utils/constants";
 
-const newUserDataObj = { firstName: '', lastName: '', telephone: '', email: '', role: '', sendInvitation: false, template: null }
+const newUserDataObj = { firstName: '', lastName: '', telephone: '', email: '', role: '',  sendInvitation: false, template: null }
 
 const AllUsers = () => {
     const [modalVisible, setModalVisible] = useState(false);
@@ -50,7 +50,7 @@ const AllUsers = () => {
     useEffect(() => {
         if (selectedCompany?.tenantId && savedTemplates.length === 0) {
             getTenantMessageTemplates(selectedCompany?.tenantId).then(result => {
-                setSavedTemplates(result);
+                setSavedTemplates(result.Value);
             })
         }
     }, [selectedCompany])
@@ -282,7 +282,6 @@ const AllUsers = () => {
         setNewUserErrors(newUserDataObj);
         if (newUserFirstPage) {
             if (validateFields()) {
-                setNewUserFirstPage(false);
                 setLoading(true);
                 const params = {
                     "Email": newUserData.email,
@@ -297,6 +296,7 @@ const AllUsers = () => {
 
                 addUser(params).then((user) => {
                     setNewCreatedUserData(user);
+                    setNewUserFirstPage(false);
 
                     getAllUsers().then(result => {
                         setLoading(false);
@@ -415,7 +415,7 @@ const AllUsers = () => {
                             </div>
                             <div className="g-row m-t-5">
                                 <div className="g-col-5 m-l-20 m-r-20">
-                                    <Input placeholder="Country" value={currentUser?.CountryCode} disabled />
+                                    <Input placeholder="Country" value={currentUser?.CountryCode || undefined} disabled />
                                 </div>
                                 <div className="g-col-5 m-l-20">
                                 </div>
