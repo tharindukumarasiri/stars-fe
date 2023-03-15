@@ -266,7 +266,26 @@ const GetNotified = () => {
 
         newCpvs.splice(index, 1);
         setHaveUnsavedDataRef(true);
-        setTenderCpvs(newCpvs)
+        setTenderCpvs(newCpvs)        
+
+        let allCodes = [...allCpvCodes];
+        const childLevel = code.length;
+
+        for(let i = 2; i <= childLevel; i++){            
+            let prefix = code.substring(0, i);
+            let fullCode = prefix.padEnd(code.length, "0");
+            let matching = allCodes.filter(c => c === fullCode);
+            if(matching.length === 1) {
+                let index = allCodes.indexOf(fullCode);
+                allCodes.splice(index, 1);
+            }
+            else if(matching.length > 1){
+                let index = allCodes.lastIndexOf(fullCode);
+                allCodes.splice(index, 1);
+            }
+        }   
+        
+        setAllCpvCodes(allCodes);
     }
 
     const getFormattedUserList = () => {
@@ -485,7 +504,7 @@ const GetNotified = () => {
                             <i className="search-btn icon-search" onClick={onSearch} ></i>
                             <input type="text" placeholder="Search Text" onChange={handleSearch} value={searchText} />
                         </form>
-                        <button className="primary-btn filters-btn g-col-3" onClick={clearSearch} >Filters</button>
+                        <button className="secondary-btn filters-btn g-col-3" onClick={clearSearch} >Clear</button>
                     </div>
                     <CPVData />
                 </div>

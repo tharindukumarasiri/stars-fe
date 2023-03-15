@@ -16,8 +16,8 @@ export async function getCommunicationLogsByBasket(params) {
     return data;
 }
 
-export async function getCommunicationLogsSubLvl(correlationId) {
-    const { data } = await http.get(`${config.GET_COMMUNICATION_LOGS_SUB_LVL}${correlationId}`);
+export async function getCommunicationLogsSubLvl(messageQueueId) {
+    const { data } = await http.get(`${config.GET_COMMUNICATION_LOGS_SUB_LVL}${messageQueueId}`);
     return data;
 }
 
@@ -77,17 +77,47 @@ export async function deleteCommunicationBasket(params) {
     return data;
 }
 
-export async function getCompanies(searchText = '', pageNumber = 0, pageSize = 10 ) {
-    const { data } = await http.get(`${config.GET_COMPANIES}${searchText}&pageNo=${pageNumber}&pageSize=${pageSize}`);
+export async function getCompanies(basketId, companyPartyId, searchText = '', pageNumber = 0, pageSize = 10 ) {
+    const { data } = await http.get(`${config.GET_COMPANIES}${companyPartyId}&communicationBasketId=${basketId}&searchText=${searchText}&pageNo=${pageNumber}&pageSize=${pageSize}`);
     return data;
 }
 
-export async function getPersons(searchText = '', pageNumber = 0, pageSize = 10 ) {
-    const { data } = await http.get(`${config.GET_PERSONS}${searchText}&pageNo=${pageNumber}&pageSize=${pageSize}`);
+export async function getAllCompanies(companyPartyId, searchText = '', pageNumber = 0, pageSize = 10 ) {
+    const { data } = await http.get(`${config.GET_ALL_COMPANIES}${companyPartyId}`);
+    return data;
+}
+
+export async function addCompany(params) {
+    const { data } = await http.post(config.ADD_COMPANY, params);
+    return data;
+}
+
+export async function updateCompany(params) {
+    const { data } = await http.put(config.UPDATE_COMPANY, params);
+    return data;
+}
+
+export async function getPersons(companyPartyId, communicationBasketId, searchText = '', pageNumber = 0, pageSize = 10 ) {
+    const { data } = await http.get(`${config.GET_PERSONS}${companyPartyId}&communicationBasketId=${communicationBasketId}&searchText=${searchText}&pageNo=${pageNumber}&pageSize=${pageSize}`);
     return data;
 }
 
 export async function addPerson(params) {
     const { data } = await http.post(config.ADD_PERSON, params);
+    return data;
+}
+
+export async function updatePerson(params) {
+    const { data } = await http.put(config.UPDATE_PERSON, params);
+    return data;
+}
+
+export async function updateAndSchedule(params) {
+    const { data } = await http.post(config.UPDATE_AND_SHEDULE, params);
+    return data;
+}
+
+export async function getGetCountries() {
+    const { data } = await http.get(config.GET_COUNTRIES);
     return data;
 }

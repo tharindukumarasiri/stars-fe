@@ -76,6 +76,9 @@ export default function Search(props) {
         proposals: false,
     })
 
+    const [selectedMarketValues, setSelectedMarketValues] = useState([[[]]]);
+    const [selectedMarketRows, setSelectedMarketRows] = useState({ cuurentRow: 0, preLevel: 0 });
+
     const [pageCount, setPageCount] = useState(0);
     const [actPage, setActPage] = useState(1)
     const [loading, setLoading] = useState(false)
@@ -164,6 +167,44 @@ export default function Search(props) {
             })
         } else {
             getNutsCodes(country, level + 1).then(result => {
+                setMarketInformationData({ ...marketInformationData, regions: result, cities: [], municipalities: [] })
+            })
+        }
+    }
+
+    const getCountryCodes2 = (obj, level) => {
+        const getCountryName = (lvl) => {
+            switch (lvl) {
+                case 1:
+                    return 'regions';
+                case 2:
+                    return 'cities';
+                case 3:
+                    return 'municipalities';
+                default:
+                    break;
+            }
+        }
+
+        if (level > 1) {
+            getNutsCodesByParent(obj.country, obj.code).then(result => {
+                const uniqueResult = result.filter(item => {
+                    const ind = marketInformationData[getCountryName(level)].findIndex(res => {
+                        return res.code === item.code
+                    })
+                    if (ind === -1) {
+                        return true
+                    } else {
+                        return false
+                    }
+                })
+
+                const newResult = marketInformationData[getCountryName(level)].concat(uniqueResult)
+
+                setMarketInformationData({ ...marketInformationData, [getCountryName(level)]: newResult })
+            })
+        } else {            
+            getNutsCodes(obj.code, level).then(result => {
                 setMarketInformationData({ ...marketInformationData, regions: result, cities: [], municipalities: [] })
             })
         }
@@ -784,6 +825,8 @@ export default function Search(props) {
     }
 
     const getSearchRequest = (pageNumber) => {
+        console.log(selectedMarketValues)
+        console.log(selectedMarketCriteria)
         return ({
             "name": searchText,
             "countries": getMarketCodes(selectedMarketCriteria.selectedCountries),
@@ -1272,6 +1315,119 @@ export default function Search(props) {
         )
     }
 
+    const setMarketSearchCriteria = () => {       
+
+        let countries = [];
+        let regions = [];
+        let cities = [];
+        let municipalities = [];
+
+        selectedMarketValues.map(node => {
+            if(node[0].code)
+                countries.push({code: node[0].code});
+
+            if(node.length > 1){
+                for(let i = 1; i <= node.length; i++){
+
+                    if(Array.isArray(node[i])) {
+                        if(node[i].length >= 2){
+                            regions.push({code: node[i][1].code});
+                        }
+                        if(node[i].length >= 3){
+                            cities.push({code: node[i][2].code});
+                        }
+                        if(node[i].length >= 4){
+                            municipalities.push({code: node[i][3].code});
+                        }
+                    }                    
+                }
+            }
+        });
+
+        let newCriteria = {...selectedMarketCriteria,  
+            selectedCountries: countries, selectedRegions: regions, selectedCities: cities, selectedMunicipalities: municipalities };
+        setSelectedMarketCriteria(newCriteria);        
+    }
+
+    useEffect( () => {
+        setMarketSearchCriteria();
+    }, [selectedMarketValues]);
+
+    const getMarketTreeCriteria = () => {
+        return (
+            <div className="gray-container">
+                {getCriteriaHeader(t("Market Information"), "Filter according to the NUTS codes of the business address", () => toggleOpenCriteria('Market'), openCriteria.Market)}
+                {openCriteria.Market &&
+                   <>
+                        <div className="g-row">
+                            <div className="g-col-3">
+                                {Dropdown({ placeholder: t('Country'), 
+                                            dataList: marketInformationData.countries,                                            
+                                            dataName: 'name', 
+                                            selectedList: selectedMarketValues, 
+                                            setSelectedState: setSelectedMarketValues, 
+                                            selectedRows: selectedMarketRows, 
+                                            setSelectedRows: setSelectedMarketRows, 
+                                            apiCalls: getCountryCodes2,                                             
+                                            useObjectForApi: true,
+                                            codelevel: 1, 
+                                            keyName: "code" })}
+                            </div>
+                            <div className="g-col-3">
+                                {Dropdown({ placeholder: t('Level 1'), 
+                                            dataList: marketInformationData.regions, 
+                                            dataName: 'name', 
+                                            selectedList: selectedMarketValues, 
+                                            setSelectedState: setSelectedMarketValues, 
+                                            selectedRows: selectedMarketRows, 
+                                            setSelectedRows: setSelectedMarketRows, 
+                                            apiCalls: getCountryCodes2, 
+                                            useObjectForApi: true,
+                                            codelevel: 2, 
+                                            keyName: "code" })}
+                               
+                            </div>
+                            <div className="g-col-2">
+                                {Dropdown({ placeholder: t('Level 2'), 
+                                            dataList: marketInformationData.cities, 
+                                            dataName: 'name', 
+                                            selectedList: selectedMarketValues, 
+                                            setSelectedState: setSelectedMarketValues, 
+                                            selectedRows: selectedMarketRows, 
+                                            setSelectedRows: setSelectedMarketRows, 
+                                            apiCalls: getCountryCodes2, 
+                                            useObjectForApi: true,
+                                            codelevel: 3, 
+                                            keyName: "code" })}
+                                
+                            </div>
+                            <div className="g-col-4">
+                                {Dropdown({ placeholder: t('Level 3'), 
+                                            dataList: marketInformationData.municipalities, 
+                                            dataName: 'name', 
+                                            selectedList: selectedMarketValues, 
+                                            setSelectedState: setSelectedMarketValues, 
+                                            selectedRows: selectedMarketRows, 
+                                            setSelectedRows: setSelectedMarketRows, 
+                                            apiCalls: getCountryCodes2, 
+                                            useObjectForApi: true,
+                                            codelevel: 4, 
+                                            keyName: "code" })}
+                            </div>
+                        </div>
+                        <SearchSelectedValues 
+                            selectedValues={selectedMarketValues} 
+                            setSelectedValues={setSelectedMarketValues} 
+                            selectedRows={selectedMarketRows} 
+                            setSelectedRows={setSelectedMarketRows} 
+                            useObjectForApi={true}
+                            apiCalls={getCountryCodes2} />
+                   </>
+                }
+            </div>
+        )
+    }
+
     const getProductGroupsCriteria = () => {
         return (
             <div className="g-col-12">
@@ -1434,7 +1590,8 @@ export default function Search(props) {
                         }
                         <h4>{t("Narrow down your search by...")}</h4>
                         {getCompanyInfoCriteria()}
-                        {getMarketCriteria()}
+                        {/* {getMarketCriteria()} */}
+                        {getMarketTreeCriteria()}
                         {getProductGroupsCriteria()}
                         {getProfessionCriteria()}
                         {getPeppolCriteria()}

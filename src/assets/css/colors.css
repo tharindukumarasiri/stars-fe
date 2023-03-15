@@ -12,6 +12,10 @@
   color: #b2dbfb;
 }
 
+.white {
+  color: #fff;
+}
+
 .blue {
   color: #2196F3;
 }
@@ -193,7 +197,7 @@
 }
 
 .blue-purple {
-  background-color: #746AB2;
+  color: #746AB2;
 }
 
 .bg-blue-purple {
@@ -202,4 +206,24 @@
 
 .bg-blue-purple-dark {
   background-color: #5a4f9a;
+}
+
+.bg-bluish-green-light1 {
+  background-color: #BEE2DC;
+}
+
+.bg-bluish-green-light2 {
+  background-color: #D3EFEA;
+}
+
+.bg-bluish-green-light3 {
+  background-color: #E6F6F4;
+}
+
+.bg-bluish-green-light4 {
+  background-color: #F0FAF8;
+}
+
+.bg-bluish-green-light5 {
+  background-color: #F6FAF9;
 }

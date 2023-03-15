@@ -49,8 +49,8 @@ export async function getLanguage() {
     return data;
 }
 
-export async function getAllUsers(searchText = '', pageNumber = '0') {
-    const url = process.env.LOCAL_API + config.GET_ALL_USERS + searchText + '&pageNo=' + pageNumber + '&pageSize=10';
+export async function getAllUsers(companyPartyId, searchText = '', pageNumber = '0') {
+    const url = process.env.LOCAL_API + config.GET_ALL_USERS + companyPartyId + '&searchText=' + searchText + '&pageNo=' + pageNumber + '&pageSize=10';
     const { data } = await http.get(url, getAuthHeader());
     return data;
 }

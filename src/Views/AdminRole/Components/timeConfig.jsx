@@ -208,6 +208,9 @@ const TimeConfig = (props) => {
             <div className="m-t-20" style={{ alignSelf: 'center' }}>
                 <button className="primary-btn" style={{ width: 150 }} onClick={onUpdate} >Set</button>
             </div>
+            <div className="text-center m-t-20">
+                Message will be quesed only after “Recevers” are set
+            </div>
         </div>
     )
 }

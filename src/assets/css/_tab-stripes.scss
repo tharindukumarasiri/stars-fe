@@ -3,7 +3,6 @@
 
 .tabs {
     position: relative;
-    display: grid;
     height: 100%;
 }
 .tab-list-item {
@@ -12,13 +11,17 @@
     margin-bottom: -1px;
     padding: 0.8em 1.5em;
     cursor: pointer;
+    background-color: $theme-tint-75;
 }
 
 
 .tab-content {
-    background-color: $tab-content;
+    background-color: $theme-tab-active-bg !important;
     position: relative;
     width: 100%;
+    padding: 8px;
+    height: calc(100% - 35px);
+    top: 0;
 }
 
 

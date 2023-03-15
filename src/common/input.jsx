@@ -18,7 +18,7 @@ const Input = ({ value, placeholder = '', onChange, lines = 1, endImage = '', di
                 </div>
             }
             {endImage &&
-                <i className={endImage + ' datapicker-icon'} />
+                <i className={endImage + ' datapicker-icon-x'} />
             }
         </div>
     )

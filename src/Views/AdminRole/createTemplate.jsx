@@ -188,6 +188,16 @@ const CreateTemplate = ({ closeModal, getSavedTemplates, editTemplate }) => {
 
     const dynamicParameters = [
         {
+            name: "Name",
+            value: "{{name}}",
+            sample: "Name",
+        },
+        {
+            name: "Tenant Name",
+            value: "{{tenantName}}",
+            sample: "Tenant Name",
+        },
+        {
             name: "User Name/s",
             value: "{{firstName}}",
             sample: "User Name/s",
@@ -199,12 +209,12 @@ const CreateTemplate = ({ closeModal, getSavedTemplates, editTemplate }) => {
         },
         {
             name: "Roles",
-            value: "{{user_role}}",
+            value: "{{userRole}}",
             sample: "Roles",
         },
         {
             name: "Client Name/s",
-            value: "{{client_name}}",
+            value: "{{clientName}}",
             sample: "Client Name/s",
         },
         {
@@ -256,6 +266,23 @@ const CreateTemplate = ({ closeModal, getSavedTemplates, editTemplate }) => {
                 <div className="g-col-5">
                     <Input value={templateName} placeholder="Template Name" onChange={onChangeTemplateName} />
                 </div>
+                <div className="g-col-4"><DropdownSelect
+                    values={triggerPoints}
+                    placeholder="Trigger point"
+                    dataName="DisplayName"
+                    valueName="Id"
+                    selected={triggerPoint}
+                    onChange={(e) => {
+                        setTriggerPoint(e.target.value);
+                    }}
+                /></div>
+                <div className="g-col-3">
+                    <input type="checkbox" className="check-box m-t-10 m-l-5 m-b-20 fl"
+                        checked={isDefault}
+                        onChange={() => setIsDefault(pre => !pre)}
+                    />
+                    <div className="fl m-t-10 hover-hand " onClick={() => setIsDefault(pre => !pre)}>MARK AS DEFAULT</div>
+                </div>
             </div>
             <div className="m-l-5">
                 <input
@@ -291,51 +318,26 @@ const CreateTemplate = ({ closeModal, getSavedTemplates, editTemplate }) => {
                     Business Communication Template
                 </label>
             </div>
-            <div className="g-row user-input-box">
-                <div className="g-col-1">
-                    <DropdownSelect
-                        values={triggerPoints}
-                        placeholder="Trigger point"
-                        dataName="DisplayName"
-                        valueName="Id"
-                        selected={triggerPoint}
-                        onChange={(e) => {
-                            setTriggerPoint(e.target.value);
-                        }}
-                    />
-                </div>
-            </div>
-            <input type="checkbox" className="check-box m-t-10 m-l-5 m-b-20 fl"
-                checked={isDefault}
-                onChange={() => setIsDefault(pre => !pre)}
-            /> <div className="fl m-t-10 hover-hand " onClick={() => setIsDefault(pre => !pre)}>MARK AS DEFAULT</div>
-                            <div className="n-float" />
+
+            <div className="n-float" />
 
             <EmailEditor
                 ref={emailEditorRef}
                 onLoad={onLoad}
                 onReady={onReady}
                 displayMode="email"
-                minHeight={"55vh"}
+                minHeight={"50vh"}
                 projectId={108663}
                 options={{
                     mergeTags: dynamicParameters,
                 }}
-                tools={{
-                    menu: {
-                        enabled: false,
-                    },
-                    html: {
-                        enabled: false,
-                    },
-                }}
             />
-            <div className="g-row">
-                <button className="primary-btn g-col-1 m-r-20" onClick={onSave}>
-                    Save
-                </button>
-                <button className="secondary-btn g-col-1" onClick={closeModal}>
+            <div className="editor-name">
+                <button className="secondary-btn m-r-20" onClick={closeModal}>
                     Cancel
+                </button>
+                <button className="primary-btn" onClick={onSave}>
+                    Save
                 </button>
             </div>
         </div>

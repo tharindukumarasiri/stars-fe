@@ -1,19 +1,22 @@
 @import '../../assets/css/colors.scss';
 
 .editor-name {
+    display: flex;
+    flex-direction: row;
     position: absolute;
     right: 20px;
-    bottom: 90px;
+    bottom: 43px;
     width: 430px;
-    height: 60px;
+    padding:5px;
     background-color: $white;
     z-index: 999;
+    justify-content: center;
 }
 
 .top-container {
     display: flex;
     flex-direction: row;
-    height: 50px;
+    margin-bottom: 6px;
 }
 
 .add-btn {
@@ -46,7 +49,6 @@
     input[type="time"],
     input[type="text"] {
         border: 1px solid #999999;
-        height: 40px;
     }
 
     textarea {
@@ -88,8 +90,8 @@
 
 .actions-btn {
     position: absolute;
-    right: 50px;
-    bottom: 20px;
+    right: 8px;
+    bottom: 8px;
 }
 
 .select-actions-btn {
@@ -112,6 +114,7 @@
 }
 
 .user-data-container {
+    position: relative;
     width: 20vw;
     height: 75vh;
     border-right: 3px solid $body-color;
@@ -144,6 +147,7 @@
     display: flex;
     justify-content: center;
     margin-bottom: 33px;
+    margin-top: 50px;
 }
 
 .upload-image-btn {
@@ -181,7 +185,7 @@
 }
 
 .tablele-width {
-    width: 95vw;
+    width: 100%;
 }
 
 .user-data-table-container {
@@ -250,6 +254,11 @@
 
 .basket-table-icon {
     font-size: 25px;
+}
+
+.basket-companies-table-icon {
+    font-size: 25px;
+    margin-left: 10vw;
 }
 
 .create-basket-container {
@@ -402,7 +411,14 @@
 }
 
 .recivers-user-footer {
-    margin-left: 13vw;
+    margin-left: 10vw;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.recivers-companies-footer {
+    margin-left: 10px;
     display: flex;
     flex-direction: row;
     justify-content: space-between;
@@ -492,5 +508,10 @@
     min-height: 100px;
     display: flex;
     flex-direction: row;
+    align-items: center;
+}
+
+.add-user-item {
+    display: flex;
     align-items: center;
 }

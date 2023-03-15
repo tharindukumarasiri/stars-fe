@@ -1182,14 +1182,7 @@ export const ReceversCompaniesTableHeaders = [
                 title: 'Organization ID',
                 dataIndex: 'Company',
                 render: (_, { Company }) => (
-                    Company?.CompanyRegistrationID
-                ),
-            },
-            {
-                title: 'ID',
-                dataIndex: 'Company',
-                render: (_, { Company }) => (
-                    Company?.Id
+                    Company?.CompanyId
                 ),
             },
             {
@@ -1203,7 +1196,7 @@ export const ReceversCompaniesTableHeaders = [
                 title: 'Country',
                 dataIndex: 'Company',
                 render: (_, { Company }) => (
-                    Company?.CountryName
+                    Company?.CountryTName
                 ),
             },
             {
@@ -1238,28 +1231,35 @@ export const ReceversCompaniesSubTableHeaders = [
         children: [
             {
                 title: 'ID',
-                dataIndex: 'Id',
+                dataIndex: 'Value',
+                render: (_, { Value }) => (
+                    Value?.Id
+                ),
                 width: 120
             },
             {
-                title: 'Name',
-                dataIndex: 'Name',
+                title: 'First Name',
+                dataIndex: 'Value',
+                render: (_, { Value }) => (
+                    Value?.FirstName
+                ),
+                width: 200
+            },
+            {
+                title: 'Last Name',
+                dataIndex: 'Value',
+                render: (_, { Value }) => (
+                    Value?.LastName
+                ),
                 width: 200
             },
             {
                 title: 'Title',
-                dataIndex: 'TitleName',
+                dataIndex: 'Value',
+                render: (_, { Value }) => (
+                    Value?.TitleTName
+                ),
                 width: 100
-            },
-            {
-                title: 'Email',
-                dataIndex: 'Email',
-                width: 200
-            },
-            {
-                title: 'Mobile Number',
-                dataIndex: 'PhoneNumber',
-                width: 200
             },
         ]
     }
@@ -1275,24 +1275,31 @@ export const ReceversPersonsTableHeaders = [
         width: 120
     },
     {
-        title: 'Name',
+        title: 'First Name',
         dataIndex: 'Person',
         render: (_, { Person }) => (
-            Person?.Name
+            Person?.FirstName
         ),
     },
     {
-        title: 'Position',
+        title: 'Last Name',
         dataIndex: 'Person',
         render: (_, { Person }) => (
-            Person?.TitleName
+            Person?.LastName
+        ),
+    },
+    {
+        title: 'Title',
+        dataIndex: 'Person',
+        render: (_, { Person }) => (
+            Person?.TitleTName
         ),
     },
     {
         title: 'Country',
         dataIndex: 'Person',
         render: (_, { Person }) => (
-            Person?.CountryName
+            Person?.CountryTName
         ),
     },
     {
@@ -1309,64 +1316,47 @@ export const ReceversPersonsTableHeaders = [
             Person?.Phone
         ),
     },
-    {
-        title: 'Company ID',
-        dataIndex: 'CompanyRegistrationIDs',
-        ellipsis: {
-            showTitle: false,
-        },
-        render: (_, { CompanyRegistrationIDs }) => (
-            <Tooltip placement="topLeft" title={CompanyRegistrationIDs?.toString()}>
-                {CompanyRegistrationIDs?.toString()}
-            </Tooltip>
-        ),
-    },
-    {
-        title: 'Company Name',
-        dataIndex: 'CompanyNames',
-        ellipsis: {
-            showTitle: false,
-        },
-        render: (_, { CompanyNames }) => (
-            <Tooltip placement="topLeft" title={CompanyNames?.toString()}>
-                {CompanyNames?.toString()}
-            </Tooltip>
-        ),
-    },
-    {
-        title: '',
-        width: 50,
-        dataIndex: '',
-    },
+    // {
+    //     title: '',
+    //     dataIndex: '',
+    //     width: 200
+    // },
 ]
 
-export const SearchProjectSectionTableHeaders = [
+export const ReceversPersonsTableExpandedHeaders = [
     {
-        title: 'Search Project ID',
-        dataIndex: 'Id',
+        title: 'Organization ID',
+        dataIndex: 'Company',
+        render: (_, { Company }) => (
+            Company?.CompanyRegistrationID
+        ),
     },
     {
-        title: 'Project Name',
-        dataIndex: 'Name',
-    },
-    {
-        title: 'Section',
-        dataIndex: 'Position',
-    },
-    {
-        title: 'Companies',
-        dataIndex: 'Companies',
+        title: 'Name',
+        dataIndex: 'Company',
+        render: (_, { Company }) => (
+            Company?.Name
+        ),
     },
     {
         title: 'Country',
-        dataIndex: 'Country',
+        dataIndex: 'Company',
+        render: (_, { Company }) => (
+            Company?.CountryTName
+        ),
     },
     {
         title: 'Email',
-        dataIndex: 'Email',
+        dataIndex: 'Company',
+        render: (_, { Company }) => (
+            Company?.Email
+        ),
     },
     {
         title: 'Phone',
-        dataIndex: 'Phone',
+        dataIndex: 'Company',
+        render: (_, { Company }) => (
+            Company?.Phone
+        ),
     },
 ]

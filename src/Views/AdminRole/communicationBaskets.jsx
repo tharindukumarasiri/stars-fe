@@ -15,14 +15,10 @@ import {
     getCommunicationMessageTypes,
     deleteCommunicationBasket
 } from "../../services/communicationService";
-import { FetchCurrentUser } from "../../hooks/index"
+import { FetchCurrentUser, FetchCurrentCompany } from "../../hooks/index"
 import TimeConfig from "./Components/timeConfig";
 
 const pageSize = 10;
-const firstReqParams = {
-    "PageSize": pageSize,
-    "PageCount": 0
-}
 
 const CommunicationBaskets = () => {
     const [dropDownData, setDropDownData] = useState({ type: [], status: [], comType: [] })
@@ -38,25 +34,45 @@ const CommunicationBaskets = () => {
     const [configBasketId, setConfigBasketId] = useState('');
 
     const [currentUser] = FetchCurrentUser();
+    const [selectedCompany] = FetchCurrentCompany();
+
     const { changeActiveTab } = useContext(TabContext);
 
     useEffect(() => {
-        Promise.all([
-            getCommunicationBasket(firstReqParams).then(result => {
-                setCommunicationsData(result?.Value);
-                setTotalResults(result?.Key);
-            }),
-            getCommunicationBasketTypes().then(result => {
-                setDropDownData(pre => ({ ...pre, type: result }))
-            }),
-            getCommunicationBasketStatuses().then(result => {
-                setDropDownData(pre => ({ ...pre, status: result }))
-            }),
-            getCommunicationMessageTypes().then(result => {
-                setDropDownData(pre => ({ ...pre, comType: result }))
-            }),
-        ]).finally(() => setLoading(false));
+        getCommunicationBasketTypes().then(result => {
+            setDropDownData(pre => ({ ...pre, type: result }))
+        })
+        getCommunicationBasketStatuses().then(result => {
+            setDropDownData(pre => ({ ...pre, status: result }))
+        })
+        getCommunicationMessageTypes().then(result => {
+            setDropDownData(pre => ({ ...pre, comType: result }))
+        })
     }, []);
+
+    useEffect(() => {
+        if (selectedCompany?.companyPartyId) {
+            getCommunicationBasketData()
+        }
+    }, [selectedCompany]);
+
+    const getCommunicationBasketData = (pgNumb = pageNumber) => {
+        setLoading(true)
+        const params = {
+            "BasketStatusId": filterTypes?.status?.Id,
+            "BasketTypeId": filterTypes?.type?.Id,
+            "FromDate": filterTypes.startDate,
+            "ToDate": filterTypes.endDate,
+            "PageSize": pageSize,
+            "PageCount": pgNumb,
+            "CompanyPartyId": selectedCompany?.companyPartyId
+        }
+
+        getCommunicationBasket(params).then(result => {
+            setCommunicationsData(result?.Value);
+            setTotalResults(result?.Key);
+        }).finally(() => setLoading(false))
+    }
 
     const onLogClick = (e, Id) => {
         e.stopPropagation();
@@ -67,22 +83,10 @@ const CommunicationBaskets = () => {
         e.stopPropagation();
         setLoading(true);
         const payload = [currentUser?.PartyId, id];
-        const params = {
-            "BasketStatusId": filterTypes?.status?.Id,
-            "BasketTypeId": filterTypes?.type?.Id,
-            "FromDate": filterTypes.startDate,
-            "ToDate": filterTypes.endDate,
-            "PageSize": pageSize,
-            "PageCount": pageNumber
-        }
 
         deleteCommunicationBasket(payload).then(() => {
-            getCommunicationBasket(params).then(result => {
-                setCommunicationsData(result?.Value);
-                setTotalResults(result?.Key);
-                message.success('Delete Successful');
-                setLoading(false);
-            });
+            message.success('Delete Successful');
+            getCommunicationBasketData();
         }).catch(() => {
             setLoading(false);
             message.error('Delete failed');
@@ -147,21 +151,8 @@ const CommunicationBaskets = () => {
 
     const onFilter = (e) => {
         e.preventDefault();
-        setLoading(true);
-        const params = {
-            "BasketStatusId": filterTypes?.status?.Id,
-            "BasketTypeId": filterTypes?.type?.Id,
-            "FromDate": filterTypes.startDate,
-            "ToDate": filterTypes.endDate,
-            "PageSize": pageSize,
-            "PageCount": 0
-        }
-
-        getCommunicationBasket(params).then(result => {
-            setCommunicationsData(result?.Value);
-            setTotalResults(result?.Key);
-            setPageNumber(0);
-        }).finally(() => setLoading(false));
+        getCommunicationBasketData();
+        setPageNumber(0);
     }
 
     const toggleModal = () => {
@@ -174,11 +165,7 @@ const CommunicationBaskets = () => {
 
     const onUpdateSuccess = () => {
         toggleConfigModal();
-        setLoading(true)
-        getCommunicationBasket(firstReqParams).then(result => {
-            setCommunicationsData(result?.Value);
-            setTotalResults(result?.Key);
-        }).finally(() => setLoading(false))
+        getCommunicationBasketData();
     }
 
     const validateFields = () => {
@@ -202,17 +189,15 @@ const CommunicationBaskets = () => {
                 "Name": newGroupData.name,
                 "BasketTypeId": newGroupData.basketType ? 1 : 2,
                 "MessageTypeId": JSON.parse(newGroupData?.communicationType)?.Id,
-                "Description": newGroupData.description
+                "Description": newGroupData.description,
+                "CompanyPartyId": selectedCompany?.companyPartyId
             }
 
             addCommunicationBasket(params).then(() => {
                 toggleModal();
                 message.success("Create basket successful");
                 setNewGroupData({ name: '', basketType: true, communicationType: null, description: '' })
-                getCommunicationBasket(firstReqParams).then(result => {
-                    setCommunicationsData(result?.Value);
-                    setTotalResults(result?.Key);
-                }).finally(() => setLoading(false));
+                getCommunicationBasketData();
             }).catch(() => {
                 message.error("Create basket failed please try again");
                 setLoading(false);
@@ -232,12 +217,8 @@ const CommunicationBaskets = () => {
             "PageCount": pageNumb
         }
 
-        getCommunicationBasket(params).then(result => {
-            setCommunicationsData(result?.Value);
-            setLoading(false)
-            setPageNumber(pageNumb)
-            setTotalResults(result?.Key)
-        }).catch(() => setLoading(false))
+        setPageNumber(pageNumb)
+        getCommunicationBasketData();
     }
 
     const onChangeNewGroupField = (e, fieldName) => {

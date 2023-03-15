@@ -152,9 +152,9 @@ const Templates = () => {
                     <div></div>
                 </div>
             }
-            <div className="m-t-20 m-l-20">
-                <button className="primary-btn m-r-20" style={{ float: 'left' }} onClick={createNewTemplateClick} >Create New</button>
-                <div className="g-col-2 fl">
+            <div>
+                <button className="primary-btn m-r-10" style={{ float: 'left' }} onClick={createNewTemplateClick} >Create New</button>
+                <div className="fl">
                     <Input value={''} placeholder='Search' onChange={() => { }} endImage={'icon-search-1'} />
                 </div>
                 <button className="primary-btn" style={{ float: 'left' }} onClick={() => { }} >Filters</button>
@@ -162,7 +162,7 @@ const Templates = () => {
             <div className="n-float"></div>
             <div className="page-container">
                 <div className="custom-tab-container">
-                    <Tabs type="card" style={{ width: '90vw' }} >
+                    <Tabs type="card">
                         <TabPane tab="Notification templates" key="1">
                             <Table
                                 rowKey={(record) => record?.id}
@@ -200,12 +200,14 @@ const Templates = () => {
                                 columns={tableHeaders}
                                 pagination={false}
                             />
+                            <div className="action-bar">
                             <div className="flex-center-middle m-t-20">
                                 <Pagination size="small" 
                                     pageSize={pageSize}
                                     current={bdCurrentPageNo} 
                                     onChange={(pageNum) => { onChangePage(pageNum, constants.templateType.Communication) }} 
                                     total={bdTotal} showSizeChanger={false} />
+                                </div>
                             </div>
                         </TabPane>
                     </Tabs>
@@ -216,10 +218,11 @@ const Templates = () => {
                 visible={modalVisible}
                 footer={[]}
                 onCancel={toggaleTemplateCreater}
-                centered={true} width={'95vw'} style={{height: '86vh'}}>
+                width={'95vw'}
+                centered={true}>
                 <div className="g-row">
                     <CreateTemplate closeModal={toggaleTemplateCreater} getSavedTemplates={getSavedTemplates} editTemplate={editTemplate} />
-                    <div className="editor-name" />
+                    {/* <div className="editor-name" /> */}
                 </div>
                 <div className="n-float" />
             </Modal>

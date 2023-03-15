@@ -37,11 +37,6 @@ const AllUsers = () => {
     const { changeActiveTab } = useContext(TabContext);
 
     useEffect(() => {
-        getAllUsers().then(result => {
-            setLoading(false)
-            setUsers(result?.Value)
-            setTotalResults(result?.Key)
-        }).catch(() => setLoading(false))
         getCommunicationEntitiesWithRoles().then(result => {
             setExistingClients(result)
         })
@@ -52,29 +47,30 @@ const AllUsers = () => {
             getTenantMessageTemplates(selectedCompany?.tenantId).then(result => {
                 setSavedTemplates(result.Value);
             })
+            getUsersData();
         }
     }, [selectedCompany])
 
-    const onChangePage = (page) => {
-        const pageNumb = page - 1
-        setLoading(true);
-        getAllUsers(searchText, pageNumb).then(result => {
+    const getUsersData = (pgNumb = pageNumber) => {
+        setLoading(true)
+        getAllUsers(selectedCompany?.companyPartyId, searchText, pgNumb).then(result => {
             setLoading(false)
-            setPageNumber(pageNumb)
             setUsers(result?.Value)
             setTotalResults(result?.Key)
         }).catch(() => setLoading(false))
     }
 
+    const onChangePage = (page) => {
+        const pageNumb = page - 1
+        setPageNumber(pageNumb)
+        getUsersData(pageNumb);
+    }
+
     const onActivate = () => {
         setLoading(true);
         activateUsers(selectedUsers).then(() => {
-            getAllUsers(searchText, pageNumber).then(result => {
-                message.success("Users activated")
-                setLoading(false)
-                setUsers(result?.Value)
-                setTotalResults(result?.Key)
-            }).catch(() => setLoading(false))
+            message.success("Users activated")
+            getUsersData();
         }).catch(() => {
             message.error("Users activaion failed")
             setLoading(false)
@@ -86,12 +82,8 @@ const AllUsers = () => {
         const userLisyPayload = [currentUser?.PartyId].concat(selectedUsers)
 
         deActivateUsers(userLisyPayload).then(() => {
-            getAllUsers(searchText, pageNumber).then(result => {
-                message.success("Users deactivated")
-                setLoading(false)
-                setUsers(result?.Value)
-                setTotalResults(result?.Key)
-            }).catch(() => setLoading(false))
+            message.success("Users deactivated")
+            getUsersData();
         }).catch(() => {
             message.error("Users deactivaion failed")
             setLoading(false)
@@ -100,8 +92,8 @@ const AllUsers = () => {
 
     const actions = (
         <Menu>
-            <Menu.Item>Send Invitation</Menu.Item>
-            <Menu.Item>Send Messege</Menu.Item>
+            <Menu.Item disabled>Send Invitation</Menu.Item>
+            <Menu.Item disabled>Send Messege</Menu.Item>
             <Menu.Item onClick={onActivate}>Mark Active</Menu.Item>
             <Menu.Item onClick={onDeActivate}>Mark Inactive</Menu.Item>
         </Menu>
@@ -145,13 +137,8 @@ const AllUsers = () => {
     }, [searchClientsText])
 
     const onSearch = () => {
-        setLoading(true)
-        getAllUsers(searchText).then(result => {
-            setLoading(false)
-            setUsers(result?.Value)
-            setTotalResults(result?.Key)
-            setPageNumber(0);
-        }).catch(() => setLoading(false))
+        setPageNumber(0);
+        getUsersData(0);
     }
 
     const toggleModal = () => {
@@ -297,13 +284,7 @@ const AllUsers = () => {
                 addUser(params).then((user) => {
                     setNewCreatedUserData(user);
                     setNewUserFirstPage(false);
-
-                    getAllUsers().then(result => {
-                        setLoading(false);
-                        setUsers(result?.Value)
-                        setTotalResults(result?.Key)
-                        setPageNumber(0)
-                    }).catch(() => setLoading(false))
+                    setLoading(false);
                 }).catch(() => message.error('Create user failed please try again'))
             }
         } else {
@@ -317,12 +298,16 @@ const AllUsers = () => {
                 "PictureFileId": '',
                 "LoggedInUserPartyId": currentUser?.PartyId,
                 "UserRoles": selecteduserRoles,
-                "IsSendEmail": newUserData.sendInvitation
+                "IsSendEmail": newUserData.sendInvitation,
+                "IsActive": false,
+                "UserPartyId": newUserData?.PartyId
             }
 
             updateUser(params).then(() => {
                 setLoading(false);
                 message.success('New user created')
+                getUsersData(0);
+                setPageNumber(0);
             }).catch(() => {
                 setLoading(false);
             })
@@ -369,6 +354,7 @@ const AllUsers = () => {
                     pagination={false}
                 />
             </div>
+            <div className="action-bar">
             <div className="flex-center-middle m-t-20">
                 <Pagination size="small" current={pageNumber + 1} onChange={onChangePage} total={totalResults} showSizeChanger={false} />
             </div>
@@ -377,7 +363,7 @@ const AllUsers = () => {
             >
                 <button className="primary-btn actions-btn" >Action</button>
             </Dropdown>
-
+            </div>
             <Modal title={"Create New User"}
                 visible={modalVisible}
                 onCancel={toggleModal}

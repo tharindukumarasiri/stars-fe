@@ -1,6 +1,6 @@
 import React from "react";
 
-const SearchSelectedValues = ({ selectedValues, setSelectedValues, selectedRows, setSelectedRows, apiCalls } = {}) => {
+const SearchSelectedValues = ({ selectedValues, setSelectedValues, selectedRows, setSelectedRows, apiCalls, useObjectForApi } = {}) => {
     const getBgColor = (value, index) => {
         switch (value[0] + index) {
             case 3:
@@ -97,7 +97,12 @@ const SearchSelectedValues = ({ selectedValues, setSelectedValues, selectedRows,
         if (changeRowIndex > 0)
             setSelectedRows({ ...selectedRows, cuurentRow: changeRowIndex })
 
-        apiCalls(value.value, 2);
+        if(useObjectForApi){
+            apiCalls(value, 1);
+        }
+        else{
+            apiCalls(value.value, 2);
+        }
     }
 
     if (selectedValues.flat(3).length < 1)

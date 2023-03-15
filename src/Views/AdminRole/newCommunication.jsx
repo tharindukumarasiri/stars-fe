@@ -1,24 +1,22 @@
 import React, { useState, useEffect } from "react";
-import { AutoComplete, message } from 'antd';
+import { message } from 'antd';
 
 import Input from '../../common/input'
 import Dropdown from "../../common/dropdown";
 import image_thumb from "../../assets/images/image_thumb.png"
 import { getTenantMessageTemplates } from "../../services/templateService";
 import { FetchCurrentCompany, FetchCurrentUser } from "../../hooks/index";
+import CompaniesAndPersons from "./companiesAndPersons";
 import * as constants from "../../utils/constants";
 
-const templateTypes = ['Admin Templates', 'Business Communications']
-const pageSize = 50
+const pageSize = 100
 
 const NewCommunication = () => {
     const [currentStep, setCurrentStep] = useState(1)
     const [template, setTemplate] = useState(true);
     const [templateList, setTemplateList] = useState([]);
-    const [selectedTemplate, setSelectedTemplate] = useState()
+    const [selectedTemplate, setSelectedTemplate] = useState(null)
     const [templateSubject, setTemplateSubject] = useState('');
-    const [searchCompanyText, setSearchCompanyText] = useState('');
-    const [templateType, setTemplateType] = useState(null);
     const [loading, setLoading] = useState(true);
 
     const [selectedCompany] = FetchCurrentCompany();
@@ -48,7 +46,8 @@ const NewCommunication = () => {
     }, [selectedCompany]);
 
     const onTemplateTypeChange = () => {
-        setTemplate(pre => !pre)
+        setTemplate(pre => !pre);
+        selectedTemplate(null);
     }
 
     const onSearchTemplateSubject = (e) => {
@@ -56,27 +55,9 @@ const NewCommunication = () => {
         setTemplateSubject(e.target.value);
     }
 
-    const onFilterTemplate = () => {
-
-    }
-
-    const onChangeTemplateType = (e) => {
-        e.preventDefault();
-        setTemplateType(e.target.value);
-    }
-
-    const onSearchCompany = (e) => {
-        e.preventDefault();
-        setSearchCompanyText(e.target.value);
-    }
-
-    const onFilterCompany = () => {
-
-    }
-
     const validate = () => {
         let validation = true
-        if (currentStep === 1) {
+        if (currentStep === 1 && template) {
             if (!selectedTemplate) {
                 message.error('Please select a template');
                 validation = false;
@@ -132,8 +113,9 @@ const NewCommunication = () => {
         )
     }
 
-    const onSelect = (value, option) => {
-        setSelectedTemplate(option);
+    const onSelect = (e) => {
+        e.preventDefault();
+        setSelectedTemplate(JSON.parse(e.target.value));
     };
 
     const getStepContent = () => {
@@ -141,45 +123,30 @@ const NewCommunication = () => {
             case 1:
                 return (
                     <div className="new-com-sub-container">
+                        <div className="m-t-20 m-b-20">
+                            <input type="radio" id="Email" name="Email" checked={true} onChange={() => { }} /> <label className="p-r-20 p-l-20 m-r-20" htmlFor="Email">Email</label>
+                            <input type="radio" id="SMS" name="SMS" disabled /> <label className="p-r-20 p-l-20 m-r-20 btn-disabled" htmlFor="SMS">SMS</label>
+                            <input type="radio" id="Notification" name="Notification" disabled /> <label className="p-l-20 btn-disabled" htmlFor="Notification">Push Notification</label>
+                        </div>
+                        <div className="m-t-20 m-b-20">
+                            <input type="radio" id="Template" name="Template" checked={template} onChange={onTemplateTypeChange} /> <label className="p-r-20 p-l-20 m-r-20" htmlFor="Template">Template</label>
+                            <input type="radio" id="PlainHtml" name="PlainHtml" checked={!template} onChange={onTemplateTypeChange} /> <label className="p-l-20" htmlFor="PlainHtml">Plain (basic html)</label>
+                        </div>
                         {template &&
                             <>
-                                <div className="m-t-20 m-b-20">
-                                    <input type="radio" id="Email" name="Email" checked={true} onChange={() => { }} /> <label className="p-r-20 p-l-20 m-r-20" htmlFor="Email">Email</label>
-                                    <input type="radio" id="SMS" name="SMS" disabled /> <label className="p-r-20 p-l-20 m-r-20 btn-disabled" htmlFor="SMS">SMS</label>
-                                    <input type="radio" id="Notification" name="Notification" disabled /> <label className="p-l-20 btn-disabled" htmlFor="Notification">Push Notification</label>
-                                </div>
-                                <div className="m-t-20 m-b-20">
-                                    <input type="radio" id="Template" name="Template" checked={template} onChange={onTemplateTypeChange} /> <label className="p-r-20 p-l-20 m-r-20" htmlFor="Template">Template</label>
-                                    <input type="radio" id="PlainHtml" name="PlainHtml" checked={!template} onChange={onTemplateTypeChange} /> <label className="p-l-20" htmlFor="PlainHtml">Plain (basic html)</label>
-                                </div>
-                                <div className="com-search-input-container m-t-20">
-                                    <AutoComplete
-                                        dropdownMatchSelectWidth={400}
-                                        placeholder="Search Template"
-                                        style={{
-                                            width: 308,
-                                        }}
-                                        options={templateList}
-                                        fieldNames={{ label: "DisplayName", value: "DisplayName" }}
-                                        filterOption={(inputValue, option) =>
-                                            option?.DisplayName?.toUpperCase().indexOf(inputValue.toUpperCase()) !== -1
-                                        }
-                                        onSelect={onSelect}
+                                <div className="new-com-drop-down-container m-t-20" >
+                                    <Dropdown
+                                        values={templateList}
+                                        onChange={onSelect}
+                                        selected={JSON.stringify(selectedTemplate || undefined)}
+                                        placeholder="Template"
+                                        dataName="DisplayName"
                                     />
-                                    <button className="add-btn" onClick={onFilterTemplate} >Filters</button>
                                 </div>
                                 <div className="com-search-input-container m-t-20">
                                     <div className="new-com-input-container" >
                                         <Input placeholder="Subject" value={templateSubject} onChange={onSearchTemplateSubject} />
                                     </div>
-                                </div>
-                                <div className="new-com-drop-down-container m-t-20" >
-                                    <Dropdown
-                                        values={templateTypes}
-                                        onChange={onChangeTemplateType}
-                                        selected={templateType}
-                                        placeholder="Template"
-                                    />
                                 </div>
                             </>
                         }
@@ -188,32 +155,15 @@ const NewCommunication = () => {
             case 2:
                 return (
                     <div className="new-com-sub-container">
-                        <div className="com-search-input-container m-t-20">
-                            <div className="new-com-search-input-container" >
-                                <Input placeholder="Search for Company/ Contact Persons" value={searchCompanyText} onChange={onSearchCompany} endImage='icon-search-1' />
-                            </div>
-                            <button className="add-btn" onClick={onFilterCompany} >Filters</button>
-                        </div>
-                        <div className="new-com-drop-down-container m-t-20" >
-                            <Dropdown
-                                values={['Basket1']}
-                                onChange={onChangeTemplateType}
-                                selected={templateType}
-                                placeholder="Basket"
-                            />
-                        </div>
-                        <div className="receivers-header m-b-15">Selected Receivers</div>
-                        <div className="user-cards-container">
-                            {[2, 3, 4].map(() => {
-                                return getUserCard()
-                            })}
-                        </div>
+                        <CompaniesAndPersons />
                     </div>
                 )
             case 3:
                 return (
                     <div className="new-com-sub-container">
-                        <div dangerouslySetInnerHTML={{ __html: selectedTemplate?.MessageBody }} />
+                        {selectedTemplate &&
+                            <div dangerouslySetInnerHTML={{ __html: selectedTemplate?.MessageBody }} />
+                        }
                     </div>
                 )
             default:

@@ -1,15 +1,38 @@
 ﻿/////Colors
-$theme: #2196F3
-/*#0592D9*/
-;
+$theme: #2196F3/*#0592D9*/;
+
+@function tint($color, $percent) {
+    @return mix(#eee, $color, $percent);
+}
+
+// Add percentage of black to a color
+@function shade($color, $percent) {
+    @return mix(black, $color, $percent);
+}
+
+
+
+$theme-shade-15: shade( $theme, 15% );
+$theme-tint-75: tint( $theme, 75% );
+$theme-tint-85: tint( $theme, 85% );
+$theme-tint-95: tint( $theme, 95% );
+
 $theme-dark: darken($theme, 20%);
 $theme-dark1: darken($theme, 25%);
 $theme-dark2: darken($theme, 30%);
 $theme-darkest: darken($theme, 34%);
 $theme-light-dark: desaturate($theme, 10%);
 $theme-light: lighten($theme, 30%);
-$tab-content: lighten($theme, 45%);
 $body-color: #EBEBEB;
+$theme-light-grey: desaturate($theme, 80%);
+
+$tab-content: #c8ced3;
+$theme-tab-active-bg: #c8ced3;
+
+
+
+
+
 
 //==============blue
 $blue-color: #2196F3

@@ -30,11 +30,13 @@
 }
 
 .page-container {
+    margin: 0;
+    padding: 10px;
+    position: relative;
+    bottom: 50px;
+    top: 0px;
+    height: calc(100% - 46px);
     background-color: $white;
-    margin: 3px;
-    padding: 15px;
-    display: grid;
-    min-height: 86vh;
 
     .title-txt {
         color: $blue-color;
@@ -63,62 +65,6 @@
     }
 }
 
-.primary-btn {
-    float: right;
-    background-color: $light-dark-blue;
-    border-color: transparent;
-    color: $white;
-    margin-top: 10px;
-    right: 10px;
-    cursor: pointer;
-    transition: $animation-1s;
-
-    &:hover {
-        background-color: $dark-blue;
-    }
-
-    &:disabled {
-        background-color: $base-gray;
-        cursor: not-allowed;
-    }
-}
-
-.secondary-btn {
-    float: right;
-    background-color: $white;
-    border: solid $light-dark-blue;
-    border-width: 1px;
-    color: $light-dark-blue;
-    margin-top: 10px;
-    right: 10px;
-    cursor: pointer;
-    transition: $animation-1s;
-
-    &:hover {
-        background-color: $dark-blue;
-    }
-
-    &:disabled {
-        background-color: $base-gray;
-        cursor: not-allowed;
-    }
-}
-
-.btn-disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-}
-
-.close-btn {
-    color: $light-dark-blue;
-    font-size: 0.8em;
-    cursor: pointer;
-    transition: $animation-1s;
-
-    &:hover {
-        color: $red
-    }
-}
 
 .star {
     visibility: hidden;
@@ -174,10 +120,11 @@
 .input-hint-text-visible {
     position: absolute;
     font-size: 12px;
-    padding-left: 10px;
-    transition: all .2s ease-out;
-    top: 0;
+    padding: 0px 6px 0 0;
+    transition: all 0.2s ease-out;
+    top: -4px;
     left: 0;
+    background-color: $white;
 }
 
 .input-hint-text-hidden {
@@ -204,32 +151,31 @@
 }
 
 .custom-tab-container {
-    margin: 3px;
-    padding: 15px;
-    display: grid;
-    min-height: 500px;
+    margin-top: 3px;
+    padding: 0 0 50px 0;
+    overflow: scroll;
+    background-color: $white;
 
     .ant-tabs {
         background-color: $white;
     }
 
-    .ant-tabs>.ant-tabs-nav .ant-tabs-nav-wrap {
-        background-color: $tab-content;
+    .ant-tabs > .ant-tabs-nav .ant-tabs-nav-wrap {
+        background-color: $theme-tint-85;
     }
 
     .ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn {
         color: $blue-color;
     }
 
-    .ant-tabs-card>.ant-tabs-nav .ant-tabs-tab {
+    .ant-tabs-card > .ant-tabs-nav .ant-tabs-tab {
         background-color: #81B1CA;
         border-color: #81B1CA;
     }
 
-    .ant-tabs-card.ant-tabs-top>.ant-tabs-nav .ant-tabs-tab-active {
+    .ant-tabs-card.ant-tabs-top > .ant-tabs-nav .ant-tabs-tab-active {
         background-color: $white;
         border-color: $white;
-
     }
 
     .ant-badge-status-text {
@@ -245,4 +191,18 @@
 
 .ant-notification-notice {
     top: 30px;
+}
+
+.my-modal-container-invitation {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #fff;
+    border: 1px solid #f2f2f2;    
+    border-radius: 5px;
+    min-height: 600px;
+    z-index: 100099;
+    width: 70%;
+    height: 75%
 }

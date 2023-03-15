@@ -4,19 +4,45 @@ import Dropdown from "../../common/dropdown"
 import image_thumb from "../../assets/images/image_thumb.png"
 import { updateUser, activateRoleUser, deActivateRoleUser } from "../../services/userService";
 import { FetchCurrentUser } from "../../hooks/index"
-
+import Input from '../../common/input'
+import { getGetCountries } from "../../services/communicationService";
 const { Panel } = Collapse;
 
 const UserDetails = ({ props }) => {
     const [status, setStatus] = useState(props?.IsActive ? "Active" : "Inactive");
+    const [userData, setUserData] = useState({ firstName: props?.FirstName, lastName: props?.LastName, userName: props?.UserName, country: { Id: props?.CountryId, Name: props?.CountryName } })
     const [selectedFile, setSelectedFile] = useState(props?.PictureFileId || null);
     const [activateRoles, setActivateRoles] = useState([]);
     const [deactivateRoles, setDeactivateRoles] = useState([]);
     const [checked, setChecked] = useState(props?.UserRoles);
+    const [countryList, setCountryList] = useState([])
+    const [editDetails, setEditDetails] = useState(false);
     const [loading, setLoading] = useState(true);
 
     const [currentUser] = FetchCurrentUser();
     const UPLOAD_BTN_REF = useRef(null);
+
+    const userReqParams = {
+        "UserId": props?.UserId,
+        "TitleName": props?.TitleName,
+        "UserName": props?.UserName,
+        "FirstName": props?.FirstName,
+        "LastName": props?.LastName,
+        "Email": props?.Email,
+        "PhoneNumber": props?.PhoneNumber,
+        "CountryId": props?.CountryId,
+        "CountryName": props?.CountryName,
+        "IsActive": props?.IsActive,
+        "PictureFileId": selectedFile,
+        "LoggedInUserPartyId": status === "Active" ? null : currentUser?.PartyId,
+        "UserPartyId": props?.UserPartyId
+    }
+
+    useEffect(() => {
+        getGetCountries().then(result => {
+            setCountryList(result);
+        })
+    }, [])
 
     useEffect(() => {
         if (currentUser?.Id) {
@@ -28,15 +54,9 @@ const UserDetails = ({ props }) => {
     const onChangeStatus = (e) => {
         setLoading(true)
         setStatus(e.target.value);
-        const params = {
-            "UserId": props?.UserId,
-            "FirstName": props?.FirstName,
-            "LastName": props?.LastName,
-            "Email": props?.Email,
-            "CountryId": props?.CountryId,
-            "PictureFileId": selectedFile,
-            "LoggedInUserPartyId": e.target.value === "Active" ? null : currentUser?.PartyId
-        }
+
+        const params = userReqParams;
+        params.LoggedInUserPartyId = e.target.value === "Active" ? null : currentUser?.PartyId;
 
         updateUser(params).then(() => {
             setLoading(false);
@@ -63,15 +83,8 @@ const UserDetails = ({ props }) => {
         reader.onload = () => {
             setSelectedFile(reader.result); //base64encoded string
 
-            const params = {
-                "UserId": props?.UserId,
-                "FirstName": props?.FirstName,
-                "LastName": props?.LastName,
-                "Email": props?.Email,
-                "CountryId": props?.CountryId,
-                "PictureFileId": reader.result,
-                "LoggedInUserPartyId": status === "Active" ? null : currentUser?.PartyId
-            }
+            const params = userReqParams;
+            params.PictureFileId = reader.result;
 
             updateUser(params).then(() => {
                 setLoading(false);
@@ -100,6 +113,8 @@ const UserDetails = ({ props }) => {
                 "UserId": props?.UserId,
                 "EntityPartyId": roleData?.EntityPartyId,
                 "RoleId": roleData?.RoleId,
+                "CreatedUserPartyId": currentUser?.PartyId,
+                "IsActive": false
             }
             const newUpdateRoles = [...activateRoles];
             newUpdateRoles.push(params);
@@ -133,7 +148,7 @@ const UserDetails = ({ props }) => {
         }
     }
 
-    const getPanel = (header, key) => {
+    const getPanel = (header, key = 1) => {
         const rolesData = props?.UserRoles?.filter(role => { return role?.EntityName === header });
 
         return (
@@ -197,10 +212,38 @@ const UserDetails = ({ props }) => {
 
     const onUpdate = () => {
         setLoading(true)
+        if (editDetails) {
+            const params = userReqParams;
+
+            params.UserName = userData.userName;
+            params.FirstName = userData.firstName;
+            params.LastName = userData.lastName;
+            params.CountryId = userData.country?.Id;
+            params.CountryName = userData.country?.Name;
+
+            updateUser(params).then(() => {
+                message.success('User data updated')
+                setLoading(false);
+                setEditDetails(false);
+            }).catch(() => {
+                message.error('User data update failed please try again')
+                setLoading(false);
+            })
+        }
         Promise.all([
             activateRoleUser(activateRoles),
             deActivateRoleUser(deactivateRoles)
         ]).finally(() => setLoading(false))
+    }
+
+    const onChangeUserData = (e, fieldName) => {
+        e.preventDefault();
+        setUserData({ ...userData, [fieldName]: e.target.value })
+    }
+
+    const onChangeCountry = (e) => {
+        e.preventDefault();
+        setUserData(pre => ({ ...pre, country: JSON.parse(e.target.value) }))
     }
 
     return (
@@ -234,21 +277,50 @@ const UserDetails = ({ props }) => {
                             </div>
                             <div className="m-b-20 p-t-10">
                                 FIrst Name
-                                <div className="bold">{props?.FirstName}</div>
+                                {editDetails ?
+                                    <Input placeholder="First Name"
+                                        value={userData.firstName}
+                                        onChange={(e) => onChangeUserData(e, 'firstName')}
+                                    /> :
+                                    <div className="bold">{userData.firstName}</div>
+                                }
                             </div>
                             <div className="p-t-10">
                                 Last Name
-                                <div className="bold">{props?.LastName}</div>
+                                {editDetails ?
+                                    <Input placeholder="Last Name"
+                                        value={userData.lastName}
+                                        onChange={(e) => onChangeUserData(e, 'lastName')}
+                                    /> :
+                                    <div className="bold">{userData.lastName}</div>
+                                }
                             </div>
                         </div>
                         <div>
                             <div className="m-b-20 m-t-20">
                                 User Name
-                                <div className="bold">{props?.UserName}</div>
+                                {editDetails ?
+                                    <Input placeholder="User Name"
+                                        value={userData.userName}
+                                        onChange={(e) => onChangeUserData(e, 'userName')}
+                                    /> :
+                                    <div className="bold">{userData.userName}</div>
+                                }
                             </div>
                             <div className="p-t-10">
                                 Country
-                                <div className="bold">{props?.CountryName}</div>
+                                {editDetails ?
+                                    <div className="user-drop-down" style={{ width: 200 }}>
+                                        <Dropdown
+                                            values={countryList}
+                                            onChange={onChangeCountry}
+                                            selected={JSON.stringify(userData.country || undefined)}
+                                            placeholder="Country"
+                                            dataName="Name"
+                                        />
+                                    </div> :
+                                    <div className="bold">{userData.country?.Name}</div>
+                                }
                             </div>
                         </div>
                         <div>
@@ -263,13 +335,12 @@ const UserDetails = ({ props }) => {
                             </div>
                         </div>
                     </div>
+                    <i type="file" className="icon-edit upload-image-btn hover-hand" onClick={() => setEditDetails(true)} />
                 </div>
                 <div className="user-data-table-container">
                     <div className="m-b-20">Assigned company/ies</div>
                     <Collapse>
-                        {props?.Companies.map((company, index) => {
-                            return getPanel(company.Value, index)
-                        })}
+                        {getPanel(props?.Company?.Value)}
                     </Collapse>
                 </div>
             </div>

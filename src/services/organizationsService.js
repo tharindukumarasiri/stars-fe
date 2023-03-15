@@ -53,8 +53,8 @@ export async function removeSearchAccumulateMunicipality(searchId, params) {
     return data;
 }
 
-export async function getOrganization(id) {
-    const { data } = await http.get(`${process.env.SDC_SEARCH_API + config.GET_ORGANIZATIONS}/${id}/NO`);
+export async function getOrganization(id, countryCode = 'NO') {
+    const { data } = await http.get(`${process.env.SDC_SEARCH_API + config.GET_ORGANIZATIONS}/${id}/${countryCode}`);
     return data;
 }
 
@@ -127,7 +127,7 @@ export async function updateUnspscCodes(id, params) {
     return data;
 }
 export async function searchUnspscCodes(params) {
-    const { data } = await http.post(process.env.SDC_SEARCH_API + config.SEARCH_UNSPSC_CODES, params, { headers: { 'Content-Type': 'application/json' } });
+    const { data } = await http.post(process.env.SDC_SEARCH_API + config.SEARCH_UNSPSC_CODES, `'${params}'`, { headers: { 'Content-Type': 'application/json' } });
     return data;
 }
 
@@ -141,7 +141,7 @@ export async function updateCpvCodes(id, params) {
     return data;
 }
 export async function searchCpvCodes(params) {
-    const { data } = await http.post(process.env.SDC_SEARCH_API + config.SEARCH_CPV_CODES, params, { headers: { 'Content-Type': 'application/json' } });
+    const { data } = await http.post(process.env.SDC_SEARCH_API + config.SEARCH_CPV_CODES, `'${params}'`, { headers: { 'Content-Type': 'application/json' } });
     return data;
 }
 
@@ -155,7 +155,7 @@ export async function updateNaceCodes(id, params) {
     return data;
 }
 export async function searchNaceCodes(params) {
-    const { data } = await http.post(process.env.SDC_SEARCH_API + config.SEARCH_NACE_CODES, params, { headers: { 'Content-Type': 'application/json' } });
+    const { data } = await http.post(process.env.SDC_SEARCH_API + config.SEARCH_NACE_CODES, `'${params}'`, { headers: { 'Content-Type': 'application/json' } });
     return data;
 }
 

@@ -1,14 +1,21 @@
 import React from "react";
 
-const Dropdown = ({ placeholder, dataList, dataName = 'name', selectedList, setSelectedState, selectedRows = false, setSelectedRows, keyName, apiCalls = () => { }, codelevel = 0 } = {}) => {
+const Dropdown = ({ placeholder, dataList, dataName = 'name', selectedList, setSelectedState, selectedRows = false, setSelectedRows, keyName, 
+    apiCalls = () => { }, codelevel = 0, useObjectForApi = false } = {}) => {
     const handleDropdownSelect = (e) => {
         e.preventDefault();
         const selectedData = dataList.find((item) => item[keyName] === e.target.value)
         const value = selectedData[dataName]
         const code = selectedData[keyName]
         const index = selectedList.flat(3).filter(item => item.code === code)
-        apiCalls(value, codelevel + 1);
-
+       
+        if(useObjectForApi){
+            apiCalls(selectedData, codelevel);
+        }
+        else{
+            apiCalls(value, codelevel + 1);
+        } 
+        
         if (index.length === 0) {
             // TODO: This coppies the same array reference (because deep array) find better way
             const newSelectedValues = selectedList.slice();
@@ -26,12 +33,14 @@ const Dropdown = ({ placeholder, dataList, dataName = 'name', selectedList, setS
                 setSelectedRows({ ...selectedRows, preLevel: codelevel })
             }
             setSelectedState(newSelectedValues)
+           
         } else {
             const changeRowIndex = selectedList.findIndex(item => item[0].code === code)
             if (changeRowIndex > 0) {
                 setSelectedRows({ ...selectedRows, cuurentRow: changeRowIndex })
             }
-        }
+        }       
+        
     }
 
     return (
