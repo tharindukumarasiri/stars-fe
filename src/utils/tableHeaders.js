@@ -879,14 +879,14 @@ export const usersTableHeaders = [
     },
     {
         title: 'Assigned Roles',
-        dataIndex: 'UserRoles',
+        dataIndex: 'Roles',
         width: 150,
         ellipsis: {
             showTitle: false,
         },
-        render: (UserRoles) => (
-            <Tooltip placement="topLeft" title={UserRoles?.map(item => { return item?.RoleName + ', ' })}>
-                {UserRoles?.map(item => { return item?.RoleName + ', ' })}
+        render: (Roles) => (
+            <Tooltip placement="topLeft" title={Roles?.map((item, index) => { return ((index !== 0 ? ', ' : '') + item?.Value) })}>
+                {Roles?.map((item, index) => { return ((index !== 0 ? ', ' : '') + item?.Value) })}
             </Tooltip>
         ),
     },
@@ -1045,10 +1045,7 @@ export const CommunicationsSubTableHeaders = [
     },
     {
         title: 'Workflow Status',
-        dataIndex: 'WorkflowStatus',
-        render: (_, { WorkflowStatus }) => (
-            WorkflowStatus?.Name
-        ),
+        dataIndex: 'Response',
     },
     {
         title: 'Distribution Status',
@@ -1199,28 +1196,6 @@ export const ReceversCompaniesTableHeaders = [
                     Company?.CountryTName
                 ),
             },
-            {
-                title: 'Email',
-                dataIndex: 'Company',
-                render: (_, { Company }) => (
-                    Company?.Email
-                ),
-            },
-            {
-                title: 'Phone',
-                dataIndex: 'Company',
-                render: (_, { Company }) => (
-                    Company?.Phone
-                ),
-            },
-            {
-                title: 'Source',
-                dataIndex: 'Company',
-                render: (_, { Company }) => (
-                    'Xxxx'
-                ),
-
-            },
         ]
     }
 ]
@@ -1302,25 +1277,6 @@ export const ReceversPersonsTableHeaders = [
             Person?.CountryTName
         ),
     },
-    {
-        title: 'Email',
-        dataIndex: 'Person',
-        render: (_, { Person }) => (
-            Person?.Email
-        ),
-    },
-    {
-        title: 'Mobile Number',
-        dataIndex: 'Person',
-        render: (_, { Person }) => (
-            Person?.Phone
-        ),
-    },
-    // {
-    //     title: '',
-    //     dataIndex: '',
-    //     width: 200
-    // },
 ]
 
 export const ReceversPersonsTableExpandedHeaders = [

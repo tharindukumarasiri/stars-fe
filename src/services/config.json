@@ -71,9 +71,11 @@
     "INSERT_MESSAGE_TEMPLATE": "/actionapi/MessageTemplates/InsertMessageTemplate?userPartyId=",
     "UPDATE_MESSAGE_TEMPLATE": "/actionapi/MessageTemplates/UpdateMessageTemplate",
     "GET_MESSAGE_TEMPLATE": "/actionapi/MessageTemplates/Get",
-    "GET_TENANT_MESSAGE_TEMPLATE": "/actionapi/MessageTemplates/GetMessageTemplatesByTenant?tenantId=",
+    "GET_MESSAGE_TEMPLATE_NEW_USER_INVITATION": "/actionapi/MessageTemplates/GetNewUserInvitationTemplatesByTenant?companyPartyId=",
+    "GET_TENANT_MESSAGE_TEMPLATE": "/actionapi/MessageTemplates/GetMessageTemplatesByTenantAndType?companyPartyId=",
     "DELETE_TENANT_MESSAGE_TEMPLATE": "/actionapi/MessageTemplates/DeleteMessageTemplate?templateId=",
     "GET_TRIGGER_POINTS": "/actionapi/MessageTemplates/GetMessageTriggerPointsByType?templateTypeId=",
+    "GET_TENANT_COMMUNICATION_TEMPLATES": "/actionapi/MessageTemplates/GetCommunicationTemplatesByTenant",
 
     "GET_COMMUNICATIONS": "/actionapi/MessageQueues/GetCommunications",
     "GET_COMMUNICATION_LOGS": "/actionapi/MessageQueues/GetCommunicationLogs",
@@ -98,6 +100,7 @@
     "ADD_PERSON": "/actionapi/PersonTs/AddPersonT",
     "UPDATE_PERSON": "/actionapi/PersonTs/UpdatePersonT",
     "UPDATE_AND_SHEDULE": "/actionapi/BasketReceivers/UpdateAndSchedule",
+    "SEND_IMMEDIATELY": "/actionapi/BasketReceivers/SendImmediately",
     "GET_COUNTRIES": "/actionapi/countries/GetCountries",
 
     "GET_PROJECTS": "actionapi/Projects/GetAll",

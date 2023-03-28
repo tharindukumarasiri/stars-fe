@@ -3,6 +3,9 @@ import React from "react";
 export const emailRegEx =
     /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
 
+export const phoneRegEx =
+    /^[\+]?[(]?[0-9]{2,3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{3,8}$/;
+
 export const levelOneReq = {
     "level": 1,
     "code": ""

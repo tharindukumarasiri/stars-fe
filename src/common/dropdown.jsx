@@ -1,7 +1,7 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 
-const Dropdown = ({ values, selected = '', onChange, placeholder, disabled = false, dataName = '', valueName }) => {
+const Dropdown = ({ values, selected = '', onChange, placeholder, disabled = false, dataName = '', valueName, error = '' }) => {
     const { t } = useTranslation();
 
     const hintTextStyle = selected ? 'input-hint-text-visible' : 'input-hint-text-hidden';
@@ -9,7 +9,7 @@ const Dropdown = ({ values, selected = '', onChange, placeholder, disabled = fal
     return (
         <div className={containerStyle}>
             <div className={hintTextStyle}>{t(placeholder)}</div>
-            <select className="dropdown-list" onChange={onChange} value={selected || '0'} disabled={disabled}>
+            <select className="dropdown-list" onChange={onChange} value={selected || '0'} disabled={disabled}  style={error ? { borderColor: 'red' } : {}}>
                 {placeholder &&
                     <option value="0" disabled defaultValue="selected" hidden={true} className="disable-option" >{t(placeholder)}</option>
                 }
@@ -23,6 +23,11 @@ const Dropdown = ({ values, selected = '', onChange, placeholder, disabled = fal
                     })
                 }
             </select>
+            {error &&
+                <div className="error-text">
+                    {error}
+                </div>
+            }
         </div>
     )
 }

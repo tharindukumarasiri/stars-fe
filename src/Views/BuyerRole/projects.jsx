@@ -205,13 +205,17 @@ const Projects = (props) => {
                     <div></div>
                 </div>
             }
-            <h3 className="icon-plus-circled hover-hand" onClick={toggleModal} >{t("Create Project")}</h3>
-            <Tooltip title="Tile View">
-                <i className="icon-tile-view grid-view-icon fr hover-hand" onClick={() => setTableView(false)} ></i>
-            </Tooltip>
-            <Tooltip title="Grid View">
-                <i className="icon-grid-view list-view-icon fr hover-hand" onClick={() => setTableView(true)} ></i>
-            </Tooltip>
+            <div className="g-row">
+                <div className="g-col-6"> <h3 className="icon-plus-circled hover-hand fl" onClick={toggleModal} >{t("Create Project")}</h3></div>
+                <div className="g-col-6">
+                    <Tooltip title="Tile View">
+                        <i className="icon-tile-view grid-view-icon fr hover-hand" onClick={() => setTableView(false)} ></i>
+                    </Tooltip>
+                    <Tooltip title="Grid View">
+                        <i className="icon-grid-view list-view-icon fr hover-hand" onClick={() => setTableView(true)} ></i>
+                    </Tooltip>
+                </div>
+            </div>
             <h3 className="p-t-20 m-b-20 fl">{t("Projects List")}</h3>
 
             {tableView ?

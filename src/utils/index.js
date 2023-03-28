@@ -42,3 +42,8 @@ export const projectCodeFormat = (id) => {
     else
         return '';
 }
+
+export const validatePhoneNumberInput = (phone) => {
+    return phone.replace(/[^-+()0-9]/gi, '');
+}
+

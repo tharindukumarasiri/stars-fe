@@ -80,6 +80,10 @@ $vialot-lite: desaturate($vialot, 20%);
 $green: #04bd00;
 /* #2bb201; */
 $green-dark: darken($green, 10%);
+$green-dark1: darken($green, 15%);
+$green-dark2: darken($green, 20%);
+$green-dark3: darken($green, 30%);
+$green-dark4: darken($green, 40%);
 $green-lite: lighten($green, 20%);
 //
 $white: #fff;
@@ -213,12 +217,25 @@ $light-dark-blue: desaturate($base-color, 10%);
     color: $green-lite
 }
 
-.green-dark {
-    color: $green-dark
-}
+.green-dark {color: $green-dark}
 
 .bg-green {
     background-color: $green
+}
+.bg-green-dark {
+    background-color: $green-dark
+}
+.bg-green-dark1 {
+    background-color: $green-dark1
+}
+.bg-green-dark2 {
+    background-color: $green-dark2
+}
+.bg-green-dark3 {
+    background-color: $green-dark3
+}
+.bg-green-dark4 {
+    background-color: $green-dark4
 }
 
 .bg-green-lite {

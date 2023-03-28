@@ -1,10 +1,11 @@
-import React, { useState, } from "react";
+import React, { useState, useEffect  } from "react";
 import { Select, message } from 'antd';
 
 import DatePickerInput from "../../../common/datePickerInput";
 import StarDropdown from "../../../common/dropdown";
 import { configureCommunicationBasket } from "../../../services/communicationService";
 import { formatDate } from "../../../utils";
+import { FetchCurrentUser } from "../../../hooks/index"
 
 const recurringTypes = [
     { key: 1, Name: 'Monday to Friday' },
@@ -29,19 +30,30 @@ const TimeConfig = (props) => {
     const [oneTimeType, setOneTimeType] = useState(true);
     const [oneTimeData, setoneTimeData] = useState({ date: null, time: null });
     const [recurringeData, setRecurringeData] = useState({ startDate: null, endDate: null, time: null, week: '' });
+    const [fieldErrors, setFieldErrors] = useState({ date: null, startDate: null, endDate: null, time: null, week: '', custRecurring: '' });
     const [timesList, setTimesList] = useState([]);
     const [customRecurringDate, setCustomRecurringDate] = useState([])
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true);
+    const [currentUser] = FetchCurrentUser();
+
+    useEffect(() => {
+        if(currentUser?.PartyId){
+            setLoading(false);
+        }
+    },[currentUser])
 
     const onOneTimeDataChange = (value, type) => {
+        setFieldErrors(prev => ({ ...prev, [type]: '' }))
         setoneTimeData({ ...oneTimeData, [type]: value })
     }
 
     const onRecurringDataChange = (value, type) => {
+        setFieldErrors(prev => ({ ...prev, [type]: '' }))
         setRecurringeData({ ...recurringeData, [type]: value })
     }
 
     const onAddTime = () => {
+        setFieldErrors(prev => ({ ...prev, time: '' }))
         const newTimesList = [...timesList];
         if (recurringeData.time && !timesList.includes(recurringeData.time)) {
             newTimesList.push(recurringeData.time)
@@ -56,6 +68,7 @@ const TimeConfig = (props) => {
     }
 
     const onChangeDayOfTheWeek = (value) => {
+        setFieldErrors(prev => ({ ...prev, custRecurring: '' }))
         setCustomRecurringDate(value)
     }
 
@@ -73,31 +86,69 @@ const TimeConfig = (props) => {
         }
     }
 
-    const onUpdate = () => {
-        setLoading(true);
-        const params = {
-            "Id": props?.Id,
-            "FromDateTime": oneTimeType ? oneTimeData.date : recurringeData.startDate,
-            "ToDateTime": recurringeData.endDate,
-            "BasketTypeId": oneTimeType ? 1 : 2,
-            "Times": getFormatedTimeList(),
-            "BasketRecurringTypeId": recurringeData.week?.key,
-            "CustomConfiguration": customRecurringDate.toString()
+    const validate = () => {
+        let validation = true
+        setFieldErrors({ date: null, startDate: null, endDate: null, time: null, week: '', custRecurring: '' });
+        if (oneTimeType) {
+            if (!oneTimeData.date) {
+                setFieldErrors(prev => ({ ...prev, date: 'Please select a date' }))
+                validation = false
+            }
+            if (!oneTimeData.time) {
+                setFieldErrors(prev => ({ ...prev, time: 'Please select a time' }))
+                validation = false
+            }
+        } else {
+            if (!recurringeData.startDate) {
+                setFieldErrors(prev => ({ ...prev, startDate: 'Please select a date' }))
+                validation = false
+            }
+            if (timesList.length === 0) {
+                setFieldErrors(prev => ({ ...prev, time: 'Please select and add time/s' }))
+                validation = false
+            }
+            if (!recurringeData.week) {
+                setFieldErrors(prev => ({ ...prev, week: 'Please select repeat method' }))
+                validation = false
+            }
+            if (recurringeData.week?.key === 6 && customRecurringDate.length === 0) {
+                setFieldErrors(prev => ({ ...prev, custRecurring: 'Please select date(s)' }))
+                validation = false
+            }
         }
 
-        configureCommunicationBasket(params).then(() => {
-            setLoading(false);
-            message.success('Configuration Success');
-            props?.onUpdateSuccess()
-        }).catch(() => {
-            setLoading(false);
-            message.error('Configuration Failed')
-        })
+        return validation
+    }
+
+    const onUpdate = () => {
+        if (validate()) {
+            setLoading(true);
+            const params = {
+                "Id": props?.Id,
+                "FromDateTime": oneTimeType ? oneTimeData.date : recurringeData.startDate,
+                "ToDateTime": recurringeData.endDate,
+                "BasketTypeId": oneTimeType ? 1 : 2,
+                "Times": getFormatedTimeList(),
+                "BasketRecurringTypeId": recurringeData.week?.key,
+                "CustomConfiguration": customRecurringDate.toString(),
+                "UserPartyId": currentUser?.PartyId
+            }
+
+            configureCommunicationBasket(params).then(() => {
+                setLoading(false);
+                message.success('Configuration Success');
+                props?.onUpdateSuccess()
+            }).catch(() => {
+                setLoading(false);
+                message.error('Configuration Failed')
+            })
+        }
     }
 
     const changeConfigType = () => {
         setoneTimeData({ date: null, time: null });
         setRecurringeData({ startDate: null, endDate: null, time: null, week: '' });
+        setFieldErrors({ date: null, startDate: null, endDate: null, time: null, week: '', custRecurring: '' });
         setTimesList([]);
         setCustomRecurringDate([]);
         setOneTimeType(pre => !pre);
@@ -131,6 +182,8 @@ const TimeConfig = (props) => {
                         value={oneTimeData.date}
                         onChange={(date) => onOneTimeDataChange(date, 'date')}
                         isClearable
+                        minDate={new Date()}
+                        error={fieldErrors.date}
                     />
                     <DatePickerInput
                         placeholder='Time'
@@ -139,6 +192,7 @@ const TimeConfig = (props) => {
                         isClearable
                         timePicker={true}
                         dateFormat="HH.mm"
+                        error={fieldErrors.time}
                     />
                 </div> :
                 <div className="m-t-20">
@@ -147,12 +201,15 @@ const TimeConfig = (props) => {
                         value={recurringeData.startDate}
                         onChange={(date) => onRecurringDataChange(date, 'startDate')}
                         isClearable
+                        minDate={new Date()}
+                        error={fieldErrors.startDate}
                     />
                     <DatePickerInput
                         placeholder='End Date'
                         value={recurringeData.endDate}
                         onChange={(date) => onRecurringDataChange(date, 'endDate')}
                         isClearable
+                        minDate={new Date()}
                     />
                     <div className="m-t-20">Time</div>
                     <div className="time-picker-container">
@@ -164,6 +221,7 @@ const TimeConfig = (props) => {
                                 isClearable
                                 timePicker={true}
                                 dateFormat="HH.mm"
+                                error={fieldErrors.time}
                             />
                         </div>
                         <i className="icon-plus-circled time-picker-btn" onClick={onAddTime} />
@@ -188,20 +246,28 @@ const TimeConfig = (props) => {
                             selected={JSON.stringify(recurringeData.week || undefined)}
                             dataName="Name"
                             placeholder="Repeat"
+                            error={fieldErrors.week}
                         />
                     </div>
                     {recurringeData.week?.key === 6 &&
-                        <div className="user-input-box m-t-15">
-                            <Select
-                                mode="multiple"
-                                allowClear
-                                placeholder="Select Dates"
-                                onChange={onChangeDayOfTheWeek}
-                                options={DaysOfTheWeek}
-                                showArrow
-                                style={{ width: '100%' }}
-                            />
-                        </div>
+                        <>
+                            <div className="user-input-box m-t-15">
+                                <Select
+                                    mode="multiple"
+                                    allowClear
+                                    placeholder="Select Dates"
+                                    onChange={onChangeDayOfTheWeek}
+                                    options={DaysOfTheWeek}
+                                    showArrow
+                                    style={{ width: '100%' }}
+                                />
+                            </div>
+                            {fieldErrors.custRecurring &&
+                                <div className="error-text">
+                                    {fieldErrors.custRecurring}
+                                </div>
+                            }
+                        </>
                     }
                 </div>
             }
@@ -211,7 +277,7 @@ const TimeConfig = (props) => {
             <div className="text-center m-t-20">
                 Message will be quesed only after “Recevers” are set
             </div>
-        </div>
+        </div >
     )
 }
 

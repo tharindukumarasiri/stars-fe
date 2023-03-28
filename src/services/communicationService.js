@@ -77,8 +77,8 @@ export async function deleteCommunicationBasket(params) {
     return data;
 }
 
-export async function getCompanies(basketId, companyPartyId, searchText = '', pageNumber = 0, pageSize = 10 ) {
-    const { data } = await http.get(`${config.GET_COMPANIES}${companyPartyId}&communicationBasketId=${basketId}&searchText=${searchText}&pageNo=${pageNumber}&pageSize=${pageSize}`);
+export async function getCompanies(basketId = '', companyPartyId, searchText = '' ) {
+    const { data } = await http.get(`${config.GET_COMPANIES}${companyPartyId}&communicationBasketId=${basketId}&searchText=${searchText}`);
     return data;
 }
 
@@ -97,8 +97,8 @@ export async function updateCompany(params) {
     return data;
 }
 
-export async function getPersons(companyPartyId, communicationBasketId, searchText = '', pageNumber = 0, pageSize = 10 ) {
-    const { data } = await http.get(`${config.GET_PERSONS}${companyPartyId}&communicationBasketId=${communicationBasketId}&searchText=${searchText}&pageNo=${pageNumber}&pageSize=${pageSize}`);
+export async function getPersons(companyPartyId, communicationBasketId = '', searchText = '', pageNumber = 0, pageSize = 10 ) {
+    const { data } = await http.get(`${config.GET_PERSONS}${companyPartyId}&communicationBasketId=${communicationBasketId}`);
     return data;
 }
 
@@ -114,6 +114,11 @@ export async function updatePerson(params) {
 
 export async function updateAndSchedule(params) {
     const { data } = await http.post(config.UPDATE_AND_SHEDULE, params);
+    return data;
+}
+
+export async function sendImmediately(params) {
+    const { data } = await http.post(config.SEND_IMMEDIATELY, params);
     return data;
 }
 

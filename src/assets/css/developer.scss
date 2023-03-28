@@ -31,11 +31,11 @@
 
 .page-container {
     margin: 0;
-    padding: 10px;
+    padding: 10px 10px 0 10px;
     position: relative;
     bottom: 50px;
     top: 0px;
-    height: calc(100% - 46px);
+    height: calc(100% - 30px);
     background-color: $white;
 
     .title-txt {
@@ -122,7 +122,7 @@
     font-size: 12px;
     padding: 0px 6px 0 0;
     transition: all 0.2s ease-out;
-    top: -4px;
+    top: -8px;
     left: 0;
     background-color: $white;
 }
@@ -193,16 +193,4 @@
     top: 30px;
 }
 
-.my-modal-container-invitation {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background-color: #fff;
-    border: 1px solid #f2f2f2;    
-    border-radius: 5px;
-    min-height: 600px;
-    z-index: 100099;
-    width: 70%;
-    height: 75%
-}
+

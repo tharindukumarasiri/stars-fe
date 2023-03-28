@@ -123,3 +123,15 @@ button, .button, input[type=button], input[type=reset], input[type=submit] {
         color: $red
     }
 }
+
+.toggle-btn {
+    width: 40px;
+
+    button {
+        width: 40px;
+    }
+}
+
+button.add-btn {
+    max-height: 34px;
+}

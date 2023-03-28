@@ -19,9 +19,14 @@ export async function getMessageTemplates() {
     return data;
 }
 
-export async function getTenantMessageTemplates(tenantId, type, pageNo, pageSize) {
-    const { data } = await http.get(config.GET_TENANT_MESSAGE_TEMPLATE + tenantId + 
-                                    "&messageTemplateTypeId=" + type + "&pageNo=" + pageNo + "&pageSize=" + pageSize);
+export async function getMessageTemplatesNewUserInvitation(companyPartyId) {
+    const { data } = await http.get(`${config.GET_MESSAGE_TEMPLATE_NEW_USER_INVITATION}${companyPartyId}`);
+    return data;
+}
+
+export async function getTenantMessageTemplates(companyPartyId, type, pageNo = 0, pageSize = 100) {
+    const { data } = await http.get(config.GET_TENANT_MESSAGE_TEMPLATE + companyPartyId + 
+                                     "&pageNo=" + pageNo + "&pageSize=" + pageSize + "&messageTemplateTypeId=" + type);
     return data;
 }
 
@@ -32,5 +37,10 @@ export async function deleteMessageTemplate(id, userId) {
 
 export async function getTriggerPoints(type) {
     const { data } = await http.get(config.GET_TRIGGER_POINTS + type);
+    return data;
+}
+
+export async function GetCommunicationTemplatesByTenant(companyPartyId, type){
+    const { data } = await http.get(config.GET_TENANT_COMMUNICATION_TEMPLATES + "?companyPartyId=" + companyPartyId + "&path=" + type );
     return data;
 }

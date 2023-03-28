@@ -1,0 +1,14 @@
+﻿@media (max-width: 780px) {
+
+    .u-row .u-col {
+        min-width: 320px !important; max-width: 100% !important;
+        display: block !important;
+    }
+
+    .u-col {
+        width: 100% !important;
+    }
+}
+@media only screen and (min-width: 780px) {
+    .u-row .u-col-50 { width: 380px !important}
+}

@@ -19,7 +19,7 @@
 @import 'sky.scss';
 @import 'typo.scss';
 @import 'custom-scroll.scss';
-
+@import 'template-creator.scss';
 
 *, *:before, *:after {
     -webkit-box-sizing: border-box;
@@ -87,17 +87,23 @@ html, body {
     height: calc(100vh - 50px);
     width: 100%;
     top: 50px;
-    margin-left: 50px;
-    padding-right: 48px;
+    margin-left: 0;
+    padding-right: 0;
     background-color: #e1e1e1;
     position: relative;
+
 }
+
 
 .content-pane {
     padding: 4px;
-    position: relative;
-    height: 100%;
+    position: fixed;
+    left: 50px;
+    right: 0;
+    bottom: 4px;
+    top: 50px;
 }
+.left-0{left:0 !important}
 #component-container {
     position: relative;
     height: 100%;
@@ -319,7 +325,7 @@ ul.custom-button-list {
 .login-top {
     width: 100%;
     min-height: 50px;
-    padding: 1%;
+    padding:1%;
     display: block;
     text-align: center
 }
@@ -552,3 +558,9 @@ ul.custom-button-list {
 .agreements {background-color: $blue-dark3;}
 .Catalogues {background-color: $blue-dark1;}
 .inventory { background-color: $blue-dark2;}
+
+.econnect {
+    h4, h5 {
+        color: $green-dark1
+    }
+}

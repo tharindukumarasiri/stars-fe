@@ -5,7 +5,17 @@ import "./datePickerInput.scss"
 import { formatDate } from "../utils";
 import { useTranslation } from 'react-i18next'
 
-const DatePickerInput = ({ value, onChange, placeholder, dateFormat = "MM/dd/yyyy", minDate = false, maxDate = false, isClearable = false, timePicker = false } = {}) => {
+const DatePickerInput = ({
+    value,
+    onChange,
+    placeholder,
+    dateFormat = "MM/dd/yyyy",
+    minDate = false,
+    maxDate = false,
+    isClearable = false,
+    timePicker = false,
+    error = ''
+} = {}) => {
     const { t } = useTranslation();
 
     const years = (startYear) => {
@@ -34,7 +44,7 @@ const DatePickerInput = ({ value, onChange, placeholder, dateFormat = "MM/dd/yyy
 
     const date = formatDate(value) === "01/01/0001" ? "" : value
     const InputView = forwardRef(({ value, onClick, placeholder }, ref) => (
-        <div className="datapicker-input m-b-10" onClick={onClick} ref={ref}>
+        <div className="datapicker-input m-b-10" style={error ? { borderColor: 'red' } : {}} onClick={onClick} ref={ref}>
             <div className={value ? "input-hint-text-visible" : "input-hint-text-hidden"}>{placeholder}</div>
             <div >
                 {value ? value : placeholder}
@@ -44,62 +54,69 @@ const DatePickerInput = ({ value, onChange, placeholder, dateFormat = "MM/dd/yyy
     ));
 
     return (
-        <DatePicker
-            minDate={minDate}
-            maxDate={maxDate}
-            selected={date}
-            onChange={date => onChange(date)}
-            customInput={<InputView />}
-            placeholderText={t(placeholder)}
-            isClearable={isClearable}
-            showTimeInput={timePicker}
-            showTimeSelectOnly={timePicker}
-            dateFormat={dateFormat}
+        <>
+            <DatePicker
+                minDate={minDate}
+                maxDate={maxDate}
+                selected={date}
+                onChange={date => onChange(date)}
+                customInput={<InputView />}
+                placeholderText={t(placeholder)}
+                isClearable={isClearable}
+                showTimeInput={timePicker}
+                showTimeSelectOnly={timePicker}
+                dateFormat={dateFormat}
 
-            renderCustomHeader={({
-                date,
-                changeYear,
-                changeMonth,
-                decreaseMonth,
-                increaseMonth,
-                prevMonthButtonDisabled,
-                nextMonthButtonDisabled,
-            }) => (
-                <div className="flex-justify-center">
-                    <button onClick={(e) => { e.preventDefault(); decreaseMonth() }} disabled={prevMonthButtonDisabled}>
-                        {"<"}
-                    </button>
-                    <select
-                        value={formatDate(date, "YYYY")}
-                        onChange={({ target: { value } }) => changeYear(value)}
-                    >
-                        {years().map((option) => (
-                            <option key={option} value={option}>
-                                {option}
-                            </option>
-                        ))}
-                    </select>
+                renderCustomHeader={({
+                    date,
+                    changeYear,
+                    changeMonth,
+                    decreaseMonth,
+                    increaseMonth,
+                    prevMonthButtonDisabled,
+                    nextMonthButtonDisabled,
+                }) => (
+                    <div className="flex-justify-center">
+                        <button onClick={(e) => { e.preventDefault(); decreaseMonth() }} disabled={prevMonthButtonDisabled}>
+                            {"<"}
+                        </button>
+                        <select
+                            value={formatDate(date, "YYYY")}
+                            onChange={({ target: { value } }) => changeYear(value)}
+                        >
+                            {years().map((option) => (
+                                <option key={option} value={option}>
+                                    {option}
+                                </option>
+                            ))}
+                        </select>
 
-                    <select
-                        value={formatDate(date, "MMMM")}
-                        onChange={({ target: { value } }) =>
-                            changeMonth(months.indexOf(value))
-                        }
-                        style={{ width: 120 }}
-                    >
-                        {months.map((option) => (
-                            <option key={option} value={option}>
-                                {option}
-                            </option>
-                        ))}
-                    </select>
+                        <select
+                            value={formatDate(date, "MMMM")}
+                            onChange={({ target: { value } }) =>
+                                changeMonth(months.indexOf(value))
+                            }
+                            style={{ width: 120 }}
+                        >
+                            {months.map((option) => (
+                                <option key={option} value={option}>
+                                    {option}
+                                </option>
+                            ))}
+                        </select>
 
-                    <button onClick={(e) => { e.preventDefault(); increaseMonth() }} disabled={nextMonthButtonDisabled}>
-                        {">"}
-                    </button>
+                        <button onClick={(e) => { e.preventDefault(); increaseMonth() }} disabled={nextMonthButtonDisabled}>
+                            {">"}
+                        </button>
+                    </div>
+                )}
+            />
+            {error &&
+                <div className="error-text">
+                    {error}
                 </div>
-            )}
-        />
+            }
+        </>
     )
 }
 

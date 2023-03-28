@@ -124,6 +124,26 @@
   background-color: #04bd00;
 }
 
+.bg-green-dark {
+  background-color: #038a00;
+}
+
+.bg-green-dark1 {
+  background-color: #027100;
+}
+
+.bg-green-dark2 {
+  background-color: #025700;
+}
+
+.bg-green-dark3 {
+  background-color: #012400;
+}
+
+.bg-green-dark4 {
+  background-color: black;
+}
+
 .bg-green-lite {
   background-color: #29ff24 !important;
 }
