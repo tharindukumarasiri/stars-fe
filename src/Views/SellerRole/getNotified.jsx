@@ -1,22 +1,30 @@
 import React, { useState, useMemo, useEffect, useContext } from "react";
-import { message } from 'antd';
-import { getCpvCodes, searchCpvCodes, updateTenementCPV, getTenementCPV, getSubscribedPartyTsByTenantId, getNotSubscribedPartyTsByTenantId, SaveSubscriptions } from "../../services/organizationsService";
+import { message } from "antd";
+import {
+    getCpvCodes,
+    searchCpvCodes,
+    updateTenementCPV,
+    getTenementCPV,
+    getSubscribedPartyTsByTenantId,
+    getNotSubscribedPartyTsByTenantId,
+    SaveSubscriptions,
+} from "../../services/organizationsService";
 import { levelOneReq } from "../../utils/constants";
 import { TabContext } from "../../utils/contextStore";
-import { useTranslation } from 'react-i18next'
+import { useTranslation } from "react-i18next";
 import CriteriaColorGuideTab from "./Components/criteriaColorGuideTab";
 import UserSelectedFields from "./Components/userSelectedFields";
-import DropdownMultiSelect from "../../common/dropdownMultiSelect"
-import { FetchCurrentCompany } from "../../hooks/index"
+import DropdownMultiSelect from "../../common/dropdownMultiSelect";
+import { FetchCurrentCompany } from "../../hooks/index";
 
 const GetNotified = () => {
     const { haveUnsavedDataRef, setHaveUnsavedDataRef } = useContext(TabContext);
     const { t } = useTranslation();
     const [loading, setLoading] = useState(true);
-    const [searchText, setSearchText] = useState('')
+    const [searchText, setSearchText] = useState("");
     const [cpvData, setCpvData] = useState({ division: [], cpvGroup: [], cpvClass: [], category: [], subCategory: [] });
     const [expanded, setExpanded] = useState({ division: [], cpvGroup: [], cpvClass: [], category: [] });
-    const [searchResult, setSearchResult] = useState('');
+    const [searchResult, setSearchResult] = useState("");
     const [showingSearchedCodes, setShowingSearchedCodes] = useState(false);
     const [tenderCpvs, setTenderCpvs] = useState([]);
     const [allCpvCodes, setAllCpvCodes] = useState([]);
@@ -26,10 +34,13 @@ const GetNotified = () => {
     const [selectedCompany] = FetchCurrentCompany();
 
     useEffect(() => {
-        getCpvCodes(levelOneReq).then(result => {
+        getCpvCodes(levelOneReq).then((result) => {
             setCpvData({
-                ...cpvData, division: result.map(val => { return { code: val.code2, desscription: val.desscription } })
-            })
+                ...cpvData,
+                division: result.map((val) => {
+                    return { code: val.code2, desscription: val.desscription };
+                }),
+            });
         });
 
         const unloadCallback = (event) => {
@@ -42,15 +53,14 @@ const GetNotified = () => {
 
         window.addEventListener("beforeunload", unloadCallback);
         return () => window.removeEventListener("beforeunload", unloadCallback);
-
     }, []);
 
     useEffect(() => {
         if (selectedCompany.companyRegistrationId && tenderCpvs.length === 0) {
             Promise.all([
-                getTenementCPV(selectedCompany.companyRegistrationId, 'NO').then(result => {
+                getTenementCPV(selectedCompany.companyRegistrationId, "NO").then((result) => {
                     if (result?.cpvs?.length > 0) {
-                        setTenderCpvs(result?.cpvs)
+                        setTenderCpvs(result?.cpvs);
                         // const formattedUserList = result?.contactUsers.map(val => {
                         //     return { Value: val?.name, Key: val?.userId }
                         // })
@@ -58,241 +68,256 @@ const GetNotified = () => {
 
                         let newAllCpvCodes = [];
                         for (let i = 0; i < result.cpvs.length; i++) {
-                            const parentCodelist = result.cpvs[i].description[0].parent.map(val => { return val.code })
+                            const parentCodelist = result.cpvs[i].description[0].parent.map((val) => {
+                                return val.code;
+                            });
                             newAllCpvCodes = newAllCpvCodes.concat(parentCodelist);
                             newAllCpvCodes.push(result.cpvs[i].code);
                         }
 
-                        setAllCpvCodes(newAllCpvCodes)
+                        setAllCpvCodes(newAllCpvCodes);
                     }
-
                 }),
 
-                getSubscribedPartyTsByTenantId(selectedCompany?.tenantId).then(result => {
-                    setSelectedUsers(result)
+                getSubscribedPartyTsByTenantId(selectedCompany?.tenantId).then((result) => {
+                    setSelectedUsers(result);
                 }),
 
-                getNotSubscribedPartyTsByTenantId(selectedCompany?.tenantId).then(result => {
+                getNotSubscribedPartyTsByTenantId(selectedCompany?.tenantId).then((result) => {
                     setUsers(result);
-                })
+                }),
             ]).finally(() => setLoading(false));
         }
     }, [selectedCompany]);
 
     const divisionData = useMemo(() => {
         if (showingSearchedCodes) {
-            const divisionCodes = searchResult.map(item => {
-                return item.code.slice(0, 2)
-            })
+            const divisionCodes = searchResult.map((item) => {
+                return item.code.slice(0, 2);
+            });
 
-            const displayUnspscData = cpvData.division.filter(division => {
-                return divisionCodes.includes(division.code.slice(0, 2))
-            })
+            const displayUnspscData = cpvData.division.filter((division) => {
+                return divisionCodes.includes(division.code.slice(0, 2));
+            });
 
-            return displayUnspscData
+            return displayUnspscData;
         } else {
-            return cpvData.division
+            return cpvData.division;
         }
     }, [cpvData, showingSearchedCodes, searchResult]);
 
     const getCpvGroupData = (code, desscription) => {
-        const indexOfCode = expanded.division.indexOf(code)
+        const indexOfCode = expanded.division.indexOf(code);
 
         if (indexOfCode < 0) {
             const data = {
-                "level": 2,
-                "code": code
-            }
-            const isDataAvailavle = cpvData.cpvGroup.filter(cpvGroup => cpvGroup.parent === code).length > 0
+                level: 2,
+                code: code,
+            };
+            const isDataAvailavle = cpvData.cpvGroup.filter((cpvGroup) => cpvGroup.parent === code).length > 0;
 
             if (!isDataAvailavle) {
-                getCpvCodes(data).then(result => {
-                    const newGroupData = [...cpvData.cpvGroup]
+                getCpvCodes(data).then((result) => {
+                    const newGroupData = [...cpvData.cpvGroup];
                     if (result.length === 0) {
-                        newGroupData.push({ parent: code, data: [{ code: code, desscription: desscription }] })
+                        newGroupData.push({ parent: code, data: [{ code: code, desscription: desscription }] });
                     } else {
-                        newGroupData.push({ parent: code, data: result.map(val => { return { code: val.code2, desscription: val.desscription } }) })
+                        newGroupData.push({
+                            parent: code,
+                            data: result.map((val) => {
+                                return { code: val.code2, desscription: val.desscription };
+                            }),
+                        });
                     }
-                    setCpvData({ ...cpvData, cpvGroup: newGroupData })
+                    setCpvData({ ...cpvData, cpvGroup: newGroupData });
                 });
             }
 
-            const newExpandedCodes = [...expanded.division]
-            newExpandedCodes.push(code)
-            setExpanded({ ...expanded, division: newExpandedCodes })
-
+            const newExpandedCodes = [...expanded.division];
+            newExpandedCodes.push(code);
+            setExpanded({ ...expanded, division: newExpandedCodes });
         } else {
-            const newExpandedCodes = [...expanded.division]
-            newExpandedCodes.splice(indexOfCode, 1)
-            setExpanded({ ...expanded, division: newExpandedCodes })
+            const newExpandedCodes = [...expanded.division];
+            newExpandedCodes.splice(indexOfCode, 1);
+            setExpanded({ ...expanded, division: newExpandedCodes });
         }
-    }
+    };
 
     const getClassData = (code, desscription) => {
-        const indexOfCode = expanded.cpvGroup.indexOf(code)
+        const indexOfCode = expanded.cpvGroup.indexOf(code);
 
         if (indexOfCode < 0) {
             const data = {
-                "level": 3,
-                "code": code
-            }
+                level: 3,
+                code: code,
+            };
 
-            const isDataAvailable = cpvData.cpvClass.filter(cpvClass => cpvClass.parent === code).length > 0
+            const isDataAvailable = cpvData.cpvClass.filter((cpvClass) => cpvClass.parent === code).length > 0;
 
             if (!isDataAvailable) {
-                getCpvCodes(data).then(result => {
-                    const newClassData = [...cpvData.cpvClass]
+                getCpvCodes(data).then((result) => {
+                    const newClassData = [...cpvData.cpvClass];
                     if (result.length === 0) {
-                        newClassData.push({ parent: code, data: [{ code: code, desscription: desscription }] })
+                        newClassData.push({ parent: code, data: [{ code: code, desscription: desscription }] });
                     } else {
-                        newClassData.push({ parent: code, data: result.map(val => { return { code: val.code2, desscription: val.desscription } }) })
+                        newClassData.push({
+                            parent: code,
+                            data: result.map((val) => {
+                                return { code: val.code2, desscription: val.desscription };
+                            }),
+                        });
                     }
-                    setCpvData({ ...cpvData, cpvClass: newClassData })
+                    setCpvData({ ...cpvData, cpvClass: newClassData });
                 });
             }
 
-            const newExpandedCodes = [...expanded.cpvGroup]
-            newExpandedCodes.push(code)
-            setExpanded({ ...expanded, cpvGroup: newExpandedCodes })
+            const newExpandedCodes = [...expanded.cpvGroup];
+            newExpandedCodes.push(code);
+            setExpanded({ ...expanded, cpvGroup: newExpandedCodes });
         } else {
-            const newExpandedCodes = [...expanded.cpvGroup]
-            newExpandedCodes.splice(indexOfCode, 1)
-            setExpanded({ ...expanded, cpvGroup: newExpandedCodes })
+            const newExpandedCodes = [...expanded.cpvGroup];
+            newExpandedCodes.splice(indexOfCode, 1);
+            setExpanded({ ...expanded, cpvGroup: newExpandedCodes });
         }
-
-
-    }
+    };
 
     const getCategoryData = (code, desscription) => {
-        const indexOfCode = expanded.cpvClass.indexOf(code)
+        const indexOfCode = expanded.cpvClass.indexOf(code);
 
         if (indexOfCode < 0) {
             const data = {
-                "level": 4,
-                "code": code
-            }
+                level: 4,
+                code: code,
+            };
 
-            const isDataAvailable = cpvData.category.filter(category => category.parent === code).length > 0
+            const isDataAvailable = cpvData.category.filter((category) => category.parent === code).length > 0;
 
             if (!isDataAvailable) {
-                getCpvCodes(data).then(result => {
-                    const newCommodityData = [...cpvData.category]
+                getCpvCodes(data).then((result) => {
+                    const newCommodityData = [...cpvData.category];
                     if (result.length === 0) {
-                        newCommodityData.push({ parent: code, data: [{ code: code, desscription: desscription }] })
+                        newCommodityData.push({ parent: code, data: [{ code: code, desscription: desscription }] });
                     } else {
-                        newCommodityData.push({ parent: code, data: result.map(val => { return { code: val.code2, desscription: val.desscription } }) })
+                        newCommodityData.push({
+                            parent: code,
+                            data: result.map((val) => {
+                                return { code: val.code2, desscription: val.desscription };
+                            }),
+                        });
                     }
-                    setCpvData({ ...cpvData, category: newCommodityData })
+                    setCpvData({ ...cpvData, category: newCommodityData });
                 });
             }
 
-            const newExpandedCodes = [...expanded.cpvClass]
-            newExpandedCodes.push(code)
-            setExpanded({ ...expanded, cpvClass: newExpandedCodes })
-
+            const newExpandedCodes = [...expanded.cpvClass];
+            newExpandedCodes.push(code);
+            setExpanded({ ...expanded, cpvClass: newExpandedCodes });
         } else {
-            const newExpandedCodes = [...expanded.cpvClass]
-            newExpandedCodes.splice(indexOfCode, 1)
-            setExpanded({ ...expanded, cpvClass: newExpandedCodes })
+            const newExpandedCodes = [...expanded.cpvClass];
+            newExpandedCodes.splice(indexOfCode, 1);
+            setExpanded({ ...expanded, cpvClass: newExpandedCodes });
         }
-
-    }
+    };
 
     const getSubCategoryData = (code, desscription) => {
-        const indexOfCode = expanded.category.indexOf(code)
+        const indexOfCode = expanded.category.indexOf(code);
 
         if (indexOfCode < 0) {
             const data = {
-                "level": 5,
-                "code": code
-            }
+                level: 5,
+                code: code,
+            };
 
-            const isDataAvailable = cpvData.subCategory.filter(subCategory => subCategory.parent === code).length > 0
+            const isDataAvailable = cpvData.subCategory.filter((subCategory) => subCategory.parent === code).length > 0;
 
             if (!isDataAvailable) {
-                getCpvCodes(data).then(result => {
-                    const newSubCategoryData = [...cpvData.subCategory]
+                getCpvCodes(data).then((result) => {
+                    const newSubCategoryData = [...cpvData.subCategory];
                     if (result.length === 0) {
-                        newSubCategoryData.push({ parent: code, data: [{ code: code, desscription: desscription }] })
+                        newSubCategoryData.push({ parent: code, data: [{ code: code, desscription: desscription }] });
                     } else {
-                        newSubCategoryData.push({ parent: code, data: result.map(val => { return { code: val.code2, desscription: val.desscription } }) })
+                        newSubCategoryData.push({
+                            parent: code,
+                            data: result.map((val) => {
+                                return { code: val.code2, desscription: val.desscription };
+                            }),
+                        });
                     }
-                    setCpvData({ ...cpvData, subCategory: newSubCategoryData })
+                    setCpvData({ ...cpvData, subCategory: newSubCategoryData });
                 });
             }
 
-            const newExpandedCodes = [...expanded.category]
-            newExpandedCodes.push(code)
-            setExpanded({ ...expanded, category: newExpandedCodes })
-
+            const newExpandedCodes = [...expanded.category];
+            newExpandedCodes.push(code);
+            setExpanded({ ...expanded, category: newExpandedCodes });
         } else {
-            const newExpandedCodes = [...expanded.category]
-            newExpandedCodes.splice(indexOfCode, 1)
-            setExpanded({ ...expanded, category: newExpandedCodes })
+            const newExpandedCodes = [...expanded.category];
+            newExpandedCodes.splice(indexOfCode, 1);
+            setExpanded({ ...expanded, category: newExpandedCodes });
         }
-
-    }
+    };
 
     const handleChekBox = ({ mostChild, parents } = {}) => {
-        const index = tenderCpvs?.findIndex(data => data.code === mostChild.code)
+        const index = tenderCpvs?.findIndex((data) => data.code === mostChild.code);
         setHaveUnsavedDataRef(true);
 
         if (index < 0 || index === undefined) {
-            const newCpvs = index ? [...tenderCpvs] : []
-            newCpvs.push({ code: mostChild.code, description: [{ lang: 'en', parent: parents, value: mostChild.value }] })
-            setTenderCpvs(newCpvs)
+            const newCpvs = index ? [...tenderCpvs] : [];
+            newCpvs.push({ code: mostChild.code, description: [{ lang: "en", parent: parents, value: mostChild.value }] });
+            setTenderCpvs(newCpvs);
 
-            const parentCodeSet = parents.map(val => { return val.code })
-            const newAllCpvs = allCpvCodes.concat(parentCodeSet)
+            const parentCodeSet = parents.map((val) => {
+                return val.code;
+            });
+            const newAllCpvs = allCpvCodes.concat(parentCodeSet);
             newAllCpvs.push(mostChild.code);
-            setAllCpvCodes(newAllCpvs)
+            setAllCpvCodes(newAllCpvs);
         } else {
-            const newCpvs = [...tenderCpvs]
+            const newCpvs = [...tenderCpvs];
             newCpvs.splice(index, 1);
-            setTenderCpvs(newCpvs)
+            setTenderCpvs(newCpvs);
 
             const allCpvIndex = allCpvCodes.indexOf(mostChild.code);
-            const newAllCpvs = [...allCpvCodes]
+            const newAllCpvs = [...allCpvCodes];
             if (allCpvIndex > 0) {
-                newAllCpvs.splice(allCpvIndex - 4, 5)
-                setAllCpvCodes(newAllCpvs)
+                newAllCpvs.splice(allCpvIndex - 4, 5);
+                setAllCpvCodes(newAllCpvs);
             }
         }
-    }
+    };
 
     const onDelete = (code) => {
-        const index = tenderCpvs.findIndex(data => data.code === code)
-        const newCpvs = [...tenderCpvs]
+        const index = tenderCpvs.findIndex((data) => data.code === code);
+        const newCpvs = [...tenderCpvs];
 
         newCpvs.splice(index, 1);
         setHaveUnsavedDataRef(true);
-        setTenderCpvs(newCpvs)        
+        setTenderCpvs(newCpvs);
 
         let allCodes = [...allCpvCodes];
         const childLevel = code.length;
 
-        for(let i = 2; i <= childLevel; i++){            
+        for (let i = 2; i <= childLevel; i++) {
             let prefix = code.substring(0, i);
             let fullCode = prefix.padEnd(code.length, "0");
-            let matching = allCodes.filter(c => c === fullCode);
-            if(matching.length === 1) {
+            let matching = allCodes.filter((c) => c === fullCode);
+            if (matching.length === 1) {
                 let index = allCodes.indexOf(fullCode);
                 allCodes.splice(index, 1);
-            }
-            else if(matching.length > 1){
+            } else if (matching.length > 1) {
                 let index = allCodes.lastIndexOf(fullCode);
                 allCodes.splice(index, 1);
             }
-        }   
-        
+        }
+
         setAllCpvCodes(allCodes);
-    }
+    };
 
     const getFormattedUserList = () => {
-        return selectedUsers?.map(val => {
-            return { name: val?.Value, userId: val?.Key }
-        })
-    }
+        return selectedUsers?.map((val) => {
+            return { name: val?.Value, userId: val?.Key };
+        });
+    };
 
     const onUpdate = async () => {
         setLoading(true);
@@ -300,220 +325,336 @@ const GetNotified = () => {
         const params = {
             organizationId: selectedCompany.companyRegistrationId,
             tenantId: selectedCompany.tenantId,
-            countryCode: 'NO',
+            countryCode: "NO",
             cpvs: tenderCpvs,
             cpvCodes: [...new Set(allCpvCodes)],
             contactUsers: getFormattedUserList(),
-        }
+        };
 
-        const userParams = selectedUsers.map(user => {
-            return ({ TenantId: selectedCompany?.tenantId, MessageTypeId: 2, PartyTId: user?.Key })
-        })
+        const userParams = selectedUsers.map((user) => {
+            return { TenantId: selectedCompany?.tenantId, MessageTypeId: 2, PartyTId: user?.Key };
+        });
 
-        updateTenementCPV(params).then(result => {
-            setLoading(false);
-            setHaveUnsavedDataRef(false);
-            if (result === 'Ok') {
-                message.success('Update successful');
-            } else {
-                message.error('Update failed please try again');
-            }
-        }).catch(() => {
-            setLoading(false);
-            message.error('Update failed please try again');
-        })
+        updateTenementCPV(params)
+            .then((result) => {
+                setLoading(false);
+                setHaveUnsavedDataRef(false);
+                if (result === "Ok") {
+                    message.success(t("UPDATE_SUCCESS"));
+                } else {
+                    message.error(t("UPDATE_FAIL"));
+                }
+            })
+            .catch(() => {
+                setLoading(false);
+                message.error(t("UPDATE_FAIL"));
+            });
 
-        SaveSubscriptions(userParams)
-    }
+        SaveSubscriptions(userParams);
+    };
 
     const handleSearch = (e) => {
         e.preventDefault();
         setSearchText(e.target.value);
-    }
+    };
 
     const onSearch = (e) => {
         setLoading(true);
         e.preventDefault();
-        searchCpvCodes(searchText).then(result => {
-            setSearchResult(result)
-            setShowingSearchedCodes(true);
-            setLoading(false);
-        }).catch(() => setLoading(false))
-    }
+        searchCpvCodes(searchText)
+            .then((result) => {
+                setSearchResult(result);
+                setShowingSearchedCodes(true);
+                setLoading(false);
+            })
+            .catch(() => setLoading(false));
+    };
 
     const clearSearch = () => {
-        setSearchText('');
+        setSearchText("");
         setShowingSearchedCodes(false);
-    }
+    };
 
     const getIndent = (level = 1) => {
         return {
-            marginLeft: 20 * level
-        }
-    }
+            marginLeft: 20 * level,
+        };
+    };
 
     const YourCpvData = () => {
         return (
             <div className="m-t-10">
-                <CriteriaColorGuideTab dataArr={['Division', 'Group', 'Class', 'Category', 'Sub Category']} containerStyle='selected-codes' />
-                <UserSelectedFields data={tenderCpvs} dataFeieldName='description' closable={true} onClose={onDelete} />
+                <CriteriaColorGuideTab
+                    dataArr={["DIVISION", "GROUP", "CLASS", "CATEGORY", "SUB_CATEGORY"]}
+                    containerStyle="selected-codes"
+                />
+                <UserSelectedFields data={tenderCpvs} dataFeieldName="description" closable={true} onClose={onDelete} />
             </div>
-        )
-    }
+        );
+    };
 
     const CPVData = () => {
-        return (
-            divisionData.map((division, divIndex) => {
-                return (
-                    <div key={divIndex}>
-                        <div className="result-item hover-hand bg-bluish-green-light1" onClick={() => { getCpvGroupData(division.code, division.desscription) }}>
-                            <div className="body-text">
-                                <i className={expanded.division.includes(division.code) ? 'icon-minus-circled fl toggle-icon' : 'icon-plus-circled fl toggle-icon'} />
-                                <div className="body-text-bold m-r-10 fl">{division.code}</div>
-                                {division.desscription}
-                            </div>
-                        </div>
-                        {expanded.division.includes(division.code) &&
-                            cpvData.cpvGroup.map((cpvGroup) => {
-                                if (cpvGroup.parent === division.code) {
-                                    return (
-                                        cpvGroup.data.map((cpvGroupData, famIndex) => {
-                                            return (
-                                                <div key={famIndex}>
-                                                    <div className="result-item hover-hand bg-bluish-green-light2" style={getIndent(2)} onClick={() => { getClassData(cpvGroupData.code, cpvGroupData.desscription) }}>
-                                                        <div className="body-text">
-                                                            <i className={expanded.cpvGroup.includes(cpvGroupData.code) ? 'icon-minus-circled fl toggle-icon' : 'icon-plus-circled fl toggle-icon'} />
-                                                            <div className="body-text-bold m-r-10 fl">{cpvGroupData.code}</div>
-                                                            {cpvGroupData.desscription}
-                                                        </div>
-                                                    </div>
-                                                    {expanded.cpvGroup.includes(cpvGroupData.code) &&
-                                                        cpvData.cpvClass.map((cpvClass) => {
-                                                            if (cpvClass.parent === cpvGroupData.code) {
-                                                                return (
-                                                                    cpvClass.data.map((cpvClassData, classIndex) => {
-                                                                        return (
-                                                                            <div key={classIndex}>
-                                                                                <div className="result-item hover-hand bg-bluish-green-light3" style={getIndent(3)} onClick={() => { getCategoryData(cpvClassData.code, cpvClassData.desscription) }}>
-                                                                                    <div className="body-text">
-                                                                                        <i className={expanded.cpvClass.includes(cpvClassData.code) ? 'icon-minus-circled fl toggle-icon' : 'icon-plus-circled fl toggle-icon'} />
-                                                                                        <div className="body-text-bold m-r-10 fl">{cpvClassData.code}</div>
-                                                                                        {cpvClassData.desscription}
-                                                                                    </div>
-                                                                                </div>
-                                                                                {expanded.cpvClass.includes(cpvClassData.code) &&
-                                                                                    cpvData.category.map((category) => {
-                                                                                        if (category.parent === cpvClassData.code) {
-                                                                                            return (
-                                                                                                category.data.map((categoryData, comIndex) => {
-                                                                                                    return (
-                                                                                                        <div key={comIndex}>
-                                                                                                            <div className="result-item hover-hand bg-bluish-green-light4" style={getIndent(4)} onClick={() => { getSubCategoryData(categoryData.code, categoryData.desscription) }}>
-                                                                                                                <div className="body-text">
-                                                                                                                    <i className={expanded.category.includes(categoryData.code) ? 'icon-minus-circled fl toggle-icon' : 'icon-plus-circled fl toggle-icon'} />
-                                                                                                                    <div className="body-text-bold m-r-10 fl">{categoryData.code}</div>
-                                                                                                                    {categoryData.desscription}
-                                                                                                                </div>
-                                                                                                            </div>
-                                                                                                            {expanded.category.includes(categoryData.code) &&
-                                                                                                                cpvData.subCategory.map((subCategory) => {
-                                                                                                                    if (subCategory.parent === categoryData.code) {
-                                                                                                                        return (
-                                                                                                                            subCategory.data.map((subCategoryData, subCategoryIndex) => {
-                                                                                                                                return (
-                                                                                                                                    <div className="result-item hover-hand bg-bluish-green-light5" style={getIndent(5)} key={subCategoryIndex}
-                                                                                                                                        onClick={() =>
-                                                                                                                                            handleChekBox(
-                                                                                                                                                {
-                                                                                                                                                    mostChild: { code: subCategoryData.code, value: subCategoryData.desscription },
-                                                                                                                                                    parents: [
-                                                                                                                                                        { code: division.code, value: division.desscription },
-                                                                                                                                                        { code: cpvGroupData.code, value: cpvGroupData.desscription },
-                                                                                                                                                        { code: cpvClassData.code, value: cpvClassData.desscription },
-                                                                                                                                                        { code: categoryData.code, value: categoryData.desscription }
-                                                                                                                                                    ]
-                                                                                                                                                })}
-                                                                                                                                    >
-                                                                                                                                        <div className="body-text m-l-10">
-                                                                                                                                            <div className="body-text-bold m-r-10 fl">{subCategoryData.code}</div>
-                                                                                                                                            {subCategoryData.desscription}
-                                                                                                                                        </div>
-                                                                                                                                        <input type="checkbox" className="check-box"
-                                                                                                                                            checked={tenderCpvs?.findIndex(data => data.code === subCategoryData.code) > -1}
-                                                                                                                                            onChange={() =>
-                                                                                                                                                handleChekBox(
-                                                                                                                                                    {
-                                                                                                                                                        mostChild: { code: subCategoryData.code, value: subCategoryData.desscription },
-                                                                                                                                                        parents: [
-                                                                                                                                                            { code: division.code, value: division.desscription },
-                                                                                                                                                            { code: cpvGroupData.code, value: cpvGroupData.desscription },
-                                                                                                                                                            { code: cpvClassData.code, value: cpvClassData.desscription },
-                                                                                                                                                            { code: categoryData.code, value: categoryData.desscription }
-                                                                                                                                                        ]
-                                                                                                                                                    })}
-                                                                                                                                        />
-                                                                                                                                    </div>
-                                                                                                                                )
-                                                                                                                            })
-                                                                                                                        )
-                                                                                                                    }
-                                                                                                                })
-                                                                                                            }
-                                                                                                        </div>
-                                                                                                    )
-                                                                                                })
-                                                                                            )
-                                                                                        }
-                                                                                    })
-                                                                                }
-                                                                            </div>
-                                                                        )
-                                                                    })
-                                                                )
-                                                            }
-                                                        })
-                                                    }
-                                                </div>
-                                            )
-                                        })
-                                    )
+        return divisionData.map((division, divIndex) => {
+            return (
+                <div key={divIndex}>
+                    <div
+                        className="result-item hover-hand bg-bluish-green-light1"
+                        onClick={() => {
+                            getCpvGroupData(division.code, division.desscription);
+                        }}
+                    >
+                        <div className="body-text">
+                            <i
+                                className={
+                                    expanded.division.includes(division.code)
+                                        ? "icon-minus-circled fl toggle-icon"
+                                        : "icon-plus-circled fl toggle-icon"
                                 }
-                            })
-                        }
+                            />
+                            <div className="body-text-bold m-r-10 fl">{division.code}</div>
+                            {division.desscription}
+                        </div>
                     </div>
-                )
-            })
-        )
-    }
+                    {expanded.division.includes(division.code) &&
+                        cpvData.cpvGroup.map((cpvGroup) => {
+                            if (cpvGroup.parent === division.code) {
+                                return cpvGroup.data.map((cpvGroupData, famIndex) => {
+                                    return (
+                                        <div key={famIndex}>
+                                            <div
+                                                className="result-item hover-hand bg-bluish-green-light2"
+                                                style={getIndent(2)}
+                                                onClick={() => {
+                                                    getClassData(cpvGroupData.code, cpvGroupData.desscription);
+                                                }}
+                                            >
+                                                <div className="body-text">
+                                                    <i
+                                                        className={
+                                                            expanded.cpvGroup.includes(cpvGroupData.code)
+                                                                ? "icon-minus-circled fl toggle-icon"
+                                                                : "icon-plus-circled fl toggle-icon"
+                                                        }
+                                                    />
+                                                    <div className="body-text-bold m-r-10 fl">{cpvGroupData.code}</div>
+                                                    {cpvGroupData.desscription}
+                                                </div>
+                                            </div>
+                                            {expanded.cpvGroup.includes(cpvGroupData.code) &&
+                                                cpvData.cpvClass.map((cpvClass) => {
+                                                    if (cpvClass.parent === cpvGroupData.code) {
+                                                        return cpvClass.data.map((cpvClassData, classIndex) => {
+                                                            return (
+                                                                <div key={classIndex}>
+                                                                    <div
+                                                                        className="result-item hover-hand bg-bluish-green-light3"
+                                                                        style={getIndent(3)}
+                                                                        onClick={() => {
+                                                                            getCategoryData(cpvClassData.code, cpvClassData.desscription);
+                                                                        }}
+                                                                    >
+                                                                        <div className="body-text">
+                                                                            <i
+                                                                                className={
+                                                                                    expanded.cpvClass.includes(cpvClassData.code)
+                                                                                        ? "icon-minus-circled fl toggle-icon"
+                                                                                        : "icon-plus-circled fl toggle-icon"
+                                                                                }
+                                                                            />
+                                                                            <div className="body-text-bold m-r-10 fl">
+                                                                                {cpvClassData.code}
+                                                                            </div>
+                                                                            {cpvClassData.desscription}
+                                                                        </div>
+                                                                    </div>
+                                                                    {expanded.cpvClass.includes(cpvClassData.code) &&
+                                                                        cpvData.category.map((category) => {
+                                                                            if (category.parent === cpvClassData.code) {
+                                                                                return category.data.map((categoryData, comIndex) => {
+                                                                                    return (
+                                                                                        <div key={comIndex}>
+                                                                                            <div
+                                                                                                className="result-item hover-hand bg-bluish-green-light4"
+                                                                                                style={getIndent(4)}
+                                                                                                onClick={() => {
+                                                                                                    getSubCategoryData(
+                                                                                                        categoryData.code,
+                                                                                                        categoryData.desscription
+                                                                                                    );
+                                                                                                }}
+                                                                                            >
+                                                                                                <div className="body-text">
+                                                                                                    <i
+                                                                                                        className={
+                                                                                                            expanded.category.includes(
+                                                                                                                categoryData.code
+                                                                                                            )
+                                                                                                                ? "icon-minus-circled fl toggle-icon"
+                                                                                                                : "icon-plus-circled fl toggle-icon"
+                                                                                                        }
+                                                                                                    />
+                                                                                                    <div className="body-text-bold m-r-10 fl">
+                                                                                                        {categoryData.code}
+                                                                                                    </div>
+                                                                                                    {categoryData.desscription}
+                                                                                                </div>
+                                                                                            </div>
+                                                                                            {expanded.category.includes(
+                                                                                                categoryData.code
+                                                                                            ) &&
+                                                                                                cpvData.subCategory.map((subCategory) => {
+                                                                                                    if (
+                                                                                                        subCategory.parent ===
+                                                                                                        categoryData.code
+                                                                                                    ) {
+                                                                                                        return subCategory.data.map(
+                                                                                                            (
+                                                                                                                subCategoryData,
+                                                                                                                subCategoryIndex
+                                                                                                            ) => {
+                                                                                                                return (
+                                                                                                                    <div
+                                                                                                                        className="result-item hover-hand bg-bluish-green-light5"
+                                                                                                                        style={getIndent(5)}
+                                                                                                                        key={
+                                                                                                                            subCategoryIndex
+                                                                                                                        }
+                                                                                                                        onClick={() =>
+                                                                                                                            handleChekBox({
+                                                                                                                                mostChild: {
+                                                                                                                                    code: subCategoryData.code,
+                                                                                                                                    value: subCategoryData.desscription,
+                                                                                                                                },
+                                                                                                                                parents: [
+                                                                                                                                    {
+                                                                                                                                        code: division.code,
+                                                                                                                                        value: division.desscription,
+                                                                                                                                    },
+                                                                                                                                    {
+                                                                                                                                        code: cpvGroupData.code,
+                                                                                                                                        value: cpvGroupData.desscription,
+                                                                                                                                    },
+                                                                                                                                    {
+                                                                                                                                        code: cpvClassData.code,
+                                                                                                                                        value: cpvClassData.desscription,
+                                                                                                                                    },
+                                                                                                                                    {
+                                                                                                                                        code: categoryData.code,
+                                                                                                                                        value: categoryData.desscription,
+                                                                                                                                    },
+                                                                                                                                ],
+                                                                                                                            })
+                                                                                                                        }
+                                                                                                                    >
+                                                                                                                        <div className="body-text m-l-10">
+                                                                                                                            <div className="body-text-bold m-r-10 fl">
+                                                                                                                                {
+                                                                                                                                    subCategoryData.code
+                                                                                                                                }
+                                                                                                                            </div>
+                                                                                                                            {
+                                                                                                                                subCategoryData.desscription
+                                                                                                                            }
+                                                                                                                        </div>
+                                                                                                                        <input
+                                                                                                                            type="checkbox"
+                                                                                                                            className="check-box"
+                                                                                                                            checked={
+                                                                                                                                tenderCpvs?.findIndex(
+                                                                                                                                    (
+                                                                                                                                        data
+                                                                                                                                    ) =>
+                                                                                                                                        data.code ===
+                                                                                                                                        subCategoryData.code
+                                                                                                                                ) > -1
+                                                                                                                            }
+                                                                                                                            onChange={() =>
+                                                                                                                                handleChekBox(
+                                                                                                                                    {
+                                                                                                                                        mostChild:
+                                                                                                                                            {
+                                                                                                                                                code: subCategoryData.code,
+                                                                                                                                                value: subCategoryData.desscription,
+                                                                                                                                            },
+                                                                                                                                        parents:
+                                                                                                                                            [
+                                                                                                                                                {
+                                                                                                                                                    code: division.code,
+                                                                                                                                                    value: division.desscription,
+                                                                                                                                                },
+                                                                                                                                                {
+                                                                                                                                                    code: cpvGroupData.code,
+                                                                                                                                                    value: cpvGroupData.desscription,
+                                                                                                                                                },
+                                                                                                                                                {
+                                                                                                                                                    code: cpvClassData.code,
+                                                                                                                                                    value: cpvClassData.desscription,
+                                                                                                                                                },
+                                                                                                                                                {
+                                                                                                                                                    code: categoryData.code,
+                                                                                                                                                    value: categoryData.desscription,
+                                                                                                                                                },
+                                                                                                                                            ],
+                                                                                                                                    }
+                                                                                                                                )
+                                                                                                                            }
+                                                                                                                        />
+                                                                                                                    </div>
+                                                                                                                );
+                                                                                                            }
+                                                                                                        );
+                                                                                                    }
+                                                                                                })}
+                                                                                        </div>
+                                                                                    );
+                                                                                });
+                                                                            }
+                                                                        })}
+                                                                </div>
+                                                            );
+                                                        });
+                                                    }
+                                                })}
+                                        </div>
+                                    );
+                                });
+                            }
+                        })}
+                </div>
+            );
+        });
+    };
 
     return (
-        <div className={loading && 'loading-overlay'}>
-            {loading &&
+        <div className={loading && "loading-overlay"}>
+            {loading && (
                 <div className="loading center-loading">
                     <div></div>
                     <div></div>
                     <div></div>
                 </div>
-            }
+            )}
             <div className="g-row">
                 <div className="g-col-5">
-                    <h3 className="text-center">CPV Codes</h3>
-                    <h6>How to get notified for Tenders?</h6>
+                    <h3 className="text-center">{t('CPV_CODES')}</h3>
+                    <h6>{t('HOW_TO_GET_NOTIFIED_TENDERS')}</h6>
                     <div className="g-row flex-center-middle m-b-15">
                         <form onSubmit={onSearch} className="search-bar g-col-11">
-                            <i className="search-btn icon-search" onClick={onSearch} ></i>
-                            <input type="text" placeholder="Search Text" onChange={handleSearch} value={searchText} />
+                            <i className="search-btn icon-search" onClick={onSearch}></i>
+                            <input type="text" placeholder={t('SEARCH_TEXT')} onChange={handleSearch} value={searchText} />
                         </form>
-                        <button className="secondary-btn filters-btn g-col-3" onClick={clearSearch} >Clear</button>
+                        <button className="secondary-btn filters-btn g-col-3" onClick={clearSearch}>
+                            {t('CLEAR')}
+                        </button>
                     </div>
                     <CPVData />
                 </div>
                 <div className="g-col-5">
-                    <h3 className="text-center p-b-20">You will get notifications for  the  below slected CPV Codes </h3>
+                    <h3 className="text-center p-b-20">{t('YOU_WILL_GET_NOTIFICATIONS')} </h3>
                     <YourCpvData />
                 </div>
                 <div className="g-col-2 m-t-5">
-                    <h3>Receivers</h3>
+                    <h3>{t('RECEIVERS')}</h3>
                     {/* <div className="static-content-container">
                         <div className="body-text-bold  m-t-20">Get notified</div>
                         <div className="body-text m-t-20">Being updated on the new tenders that have been updated is vital to win the competition. Tenders can be figured out by the CPV codes included in the tender notice. CPV codes is the taxonomy used to find the business domains/areas in Europea region. This is a feature where we let you save separate CPV codes to receive notifications when new tenders have been updated in our global tender's database. We will send the assigned user emails when new tenders are updated, and you can view them in your “Local Tenders” features. You can select/ update the CPV codes which covers your interested business domain/area at any time to receive the updates. </div>
@@ -529,13 +670,22 @@ const GetNotified = () => {
                         <div className="body-text">Select the link on email notifications to navigate to the updated tenders.</div>
                         <div className="body-text">View the new tender notices. </div>
                     </div> */}
-                    <h6 className="m-t-20 text-left">Select user(s)</h6>
-                    <DropdownMultiSelect placeholder="Users" dataList={users} dataName='Value' keyName="Key" selectedList={selectedUsers} setSelectedState={setSelectedUsers} />
+                    <h6 className="m-t-20 text-left">{t('SELECT_USERS')}</h6>
+                    <DropdownMultiSelect
+                        placeholder={t('USERS')}
+                        dataList={users}
+                        dataName="Value"
+                        keyName="Key"
+                        selectedList={selectedUsers}
+                        setSelectedState={setSelectedUsers}
+                    />
                 </div>
             </div>
-            <button className="primary-btn update-btn" onClick={onUpdate} >Update</button>
+            <button className="primary-btn update-btn" onClick={onUpdate}>
+                {t('UPDATE')}
+            </button>
         </div>
-    )
-}
+    );
+};
 
-export default GetNotified
+export default GetNotified;

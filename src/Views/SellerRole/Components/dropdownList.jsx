@@ -21,7 +21,7 @@ const DropdownList = ({ placeholder, dataList, dataName = 'name', criteriaName, 
             <>
                 {selectedList[criteriaName]?.length == 0 &&
                     <div className="selected-item" key={'all'}>
-                        <i className="close-btn icon-close-small-x m-t-5" > </i>
+                        <i className="close-btn  icon-x-bold m-t-5" > </i>
                         All
                     </div>
                 }
@@ -29,7 +29,7 @@ const DropdownList = ({ placeholder, dataList, dataName = 'name', criteriaName, 
                     selectedList[criteriaName]?.map(item => {
                         return (
                             <div className="selected-item" key={item}>
-                                <i className="close-btn icon-close-small-x m-t-5" onClick={() => setSelectedState({ ...selectedList, [criteriaName]: onCloseBtnClick(item, selectedList[criteriaName]) })} > </i>
+                                <i className="close-btn  icon-x-bold m-t-5" onClick={() => setSelectedState({ ...selectedList, [criteriaName]: onCloseBtnClick(item, selectedList[criteriaName]) })} > </i>
                                 {item}
                             </div>
                         )

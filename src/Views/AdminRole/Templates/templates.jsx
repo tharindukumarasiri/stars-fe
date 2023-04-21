@@ -14,19 +14,19 @@ import * as constants from "../../../utils/constants";
 const { confirm } = Modal;
 const { TabPane } = Tabs;
 
-const Templates = () => {   
+const Templates = () => {
     const [modalVisible, setModalVisible] = useState(false);
     const [loading, setLoading] = useState(true);
-    const [selectedCompany] = FetchCurrentCompany();    
+    const [selectedCompany] = FetchCurrentCompany();
     const [notificationTemplates, setNotificationTemplates] = useState([]);
     const [landingPageTemplates, setLandingPageTemplates] = useState([]);
     const [communicationTemplates, setCommunicationTemplates] = useState([]);
     const [editTemplate, setEditTemplate] = useState(null);
-    const [currentUser] = FetchCurrentUser();    
+    const [currentUser] = FetchCurrentUser();
     const { t } = useTranslation();
 
     const pageSize = 10;
-    const [ntCurrentPageNo, setntCurrentPageNo] = useState(0);    
+    const [ntCurrentPageNo, setntCurrentPageNo] = useState(0);
     const [lpCurrentPageNo, setlpCurrentPageNo] = useState(0);
     const [bdCurrentPageNo, setbdCurrentPageNo] = useState(0);
     const [ntTotal, setntTotal] = useState(0);
@@ -34,7 +34,7 @@ const Templates = () => {
     const [bdTotal, setbdTotal] = useState(0);
 
     const tableHeaders = useMemo(() => {
-        const headers = TemplateTableHeaders.map(a => { return { ...a, title: t(a.title) } })
+        const headers = TemplateTableHeaders(t);
         headers.push({
             title: '',
             render: (_, record) => (
@@ -45,33 +45,38 @@ const Templates = () => {
                         setModalVisible(true);
 
                     }}></i>
-                    <i className="icon-delete table-icon" onClick={(e) => {
+                    { (selectedCompany.companyPartyId === record.CompanyPartyId 
+                        //|| (selectedCompany.companyPartyId !== record.CompanyPartyId && currentUser.roles.some(id => id === 1))
+                        )
+                     && <i className="icon-delete table-icon" onClick={(e) => {
                         e.stopPropagation();
                         showDeleteConfirm(record, currentUser)
-                    }}></i>                  
+                    }}></i> 
+                    
+                    }
                 </>
             )
         })
-
+        console.log(currentUser);
         return headers
 
-    }, [currentUser])
+    }, [currentUser, selectedCompany])
 
     const getSavedTemplates = () => {
 
-        setLoading(true);       
-
-        getTenantMessageTemplates(selectedCompany.companyPartyId, constants.templateType.Notification, ntCurrentPageNo, pageSize).then(result => {            
-            setNotificationTemplates(result.Value); 
-            setntTotal(result.Key);            
+        setLoading(true);
+        
+        getTenantMessageTemplates(selectedCompany.companyPartyId, constants.templateType.Notification, ntCurrentPageNo, pageSize).then(result => {
+            setNotificationTemplates(result.Value);
+            setntTotal(result.Key);
         }).catch(() => setLoading(false))
 
-        getTenantMessageTemplates(selectedCompany.companyPartyId, constants.templateType.LandingPage, lpCurrentPageNo, pageSize).then(result => { 
+        getTenantMessageTemplates(selectedCompany.companyPartyId, constants.templateType.LandingPage, lpCurrentPageNo, pageSize).then(result => {
             setLandingPageTemplates(result.Value);
             setlpTotal(result.Key)
         }).catch(() => setLoading(false))
 
-        getTenantMessageTemplates(selectedCompany.companyPartyId, constants.templateType.Communication, bdCurrentPageNo, pageSize).then(result => {  
+        getTenantMessageTemplates(selectedCompany.companyPartyId, constants.templateType.Communication, bdCurrentPageNo, pageSize).then(result => {
             setCommunicationTemplates(result.Value);
             setbdTotal(result.Key);
         }).catch(() => setLoading(false))
@@ -80,10 +85,10 @@ const Templates = () => {
     }
 
     useEffect(() => {
-        if(selectedCompany && selectedCompany.companyPartyId){
+        if (selectedCompany && selectedCompany.companyPartyId) {
             getSavedTemplates();
         }
-            
+
     }, [selectedCompany, ntCurrentPageNo, lpCurrentPageNo, bdCurrentPageNo]);
 
     const toggaleTemplateCreater = () => { setModalVisible(prev => !prev) }
@@ -95,51 +100,50 @@ const Templates = () => {
 
     const showDeleteConfirm = (record, user) => {
         confirm({
-            title: <>{t("Are you sure")} <strong className="red">{t('delete')}</strong> {t("this template?")}</>,
+            title: <>{t("ARE_YOU_SURE")} <strong className="red">{t('DELETE_SIMPLE')}</strong> {t("THIS_TEMP")}</>,
             icon: <ExclamationCircleOutlined />,
             content: <div>
-                <div className="body-text">{t("All data will be lost on")}</div>
-                <div className="body-text">{t("Template name: ")}: <strong>{record.DisplayName}</strong></div>               
+                <div className="body-text">{t("ALL_DATA_TXT")}</div>
+                <div className="body-text">{t("TEMPLATE_NAME")}: <strong>{record.DisplayName}</strong></div>
             </div>,
-            okText: t('Yes'),
+            okText: t('YES'),
             okType: 'danger',
-            cancelText: t('No'),
+            cancelText: t('NO'),
 
-            onOk() {
-                console.log(user);
+            onOk() {                
                 deleteMessageTemplate(record.Id, user.PartyId).then(() => {
-                    getSavedTemplates();     
-                    message.success(t('Delete template successful'));   
+                    getSavedTemplates();
+                    message.success(t('MSG_DELETE_TEMPLATE_SUCCESS'));
                 }).catch(() => {
-                    message.warning('Delete template failed');
-                });  
+                    message.warning(t('MSG_DELETE_TEMPLATE_FAIL'));
+                });
             },
 
         });
     };
 
     const onChangePage = (pageNumber, type) => {
-       
-        let setActPage = (p) => {};
-        switch(type) {
-            case constants.templateType.Notification:                 
+
+        let setActPage = (p) => { };
+        switch (type) {
+            case constants.templateType.Notification:
                 setActPage = setntCurrentPageNo;
                 break;
-            case constants.templateType.LandingPage:                 
+            case constants.templateType.LandingPage:
                 setActPage = setlpCurrentPageNo;
                 break;
-            case constants.templateType.Communication:                 
+            case constants.templateType.Communication:
                 setActPage = setbdCurrentPageNo;
                 break;
         }
         switch (pageNumber) {
-            case 'prev':                
+            case 'prev':
                 setActPage((cur) => cur - 1);
                 break;
-            case 'next':               
+            case 'next':
                 setActPage((cur) => cur + 1);
                 break;
-            default:                
+            default:
                 setActPage(pageNumber);
         }
     }
@@ -155,47 +159,51 @@ const Templates = () => {
                 </div>
             }
             <div>
-                <button className="primary-btn m-r-10" style={{ float: 'left' }} onClick={createNewTemplateClick} >Create New</button>
+                <button className="primary-btn m-r-10" style={{ float: 'left' }} onClick={createNewTemplateClick} >{t('CREATE_NEW')}</button>
                 <div className="fl">
-                    <Input value={''} placeholder='Search' onChange={() => { }} endImage={'icon-search-1'} />
+                    <Input value={''} placeholder='SEARCH' onChange={() => { }} endImage={'icon-search-1'} />
                 </div>
-                <button className="primary-btn" style={{ float: 'left' }} onClick={() => { }} >Filters</button>
+                <button className="primary-btn" style={{ float: 'left' }} onClick={() => { }} >{t('FILTERS')}</button>
             </div>
             <div className="n-float"></div>
             <div className="page-container">
                 <div className="custom-tab-container">
                     <Tabs type="card">
-                        <TabPane tab="Notification templates" key="1">
+                        <TabPane tab={t('USER_NOTIFICATION_TEMPLATES')} key="1">
                             <Table
                                 rowKey={(record) => record?.id}
                                 dataSource={notificationTemplates}
                                 columns={tableHeaders}
                                 pagination={false}
                             />
-                            <div className="flex-center-middle m-t-20">
-                                <Pagination size="small" 
-                                    pageSize={pageSize}
-                                    current={ntCurrentPageNo} 
-                                    onChange={(pageNum) => { onChangePage(pageNum, constants.templateType.Notification) }} 
-                                    total={ntTotal} showSizeChanger={false} />
+                            <div className="action-bar">
+                                <div className="flex-center-middle m-t-20">
+                                    <Pagination size="small"
+                                        pageSize={pageSize}
+                                        current={ntCurrentPageNo}
+                                        onChange={(pageNum) => { onChangePage(pageNum, constants.templateType.Notification) }}
+                                        total={ntTotal} showSizeChanger={false} />
+                                </div>
                             </div>
                         </TabPane>
-                        <TabPane tab="landing pages templates" key="2">
+                        <TabPane tab={t('LANDING_PG_TEMPLATES')} key="2">
                             <Table
                                 rowKey={(record) => record?.id}
                                 dataSource={landingPageTemplates}
                                 columns={tableHeaders}
                                 pagination={false}
                             />
-                            <div className="flex-center-middle m-t-20">
-                                <Pagination size="small" 
-                                    pageSize={pageSize}
-                                    current={lpCurrentPageNo} 
-                                    onChange={(pageNum) => { onChangePage(pageNum, constants.templateType.LandingPage) }} 
-                                    total={lpTotal} showSizeChanger={false} />
+                            <div className="action-bar">
+                                <div className="flex-center-middle m-t-20">
+                                    <Pagination size="small"
+                                        pageSize={pageSize}
+                                        current={lpCurrentPageNo}
+                                        onChange={(pageNum) => { onChangePage(pageNum, constants.templateType.LandingPage) }}
+                                        total={lpTotal} showSizeChanger={false} />
+                                </div>
                             </div>
                         </TabPane>
-                        <TabPane tab="Business Communication Template" key="3">
+                        <TabPane tab={t('BUSINESS_COM_TEMPLATE')} key="3">
                             <Table
                                 rowKey={(record) => record?.id}
                                 dataSource={communicationTemplates}
@@ -203,12 +211,12 @@ const Templates = () => {
                                 pagination={false}
                             />
                             <div className="action-bar">
-                            <div className="flex-center-middle m-t-20">
-                                <Pagination size="small" 
-                                    pageSize={pageSize}
-                                    current={bdCurrentPageNo} 
-                                    onChange={(pageNum) => { onChangePage(pageNum, constants.templateType.Communication) }} 
-                                    total={bdTotal} showSizeChanger={false} />
+                                <div className="flex-center-middle m-t-20">
+                                    <Pagination size="small"
+                                        pageSize={pageSize}
+                                        current={bdCurrentPageNo}
+                                        onChange={(pageNum) => { onChangePage(pageNum, constants.templateType.Communication) }}
+                                        total={bdTotal} showSizeChanger={false} />
                                 </div>
                             </div>
                         </TabPane>
@@ -216,12 +224,13 @@ const Templates = () => {
                 </div>
 
             </div>
-            <Modal title={"Create New Template"}
+            <Modal title={t('CREATE_NEW_TEMPLATE')}
                 visible={modalVisible}
                 footer={[]}
                 onCancel={toggaleTemplateCreater}
                 width={'95vw'}
-                centered={true}>
+                centered={true}
+                closeIcon={< i className='icon-close close-icon' />}>
                 <div className="g-row">
                     <CreateTemplate closeModal={toggaleTemplateCreater} getSavedTemplates={getSavedTemplates} editTemplate={editTemplate} />
                     {/* <div className="editor-name" /> */}

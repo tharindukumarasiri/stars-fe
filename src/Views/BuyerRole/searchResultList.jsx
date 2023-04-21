@@ -1,7 +1,9 @@
-import React, { useEffect, useState, } from "react";
+import React, { useEffect, useState, useTransition, } from "react";
 import { Table, Pagination } from 'antd';
 import { removeSearch } from "../../services/organizationsService";
 import { searchResultsListTableHeaders } from "../../utils/tableHeaders";
+import { useTranslation } from "react-i18next";
+
 const pageSize = 10
 
 const SearchResultsList = (props) => {
@@ -9,7 +11,8 @@ const SearchResultsList = (props) => {
     const [organizations, setOrganizations] = useState([]);
     const [actPage, setActPage] = useState(1);
     const [pageCount, setPageCount] = useState(0);
-
+    const { t } = useTranslation();
+    
     useEffect(() => {
         setLoading(true);
 
@@ -75,11 +78,11 @@ const SearchResultsList = (props) => {
                     <div></div>
                 </div>
             }
-            <div className="h1">{`Total Companies: ${pageCount}`}</div>
+            <div className="h1">{`${t('TOTAL_COMPANIES')}: ${pageCount}`}</div>
             <Table
                 rowKey={(record) => record?.id}
                 dataSource={organizations}
-                columns={searchResultsListTableHeaders}
+                columns={searchResultsListTableHeaders(t)}
                 pagination={false}
             />
             <div className="flex-center-middle m-t-20">

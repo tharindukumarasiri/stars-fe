@@ -26,7 +26,7 @@ const WhiteLabel = () => {
 
     const closeTab = (tab) => {
         const index = openTabs.indexOf(tab)
-        if (index > -1 && openTabs.length > 1) {
+        if (index > -1 && openTabs.length > 0) {
             const newOpenTabs = Array.from(openTabs)
             newOpenTabs.splice(index, 1)
             setOpenTabs(newOpenTabs)

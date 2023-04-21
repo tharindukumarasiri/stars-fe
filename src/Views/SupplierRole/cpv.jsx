@@ -255,20 +255,20 @@ const Cpv = () => {
             setLoading(false);
             setHaveUnsavedDataRef(false);
             if (result === 'Ok') {
-                message.success('Update successful');
+                message.success(t('UPDATE_SUCCESS'));
             } else {
-                message.error('Update failed please try again');
+                message.error(t('UPDATE_FAIL'));
             }
         }).catch(() => {
             setLoading(false);
-            message.error('Update failed please try again');
+            message.error(t('UPDATE_FAIL'));
         })
     }
 
     const YourCpvData = () => {
         return (
             <>
-                <CriteriaColorGuideTab dataArr={['Division', 'Group', 'Class', 'Category', 'Sub Category']} containerStyle='selected-codes' />
+                <CriteriaColorGuideTab dataArr={['DIVISION', 'GROUP', 'CLASS', 'CATEGORY', 'SUB_CATEGORY']} containerStyle='selected-codes' />
                 <UserSelectedFields data={organizationData.cpvs} dataFeieldName='description' closable={true} onClose={onDelete} />
             </>
         )
@@ -411,13 +411,13 @@ const Cpv = () => {
                 }
                 <div className="g-row">
                     <div className="g-col-5">
-                        <h3 className="text-center">{t("CPV Codes")}</h3>
+                        <h3 className="text-center">{t("CPV_CODES")}</h3>
                         <div className="g-row flex-center-middle m-b-15">
                             <form onSubmit={onSearch} className="search-bar g-col-8 m-r-10">
                                 <i className="search-btn icon-search" onClick={onSearch} ></i>
-                                <input type="text" placeholder={t("Search by Location, Product or Service")} onChange={handleSearch} value={searchText} />
+                                <input type="text" placeholder={t("SEARCH_BY_LOCATION")} onChange={handleSearch} value={searchText} />
                             </form>
-                            <h3 className="g-col-2 hover-hand" onClick={clearSearch} >{t("Clear")}</h3>
+                            <h3 className="g-col-2 hover-hand" onClick={clearSearch} >{t("CLEAR")}</h3>
                             <div className="g-col-2 g-row hover-hand">
                                 <span className="fl g-col-6 m-r-10">English </span>
                                 <span className="fl g-col-3"><img src={gb_flag} className="flag-image fl m-r-5" alt='img' /></span>
@@ -427,38 +427,37 @@ const Cpv = () => {
                         <CPVData />
                     </div>
                     <div className="g-col-5">
-                        <h3 className="text-center">{t("Your selected CPV Codes")}</h3>
+                        <h3 className="text-center">{t("SELECTED_CPV_CODES")}</h3>
                         <YourCpvData />
                     </div>
                     <div className="g-col-2 text-center">
-                        <h3>{t("How to update your CPV Codes?")}</h3>
+                        <h3>{t("HOW_TO_UPDATE_CPV_CODES")}</h3>
                         <div className="flex-center-middle"><img src={directional_sign} alt='img' className="directional-img" /></div>
 
                         <div className="static-content-container">
-                            <div className="body-text-bold  m-t-20">{t("What are CPV Codes?")}</div>
-                            <div className="body-text m-t-20">{t("Common Procurement Vocabulary (CPV) codes are a framework of classification for public procurement that makes use of a standardized vocabulary. With the aid of CPV codes, procurement staff may consistently classify their contract notices and make it simpler for suppliers and contracting authorities to locate notices. The vocabulary is built on a tree structure comprising codes up to 9 digits which is a 8 digit code with a verification digit that are linked to terminology that defines the kind of goods or services that the contract is for.")}</div>
-                            <div className="body-text"><strong>XX</strong>000000-Y : {t("The first two digits for")} <strong>{t("divisions")}</strong></div>
-                            <div className="body-text"><strong>XXX</strong>00000-Y : {t("The first three digits for")} <strong>{t("groups")}</strong></div>
-                            <div className="body-text"><strong>XXXX</strong>0000-Y : {t("The first four digits for")} <strong>{t("classes")}</strong></div>
-                            <div className="body-text"><strong>XXXXX</strong>000-Y : {t("The first five digits for")} <strong>{t("categories")}</strong></div>
-                            <div className="body-text m-b-20">XXXXX<strong>000</strong>-Y : {t("Last three digits for")} <strong>{t("sub categories")}</strong></div>
+                            <div className="body-text-bold  m-t-20">{t("WHAT_ARE_CPV_CODES")}</div>
+                            <div className="body-text m-t-20">{t("CPV_INTRO")}</div>
+                            <div className="body-text"><strong>XX</strong>000000-Y : {t("FIRST_TWO_DIGITS_FOR")} <strong>{t("DIVISION")}</strong></div>
+                            <div className="body-text"><strong>XXX</strong>00000-Y : {t("FIRST_THREE_DIGITS_FOR")} <strong>{t("GROUP")}</strong></div>
+                            <div className="body-text"><strong>XXXX</strong>0000-Y : {t("FIRST_FOUR_DIGITS_FOR")} <strong>{t("CLASS")}</strong></div>
+                            <div className="body-text"><strong>XXXXX</strong>000-Y : {t("FIRST_FIVE_DIGITS_FOR")} <strong>{t("CATEGORY")}</strong></div>
+                            <div className="body-text m-b-20">XXXXX<strong>000</strong>-Y : {t("LAST_THREE_DIGITS_FOR")} <strong>{t("SUB_CATEGORY")}</strong></div>
 
-                            <div className="body-text-bold  m-t-20 ">{t("Why update CPV Codes?")}</div>
-                            <div className="body-text">{t("Your company will be listed on the \"Star Search Engine,\" which is also a global standard.")}
-                                {t(" Benefit from the ability to be notified whenever new tenders are updated in TED & Doffin.")}</div>
+                            <div className="body-text-bold  m-t-20 ">{t("WHY_UPDATE_CPV_CODES")}</div>
+                            <div className="body-text">{t("WHY_UPDATE_CPV_CODES_REASON")}</div>
 
-                            <div className="body-text-bold  m-t-20 ">{t("How to update CPV Codes?")}</div>
-                            <div className="body-text">1. {t("The CPV Codes displays according to the hierarchy in selected language (Default language would be logged in language)")}</div>
-                            <div className="body-text">2. {t("Using \"+,\" make the codes expanded to discover your precise business domain, and \"-,\" make them unfold.")}</div>
-                            <div className="body-text">3. {t("Check all the boxes to choose the codes that apply to your business domain.")}</div>
-                            <div className="body-text">4. {t("You may uncheck/remove the unintended codes.")}</div>
-                            <div className="body-text">5. T{t("to save your work, choose \"Update\". The CPV Codes will be saved in selected Language.(Do a new update if you want to include a different language.)")}</div>
+                            <div className="body-text-bold  m-t-20 ">{t("HOW_TO_UPDATE_CPV_CODES")}</div>
+                            <div className="body-text">1. {t("HOW_TO_UPDATE_CPV_CODES_R1")}</div>
+                            <div className="body-text">2. {t("HOW_TO_UPDATE_CPV_CODES_R2")}</div>
+                            <div className="body-text">3. {t("HOW_TO_UPDATE_CPV_CODES_R3")}</div>
+                            <div className="body-text">4. {t("HOW_TO_UPDATE_CPV_CODES_R4")}</div>
+                            <div className="body-text">5. {t("HOW_TO_UPDATE_CPV_CODES_R5")}</div>
                         </div>
                     </div>
                 </div>
 
             </div>
-            <button className="primary-btn update-btn" onClick={onUpdate} >{t("Update")}</button>
+            <button className="primary-btn update-btn" onClick={onUpdate} >{t("UPDATE")}</button>
         </ div>
     )
 }

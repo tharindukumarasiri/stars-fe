@@ -55,8 +55,8 @@
 .search-btn {
     position: absolute;
     right: 4px;
-    padding-top: 6px;
-    font-size: 2em;
+    padding-top: 4px;
+    font-size: 1.5em;
     cursor: pointer;
     transition: all 1s;
     color: $blue-color;
@@ -90,9 +90,7 @@
 }
 
 .save-button {
-    position: absolute;
-    right: 20px;
-    bottom: 50px;
+    right: 10px;
 }
 
 .remove-button {
@@ -113,9 +111,9 @@
     bottom: 20px;
 }
 
-.search-result-pagination-container {
-    position: absolute;
-    bottom: 20px;
+.buyer-search-result-pagination-container {
+    margin-top: 10px;
+    margin-left: 15vw;
 }
 
 // End Search Page Styles ---*>
@@ -158,13 +156,7 @@
 }
 
 .section-search-results-container {
-    overflow-y: scroll;
-    position: absolute;
-    top: 330px;
-    background-color: $white;
-    // display: grid;
-    height: calc(78% - 240px);
-    width: 47%;
+
 }
 
 .selectAll-checkbox {
@@ -182,6 +174,11 @@
 
 .table-separate {
     border-bottom: 0.5px solid $blue-color;
+}
+
+.buyer-search-crieteria-container {
+    max-height: 80vh;
+    overflow: scroll;
 }
 
 // End Projects Page Styles ---*>

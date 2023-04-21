@@ -1,5 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { message } from "antd";
+import { useTranslation } from "react-i18next";
+import Editor from "react-simple-wysiwyg";
 
 import Input from "../../../common/input";
 import Dropdown from "../../../common/dropdown";
@@ -8,7 +10,8 @@ import { GetCommunicationTemplatesByTenant } from "../../../services/templateSer
 import { sendImmediately } from "../../../services/communicationService";
 import { FetchCurrentCompany, FetchCurrentUser } from "../../../hooks/index";
 import CompaniesAndPersonsNoBasket from "./companiesAndPersonsNoBasket";
-import Editor from "react-simple-wysiwyg";
+import { NAVIGATION_PAGES } from '../../../utils/enums';
+import { TabContext } from "../../../utils/contextStore";
 
 const NewCommunication = (props) => {
     const [currentStep, setCurrentStep] = useState(1);
@@ -20,8 +23,11 @@ const NewCommunication = (props) => {
     const [loading, setLoading] = useState(true);
     const [selectedRecipients, setSelectedRecipients] = useState([]);
 
+    const { changeActiveTab, closeTab } = useContext(TabContext);
+
     const [selectedCompany] = FetchCurrentCompany();
     const [currentUser] = FetchCurrentUser();
+    const { t } = useTranslation();
 
     const getSavedTemplates = () => {
         setLoading(true);
@@ -62,17 +68,16 @@ const NewCommunication = (props) => {
         let validation = true;
         if (currentStep === 1) {
             if (template && !selectedTemplate) {
-                message.error("Please select a message template");
                 validation = false;
             }
             if (!templateSubject) {
-                message.error("Please enter a message subject");
                 validation = false;
             }
             if (!template && !plainText) {
-                message.error("Please enter the message text");
                 validation = false;
             }
+        } else if(currentStep === 2 && selectedRecipients?.length === 0 && !props.showOnlyDefaultRecievers) {
+            validation = false;
         }
 
         return validation;
@@ -92,7 +97,7 @@ const NewCommunication = (props) => {
                     <div className="m-l-15">
                         <div className="body-text-bold">{recipient.Name}</div>
                     </div>
-                    <i className="icon-close-1 user-card-close-icon hover-hand" onClick={() => {removeFunction(recipient)}} />
+                    <i className="icon-close-1 user-card-close-icon hover-hand" onClick={() => { removeFunction(recipient) }} />
                 </div>
 
                 <div className="m-t-20">
@@ -118,7 +123,7 @@ const NewCommunication = (props) => {
         newlyAddedRecipients.forEach((r) => {
             let email = r.Email;
             let index = selectedRecipients.findIndex(r => r.Email === email);
-            if(index > -1){
+            if (index > -1) {
                 let foundAt = clone.findIndex(r => r.Email === email);
                 clone.splice(foundAt, 1);
             }
@@ -129,7 +134,7 @@ const NewCommunication = (props) => {
     const removeFromRecipients = (item) => {
         let newSet = [...selectedRecipients];
         let index = selectedRecipients.findIndex(r => r.Email === item.Email)
-        if(index > -1)
+        if (index > -1)
             newSet.splice(index, 1)
         setSelectedRecipients(newSet);
     }
@@ -137,9 +142,18 @@ const NewCommunication = (props) => {
     const removeFromDefaultRecipients = (item) => {
         let newSet = [...props.defaultRecievers];
         let index = props.defaultRecievers.findIndex(r => r.Email === item.Email)
-        if(index > -1)
+        if (index > -1)
             newSet.splice(index, 1)
         props.updateDefaultRecievers(newSet);
+    }
+
+    const onCloseTab = () => {
+        closeTab(NAVIGATION_PAGES.NEW_COMMUNICATION)
+        if(props.showOnlyDefaultRecievers){
+            changeActiveTab(NAVIGATION_PAGES.ALL_USERS);
+        } else {
+            changeActiveTab(NAVIGATION_PAGES.COMMUNICATIONS);
+        }
     }
 
     const sendNotifications = () => {
@@ -152,7 +166,7 @@ const NewCommunication = (props) => {
             MessageSubject: templateSubject,
             MessageBody: plainText
         };
-       
+
         let companiesAndPersons = selectedRecipients.map(r => {
             return {
                 CompanyPartyTId: r.CompanyPartyTId ? r.CompanyPartyTId : null,
@@ -169,23 +183,23 @@ const NewCommunication = (props) => {
                 CompanyPartyTId: null,
                 PersonPartyTId: null,
                 UserPartyId: u.UserPartyId,
-                Name: `${u.FirstName} ${u.LastName}` ,
+                Name: `${u.FirstName} ${u.LastName}`,
                 Email: u.Email,
                 IsReceiver: true
             }
-        }) : [];        
+        }) : [];
         dto.BasketReceivers = [...companiesAndPersons, ...users];
-        if(dto.BasketReceivers.length === 0){
-            message.error("No recipients selected!")
+        if (dto.BasketReceivers.length === 0) {
+            message.error(t("NO_RECIPIENTS_ERROR"))
             return;
         }
         setLoading(true)
         sendImmediately(dto).then(() => {
-            message.info("Messages sent to the selected recipients")
-            props.closeTab();
-        }).catch((ex) => { 
-            setLoading(false); 
-            message.error("Message sending failed!")
+            message.info(t('MESSAGE_SENT_RECIPIENTS'))
+            onCloseTab();
+        }).catch((ex) => {
+            setLoading(false);
+            message.error(t('MESSAGE_SEND_FAIL_ERROR'))
         }).finally(() => setLoading(false))
     }
 
@@ -195,9 +209,9 @@ const NewCommunication = (props) => {
                 return (
                     <div className="new-com-sub-container">
                         <div className="m-t-20 m-b-20">
-                            <input type="radio" id="Email" name="Email" checked={true} onChange={() => {}} />{" "}
+                            <input type="radio" id="Email" name="Email" checked={true} onChange={() => { }} />{" "}
                             <label className="p-r-20 p-l-20 m-r-20" htmlFor="Email">
-                                Email
+                                {t('EMAIL')}
                             </label>
                             <input type="radio" id="SMS" name="SMS" disabled />{" "}
                             <label className="p-r-20 p-l-20 m-r-20 btn-disabled" htmlFor="SMS">
@@ -205,17 +219,17 @@ const NewCommunication = (props) => {
                             </label>
                             <input type="radio" id="Notification" name="Notification" disabled />{" "}
                             <label className="p-l-20 btn-disabled" htmlFor="Notification">
-                                Push Notification
+                                {t('PUSH_NOTIFICATION')}
                             </label>
                         </div>
                         <div className="m-t-20 m-b-20">
                             <input type="radio" id="Template" name="Template" checked={template} onChange={onTemplateTypeChange} />{" "}
                             <label className="p-r-20 p-l-20 m-r-20" htmlFor="Template">
-                                Template
+                                {t('TEMPLATE')}
                             </label>
                             <input type="radio" id="PlainHtml" name="PlainHtml" checked={!template} onChange={onTemplateTypeChange} />{" "}
                             <label className="p-l-20" htmlFor="PlainHtml">
-                                Plain (basic html)
+                                {t('PLAIN_HTML')}
                             </label>
                         </div>
                         {template && (
@@ -224,29 +238,28 @@ const NewCommunication = (props) => {
                                     values={templateList}
                                     onChange={onSelect}
                                     selected={JSON.stringify(selectedTemplate || undefined)}
-                                    placeholder="Template"
+                                    placeholder="TEMPLATE"
                                     dataName="DisplayName"
                                 />
                             </div>
                         )}
                         <div className="com-search-input-container m-t-20">
                             <div className="new-com-input-container">
-                                <Input placeholder="Subject" value={templateSubject} onChange={onSearchTemplateSubject} />
+                                <Input placeholder="SUBJECT" value={templateSubject} onChange={onSearchTemplateSubject} />
                             </div>
                         </div>
 
                         {!template && (
-                            <div className="com-search-input-container m-t-20">
-                                <div className="new-com-input-container">
-                                    <Editor
-                                        placeholder="Message body..."
+                            <div className="new-com-input-container m-t-20">
+                                <Editor                                        
+                                        placeholder={`${t('MESSAGE_BODY')}...`}
                                         value={plainText}
                                         onChange={(e) => {
                                             setPlainText(e.target.value);
                                         }}
                                     />
-                                    {/* <TextArea placeholder="Message body..." value={plainText} onChange={(e) => {setPlainText(e.target.value)}} /> */}
-                                </div>
+                               
+                                {/* <TextArea placeholder="Message body..." value={plainText} onChange={(e) => {setPlainText(e.target.value)}} /> */}
                             </div>
                         )}
                     </div>
@@ -255,6 +268,7 @@ const NewCommunication = (props) => {
                 return (
                     <div className="new-com-sub-container">
                         <CompaniesAndPersonsNoBasket
+                            selectedTemplate={selectedTemplate}
                             defaultRecievers={props.defaultRecievers}
                             showOnlyDefaultRecievers={props.showOnlyDefaultRecievers}
                             updateRecipients={updateRecipients}
@@ -264,7 +278,7 @@ const NewCommunication = (props) => {
             case 3:
                 return (
                     <div className="new-com-sub-container">
-                        <div className="g-row">
+                        <div className="g-row p-b-20 m-b-20">
                             <div className="g-col-6">
                                 <div className="g-row">
                                     {selectedRecipients.map((r) => {
@@ -297,22 +311,22 @@ const NewCommunication = (props) => {
                 </div>
             )}
             <div className="user-top-container">
-                {currentStep === 2 && (
+                {(currentStep === 2 || currentStep === 3) && (
                     <>
                         <div className="m-r-20 p-r-20">
-                            <div className="m-l-20">Message ID</div>
+                            <div className="m-l-20">{t('MESSAGE_ID')}</div>
                             <div className="body-text-bold m-l-20"></div>
                         </div>
                         <div className="m-r-20 p-r-20">
-                            <div className="m-l-20">Subject</div>
+                            <div className="m-l-20">{t('SUBJECT')}</div>
                             <div className="body-text-bold m-l-20">{templateSubject}</div>
                         </div>
                         <div className="m-r-20 p-r-20">
-                            <div className="m-l-20">Message Method</div>
-                            <div className="body-text-bold m-l-20">Email</div>
+                            <div className="m-l-20">{t('MESSAGE_METHOD')}</div>
+                            <div className="body-text-bold m-l-20">{t('EMAIL')}</div>
                         </div>
                         <div className="m-r-20 p-r-20">
-                            <div className="m-l-20 disable-div">Attachments</div>
+                            <div className="m-l-20 disable-div">{t('ATTACHMENTS')}</div>
                         </div>
                     </>
                 )}
@@ -322,36 +336,35 @@ const NewCommunication = (props) => {
                 <div className="step-main-container">
                     <div
                         className={currentStep !== 1 ? "step-container m-b-20 disable-step" : "step-container m-b-20 "}
-                        onClick={() => setCurrentStep(1)}
                     >
                         <div className="step-numb-container">01</div>
-                        <h3 className="m-t-10">General Info.</h3>
+                        <h3 className="m-t-10">{t('GENERAL_INFO')}.</h3>
                     </div>
                     <div
                         className={currentStep !== 2 ? "step-container m-b-20 disable-step" : "step-container m-b-20 "}
-                        onClick={() => setCurrentStep(2)}
                     >
                         <div className="step-numb-container">02</div>
-                        <h3 className="m-t-10">Receivers</h3>
+                        <h3 className="m-t-10">{t('RECEIVERS')}</h3>
                     </div>
                     <div
                         className={currentStep !== 3 ? "step-container m-b-20 disable-step" : "step-container m-b-20 "}
-                        onClick={() => setCurrentStep(3)}
                     >
                         <div className="step-numb-container">03</div>
-                        <h3 className="m-t-10">Preview</h3>
+                        <h3 className="m-t-10">{t('PREVIEW')}</h3>
                     </div>
                 </div>
                 {getStepContent()}
                 {currentStep === 3 ? (
-                    <div className="next-btn-container">
-                        <button className="secondary-btn m-r-20" onClick={() => { props.closeTab()}}>Cancel</button>
-                        <button className="primary-btn m-l-10" onClick={() => { sendNotifications()}}>Send</button>
+                    <div className="action-bar p-t-10 p-r-10">
+                        <button className="secondary-btn" onClick={onCloseTab}>{t('CANCEL')}</button>
+                        {(selectedRecipients?.length > 0 || props?.showOnlyDefaultRecievers)  &&
+                            <button className="primary-btn m-r-10" onClick={() => { sendNotifications() }}>{t('SEND')}</button>
+                        }
                     </div>
                 ) : (
-                    <div className="next-btn-container">
-                        <button className="primary-btn" onClick={onNextBtnClicked}>
-                            Next
+                    <div className="action-bar p-t-10 p-r-10">
+                        <button className={`primary-btn  ${!validate() && 'disable-div'}`} onClick={onNextBtnClicked}>
+                            {t('NEXT')}
                         </button>
                     </div>
                 )}

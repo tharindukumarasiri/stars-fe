@@ -5,6 +5,7 @@ import { FilePdfTwoTone, CopyTwoTone, ShareAltOutlined } from '@ant-design/icons
 import { getTendersByNoticeNumber } from "../../services/organizationsService";
 import { FetchCurrentLanguage } from "../../hooks";
 import { FacebookShareButton, FacebookIcon, EmailShareButton, EmailIcon, TwitterShareButton, TwitterIcon, LinkedinShareButton, LinkedinIcon } from "react-share";
+import { useTranslation } from "react-i18next";
 
 const { TabPane } = Tabs;
 
@@ -15,6 +16,7 @@ const TenderDetails = (props) => {
     const [allLanguages, setAllLanguages] = useState([]);
     const [loading, setLoading] = useState(true);
     const [modalVisible, setModalVisible] = useState(false);
+    const {t} = useTranslation();
 
     const currentLanguage = FetchCurrentLanguage();
 
@@ -61,7 +63,7 @@ const TenderDetails = (props) => {
                 }
                 {currentLanguage !== selectedLanguage &&
                     <div className="notification-box flex-center-middle">
-                        <div className="white">This Notice is not available in your “Default” Language.Please select options below.</div>
+                        <div className="white">{t('TENDER_WARNING')}</div>
                     </div>
                 }
 
@@ -69,26 +71,26 @@ const TenderDetails = (props) => {
                     <Dropdown values={allLanguages}
                         onChange={onLanguageSelect}
                         selected={selectedLanguage}
-                        placeholder="Available Language/s"
+                        placeholder={t('AVAILABLE_LANGUAGES')}
                     />
                 </div>
-                <TextRow label="Description" value={tenderDetails?.buyerDescription} />
-                <TextRow label="Main CPV code" value={tenderDetails?.mainCPVCode} />
-                <TextRow label="Email" value={tenderDetails?.buyerDetails?.email} />
-                <TextRow label="State" value={tenderDetails?.noticeStatus} />
-                <h3 className="fl m-t-20 p-t-20">Buyer Details</h3>
-                <TextRow label="Company Name" value={tenderDetails?.buyerDetails?.name} />
-                <TextRow label="Organisarion ID" />
-                <TextRow label="Location" value={tenderDetails?.buyerDetails?.postalAddress} />
-                <TextRow label="Date" value={""} />
+                <TextRow label={t('DESCRIPTION')} value={tenderDetails?.buyerDescription} />
+                <TextRow label={t('MAIN_CPV_CODE')} value={tenderDetails?.mainCPVCode} />
+                <TextRow label={t("EMAIL")} value={tenderDetails?.buyerDetails?.email} />
+                <TextRow label={t('STAUS')} value={tenderDetails?.noticeStatus} />
+                <h3 className="fl m-t-20 p-t-20">{t('BUYER_DETAILS')}</h3>
+                <TextRow label={t('COMPANY_NAME')} value={tenderDetails?.buyerDetails?.name} />
+                <TextRow label={t('ORGANIZATION_ID')} />
+                <TextRow label={t('LOCATION')} value={tenderDetails?.buyerDetails?.postalAddress} />
+                <TextRow label={t('DATE')} value={""} />
                 <a className="fl m-t-20 p-t-20" href={downloadLink()} download >
-                    <div><FilePdfTwoTone className="m-r-5" />Download original Pdf</div>
+                    <div><FilePdfTwoTone className="m-r-5" />{t('DOWNLOAD_ORIGINAL_PDF')}</div>
                 </a>
                 <div className="fl m-t-20 p-t-20 m-l-20 hover-hand" onClick={() => { navigator.clipboard.writeText(downloadLink()) }} >
-                    <div><CopyTwoTone className="m-r-5" />Copy Download Link</div>
+                    <div><CopyTwoTone className="m-r-5" />{t('COPY_DOWNLOAD_LINK')}</div>
                 </div>
                 <div className="fl m-t-20 p-t-20 m-l-20 hover-hand" onClick={toggelModal} >
-                    <div className="share-btn"><ShareAltOutlined className="m-r-5" />Share</div>
+                    <div className="share-btn"><ShareAltOutlined className="m-r-5" />{t('SHARE')}</div>
                 </div>
             </>
         )
@@ -99,21 +101,21 @@ const TenderDetails = (props) => {
             <>
                 {
                     !(tenderDetails?.doffinExpreeofintUrl || tenderDetails?.attachDocument || tenderDetails?.attachParticipant) &&
-                    <div>No Attachments</div>
+                    <div>{t('NO_ATTACHMENTS')}</div>
                 }
                 {tenderDetails?.doffinExpreeofintUrl &&
                     <a className="fl m-t-20 p-t-20" href={tenderDetails?.doffinExpreeofintUrl} download >
-                        <div><FilePdfTwoTone className="m-r-5" />Doffin Expree of int</div>
+                        <div><FilePdfTwoTone className="m-r-5" />{t('DOFFIN_EXPRESSION')}</div>
                     </a>
                 }
                 {tenderDetails?.attachDocument &&
                     <a className="fl m-t-20 p-t-20" href={tenderDetails.attachDocument} download >
-                        <div><FilePdfTwoTone className="m-r-5" />Attach Document</div>
+                        <div><FilePdfTwoTone className="m-r-5" />{t('ATTACH_DOCUMENT')}</div>
                     </a>
                 }
                 {tenderDetails?.attachParticipant &&
                     <a className="fl m-t-20 p-t-20" href={tenderDetails?.attachParticipant} download >
-                        <div><FilePdfTwoTone className="m-r-5" />Attach Participant</div>
+                        <div><FilePdfTwoTone className="m-r-5" />{t('ATTACH_PARTICIPANT')}</div>
                     </a>
                 }
             </>
@@ -123,13 +125,13 @@ const TenderDetails = (props) => {
     return (
         <>
             <div className="g-row m-l-20 m-b-20 m-t-10">
-                <TextColumn label={'Document Number'} value={tenderDetails?.noticeNumber} containerStyle="g-col-2" />
-                <TextColumn label={'NUTS Code'} value={tenderDetails?.buyerDetails?.nutsCode} />
-                <TextColumn label={'Location'} value={tenderDetails?.buyerDetails?.country} />
-                <TextColumn label={'published Date'} value={tenderDetails?.publicationDate} containerStyle="g-col-2" />
-                <TextColumn label={'Deadline'} value={tenderDetails?.deletionDate} containerStyle="g-col-2" />
-                <TextColumn label={'Contact Person'} value={tenderDetails?.buyerDetails?.contactPerson} />
-                <TextColumn label={'Original Language'} value={tenderDetails?.originalLanguage} containerStyle="g-col-2 fr m-l-20" />
+                <TextColumn label={t('DOCUMENT_NUMBER')} value={tenderDetails?.noticeNumber} containerStyle="g-col-2" />
+                <TextColumn label={t('NUTS_CODE')} value={tenderDetails?.buyerDetails?.nutsCode} />
+                <TextColumn label={t('LOCATION')} value={tenderDetails?.buyerDetails?.country} />
+                <TextColumn label={t('PUBLISHED_DATE')} value={tenderDetails?.publicationDate} containerStyle="g-col-2" />
+                <TextColumn label={t('DEADLINE')} value={tenderDetails?.deletionDate} containerStyle="g-col-2" />
+                <TextColumn label={t('CONTACT_PERSON')} value={tenderDetails?.buyerDetails?.contactPerson} />
+                <TextColumn label={t('ORIGINAL_LANGUAGE')} value={tenderDetails?.originalLanguage} containerStyle="g-col-2 fr m-l-20" />
             </div>
             <div className="page-container">
                 <div className="custom-tab-container">
@@ -144,18 +146,19 @@ const TenderDetails = (props) => {
                 </div>
             </div>
             <Modal
-                title={'Share'}
+                title={t('SHARE')}
                 visible={modalVisible}
                 centered={true}
                 footer={null}
                 onCancel={toggelModal}
                 width={380}
+                closeIcon={< i className='icon-close close-icon'/>}
             >
                 <div className="m-b-20 p-b-10 m-l-20 p-l-20">
                     <EmailShareButton children={
                         <div className="flex-center-middle m-r-20 p-r-20">
                             <EmailIcon size={32} />
-                            <div className="m-l-10">E-mail</div>
+                            <div className="m-l-10">{t('EMAIL')}</div>
                         </div>}
                         url={downloadLink()}
                     />

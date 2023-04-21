@@ -25,8 +25,8 @@ export default function Tab(props) {
 
   return (
     <div className={className} onClick={onClick}>
-      <i className="icon-close-small-x" onClick={onCloseBtnClick} > </i>
       {props.label}
+          <i className="icon-x-bold m-l-5" onClick={onCloseBtnClick} > </i>
     </div>
   );
 }

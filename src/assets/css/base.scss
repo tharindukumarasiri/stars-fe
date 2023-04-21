@@ -261,8 +261,8 @@ ul.custom-button-list {
     pointer-events: none;
     position: absolute;
     text-overflow: ellipsis;
-    top: 2px;
-    left: 2px;
+    top: 0;
+    left: -2px;
     text-align: left;
     transform: translateY(3px);
     transition: all .2s ease-out;
@@ -526,7 +526,7 @@ ul.custom-button-list {
 }
 
 .action-bar {
-    background-color: $theme-light-grey;
+    background-color: $theme-tint-95;
     position: fixed;
     left: 0;
     right: 0;
@@ -563,4 +563,18 @@ ul.custom-button-list {
     h4, h5 {
         color: $green-dark1
     }
+}
+
+.icon-x-bold {
+    font-size: 11px;
+}
+
+.searh-result-header {
+    display: grid;
+    border-bottom: 2px solid $theme-tint-95
+}
+.landing-page-container {
+    display: block;
+    position: relative;
+    padding: 30px
 }

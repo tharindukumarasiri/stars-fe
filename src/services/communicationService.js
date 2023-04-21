@@ -32,8 +32,8 @@ export async function getCommunicationEntities() {
     return data;
 }
 
-export async function getCommunicationEntitiesWithRoles() {
-    const { data } = await http.get(config.GET_COMMUNICATION_ENTITIES_WITH_ROLES);
+export async function getCommunicationEntitiesWithRoles(companyPartyId) {
+    const { data } = await http.get(`${config.GET_COMMUNICATION_ENTITIES_WITH_ROLES}${companyPartyId}`);
     return data;
 }
 
@@ -77,8 +77,8 @@ export async function deleteCommunicationBasket(params) {
     return data;
 }
 
-export async function getCompanies(basketId = '', companyPartyId, searchText = '' ) {
-    const { data } = await http.get(`${config.GET_COMPANIES}${companyPartyId}&communicationBasketId=${basketId}&searchText=${searchText}`);
+export async function getCompanies(basketId = '', companyPartyId, searchText = '', messageTemplateId = '' ) {
+    const { data } = await http.get(`${config.GET_COMPANIES}${companyPartyId}&communicationBasketId=${basketId}&searchText=${searchText}&messageTemplateId=${messageTemplateId}`);
     return data;
 }
 
@@ -97,8 +97,8 @@ export async function updateCompany(params) {
     return data;
 }
 
-export async function getPersons(companyPartyId, communicationBasketId = '', searchText = '', pageNumber = 0, pageSize = 10 ) {
-    const { data } = await http.get(`${config.GET_PERSONS}${companyPartyId}&communicationBasketId=${communicationBasketId}`);
+export async function getPersons(companyPartyId, communicationBasketId = '', messageTemplateId = '', searchText = '', pageNumber = 0, pageSize = 10 ) {
+    const { data } = await http.get(`${config.GET_PERSONS}${companyPartyId}&communicationBasketId=${communicationBasketId}&messageTemplateId=${messageTemplateId}`);
     return data;
 }
 

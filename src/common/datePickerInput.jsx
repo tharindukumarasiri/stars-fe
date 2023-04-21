@@ -18,9 +18,9 @@ const DatePickerInput = ({
 } = {}) => {
     const { t } = useTranslation();
 
-    const years = (startYear) => {
+    const years = () => {
         var currentYear = new Date().getFullYear() + 5, years = [];
-        startYear = startYear || 1980;
+        let startYear = minDate ? minDate?.getFullYear() : 1980;
         while (startYear <= currentYear) {
             years.push(startYear++);
         }
@@ -45,9 +45,9 @@ const DatePickerInput = ({
     const date = formatDate(value) === "01/01/0001" ? "" : value
     const InputView = forwardRef(({ value, onClick, placeholder }, ref) => (
         <div className="datapicker-input m-b-10" style={error ? { borderColor: 'red' } : {}} onClick={onClick} ref={ref}>
-            <div className={value ? "input-hint-text-visible" : "input-hint-text-hidden"}>{placeholder}</div>
+            <div className={value ? "input-hint-text-visible" : "input-hint-text-hidden"}>{t(placeholder)}</div>
             <div >
-                {value ? value : placeholder}
+                {value ? value : t(placeholder)}
                 {!value && <i className="icon-calander datapicker-icon" />}
             </div>
         </div>

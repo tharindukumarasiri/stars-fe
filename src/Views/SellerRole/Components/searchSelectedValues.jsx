@@ -24,7 +24,7 @@ const SearchSelectedValues = ({ selectedValues, setSelectedValues, selectedRows,
                         <div className="body-text-bold fl m-r-10">{value.code}</div>
                         {value.value}
                     </div>
-                    <i className="icon-close-small-x hover-hand m-r-5" onClick={() => onClose(value.code)} > </i>
+                    <i className=" icon-x-bold hover-hand m-r-5" onClick={() => onClose(value.code)} > </i>
                 </div>
             )
         } else if (Array.isArray(value) && value.length > 0) {
@@ -41,7 +41,7 @@ const SearchSelectedValues = ({ selectedValues, setSelectedValues, selectedRows,
                                             <div className="body-text-bold fl m-r-10">{val.code}</div>
                                             {val.value}
                                         </div>
-                                        <i className="icon-close-small-x hover-hand m-r-5" onClick={() => onClose(val.code)} > </i>
+                                        <i className=" icon-x-bold hover-hand m-r-5" onClick={() => onClose(val.code)} > </i>
                                     </div>
                                 )
 

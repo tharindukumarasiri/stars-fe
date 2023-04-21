@@ -10,6 +10,7 @@ import TenderDetails from './tenderDetails';
 import GlobalTenderSearch from './globalTenderSearch';
 import { Button, notification } from 'antd';
 import { FetchCurrentCompany } from "../../hooks/index";
+import { useTranslation } from "react-i18next";
 
 const SellerRole = () => {
     const [activeTab, setActiveTab] = useState(NAVIGATION_PAGES.SELLER_HOME);
@@ -18,6 +19,7 @@ const SellerRole = () => {
     const haveUnsavedDataRef = useRef(false);
     const shouldBeClosed = useRef({ state: false, tab: '' });
     const [selectedCompany] = FetchCurrentCompany();
+    const { t } = useTranslation();
 
     const changeActiveTab = (tab, params = null) => {
         const openNotification = (placement = 'top') => {
@@ -39,13 +41,13 @@ const SellerRole = () => {
                     }
                     setActiveTab(tab);
                 }}>
-                    Leave
+                    {t('LEAVE')}
                 </Button>
             );
             const args = {
-                message: 'Leave page?',
+                message: t('LEAVE_PAGE'),
                 description:
-                    'Changes that you made may not be saved.',
+                    t('CHANGES_MADE_NOT_SAVED'),
                 duration: 0,
                 placement,
                 btn,
@@ -73,7 +75,7 @@ const SellerRole = () => {
         const index = openTabs.indexOf(tab);
         if (haveUnsavedDataRef.current) {
             shouldBeClosed.current = { state: true, tab };
-        } else if (index > -1 && openTabs.length > 1) {
+        } else if (index > -1 && openTabs.length > 0) {
             const newOpenTabs = Array.from(openTabs)
             newOpenTabs.splice(index, 1)
             setOpenTabs(newOpenTabs)
@@ -95,25 +97,25 @@ const SellerRole = () => {
                 setHaveUnsavedDataRef,
             }}>
             <Tabs>
-                <div label={"SELLER"} id={NAVIGATION_PAGES.SELLER_HOME} >
+                <div label={t('SELLER')} id={NAVIGATION_PAGES.SELLER_HOME} >
                     <div className="page-container">
                         <SellerHome />
                     </div>
                 </div>
-                <div label={"GET NOTIFIED"} id={NAVIGATION_PAGES.SELLER_GET_NOTIFIED}>
+                <div label={t('GET_NOTIFIED')} id={NAVIGATION_PAGES.SELLER_GET_NOTIFIED}>
                     <div className="page-container">
                         <GetNotified />
                     </div>
                 </div>
-                <div label={"MATCHING TENDERS"} id={NAVIGATION_PAGES.SELLER_MATCHING_TENDERS}>
+                <div label={t('MATCHING_TENDERS')} id={NAVIGATION_PAGES.SELLER_MATCHING_TENDERS}>
                     <div className="page-container">
                         <MatchingTenders />
                     </div>
                 </div>
-                <div label={"GLOBAL TENDER"} id={NAVIGATION_PAGES.SELLER_GLOBAL_TENDER}>
+                <div label={t('GLOBAL_TENDER')} id={NAVIGATION_PAGES.SELLER_GLOBAL_TENDER}>
                     <GlobalTenderSearch />
                 </div>
-                <div label={`MATCHING TENDERS : ${params.SELLER_TENDER_DETAILS?.receiptionId}`} id={NAVIGATION_PAGES.SELLER_TENDER_DETAILS}>
+                <div label={`${t('MATCHING_TENDERS')} : ${params.SELLER_TENDER_DETAILS?.receiptionId}`} id={NAVIGATION_PAGES.SELLER_TENDER_DETAILS}>
                     <div className="page-container">
                         <TenderDetails {...params.SELLER_TENDER_DETAILS} />
                     </div>

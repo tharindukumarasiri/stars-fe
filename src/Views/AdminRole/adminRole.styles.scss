@@ -19,16 +19,7 @@
     margin-bottom: 6px;
 }
 
-.add-btn {
-    background-color: $light-dark-blue;
-    border-color: transparent;
-    color: $white;
-    cursor: pointer;
 
-    &:hover {
-        background-color: $dark-blue;
-    }
-}
 
 .search-input-container {
     /*margin-left: 11px; */
@@ -45,7 +36,7 @@
 }
 
 .user-input-box {
-
+    /*
     input[type="time"],
     input[type="text"] {
         border: 1px solid #999999;
@@ -57,7 +48,7 @@
 
     .dropdown-list {
         border: 1px solid #999999;
-    }
+    }*/
 
     .ant-select:not(.ant-select-customize-input) .ant-select-selector {
         border: 1px solid #999999;
@@ -97,6 +88,11 @@
     bottom: 8px;
 }
 
+.actions-btn-on-top {
+    position: absolute;
+    right: 10px;
+}
+
 .select-actions-btn {
     position: absolute;
     right: 50px;
@@ -110,7 +106,7 @@
 
 .user-details-main-container {
     background-color: $white;
-    margin: 60px;
+    margin: 15px;
     display: flex;
     flex-direction: row;
     min-height: 75vh;
@@ -151,7 +147,7 @@
     display: flex;
     justify-content: center;
     margin-bottom: 33px;
-    margin-top: 50px;
+    margin-top: 0;
 }
 
 .upload-image-btn {
@@ -235,7 +231,7 @@
 }
 
 .sub-table-padding {
-    margin-left: 480px;
+    margin-left: 50vw;
 }
 
 .user-details-pannerl-container {
@@ -367,6 +363,7 @@
     flex-direction: column;
     margin-top: 10px;
     align-items: center;
+    overflow: scroll;
 }
 
 .step-numb-container {
@@ -486,7 +483,7 @@
 }
 
 .user-card-container {
-    width: 400px;
+    width: 100%;
     height: 180px;
     display: flex;
     flex-direction: column;
@@ -540,4 +537,14 @@
 .role-select-row {
     display: flex;
     margin-bottom: 10px;
+}
+
+.default-recivers-content {
+    height: 80vh;
+}
+
+.expandable-table-btn {
+    button, .button, input[type=button] {
+        padding: 0 !important;
+    }
 }

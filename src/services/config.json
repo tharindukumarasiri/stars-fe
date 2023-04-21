@@ -57,6 +57,7 @@
     "DEACTIVATE_USERS": "actionapi/Users/Deactivate",
     "ACTIVATE_ROLES_USER": "actionapi/UserRoles/Activate",
     "DEACTIVATE_ROLES_USER": "actionapi/UserRoles/Deactivate",
+    "DELETE_USER": "actionapi/Users/Delete",
 
     "GET_ALL_TENDERS": "getAllTenders?language=",
     "GET_TENDERS": "getTenders/",
@@ -83,7 +84,7 @@
     "GET_COMMUNICATION_LOGS_BY_BASKET": "/actionapi/MessageQueues/GetCommunicationLogsByBasket",
     "DELETE_COMMUNICATION_LOGS": "/actionapi/MessageQueues/DeleteCommunications",
     "GET_COMMUNICATION_ENTITIES": "/actionapi/Entities/Get",
-    "GET_COMMUNICATION_ENTITIES_WITH_ROLES": "/actionapi/Entities/GetEntities",
+    "GET_COMMUNICATION_ENTITIES_WITH_ROLES": "/actionapi/Entities/GetEntities?companyPartyId=",
     "GET_COMMUNICATION_MESSAGE_TYPES": "/actionapi/MessageTypes/Get",
     "GET_COMMUNICATIONS_MESSAGE_STATUSES": "/actionapi/MessageStatuses/Get",
     "GET_COMMUNICATION_BASKET": "/actionapi/CommunicationBaskets/GetCommunicationBaskets",

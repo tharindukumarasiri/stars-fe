@@ -6,7 +6,7 @@ import Dropdown from "../../common/dropdown";
 import DatePickerInput from "../../common/datePickerInput";
 import Input from '../../common/input'
 import { getCommunicationLogs, getCommunicationLogsByBasket, getCommunicationEntities, getCommunicationMessageTypes, getCommunicationMessageStatuses, getCommunicationLogsSubLvl } from "../../services/communicationService";
-
+import { useTranslation } from "react-i18next";
 const pageSize = 10;
 
 const CommunicationsLog = ({ props }) => {
@@ -15,22 +15,23 @@ const CommunicationsLog = ({ props }) => {
     const [searchText, setSearchText] = useState('');
     const [communicationsData, setCommunicationsData] = useState([])
     const [communicationsDataExpanded, setCommunicationsDataExpanded] = useState([]);
-    const [pageNumber, setPageNumber] = useState(0);
+    const [pageNumber, setPageNumber] = useState(1);
     const [totalResults, setTotalResults] = useState(0);
     const [loading, setLoading] = useState(true);
+    const { t } = useTranslation();
 
     const getBasketApi = () => {
         if (props?.basketId) {
             const params = {
                 "CommunicationBasketId": props?.basketId,
                 "PageSize": pageSize,
-                "PageCount": 0
+                "PageCount": 1
             }
             return getCommunicationLogsByBasket(params)
         } else {
             const params = {
                 "PageSize": pageSize,
-                "PageCount": 0
+                "PageCount": 1
             }
             return getCommunicationLogs(params)
         }
@@ -75,7 +76,7 @@ const CommunicationsLog = ({ props }) => {
         return (
             <div className="sub-table-padding">
                 <Table
-                    columns={CommunicationsSubTableHeaders}
+                    columns={CommunicationsSubTableHeaders(t)}
                     dataSource={dataObj?.data}
                     pagination={false}
                     showHeader={false}
@@ -95,20 +96,19 @@ const CommunicationsLog = ({ props }) => {
             "ToDate": filterTypes.toDate,
             "SearchText": searchText,
             "PageSize": pageSize,
-            "PageCount": 0
+            "PageCount": 1
         }
 
         getCommunicationLogs(params).then(result => {
             setCommunicationsData(result?.Value);
             setTotalResults(result?.Key);
             setLoading(false);
-            setPageNumber(0);
+            setPageNumber(1);
         });
 
     }
 
-    const onChangePage = (page) => {
-        const pageNumb = page - 1
+    const onChangePage = (pageNumb) => {
         setLoading(true);
 
         const params = {
@@ -152,14 +152,14 @@ const CommunicationsLog = ({ props }) => {
                         <div></div>
                     </div>
                 }
-                <div className="filter-by-text">Filter By:</div>
+                <div className="filter-by-text">{t('FILTER_BY')}:</div>
                 <div className="com-drop-down-width">
                     <Dropdown
                         values={dropDownData.entity}
                         onChange={e => onChangeFilterType(e, 'entity')}
                         selected={JSON.stringify(filterTypes.entity || undefined)}
                         dataName="Name"
-                        placeholder="Entity(Tenant/Client)"
+                        placeholder="ENTITY_TENANT_CLIENT"
                     />
                 </div>
                 <div className="com-drop-down-width">
@@ -168,7 +168,7 @@ const CommunicationsLog = ({ props }) => {
                         onChange={e => onChangeFilterType(e, 'status')}
                         selected={JSON.stringify(filterTypes.status || undefined)}
                         dataName="Name"
-                        placeholder="Status"
+                        placeholder="STATUS"
                     />
                 </div>
                 <div className="com-drop-down-width">
@@ -177,12 +177,12 @@ const CommunicationsLog = ({ props }) => {
                         onChange={e => onChangeFilterType(e, 'type')}
                         selected={JSON.stringify(filterTypes.type || undefined)}
                         dataName="Name"
-                        placeholder="Type"
+                        placeholder="TYPE"
                     />
                 </div>
                 <div className="com-drop-down-width">
                     <DatePickerInput
-                        placeholder='From Date'
+                        placeholder='FROM_DATE'
                         value={filterTypes.fromDate}
                         onChange={(date) => onFilterTypeDateChange(date, "fromDate")}
                         isClearable
@@ -190,7 +190,7 @@ const CommunicationsLog = ({ props }) => {
                 </div>
                 <div className="com-drop-down-width">
                     <DatePickerInput
-                        placeholder='To Date'
+                        placeholder='TO_DATE'
                         value={filterTypes.toDate}
                         onChange={(date) => onFilterTypeDateChange(date, "toDate")}
                         isClearable
@@ -198,21 +198,21 @@ const CommunicationsLog = ({ props }) => {
                 </div>
                 <div className="com-search-input-container">
                     <div className="search-input-container" >
-                        <Input placeholder="Search By Name or Org. ID" value={searchText} onChange={onChangeSearchText} endImage='icon-search-1' />
+                        <Input placeholder="SEARCH_NAME_ORG" value={searchText} onChange={onChangeSearchText} endImage='icon-search-1' />
                     </div>
-                    <button className="add-btn" onClick={onFilter} >Filters</button>
+                    <button className="add-btn" onClick={onFilter} >{t('FILTERS')}</button>
                 </div>
 
             </div>
             <div className="page-container">
-                <div className="tablele-width">
+                <div className="tablele-width expandable-table-btn">
                     <Table
                         rowKey={(record, index) => index}
                         dataSource={communicationsData}
                         scroll={{
                             y: '60vh',
                         }}
-                        columns={CommunicationsLogTableHeaders}
+                        columns={CommunicationsLogTableHeaders(t)}
                         pagination={false}
                         expandable={{
                             expandedRowRender,
@@ -221,9 +221,11 @@ const CommunicationsLog = ({ props }) => {
                         }}
                     />
                 </div>
-                <div className="flex-center-middle m-t-20">
-                            <Pagination size="small" current={pageNumber + 1} onChange={onChangePage} total={totalResults} showSizeChanger={false} />
-                        </div>
+                <div className="action-bar p-t-10 p-r-10">
+                    <div className="flex-center-middle m-t-10">
+                        <Pagination size="small" current={pageNumber} onChange={onChangePage} total={totalResults} showSizeChanger={false} />
+                    </div>
+                </div>
             </div>
         </>
 

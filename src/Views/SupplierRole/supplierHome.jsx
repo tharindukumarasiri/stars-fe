@@ -3,9 +3,11 @@ import { TabContext } from "../../utils/contextStore";
 import { NAVIGATION_PAGES } from "../../utils/enums";
 import TitleCard from "../../common/titleCard";
 import NavigationCard from "../../common/navigationCard";
+import { useTranslation } from "react-i18next";
 
 const SupplierHome = () => {
     const { changeActiveTab } = useContext(TabContext);
+    const { t } = useTranslation();
 
     const onClickCard = (navigate = '') => {
         changeActiveTab(navigate)
@@ -16,8 +18,8 @@ const SupplierHome = () => {
             <div className="g-row m-b-20">
                 <TitleCard title={'Supplier'} topIcon={'icon-employees'} topBgColor='bg-bluish-green' />
                 <div className="g-col-5 p-l-20">
-                    <h2>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque lacinia est vitae sapien</h2>
-                    <div>ursus, vel semper justo dapibus. Nullam blandit fermentum eros eget pellentesque. Nam facilisis iaculis tortor eu dapibus. Duis euismod, justo non pulvinar suscipit, ursus, vel semper justo dapibus. Nullam blandit fermentum eros eget pellentesque. Nam facilisis iaculis tortor eu dapibus. Duis euismod, justo non pulvinar suscipit, leo libero ullamcorper</div>
+                    <h2>{t('SUPPLIER_HONE_SUB_TITLE')}</h2>
+                    <div>{t('SUPPLIER_HONE_DESCRIPTION')}</div>
 
                 </div>
             </div>

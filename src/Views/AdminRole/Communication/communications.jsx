@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo, useContext } from "react";
 import { Table, Tabs, Dropdown, Menu, message, Pagination } from 'antd';
+import { useTranslation } from "react-i18next";
 
 import StarDropdown from "../../../common/dropdown";
 import Input from '../../../common/input'
@@ -15,7 +16,7 @@ const { TabPane } = Tabs;
 const pageSize = 10;
 const initialPayload = {
     "PageSize": pageSize,
-    "PageCount": 0
+    "PageCount": 1
 }
 
 const Communications = () => {
@@ -27,8 +28,9 @@ const Communications = () => {
     const [selectedRows, setSelectedRows] = useState([])
     const [loading, setLoading] = useState(true);
     const [currentUser] = FetchCurrentUser();
-    const [pageNumber, setPageNumber] = useState(0);
+    const [pageNumber, setPageNumber] = useState(1);
     const [totalResults, setTotalResults] = useState(0);
+    const { t } = useTranslation();
 
     useEffect(() => {
         Promise.all([
@@ -47,7 +49,7 @@ const Communications = () => {
     }, []);
 
     const tableHeaders = useMemo(() => {
-        const headers = CommunicationsTableHeaders?.map(a => { return { ...a, title: a.title } })
+        const headers = CommunicationsTableHeaders(t);
         headers.push({
             title: <input className="star" type="checkbox" disabled />,
             render: (_, record) => (
@@ -95,11 +97,11 @@ const Communications = () => {
             getCommunicationsList(params).then(result => {
                 setCommunicationsData(result?.Value);
                 setTotalResults(result?.Key);
-                message.success("Delete successful");
+                message.success(t('DELETE_SUCCESSFUL'));
             }).finally(() => setLoading(false))
         }).catch(() => {
             setLoading(false);
-            message.error("Delete unsuccessful");
+            message.error(t('DELETE_FAILED'));
         })
     }
 
@@ -136,14 +138,14 @@ const Communications = () => {
             "ToDate": dropDownSelected.toDate,
             "SearchText": searchText,
             "PageSize": pageSize,
-            "PageCount": 0
+            "PageCount": 1
         }
 
         getCommunicationsList(params).then(result => {
             setCommunicationsData(result?.Value);
             setTotalResults(result?.Value);
             setLoading(false);
-            setPageNumber(0);
+            setPageNumber(1);
         });
     }
 
@@ -151,8 +153,7 @@ const Communications = () => {
         changeActiveTab(NAVIGATION_PAGES.NEW_COMMUNICATION)
     }
 
-    const onChangePage = (page) => {
-        const pageNumb = page - 1
+    const onChangePage = (pageNumb) => {
         setLoading(true);
 
         const params = {
@@ -183,15 +184,15 @@ const Communications = () => {
                         <div></div>
                     </div>
                 }
-                <button className="add-btn m-r-20 com-drop-down-width" onClick={createNew} >Create New</button>
-                <div className="filter-by-text m-l-20">Filter By:</div>
+                <button className="add-btn m-r-20 com-drop-down-width" onClick={createNew} >{t('CREATE_NEW')}</button>
+                <div className="filter-by-text m-l-20">{t('FILTER_BY')}:</div>
                 <div className="com-drop-down-width">
                     <StarDropdown
                         values={dropDownData.status}
                         onChange={e => onChangeFilterType(e, 'status')}
                         selected={JSON.stringify(dropDownSelected.status || undefined)}
                         dataName="Name"
-                        placeholder="Status"
+                        placeholder="STATUS"
                     />
                 </div>
                 <div className="com-drop-down-width">
@@ -200,12 +201,12 @@ const Communications = () => {
                         onChange={e => onChangeFilterType(e, 'type')}
                         selected={JSON.stringify(dropDownSelected.type || undefined)}
                         dataName="Name"
-                        placeholder="Type"
+                        placeholder="TYPE"
                     />
                 </div>
                 <div className="com-drop-down-width">
                     <DatePickerInput
-                        placeholder='From Date'
+                        placeholder='FROM_DATE'
                         value={dropDownSelected.fromDate}
                         onChange={(date) => onFilterTypeDateChange(date, "fromDate")}
                         isClearable
@@ -213,7 +214,7 @@ const Communications = () => {
                 </div>
                 <div className="com-drop-down-width">
                     <DatePickerInput
-                        placeholder='To Date'
+                        placeholder='TO_DATE'
                         value={dropDownSelected.toDate}
                         onChange={(date) => onFilterTypeDateChange(date, "toDate")}
                         isClearable
@@ -221,15 +222,15 @@ const Communications = () => {
                 </div>
                 <div className="com-search-input-container">
                     <div className="search-input-container" >
-                        <Input placeholder="Search By Name or Org. ID" value={searchText} onChange={onChangeSearchText} endImage='icon-search-1' />
+                        <Input placeholder="SEARCH_NAME_ORG" value={searchText} onChange={onChangeSearchText} endImage='icon-search-1' />
                     </div>
-                    <button className="add-btn" onClick={onFilter} >Filters</button>
+                    <button className="add-btn" onClick={onFilter} >{t('FILTERS')}</button>
                 </div>
 
             </div>
             <div className="page-container">
                 <Tabs type="card" style={{ width: '95vw' }} >
-                    <TabPane tab="SENT" key="1">
+                    <TabPane tab={t("SENT")} key="1">
                         <div className="tablele-width">
                             <Table
                                 rowKey={(record, index) => index}
@@ -241,21 +242,23 @@ const Communications = () => {
                                 pagination={false}
                             />
                         </div>
-                        <div className="flex-center-middle m-t-20">
-                            <Pagination size="small" current={pageNumber + 1} onChange={onChangePage} total={totalResults} showSizeChanger={false} />
-                        </div>
                     </TabPane>
-                    <TabPane tab="DRAFTS" key="2">
+                    <TabPane tab={t("DRAFTS")} key="2">
                         <div></div>
                     </TabPane>
                 </Tabs>
 
             </div>
-            <Dropdown
-                overlay={actions} placement="topRight" arrow
-            >
-                <button className="primary-btn select-actions-btn" >Seletct Action</button>
-            </Dropdown>
+            <div className="action-bar p-t-10 p-r-10">
+                <div className="flex-center-middle m-t-10">
+                    <Pagination size="small" current={pageNumber} onChange={onChangePage} total={totalResults} showSizeChanger={false} />
+                </div>
+                <Dropdown
+                    overlay={actions} placement="topRight" arrow
+                >
+                    <button className="primary-btn actions-btn" >{t('SELECT_ACTION')}</button>
+                </Dropdown>
+            </div>
         </>
     )
 }

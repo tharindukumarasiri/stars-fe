@@ -1,15 +1,19 @@
 import React, { useState, useMemo, useContext, useEffect } from "react";
-import { Table, Modal, Switch, Dropdown, Menu, message, Pagination } from 'antd';
+import { Table, Modal, Dropdown, Menu, message, Pagination } from 'antd';
+import { ExclamationCircleOutlined } from '@ant-design/icons';
+import { useTranslation } from "react-i18next";
 
 import { TabContext, UserContext } from "../../../utils/contextStore";
 import { NAVIGATION_PAGES } from "../../../utils/enums";
 import { usersTableHeaders } from '../../../utils/tableHeaders'
 import StarDropdown from "../../../common/dropdown";
 import Input from '../../../common/input'
-import { addUser, updateUser, activateUsers, deActivateUsers } from "../../../services/userService";
+import { addUser, updateUser, activateUsers, deActivateUsers, deleteUser } from "../../../services/userService";
 import { getMessageTemplatesNewUserInvitation } from "../../../services/templateService";
 import { getCommunicationEntitiesWithRoles } from "../../../services/communicationService";
 import { emailRegEx } from "../../../utils/constants";
+
+const { confirm } = Modal;
 
 const newUserDataObj = { firstName: '', lastName: '', telephone: '', email: '', role: '', sendInvitation: false, template: null }
 
@@ -24,16 +28,11 @@ const AllUsers = (props) => {
     const [selecteduserRoles, setSelecteduserRoles] = useState([]);
     const [selectedUsers, setSelectedUsers] = useState([]);
     const [loading, setLoading] = useState(true);
+    const { t } = useTranslation();
 
     const { changeActiveTab } = useContext(TabContext);
     const { getUsersData, users, totalResults, pageNumber, setPageNumber,
         usersLoading, searchText, setSearchText, selectedCompany, currentUser, savedTemplates, setSavedTemplates } = useContext(UserContext);
-
-    useEffect(() => {
-        getCommunicationEntitiesWithRoles().then(result => {
-            setExistingClients(result)
-        })
-    }, []);
 
     useEffect(() => {
         setLoading(usersLoading)
@@ -44,50 +43,87 @@ const AllUsers = (props) => {
             getMessageTemplatesNewUserInvitation(selectedCompany?.companyPartyId).then(result => {
                 setSavedTemplates(result);
             })
+            getCommunicationEntitiesWithRoles(selectedCompany?.companyPartyId).then(result => {
+                setExistingClients(result)
+            })
             getUsersData();
         }
     }, [selectedCompany])
 
-    const onChangePage = (page) => {
-        const pageNumb = page - 1
-        setPageNumber(pageNumb)
-        getUsersData(pageNumb);
+    const isUserAdmin = useMemo(() => {
+        return (currentUser?.roles?.findIndex(role => role?.Name === 'Super Administrator') === -1)
+    }, [currentUser])
+
+    const onChangePage = (pageNum) => {
+        setPageNumber(pageNum)
+        getUsersData(pageNum);
     }
 
     const onActivate = () => {
         setLoading(true);
-        activateUsers(selectedUsers).then(() => {
-            message.success("Users activated")
+        const userListPayload = [selectedCompany?.companyPartyId].concat(selectedUsers)
+
+        activateUsers(userListPayload).then(() => {
+            message.success(t('MSG_USERS_ACTIVATED'));
             getUsersData();
         }).catch(() => {
-            message.error("Users activaion failed")
+            message.error(t('MSG_USERS_ACTIVATE_FAIL'))
             setLoading(false)
         })
     }
 
     const onDeActivate = () => {
         setLoading(true);
-        const userLisyPayload = [currentUser?.PartyId].concat(selectedUsers)
+        const userLisyPayload = [selectedCompany?.companyPartyId].concat(selectedUsers)
 
         deActivateUsers(userLisyPayload).then(() => {
-            message.success("Users deactivated")
+            message.success(t('MSG_USERS_DEACTIVATE_SUCESS'))
             getUsersData();
         }).catch(() => {
-            message.error("Users deactivaion failed")
+            message.error(t('MSG_USERS_DEACTIVATE_FAIL'))
             setLoading(false)
         })
     }
 
     const onSendMessage = () => {
-        props.changeActiveTab(NAVIGATION_PAGES.NEW_COMMUNICATION);
+        changeActiveTab(NAVIGATION_PAGES.NEW_COMMUNICATION);
+    }
+
+    const onDeleteUser = () => {
+        confirm({
+            title: (
+                <>
+                    {t("ARE_YOU_SURE")} <strong className="red">{t("DELETE")}</strong>{" "}
+                    {t("USERS_SINGLE")}
+                </>
+            ),
+            icon: <ExclamationCircleOutlined />,
+            okText: t("YES"),
+            okType: "danger",
+            cancelText: t("NO"),
+            onOk() {
+                setLoading(true);
+                const userLisyPayload = [selectedCompany?.companyPartyId, currentUser?.PartyId].concat(selectedUsers)
+
+                deleteUser(userLisyPayload).then(() => {
+                    message.success(t('DELETE_SUCCESSFUL'))
+                    getUsersData();
+                    setSelectedUsers([]);
+                }).catch(() => {
+                    message.error(t('DELETE_FAILED'))
+                    setLoading(false)
+                })
+            },
+        });
     }
 
     const actions = (
         <Menu>
-            <Menu.Item disabled>Send Invitation</Menu.Item>
-            <Menu.Item onClick={onSendMessage}>Send Message</Menu.Item>
-            <Menu.Item onClick={onActivate}>Mark Active</Menu.Item>
-            <Menu.Item onClick={onDeActivate}>Mark Inactive</Menu.Item>
+            <Menu.Item disabled key={1}>{t('SEND_INVITATION')}</Menu.Item>
+            <Menu.Item onClick={onSendMessage} key={2}>{t('SEND_MESSAGE')}</Menu.Item>
+            <Menu.Item onClick={onActivate} hidden={isUserAdmin} key={3}>{t('MARK_ACTIVE')}</Menu.Item>
+            <Menu.Item onClick={onDeActivate} hidden={isUserAdmin} key={4}>{t('MARK_INACTIVE')}</Menu.Item>
+            <Menu.Item onClick={onDeleteUser} hidden={isUserAdmin} key={5}>{t('DELETE')}</Menu.Item>
         </Menu>
     );
 
@@ -112,7 +148,7 @@ const AllUsers = (props) => {
     }
 
     const tableHeaders = useMemo(() => {
-        const headers = usersTableHeaders?.map(a => { return { ...a, title: a.title } })
+        const headers = usersTableHeaders(t);
         headers.push({
             title: '',
             fixed: 'right',
@@ -134,16 +170,16 @@ const AllUsers = (props) => {
     // }, [searchClientsText])
 
     const onSearch = () => {
-        setPageNumber(0);
-        getUsersData(0);
+        setPageNumber(1);
+        getUsersData(1);
     }
 
     const toggleModal = () => {
         setModalVisible(pre => !pre)
         setNewUserFirstPage(true);
         // setSearchClientsText('');//TO be enabled in the future
-        setNewUserData(newUserDataObj)
         setNewUserErrors(newUserDataObj)
+        setNewUserData({ ...newUserDataObj, template: savedTemplates[0] })
     }
 
     const onChangeSearchText = (e) => {
@@ -166,7 +202,9 @@ const AllUsers = (props) => {
         e.preventDefault();
         setNewUserErrors(pre => ({ ...pre, telephone: '' }))
         const result = e.target.value.replace(/[^-+()0-9]/gi, '');
-        setNewUserData({ ...newUserData, telephone: result })
+        if (result?.length < 15) {
+            setNewUserData({ ...newUserData, telephone: result })
+        }
     }
 
     // const onChangeRole = (roles, client) => { //TO be enabled in the future
@@ -238,7 +276,7 @@ const AllUsers = (props) => {
                 "UserId": currentUser?.Id,
                 "RoleId": role?.Key,
                 "RoleName": role?.Value,
-                "IsActive": !newUserData?.sendInvitation
+                "IsActive": false
             }
             newSelectedRoles.push(params)
         } else {
@@ -260,7 +298,7 @@ const AllUsers = (props) => {
             return (
                 <div className="role-select-row blue">
                     {role?.Value?.toUpperCase() === 'USER' ?
-                        <span className="check-box-placeholder-hidden"></span> :
+                        <input type="checkbox" className="check-box" checked={true} disabled onChange={() => { }} /> :
                         <input type="checkbox" className="check-box"
                             checked={selecteduserRoles.findIndex(selctRole => {
                                 return (
@@ -275,9 +313,9 @@ const AllUsers = (props) => {
         })
     }
 
-    const onToggle = (val) => {
-        setNewUserData({ ...newUserData, sendInvitation: val })
-    }
+    // const onToggle = (val) => {
+    //     setNewUserData({ ...newUserData, sendInvitation: val })
+    // }
 
     const onChangeTemplate = (e) => {
         setNewUserData({ ...newUserData, template: JSON.parse(e.target.value) })
@@ -286,28 +324,28 @@ const AllUsers = (props) => {
     const validateFields = () => {
         let validation = true
         if (!newUserData.firstName) {
-            setNewUserErrors(pre => ({ ...pre, firstName: 'First name cannot be empty' }))
+            setNewUserErrors(pre => ({ ...pre, firstName: t('FIRST_NAME_CANNOT_BE_EMPTY') }))
             validation = false
         }
         if (!newUserData.lastName) {
-            setNewUserErrors(pre => ({ ...pre, lastName: 'Last name cannot be empty' }))
+            setNewUserErrors(pre => ({ ...pre, lastName: t('LAST_NAME_CANNOT_BE_EMPTY') }))
             validation = false
         }
         if (!newUserData.telephone) {
-            setNewUserErrors(pre => ({ ...pre, telephone: 'Telephone cannot be empty' }))
+            setNewUserErrors(pre => ({ ...pre, telephone: t('TELEPHONE_CANNOT_BE_EMPTY') }))
             validation = false
         }
         if (!newUserData.email) {
-            setNewUserErrors(pre => ({ ...pre, email: 'Email cannot be empty' }))
+            setNewUserErrors(pre => ({ ...pre, email: t('EMAIL_CANNOT_BE_EMPTY') }))
             validation = false
         } else if (!emailRegEx.test(newUserData.email)) {
-            setNewUserErrors(pre => ({ ...pre, email: 'Invalid email adress' }))
+            setNewUserErrors(pre => ({ ...pre, email: t('INVALID_EMAIL') }))
             validation = false
         }
-        if (newUserData.sendInvitation && !newUserData?.template) {
-            setNewUserErrors(pre => ({ ...pre, sendInvitation: 'Please select a template' }))
-            validation = false
-        }
+        // if (newUserData.sendInvitation && !newUserData?.template) {
+        //     setNewUserErrors(pre => ({ ...pre, sendInvitation: t('EMPTY_TEMPLATE') }))
+        //     validation = false
+        // }
 
         return validation;
     }
@@ -335,7 +373,13 @@ const AllUsers = (props) => {
                     setNewCreatedUserData(user);
                     setNewUserFirstPage(false);
                     setLoading(false);
-                }).catch(() => message.error('Create user failed please try again'))
+                }).catch((error) => {
+                    if (error?.response?.status === 409) {
+                        setNewUserErrors(pre => ({ ...pre, email: 'Email already exists' }))
+                    } else {
+                        message.error(t('MSG_CREATE_USER_FAILED'))
+                    }
+                })
             }
         } else {
             setLoading(true)
@@ -348,7 +392,7 @@ const AllUsers = (props) => {
                 "UserId": currentUser?.Id,
                 "RoleId": userRole?.Key,
                 "RoleName": userRole?.Value,
-                "IsActive": !newUserData?.sendInvitation
+                "IsActive": false
             }
             newSelectedRoles.push(userRoleData)
 
@@ -361,7 +405,7 @@ const AllUsers = (props) => {
                 "PictureFileId": '',
                 "LoggedInUserPartyId": currentUser?.PartyId,
                 "UserRoles": newSelectedRoles,
-                "IsSendEmail": newUserData.sendInvitation,
+                // "IsSendEmail": true,
                 "IsActive": false,
                 "UserPartyId": newUserData?.PartyId,
                 "MessageTemplateId": newUserData?.template?.Id
@@ -369,9 +413,9 @@ const AllUsers = (props) => {
 
             updateUser(params).then(() => {
                 setLoading(false);
-                message.success('New user created')
-                getUsersData(0);
-                setPageNumber(0);
+                message.success(t('MSG_CREATE_USER_SUCCESS'))
+                getUsersData(1);
+                setPageNumber(1);
             }).catch(() => {
                 setLoading(false);
             })
@@ -396,84 +440,104 @@ const AllUsers = (props) => {
                 </div>
             }
             <div className="top-container">
-                <button className="add-btn m-r-20" onClick={toggleModal} ><i className="icon-plus-circled m-r-10" />Add New User</button>
+                <button className="add-btn m-r-20" onClick={toggleModal} ><i className="icon-plus-circled m-r-10" />{t('ADD_NEW_USER')}</button>
                 <div className="search-input-container" >
-                    <Input placeholder="Search By Name or Org. Name" value={searchText} onChange={onChangeSearchText} endImage='icon-search-1' />
+                    <Input placeholder={t('SEARCH_BY_ORG_NAME')} value={searchText} onChange={onChangeSearchText} endImage='icon-search-1' />
                 </div>
-                <button className="add-btn" onClick={onSearch} >Filters</button>
+                <button className="add-btn" onClick={onSearch} >{t('SEARCH')}</button>
+                <div className={selectedUsers?.length === 0 ? 'disable-div fr' : 'fr'}>
+                    <Dropdown
+                        overlay={actions} placement="topRight" arrow
+                    >
+                        <button className="primary-btn actions-btn-on-top" >{t('ACTION')}</button>
+                    </Dropdown>
+                </div>
             </div>
-            <div className="tablele-width">
-                <Table
-                    rowKey={(record) => record?.UserId}
-                    dataSource={users}
-                    scroll={{
-                        y: '60vh',
-                    }}
-                    columns={tableHeaders}
-                    onRow={(record, rowIndex) => {
-                        return {
-                            onClick: () => onClickUserRow(record),
-                        };
-                    }}
-                    pagination={false}
-                />
-            </div>
+            {users?.length > 0 &&
+                <div className="tablele-width">
+                    <Table
+                        rowKey={(record) => record?.UserId}
+                        dataSource={users}
+                        scroll={{
+                            y: '65vh',
+                        }}
+                        columns={tableHeaders}
+                        onRow={(record, rowIndex) => {
+                            return {
+                                onClick: () => onClickUserRow(record),
+                            };
+                        }}
+                        pagination={false}
+                    />
+                </div>
+            }
             <div className="action-bar">
-                <div className="flex-center-middle m-t-20">
-                    <Pagination size="small" current={pageNumber + 1} onChange={onChangePage} total={totalResults} showSizeChanger={false} />
+                <div className="flex-center-middle m-t-10">
+                    <Pagination size="small" current={pageNumber} onChange={onChangePage} total={totalResults} showSizeChanger={false} />
                 </div>
-                <Dropdown
-                    overlay={actions} placement="topRight" arrow
-                >
-                    <button className="primary-btn actions-btn" >Action</button>
-                </Dropdown>
             </div>
 
-            <Modal title={"Create New User"}
+            <Modal title={t('CREATE_NEW_USER')}
                 visible={modalVisible}
                 onCancel={toggleModal}
-                okText={newUserFirstPage ? 'Next' : 'Done'}
+                cancelText={t('CANCEL')}
+                okText={newUserFirstPage ? t('NEXT') : t('DONE')}
                 onOk={onOk}
-                centered={true} >
+                centered={true}
+                closeIcon={< i className='icon-close close-icon' />}>
                 <div className="user-input-box" >
                     <div className="g-row flex-center-middle">
-                        <div className={newUserFirstPage ? "g-col-5 text-center blue" : "g-col-5 text-center"}>User Info</div>
+                        <div className={newUserFirstPage ? "g-col-5 text-center blue" : "g-col-5 text-center"}>{t('USER_INFO')}</div>
                         <i className="icon-circle-arrow-r2 g-col-2 text-center blue arrow-icon-lg" />
-                        <div className={newUserFirstPage ? "g-col-5 text-center" : "g-col-5 text-center blue"}>Client  Info</div>
+                        <div className={newUserFirstPage ? "g-col-5 text-center" : "g-col-5 text-center blue"}>{t('CLIENT_INFO')}</div>
                     </div>
                     {newUserFirstPage ?
                         <div>
                             <div className="g-row m-t-20">
                                 <div className="g-col-5 m-l-20 m-r-20">
-                                    <Input placeholder="First Name" value={newUserData.firstName}
+                                    <Input placeholder={t('FIRST_NAME')} value={newUserData.firstName}
                                         onChange={(e) => onChangeNewUserField(e, 'firstName')}
                                         error={newUserErrors.firstName} />
                                 </div>
                                 <div className="g-col-5 m-l-20">
-                                    <Input placeholder="Telephone" value={newUserData.telephone}
+                                    <Input placeholder={t('PHONE')} value={newUserData.telephone}
                                         onChange={onChangeTelephoneNum} error={newUserErrors.telephone} />
                                 </div>
                             </div>
                             <div className="g-row m-t-5">
                                 <div className="g-col-5 m-l-20 m-r-20">
-                                    <Input placeholder="Last Name" value={newUserData.lastName}
+                                    <Input placeholder={t('LAST_NAME')} value={newUserData.lastName}
                                         onChange={(e) => onChangeNewUserField(e, 'lastName')} error={newUserErrors.lastName} />
                                 </div>
                                 <div className="g-col-5 m-l-20">
-                                    <Input placeholder="Email" value={newUserData.email}
+                                    <Input placeholder={t('EMAIL')} value={newUserData.email}
                                         onChange={(e) => onChangeNewUserField(e, 'email')} error={newUserErrors.email} />
                                 </div>
                             </div>
                             <div className="g-row m-t-5">
                                 <div className="g-col-5 m-l-20 m-r-20">
-                                    <Input placeholder="Country" value={currentUser?.CountryCode || ''} onChange={() => { }} disabled />
+                                    <Input placeholder={t('COUNTRY')} value={currentUser?.CountryCode || ''} onChange={() => { }} disabled />
+                                </div>
+                                <div className="g-col-5 m-l-20">
+                                </div>
+                            </div>
+                            <div className="g-row m-t-5">
+                                <div className="g-col-5 m-l-20 m-r-20">
+                                    <StarDropdown
+                                        values={savedTemplates}
+                                        onChange={onChangeTemplate}
+                                        selected={JSON.stringify(newUserData?.template || undefined)}
+                                        placeholder={t('SELECT_TEMPLATE')}
+                                        dataName="DisplayName"
+                                    // error={newUserErrors?.sendInvitation || ''}
+                                    />
                                 </div>
                                 <div className="g-col-5 m-l-20">
                                 </div>
                             </div>
                             <div className="n-float" />
-                            <div className="flex-align-center m-t-20 toggle-container">
-                                <div className="m-t-10 m-b-10">Send Invitation?</div>
+                            {/* <div className="flex-align-center m-t-20 toggle-container">
+                                <div className="m-t-10 m-b-10">{t('SEND_INVITAION')}?</div>
                                 <div className="toggle-btn">
                                     <Switch checkedChildren="Yes" unCheckedChildren="No" checked={newUserData.sendInvitation} onChange={onToggle} />
                                 </div>
@@ -483,13 +547,13 @@ const AllUsers = (props) => {
                                             values={savedTemplates}
                                             onChange={onChangeTemplate}
                                             selected={JSON.stringify(newUserData?.template || undefined)}
-                                            placeholder="Select Template"
+                                            placeholder={t('SELECT_TEMPLATE')}
                                             dataName="DisplayName"
                                             error={newUserErrors?.sendInvitation || ''}
                                         />
                                     </div>
                                 }
-                            </div>
+                            </div> */}
                         </div> :
                         <div className={loading ? 'loading-overlay' : ''} >
                             <div className="n-float" />

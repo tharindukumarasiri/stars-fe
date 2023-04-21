@@ -14,7 +14,7 @@ const Input = ({ value, placeholder = '', onChange, lines = 1, endImage = '', di
             }
             {error &&
                 <div className="error-text">
-                    {error}
+                    {t(error)}
                 </div>
             }
             {endImage &&

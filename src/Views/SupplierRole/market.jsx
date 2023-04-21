@@ -128,13 +128,13 @@ const Market = () => {
             setLoading(false);
             setHaveUnsavedDataRef(false);
             if (result === 'Ok') {
-                message.success('Update successful');
+                message.success(t('UPDATE_SUCCESS'));
             } else {
-                message.error('Update failed please try again');
+                message.error(t('UPDATE_FAIL'));
             }
         }).catch(() => {
             setLoading(false);
-            message.error('Update failed please try again');
+            message.error(t('UPDATE_FAIL'));
         })
     }
 
@@ -485,24 +485,24 @@ const Market = () => {
                             <div className="flex-center-middle"><img src={directional_sign} alt='img' className="directional-img" /></div>
 
                             <div className="static-content-container-small text-left">
-                                <div className="body-text-bold  m-t-20">{t("What are Markets?")}</div>
-                                <div className="body-text m-t-20">{t("The markets are a good way to find your business in a location wise. You can update the locations of your business here. The locations can be saved according to your country’s administrative divisions. As an example, Norway has Counties, Regions and Municipalities")}</div>
+                                <div className="body-text-bold  m-t-20">{t("WHAT_ARE_MARKETS")}</div>
+                                <div className="body-text m-t-20">{t("MARKET_INTRO")}</div>
 
-                                <div className="body-text-bold  m-t-20 ">{t("Why update Markets?")}</div>
-                                <div className="body-text">{t("Your company will be listed on the \"Star Search Engine,\" according to the market views you save, So that the others can know that your business is out there in their locations.")}</div>
+                                <div className="body-text-bold  m-t-20 ">{t("WHY_UPDATE_MARKET")}</div>
+                                <div className="body-text">{t("WHY_UPDATE_MARKET_REASON")}</div>
 
-                                <div className="body-text-bold  m-t-20 ">{t("How to update Market?")}</div>
-                                <div className="body-text">1. {t("First, you have to select your country from the dropdown.")}</div>
-                                <div className="body-text">2. {t("Then you can select values from dropdowns allocated according to the selected country.")}</div>
-                                <div className="body-text">3. {t("According to the previously selected dropdown, the rest of the dropdowns will be drilled down.")}</div>
-                                <div className="body-text">4. {t("You may remove markets by selecting “X” at the municipality level.")}</div>
-                                <div className="body-text">5. {t("To save your work, choose \"Update\". The Markets will be saved and you can view them.")}</div>
+                                <div className="body-text-bold  m-t-20 ">{t("HOW_TO_UPDATE_MARKET")}</div>
+                                <div className="body-text">1. {t("HOW_TO_UPDATE_MARKET_R1")}</div>
+                                <div className="body-text">2. {t("HOW_TO_UPDATE_MARKET_R2")}</div>
+                                <div className="body-text">3. {t("HOW_TO_UPDATE_MARKET_R3")}</div>
+                                <div className="body-text">4. {t("HOW_TO_UPDATE_MARKET_R4")}</div>
+                                <div className="body-text">5. {t("HOW_TO_UPDATE_MARKET_R5")}</div>
                             </div>
                         </div>
                     </div>
 
                 </div>
-                <button className="primary-btn update-btn" onClick={onUpdate} >{t("Update")}</button>
+                <button className="primary-btn update-btn" onClick={onUpdate} >{t("UPDATE")}</button>
             </>
         )
     }
@@ -514,7 +514,7 @@ const Market = () => {
                     <Dropdown values={countries} selected={JSON.stringify(selectedCountry)} dataName='name' keyName='code' onChange={(e) => onCountrySelect(e)} />
                 </div>
                 <div className="g-col-3 m-l-20 m-r-20">
-                    <div className="body-text">{t("Country Code")} ( NUTS Level 0 )</div>
+                    <div className="body-text">{t("COUNTRY_CODE")} ( {t('NUTS_LEVEL_0')} )</div>
                     <div className="body-text-bold">{selectedCountry?.code}</div>
                 </div>
             </div>

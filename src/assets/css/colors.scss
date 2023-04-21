@@ -26,12 +26,12 @@ $theme-light: lighten($theme, 30%);
 $body-color: #EBEBEB;
 $theme-light-grey: desaturate($theme, 80%);
 
-$tab-content: #c8ced3;
-$theme-tab-active-bg: #c8ced3;
+$tab-content: #fff;
+$theme-tab-active-bg: #fff;
 
 
 
-
+$input-border-color: #999;
 
 
 //==============blue
@@ -75,7 +75,7 @@ $orange-dark: darken($orange, 0%);
 $white: #fff;
 $vialot: #B572CD;
 $vialot-lite: desaturate($vialot, 20%);
-
+$vialot-dark1: darken($vialot, 20%);
 //Green
 $green: #04bd00;
 /* #2bb201; */
@@ -110,6 +110,9 @@ $light-dark-blue: desaturate($base-color, 10%);
 
 .white {
     color: $white;
+}
+.bg-white {
+    background-color: $white
 }
 
 
@@ -295,6 +298,9 @@ $light-dark-blue: desaturate($base-color, 10%);
 
 .bg-vialot {
     background-color: $vialot;
+}
+.bg-vialot-dark1 {
+    background-color: $vialot-dark1;
 }
 
 //

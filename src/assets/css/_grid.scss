@@ -78,6 +78,12 @@
     width: 100%;
 }
 
+.g-container {
+    height: calc(100vh - 50px);
+    overflow-y: auto;
+    padding-bottom: 50px;
+}
+
 .g-row {
     width: 100%;
     /* display: flex;

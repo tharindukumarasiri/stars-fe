@@ -6,7 +6,7 @@ import { markTendersitems } from "../../utils/constants";
 import { matchinTendersTableHeaders } from "../../utils/tableHeaders";
 import { useTranslation } from "react-i18next";
 import { NAVIGATION_PAGES } from "../../utils/enums";
-import { FetchCurrentCompany } from "../../hooks/index"
+import { FetchCurrentCompany } from "../../hooks/index";
 
 const pageSize = 10;
 
@@ -86,12 +86,10 @@ const MatchingTenders = () => {
     }
 
     const tableHeaders = useMemo(() => {
-        const headers = matchinTendersTableHeaders.map((a) => {
-            return { ...a, title: t(a.title) };
-        });
+        const headers = matchinTendersTableHeaders(t);
 
         headers.push({
-            title: 'Mark As',
+            title: t('MARK_AS'),
             dataIndex: ['id', 'countryCode', 'noticeNumber', 'markerType'],
             render: (_, { noticeNumber, markerType }) => (
                 <div onClick={(e) => { e.stopPropagation() }}>
@@ -126,11 +124,11 @@ const MatchingTenders = () => {
             }
             <div className="g-row fr m-l-20 p-l-20">
                 <div className="g-col-3" />
-                <div className="g-col-1"><i className="icon-tender-new green" />New</div>
-                <div className="g-col-2"><i className="icon-tender-open blue-dark" />Open for consideration</div>
-                <div className="g-col-3"><i className="icon-tender-proposal blue-purple" />Decided to reply with a proposal</div>
-                <div className="g-col-2"><i className="icon-tender-not-relevant" />Not relevant</div>
-                <div className="g-col-1"><i className="icon-tender-closed red" />Closed</div>
+                <div className="g-col-1"><i className="icon-tender-new green" />{t('NEW')}</div>
+                <div className="g-col-2"><i className="icon-tender-open blue-dark" />{t('OPEN_FOR_CONSIDERATION')}</div>
+                <div className="g-col-3"><i className="icon-tender-proposal blue-purple" />{t('DECIDED_TO_REPLY_WITH_PROPOSAL')}</div>
+                <div className="g-col-2"><i className="icon-tender-not-relevant" />{t('NOT_RELEVANT')}</div>
+                <div className="g-col-1"><i className="icon-tender-closed red" />{t('CLOSED')}</div>
             </div>
             <Table
                 rowKey={(record) => record.id}
@@ -143,7 +141,16 @@ const MatchingTenders = () => {
                     };
                 }}
             />
-            <Pagination size="small" className="fr m-t-20 m-b-20" current={pageNumber} onChange={onChangePage} total={pageCount} showSizeChanger={false} />
+            <div className="action-bar">
+                <div className="flex-center-middle m-t-20">
+                    <Pagination
+                        size="small"
+                        current={pageNumber}
+                        onChange={onChangePage}
+                        total={pageCount}
+                        showSizeChanger={false} />
+                </div>
+            </div>
         </div>
     )
 

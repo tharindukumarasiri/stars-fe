@@ -16,9 +16,9 @@ export default function SellerHome() {
     return (
         <>
             <div className="g-row m-b-20">
-                <TitleCard title={t("Seller")} topIcon={"icon-seller"} />
+                <TitleCard title={t("SELLER")} topIcon={"icon-seller"} />
                 <div className="g-col-9 p-l-20">
-                    <h4>{t('Seller Role Space')}</h4>
+                    <h4>{t('SELLER_ROLE_SPACE')}</h4>
                     <div>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque lacinia est vitae sapienursus,</div>
                     <div>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque lacinia est vitae sapienursus,</div>
                     <div>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque lacinia est vitae sapienursus,</div>
@@ -27,19 +27,19 @@ export default function SellerHome() {
             </div>
             <div className="g-row">
                 <NavigationCard
-                    name={t("GET NOTIFIED")}
+                    name={t("GET_NOTIFIED")}
                     cardColour={"bg-vialot"}
                     // imageName={"icon-search-module"}
                     onClick={() => onClickCard(NAVIGATION_PAGES.SELLER_GET_NOTIFIED)}
                 />
                 <NavigationCard
-                    name={t("MATCHING TENDERS")}
+                    name={t("MATCHING_TENDERS")}
                     cardColour={"bg-vialot"}
                     // imageName={"icon-projects"}
                     onClick={() => onClickCard(NAVIGATION_PAGES.SELLER_MATCHING_TENDERS)}
                 />
                 <NavigationCard
-                    name={t("GLOBAL TENDER")}
+                    name={t("GLOBAL_TENDER")}
                     cardColour={"bg-vialot"}
                     // imageName={"icon-projects"}
                     onClick={() => onClickCard(NAVIGATION_PAGES.SELLER_GLOBAL_TENDER)}

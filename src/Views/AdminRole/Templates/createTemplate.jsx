@@ -1,6 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
 import { message } from "antd";
 import EmailEditor from "react-email-editor";
+import { useTranslation } from "react-i18next";
+
 import { updateMessageTemplates, insertMessageTemplates, getTriggerPoints } from "../../../services/templateService";
 import { FetchCurrentCompany } from "../../../hooks/index";
 import { FetchCurrentUser } from "../../../hooks/index";
@@ -19,11 +21,14 @@ const CreateTemplate = ({ closeModal, getSavedTemplates, editTemplate }) => {
     const [triggerPoint, setTriggerPoint] = useState("");
     const [isDefault, setIsDefault] = useState(false);
 
+    const { t } = useTranslation();
+
     useEffect(() => {
         if (editTemplate) {
             setTemplateName(editTemplate.DisplayName || "");
             setTriggerPoint(editTemplate.MessageTriggerPointId);
             setIsDefault(editTemplate.IsDefault);
+            setSelectedTemplateType(getMessageTemplateTypeName(editTemplate.MessageTemplateTypeId));
         } else {
             setTemplateName("");
             setTriggerPoint("");
@@ -63,7 +68,7 @@ const CreateTemplate = ({ closeModal, getSavedTemplates, editTemplate }) => {
                     MessageBody: html,
                     MessageBodyJson: JSON.stringify(design),
                     LanguageId: 2057,
-                    TenantId: selectedCompany?.tenantId,
+                    CompanyPartyId: selectedCompany?.tenantId,
                     IsSubTemplate: false,
                     MessageMedium: null,
                     MessageType: null,
@@ -77,7 +82,7 @@ const CreateTemplate = ({ closeModal, getSavedTemplates, editTemplate }) => {
                     MessageTemplateTypeId: getMessageTemplateType(),
                 };
 
-            saveTemplate(selectedCompany?.tenantId, params);
+            saveTemplate(params);
             // console.log("export HTML:");
             // console.log({ html });
             // console.log("export JSON:");
@@ -85,26 +90,30 @@ const CreateTemplate = ({ closeModal, getSavedTemplates, editTemplate }) => {
         });
     };
 
-    const saveTemplate = (tenantId, params) => {
+    const saveTemplate = (params) => {
         if (!templateName) {
-            message.warning("Template name is mandatory!");
+            message.warning(t('MSG_TEMPLATE_NAME'));
+            return;
+        }
+        if (!params.MessageTriggerPointId) {
+            message.warning(t('MSG_TEMPLATE_TRIIGER_POINT'));
             return;
         }
         if (params.Id > 0) {
             updateMessageTemplates(params)
                 .then((result) => {
                     getSavedTemplates();
-                    message.success("Template saved!");
+                    message.success(t('MSG_TEMPLATE_SAVE'));
                     closeModal();
                 })
                 .catch((err) => {
                     console.log(err);
                 });
         } else {
-            insertMessageTemplates(tenantId, params)
+            insertMessageTemplates(currentUser?.PartyId, params)
                 .then((result) => {
                     getSavedTemplates();
-                    message.success("Template saved!");
+                    message.success(t('MSG_TEMPLATE_SAVE'));
                     closeModal();
                 })
                 .catch((err) => {
@@ -136,6 +145,19 @@ const CreateTemplate = ({ closeModal, getSavedTemplates, editTemplate }) => {
                 return constants.templateType.Communication;
             default:
                 return constants.templateType.Notification;
+        }
+    };
+
+    const getMessageTemplateTypeName = (id) => {
+        switch (id) {
+            case constants.templateType.Notification:
+                return "Notification";
+            case constants.templateType.LandingPage:
+                return "Landing";
+            case constants.templateType.Communication:
+                return "Business";
+            default:
+                return "Notification";
         }
     };
 
@@ -185,6 +207,16 @@ const CreateTemplate = ({ closeModal, getSavedTemplates, editTemplate }) => {
         // editor is ready
         setLoading(false);
     };
+
+    const onCloseModal = () => {
+        setTemplateName("");
+        setTriggerPoint("");
+        setIsDefault(false);
+        if (emailEditorRef.current && emailEditorRef.current.editor) {           
+            emailEditorRef.current.editor.loadBlank();
+        }
+        closeModal();
+    }
 
     const dynamicParameters = [
         {
@@ -264,11 +296,11 @@ const CreateTemplate = ({ closeModal, getSavedTemplates, editTemplate }) => {
             )}
             <div className="g-row user-input-box m-b-10">
                 <div className="g-col-5">
-                    <Input value={templateName} placeholder="Template Name" onChange={onChangeTemplateName} />
+                    <Input value={templateName} placeholder='TEMPLATE_NAME' onChange={onChangeTemplateName} />
                 </div>
                 <div className="g-col-4"><DropdownSelect
                     values={triggerPoints}
-                    placeholder="Trigger point"
+                    placeholder='TRIGGER_POINT'
                     dataName="DisplayName"
                     valueName="Id"
                     selected={triggerPoint}
@@ -281,7 +313,7 @@ const CreateTemplate = ({ closeModal, getSavedTemplates, editTemplate }) => {
                         checked={isDefault}
                         onChange={() => setIsDefault(pre => !pre)}
                     />
-                    <div className="fl m-t-10 hover-hand " onClick={() => setIsDefault(pre => !pre)}>MARK AS DEFAULT</div>
+                    <div className="fl m-t-10 hover-hand " onClick={() => setIsDefault(pre => !pre)}>{t('MARK_AS_DEFAULT')}</div>
                 </div>
             </div>
             <div className="m-l-5">
@@ -293,7 +325,7 @@ const CreateTemplate = ({ closeModal, getSavedTemplates, editTemplate }) => {
                     onChange={onTemplateTypeChange}
                 />{" "}
                 <label className="p-r-20 p-l-20" htmlFor="Notification">
-                    Notification Template
+                    {t('NOTIFICATION_TEMPLATE')}
                 </label>
                 <input
                     type="radio"
@@ -304,7 +336,7 @@ const CreateTemplate = ({ closeModal, getSavedTemplates, editTemplate }) => {
                     onChange={onTemplateTypeChange}
                 />{" "}
                 <label className="p-r-20 p-l-20" htmlFor="Landing">
-                    Landing Page Template
+                    {t('LANDING_TEMPLATE')}
                 </label>
                 <input
                     type="radio"
@@ -315,7 +347,7 @@ const CreateTemplate = ({ closeModal, getSavedTemplates, editTemplate }) => {
                     onChange={onTemplateTypeChange}
                 />{" "}
                 <label className="p-l-20" htmlFor="Business">
-                    Business Communication Template
+                    {t('BUSINESS_COM_TEMPLATE')}
                 </label>
             </div>
 
@@ -333,11 +365,11 @@ const CreateTemplate = ({ closeModal, getSavedTemplates, editTemplate }) => {
                 }}
             />
             <div className="editor-name">
-                <button className="secondary-btn m-r-20" onClick={closeModal}>
-                    Cancel
+                <button className="secondary-btn m-r-20" onClick={onCloseModal}>
+                    {t('CANCEL')}
                 </button>
                 <button className="primary-btn" onClick={onSave}>
-                    Save
+                    {t('SAVE')}
                 </button>
             </div>
         </div>

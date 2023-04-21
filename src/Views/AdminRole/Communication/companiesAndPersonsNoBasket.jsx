@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo } from "react";
-import { Tabs, Table, message, Modal, Tooltip, Select } from "antd";
+import { Tabs, Table, message, Modal, Select } from "antd";
+import { useTranslation } from "react-i18next";
 
 import Input from "../../../common/input";
 import {
@@ -38,6 +39,7 @@ const CompaniesAndPersonsNoBasket = (props) => {
     const [currentUser] = FetchCurrentUser();
     const [selectedCompany] = FetchCurrentCompany();
     const [loading, setLoading] = useState(true);
+    const { t } = useTranslation();
 
     useEffect(() => {
         getGetCountries()
@@ -67,7 +69,7 @@ const CompaniesAndPersonsNoBasket = (props) => {
             <Tabs type="card" style={{ width: "90vw" }}>
                 {!showOnlyDefaultRecievers && (
                     <>
-                        <TabPane tab="COMPANIES" key="3">
+                        <TabPane tab={t("COMPANIES")} key="3">
                             <CompaniesPage
                                 disableUpdateBtn={isUpdateBtnDisabled}
                                 countryList={countryList}
@@ -77,27 +79,30 @@ const CompaniesAndPersonsNoBasket = (props) => {
                             />
                         </TabPane>
 
-                        <TabPane tab="PERSONS" key="4">
+                        <TabPane tab={t("PERSONS")} key="4">
                             <PersonsPage
                                 disableUpdateBtn={isUpdateBtnDisabled}
                                 countryList={countryList}
                                 currentUser={currentUser}
                                 selectedCompany={selectedCompany}
                                 updateRecipients={updateRecipients}
+                                selectedTemplate={props?.selectedTemplate}
                             />
                         </TabPane>
                     </>
                 )}
                 {showOnlyDefaultRecievers && (
-                    <TabPane tab="USERS" key="5">
-                        {defaultRecievers.map((r) => {
-                            return (
-                                <div className="row m-2">
-                                    <div className="col-2">{`${r.FirstName} ${r.LastName}`}</div>
-                                    <div className="col-3">{r.Email}</div>
-                                </div>
-                            );
-                        })}
+                    <TabPane tab={t("USERS")} key="5">
+                        <div className="default-recivers-content">
+                            {defaultRecievers.map((r) => {
+                                return (
+                                    <div className="row m-2">
+                                        <div className="col-2">{`${r.FirstName} ${r.LastName}`}</div>
+                                        <div className="col-3">{r.Email}</div>
+                                    </div>
+                                );
+                            })}
+                        </div>
                     </TabPane>
                 )}
             </Tabs>
@@ -105,10 +110,9 @@ const CompaniesAndPersonsNoBasket = (props) => {
     );
 };
 
-const CompaniesPage = ({ countryList, currentUser, selectedCompany, disableUpdateBtn, updateRecipients }) => {
+const CompaniesPage = ({ countryList, currentUser, selectedCompany, updateRecipients }) => {
     const [allCompaniesData, setAllCompaniesData] = useState([]);
-    const [companiesData, setCompaniesData] = useState();
-    const [displayCompanies, setDisplayCompanies] = useState();
+    const [displayCompanies, setDisplayCompanies] = useState([]);
     const [newCompaniesData, setNewCompaniesData] = useState({ orgId: "", name: "", country: null, email: "", phone: "" });
     const [newCompaniesErrors, setNewCompaniesErrors] = useState({ orgId: "", name: "", country: null, email: "", phone: "" });
     const [newUserData, setnewUserData] = useState({ firstname: "", lastname: "", title: null, email: "", mobileNumb: "" });
@@ -122,21 +126,28 @@ const CompaniesPage = ({ countryList, currentUser, selectedCompany, disableUpdat
     const [checkedCompaniesUsers, setCheckedCompaniesUsers] = useState([]);
     const [loading, setLoading] = useState(false);
 
-    const disableUpdate = disableUpdateBtn();
+    const { t } = useTranslation();
 
     useEffect(() => {
         if (selectedCompany?.companyPartyId) {
-            setLoading(true);
-            //getCompaniesData();
-            getCompanies("", selectedCompany?.companyPartyId).then((result) => {
-                setAllCompaniesData(result?.Value);
-                setLoading(false);
-            });
+            getCompaniesData();
         }
     }, [selectedCompany]);
 
+    const searchOptions = useMemo(() => {
+        return (
+            allCompaniesData?.map((company) => {
+                return (
+                    <Select.Option key={company?.Company?.Id} value={JSON.stringify(company)}>
+                        {company?.Company.Name}
+                    </Select.Option>
+                );
+            })
+        )
+    }, [allCompaniesData, displayCompanies])
+
     const companiesTableHeaders = useMemo(() => {
-        const headers = ReceversCompaniesTableHeaders[0].children?.map((a) => {
+        const headers = ReceversCompaniesTableHeaders(t)[0].children?.map((a) => {
             return { ...a, title: a.title };
         });
 
@@ -150,7 +161,7 @@ const CompaniesPage = ({ countryList, currentUser, selectedCompany, disableUpdat
                             Company?.Email
                         ) : (
                             <div className="blue hover-hand add-user-item " onClick={() => onAddCompanyEmail(Company, IsReceiver)}>
-                                Add Email
+                                {t('ADD_EMAIL')}
                                 <i className="icon-plus-circled basket-table-icon" />
                             </div>
                         )}
@@ -166,7 +177,7 @@ const CompaniesPage = ({ countryList, currentUser, selectedCompany, disableUpdat
                             Company?.Phone
                         ) : (
                             <div className="blue hover-hand add-user-item " onClick={() => onAddCompanyPhone(Company, IsReceiver)}>
-                                Add Phone
+                                {t('ADD_PHONE')}
                                 <i className="icon-plus-circled basket-table-icon" />
                             </div>
                         )}
@@ -176,8 +187,8 @@ const CompaniesPage = ({ countryList, currentUser, selectedCompany, disableUpdat
             {
                 title: "",
                 width: 60,
-                dataIndex: ["Company"],
-                render: (_, { Company }) => (
+                dataIndex: ["Company", "IsDisabled"],
+                render: (_, { Company, IsDisabled }) => (
                     <>
                         {Company?.Email && emailRegEx.test(Company?.Email) && (
                             <input
@@ -185,6 +196,7 @@ const CompaniesPage = ({ countryList, currentUser, selectedCompany, disableUpdat
                                 className="check-box"
                                 checked={isCompanyChecked(Company?.PartyTId)}
                                 onChange={(e) => onClickCompaniesTableCheckBox(e, Company)}
+                                disabled={IsDisabled}
                             />
                         )}
                     </>
@@ -196,19 +208,19 @@ const CompaniesPage = ({ countryList, currentUser, selectedCompany, disableUpdat
     }, [displayCompanies, checkedCompaniesUsers]);
 
     const usersTableHeaders = useMemo(() => {
-        const headers = ReceversCompaniesSubTableHeaders[0].children?.map((a) => {
+        const headers = ReceversCompaniesSubTableHeaders(t)[0].children?.map((a) => {
             return { ...a, title: a.title };
         });
         headers.push(
             {
                 title: "Email",
-                dataIndex: ["Value", "CompanyData", "Key"],
-                render: (_, { Value, CompanyData, Key }) => (
+                dataIndex: ["Person", "CompanyData", "ReceiverId"],
+                render: (_, { Person, CompanyData, ReceiverId }) => (
                     <>
-                        {Value?.Email ? (
-                            Value?.Email
+                        {Person?.Email ? (
+                            Person?.Email
                         ) : (
-                            <div className="blue hover-hand add-user-item " onClick={() => onAddUserEmail(CompanyData, Value, Key)}>
+                            <div className="blue hover-hand add-user-item " onClick={() => onAddUserEmail(CompanyData, Person, ReceiverId)}>
                                 Add Email
                                 <i className="icon-plus-circled basket-table-icon" />
                             </div>
@@ -219,13 +231,13 @@ const CompaniesPage = ({ countryList, currentUser, selectedCompany, disableUpdat
             },
             {
                 title: "Mobile Number",
-                dataIndex: ["Value", "CompanyData", "Key"],
-                render: (_, { Value, CompanyData, Key }) => (
+                dataIndex: ["Person", "CompanyData", "ReceiverId"],
+                render: (_, { Person, CompanyData, ReceiverId }) => (
                     <>
-                        {Value?.Phone ? (
-                            Value?.Phone
+                        {Person?.Phone ? (
+                            Person?.Phone
                         ) : (
-                            <div className="blue hover-hand add-user-item " onClick={() => onAddUserPhoneNumber(CompanyData, Value, Key)}>
+                            <div className="blue hover-hand add-user-item " onClick={() => onAddUserPhoneNumber(CompanyData, Person, ReceiverId)}>
                                 Add Phone
                                 <i className="icon-plus-circled basket-table-icon" />
                             </div>
@@ -237,15 +249,16 @@ const CompaniesPage = ({ countryList, currentUser, selectedCompany, disableUpdat
             {
                 title: "",
                 width: 60,
-                dataIndex: ["Value", "CompanyData"],
-                render: (_, { Value, CompanyData }) => (
+                dataIndex: ["Person", "CompanyData", 'IsDisabled'],
+                render: (_, { Person, CompanyData, IsDisabled }) => (
                     <>
-                        {Value?.Email && emailRegEx.test(Value?.Email) && (
+                        {Person?.Email && emailRegEx.test(Person?.Email) && (
                             <input
                                 type="checkbox"
                                 className="check-box"
-                                checked={isPersonChecked(CompanyData?.Company?.PartyTId, Value?.PartyTId)}
-                                onChange={(e) => onClickUsersTableCheckBox(e, CompanyData?.Company, Value)}
+                                checked={isPersonChecked(CompanyData?.Company?.PartyTId, Person?.PartyTId)}
+                                onChange={(e) => onClickUsersTableCheckBox(e, CompanyData?.Company, Person)}
+                                disabled={IsDisabled}
                             />
                         )}
                     </>
@@ -320,7 +333,7 @@ const CompaniesPage = ({ countryList, currentUser, selectedCompany, disableUpdat
 
     const onAddEmail = () => {
         if (!emailRegEx.test(newUserEmail)) {
-            setNewUserFieldError("Invalid Email");
+            setNewUserFieldError(t('INVALID_EMAIL'));
             return;
         }
 
@@ -337,13 +350,13 @@ const CompaniesPage = ({ countryList, currentUser, selectedCompany, disableUpdat
 
             updateCompany(params)
                 .then(() => {
-                    message.success("Company update success");
+                    message.success(t('MSG_COMPANY_UPDATE_SUCCESS'));
                     setLoading(false);
                     getCompaniesData();
                 })
                 .catch(() => {
                     setLoading(false);
-                    message.error("Company update failed");
+                    message.error(t('COMPANY_UPDATE_FAIL'));
                 });
         } else {
             const params = {
@@ -358,13 +371,13 @@ const CompaniesPage = ({ countryList, currentUser, selectedCompany, disableUpdat
 
             updatePerson(params)
                 .then(() => {
-                    message.success("User update success");
+                    message.success(t('USER_UPDATE_SUCCESS'));
                     setLoading(false);
                     getCompaniesData();
                 })
                 .catch(() => {
                     setLoading(false);
-                    message.error("User update failed");
+                    message.error(t('USER_UPDATE_FAIL'));
                 });
         }
 
@@ -374,7 +387,7 @@ const CompaniesPage = ({ countryList, currentUser, selectedCompany, disableUpdat
 
     const onAddPhone = () => {
         if (!phoneRegEx.test(newUserPhone)) {
-            setNewUserFieldError("Invalid phone number");
+            setNewUserFieldError(t('INVALID_PHONE_NUMBER'));
             return;
         }
 
@@ -391,13 +404,13 @@ const CompaniesPage = ({ countryList, currentUser, selectedCompany, disableUpdat
 
             updateCompany(params)
                 .then(() => {
-                    message.success("Company update success");
+                    message.success(t('MSG_COMPANY_UPDATE_SUCCESS'));
                     setLoading(false);
                     getCompaniesData();
                 })
                 .catch(() => {
                     setLoading(false);
-                    message.error("Company update failed");
+                    message.error(t('COMPANY_UPDATE_FAIL'));
                 });
         } else {
             const params = {
@@ -412,13 +425,13 @@ const CompaniesPage = ({ countryList, currentUser, selectedCompany, disableUpdat
 
             updatePerson(params)
                 .then(() => {
-                    message.success("User update success");
+                    message.success(t('USER_UPDATE_SUCCESS'));
                     setLoading(false);
                     getCompaniesData();
                 })
                 .catch(() => {
                     setLoading(false);
-                    message.error("User update failed");
+                    message.error(t('USER_UPDATE_FAIL'));
                 });
         }
 
@@ -446,16 +459,16 @@ const CompaniesPage = ({ countryList, currentUser, selectedCompany, disableUpdat
             if (index < 0)
                 newList.push(personDataSet);
         } else {
-           
+
             if (index > -1)
-                newList.splice(index, 1);            
+                newList.splice(index, 1);
         }
 
         setCheckedCompaniesUsers(newList);
         updateRecipients(newList);
     };
 
-    const onClickCompaniesTableCheckBox = (e, company) => {        
+    const onClickCompaniesTableCheckBox = (e, company) => {
         const newList = [...checkedCompaniesUsers];
         const index = checkedCompaniesUsers.findIndex((element) => {
             return element?.IsReceiver && element?.CompanyPartyTId === company?.PartyTId && !element?.PersonPartyTId;
@@ -481,46 +494,15 @@ const CompaniesPage = ({ countryList, currentUser, selectedCompany, disableUpdat
 
     const getCompaniesData = () => {
         setLoading(true);
-        getCompanies("", selectedCompany?.companyPartyId)
-            .then((result) => {
-                const newCheckedCompaniesUsers = [];
-
-                const companiesToShow = result?.Value?.filter((company) => {
-                    let isPersonReciever = false;
-                    const companyDataSet = {
-                        CompanyPartyTId: company?.Company?.PartyTId,
-                        PersonPartyTId: null,
-                        Name: company?.Company?.Name,
-                        Email: company?.Company?.Email,
-                        IsReceiver: company?.IsReceiver,
-                        BasketReceiverId: company?.BasketReceiverId || 0,
-                    };
-                    newCheckedCompaniesUsers.push(companyDataSet);
-
-                    if (company?.Persons?.length > 0) {
-                        company?.Persons.map((person) => {
-                            const personDataSet = {
-                                CompanyPartyTId: company?.Company?.PartyTId,
-                                PersonPartyTId: person?.Value.PartyTId,
-                                Name: person?.Value.Name,
-                                Email: person?.Value.Email,
-                                IsReceiver: person?.Key ? true : false,
-                                BasketReceiverId: company?.BasketReceiverId || 0,
-                            };
-                            newCheckedCompaniesUsers.push(personDataSet);
-
-                            if (person?.Key) isPersonReciever = true;
-                        });
-                    }
-
-                    return isPersonReciever || company?.IsReceiver;
-                });
-
-                setCheckedCompaniesUsers(newCheckedCompaniesUsers);
-                setCompaniesData(result?.Value);
-                setDisplayCompanies(companiesToShow);
+        getCompanies("", selectedCompany?.companyPartyId).then((result) => {
+            const newDisplay = displayCompanies?.map(company => {
+                return result?.Value?.find(c => c?.Company?.Id === company?.Company?.Id)
             })
-            .finally(() => setLoading(false));
+
+            setDisplayCompanies(newDisplay);
+            setAllCompaniesData(result?.Value);
+
+        }).finally(() => setLoading(false));
     };
 
     const onSearchCompanies = (inputValue, option) => {
@@ -546,23 +528,23 @@ const CompaniesPage = ({ countryList, currentUser, selectedCompany, disableUpdat
     const validateFields = () => {
         let validation = true;
         if (!newUserData.firstname) {
-            setNewUserErrors((pre) => ({ ...pre, firstname: "Please enter name" }));
+            setNewUserErrors((pre) => ({ ...pre, firstname: t('PLEASE_ENTER_NAME') }));
             validation = false;
         }
         if (!newUserData.lastname) {
-            setNewUserErrors((pre) => ({ ...pre, lastname: "Please enter name" }));
+            setNewUserErrors((pre) => ({ ...pre, lastname: t('PLEASE_ENTER_NAME') }));
             validation = false;
         }
         if (!newUserData.title) {
-            setNewUserErrors((pre) => ({ ...pre, title: "Please select a title" }));
+            setNewUserErrors((pre) => ({ ...pre, title: t('PLEASE_SELECT_TITLE') }));
             validation = false;
         }
         if (!emailRegEx.test(newUserData.email) || !newUserData.email) {
-            setNewUserErrors((pre) => ({ ...pre, email: "Invalid email adress" }));
+            setNewUserErrors((pre) => ({ ...pre, email: t('INVALID_EMAIL') }));
             validation = false;
         }
         if (!phoneRegEx.test(newUserData.mobileNumb) || !newUserData.mobileNumb) {
-            setNewUserErrors((pre) => ({ ...pre, mobileNumb: "Invalid mobile number" }));
+            setNewUserErrors((pre) => ({ ...pre, mobileNumb: t('INVALID_MOBILE') }));
             validation = false;
         }
 
@@ -592,10 +574,11 @@ const CompaniesPage = ({ countryList, currentUser, selectedCompany, disableUpdat
             addPerson(params)
                 .then(() => {
                     setnewUserData({ firstname: "", lastname: "", title: null, email: "", mobileNumb: "" });
-                    message.success("User created");
+                    setNewUserErrors({ firstname: "", lastname: "", title: null, email: "", mobileNumb: "" });
+                    message.success(t('MSG_CREATE_USER_SUCCESS'));
                     getCompaniesData();
                 })
-                .catch(() => message.error("Create user failed please try again"));
+                .catch(() => message.error(t('MSG_CREATE_USER_FAILED')));
         }
     };
 
@@ -605,7 +588,7 @@ const CompaniesPage = ({ countryList, currentUser, selectedCompany, disableUpdat
                 <div className="recivers-user-footer user-input-box">
                     <div className="basket-new-user-input">
                         <Input
-                            placeholder="Xxx"
+                            placeholder="FIRST_NAME"
                             value={newUserData.firstname}
                             onChange={(e) => onChangeNewUserData(e, "firstname")}
                             error={newUserErrors.firstname}
@@ -613,7 +596,7 @@ const CompaniesPage = ({ countryList, currentUser, selectedCompany, disableUpdat
                     </div>
                     <div className="basket-new-user-input">
                         <Input
-                            placeholder="Xxx"
+                            placeholder="LAST_NAME"
                             value={newUserData.lastname}
                             onChange={(e) => onChangeNewUserData(e, "lastname")}
                             error={newUserErrors.lastname}
@@ -624,14 +607,14 @@ const CompaniesPage = ({ countryList, currentUser, selectedCompany, disableUpdat
                             values={nameTitles}
                             onChange={onChangeNewUserTitle}
                             selected={JSON.stringify(newUserData.title || undefined)}
-                            placeholder="Xxx"
+                            placeholder="TITLE"
                             dataName="title"
                             error={newUserErrors.title}
                         />
                     </div>
                     <div className="basket-new-user-input">
                         <Input
-                            placeholder="Xxx"
+                            placeholder="EMAIL"
                             value={newUserData.email}
                             onChange={(e) => onChangeNewUserData(e, "email")}
                             error={newUserErrors.email}
@@ -639,7 +622,7 @@ const CompaniesPage = ({ countryList, currentUser, selectedCompany, disableUpdat
                     </div>
                     <div className="basket-new-user-input">
                         <Input
-                            placeholder="Xxx"
+                            placeholder="MOBILE_NUMBER"
                             value={newUserData.mobileNumb}
                             onChange={(e) => onChangeNewUserData(e, "mobileNumb")}
                             error={newUserErrors.mobileNumb}
@@ -685,23 +668,23 @@ const CompaniesPage = ({ countryList, currentUser, selectedCompany, disableUpdat
     const validateCompanyFields = () => {
         let validation = true;
         if (!newCompaniesData.name) {
-            setNewCompaniesErrors((pre) => ({ ...pre, name: "Please enter Name" }));
+            setNewCompaniesErrors((pre) => ({ ...pre, name: t('PLEASE_ENTER_NAME') }));
             validation = false;
         }
         if (!newCompaniesData.orgId) {
-            setNewCompaniesErrors((pre) => ({ ...pre, orgId: "Please enter Organization Id" }));
+            setNewCompaniesErrors((pre) => ({ ...pre, orgId: t('PLEASE_ENTER_ORG_ID') }));
             validation = false;
         }
         if (!newCompaniesData.country?.alpha2) {
-            setNewCompaniesErrors((pre) => ({ ...pre, country: "Please select a country" }));
+            setNewCompaniesErrors((pre) => ({ ...pre, country: t('PLEASE_SELECT_COUNTRY') }));
             validation = false;
         }
         if (!phoneRegEx.test(newCompaniesData.phone) || !newCompaniesData.phone) {
-            setNewCompaniesErrors((pre) => ({ ...pre, phone: "Invalid phone number" }));
+            setNewCompaniesErrors((pre) => ({ ...pre, phone: t('INVALID_PHONE_NUMBER') }));
             validation = false;
         }
         if (!emailRegEx.test(newCompaniesData.email) || !newCompaniesData.email) {
-            setNewCompaniesErrors((pre) => ({ ...pre, email: "Invalid email adress" }));
+            setNewCompaniesErrors((pre) => ({ ...pre, email: t('INVALID_EMAIL') }));
             validation = false;
         }
 
@@ -714,10 +697,11 @@ const CompaniesPage = ({ countryList, currentUser, selectedCompany, disableUpdat
                 .then((result) => {
                     if (result) {
                         addCompanyData();
+                        setNewCompaniesErrors({ orgId: "", name: "", country: null, email: "", phone: "" });
                     } else {
                         setLoading(false);
-                        message.error("Please enter a valid organization Id and relevant country");
-                        setNewCompaniesErrors((pre) => ({ ...pre, orgId: "Please enter a valid Organization Id" }));
+                        message.error(t('MSG_ENTER_VALID_ORGID_AND_COUNTRY'));
+                        setNewCompaniesErrors((pre) => ({ ...pre, orgId: t('INVALLID_ORG_ID') }));
                     }
                 })
                 .catch(() => setLoading(false));
@@ -728,7 +712,7 @@ const CompaniesPage = ({ countryList, currentUser, selectedCompany, disableUpdat
         const params = {
             Company: {
                 Name: newCompaniesData.name,
-                CompanyId: newCompaniesData.orgId,
+                CompanyRegistrationID: newCompaniesData.orgId,
                 CompanyTypeTId: 1, //organization
                 CountryTId: newCompaniesData.country?.Id,
                 CountryTCode: newCompaniesData.country?.alpha2,
@@ -740,29 +724,18 @@ const CompaniesPage = ({ countryList, currentUser, selectedCompany, disableUpdat
             SelectedCompanyPartyId: selectedCompany?.companyPartyId,
         };
         addCompany(params)
-            .then(() => {
-                message.success("Company created");
+            .then((result) => {
+                const newDisplayCompanies = JSON.parse(JSON.stringify(displayCompanies))
+                newDisplayCompanies.push({'Company': result});
+                setDisplayCompanies(newDisplayCompanies);
+                message.success(t('MSG_COMPANY_CREATE_SUCCESS'));
                 setLoading(false);
                 setNewCompaniesData({ orgId: "", name: "", country: null, email: "", phone: "" });
             })
             .catch(() => {
-                message.error("Company creation failed");
+                message.error(t('MSG_COMPANY_CREATE_FAIL'));
                 setLoading(false);
             });
-    };
-
-    const onUpdate = () => {
-        //setLoading(true)
-        const params = {
-            EntityPartyId: selectedCompany?.companyPartyId,
-            EntityName: selectedCompany?.name,
-            UserPartyId: currentUser?.PartyId,
-            BasketReceivers: checkedCompaniesUsers,
-        };
-
-        // updateAndSchedule(params).then(() => {
-        //     getCompaniesData();
-        // }).catch(() => setLoading(false))
     };
 
     const onSelectSearchCompany = (values) => {
@@ -778,7 +751,7 @@ const CompaniesPage = ({ countryList, currentUser, selectedCompany, disableUpdat
             <div className="recivers-companies-footer user-input-box">
                 <div className="basket-new-company-input">
                     <Input
-                        placeholder="Xxx"
+                        placeholder="ORG_ID"
                         value={newCompaniesData.orgId}
                         onChange={(e) => onChangeNewOrgData(e, "orgId")}
                         error={newCompaniesErrors.orgId}
@@ -786,7 +759,7 @@ const CompaniesPage = ({ countryList, currentUser, selectedCompany, disableUpdat
                 </div>
                 <div className="basket-new-company-input">
                     <Input
-                        placeholder="Xxx"
+                        placeholder="NAME"
                         value={newCompaniesData.name}
                         onChange={(e) => onChangeNewOrgData(e, "name")}
                         error={newCompaniesErrors.name}
@@ -797,14 +770,14 @@ const CompaniesPage = ({ countryList, currentUser, selectedCompany, disableUpdat
                         values={countryList}
                         onChange={onChangeCountry}
                         selected={JSON.stringify(newCompaniesData.country || undefined)}
-                        placeholder="Xxx"
+                        placeholder="COUNTRY"
                         dataName="Name"
                         error={newCompaniesErrors.country}
                     />
                 </div>
                 <div className="basket-new-company-input">
                     <Input
-                        placeholder="Xxx"
+                        placeholder="EMAIL"
                         value={newCompaniesData.email}
                         onChange={(e) => onChangeNewOrgData(e, "email")}
                         error={newCompaniesErrors.email}
@@ -812,7 +785,7 @@ const CompaniesPage = ({ countryList, currentUser, selectedCompany, disableUpdat
                 </div>
                 <div className="basket-new-company-input">
                     <Input
-                        placeholder="Xxx"
+                        placeholder="PHONE"
                         value={newCompaniesData.phone}
                         onChange={(e) => onChangeNewOrgData(e, "phone")}
                         error={newCompaniesErrors.phone}
@@ -834,30 +807,23 @@ const CompaniesPage = ({ countryList, currentUser, selectedCompany, disableUpdat
             )}
             <div className="recivers-top-container m-b-20">
                 <div className="companies-search-input-containers user-input-box m-r-10">
-                    {/* <Input placeholder="Search" value={searchCompaniesText} onChange={onChangesearchCompaniesText} endImage='icon-search-1' /> */}
                     <Select
                         mode="multiple"
                         allowClear
-                        placeholder="Search"
+                        placeholder={t('SEARCH')}
                         onChange={onSelectSearchCompany}
                         showArrow
                         style={{ width: "100%", overflow: "visible" }}
                         filterOption={onSearchCompanies}
                     >
-                        {allCompaniesData?.map((company) => {
-                            return (
-                                <Select.Option key={company?.Company?.Id} value={JSON.stringify(company)}>
-                                    {company?.Company.Name}
-                                </Select.Option>
-                            );
-                        })}
+                        {searchOptions}
                     </Select>
                 </div>
-                <button className="add-btn m-r-10 disable-div">Add New</button>
-                <button className="add-btn m-r-10 disable-div">Upload</button>
+                <button className="add-btn m-r-10 disable-div">{t('ADD_NEW')}</button>
+                <button className="add-btn m-r-10 disable-div">{t('UPLOAD')}</button>
             </div>
 
-            <div className="receivers-tablele-width">
+            <div className="receivers-tablele-width expandable-table-btn">
                 <Table
                     rowKey={(record, index) => index}
                     dataSource={displayCompanies}
@@ -873,25 +839,25 @@ const CompaniesPage = ({ countryList, currentUser, selectedCompany, disableUpdat
                     footer={addNewCompany}
                 />
             </div>
-            <div className="action-bar">
-                {disableUpdate ? (
-                    <Tooltip title="Basket not configured">
-                        <button className="primary-btn actions-btn" disabled={true}>
-                            Update
-                        </button>
-                    </Tooltip>
-                ) : (
-                    <button className="primary-btn actions-btn" onClick={onUpdate}>
-                        Update
-                    </button>
-                )}
-            </div>
-            <Modal title={"Add email address"} visible={emailModalVisible} onOk={onAddEmail} onCancel={toggelEmailModal}>
+            <Modal title={t('ADD_EMAIL_ADRESS')} visible={emailModalVisible}
+                onOk={onAddEmail}
+                okText={t('OK')}
+                onCancel={toggelEmailModal}
+                cancelText={t('CANCEL')}
+                closeIcon={< i className='icon-close close-icon' />}>
                 <div className="user-input-box">
                     <Input value={newUserEmail} onChange={onChangeNewUserEmail} error={newUserFieldError} />
                 </div>
             </Modal>
-            <Modal title={"Add phone number"} visible={phoneModalVisible} onOk={onAddPhone} onCancel={toggelPhoneModal}>
+            <Modal
+                title={t('ADD_PHONE_NUMBER')}
+                visible={phoneModalVisible}
+                onOk={onAddPhone}
+                okText={t('OK')}
+                onCancel={toggelPhoneModal}
+                cancelText={t('CANCEL')}
+                closeIcon={< i className='icon-close close-icon' />}
+            >
                 <div className="user-input-box">
                     <Input value={newUserPhone} onChange={onChangeNewUserPhone} error={newUserFieldError} />
                 </div>
@@ -915,12 +881,17 @@ const newPersonObject = {
     companyName: "",
 };
 
-const PersonsPage = ({ countryList, currentUser, selectedCompany, updateRecipients }) => {
-    const [searchPersonsText, setSearchPersonsText] = useState("");
+const PersonsPage = ({ countryList, currentUser, selectedCompany, updateRecipients, selectedTemplate }) => {
     const [personsData, setPersonsData] = useState();
+    const [displayPersons, setDisplayPersons] = useState();
     const [newPersonData, setnewPersonData] = useState(newPersonObject);
+    const [newPersonErrors, setNewPersonErrors] = useState(newPersonObject);
+    const [selectedFieldToUpdate, setSelectedFieldToUpdate] = useState({});
+    const [modalVisible, setModalVisible] = useState(false);
+    const [modalTextField, setModalTextField] = useState({});
     const [loading, setLoading] = useState(true);
     const [checkedPersons, setCheckedPersons] = useState([]);
+    const { t } = useTranslation();
 
     useEffect(() => {
         if (selectedCompany?.companyPartyId) {
@@ -929,63 +900,147 @@ const PersonsPage = ({ countryList, currentUser, selectedCompany, updateRecipien
     }, [selectedCompany]);
 
     const personsTableHeaders = useMemo(() => {
-        const headers = ReceversPersonsTableHeaders?.map((a) => {
-            return { ...a, title: a.title };
-        });
-        headers.push({
-            title: "",
-            width: 60,
-            dataIndex: ["IsReceiver", "Person"],
-            render: (_, { Person }) => (
-                <input
-                    type="checkbox"
-                    className="check-box"
-                    checked={isPersonChecked(Person?.PartyTId)}
-                    onChange={(e) => onClickPersonsTableCheckBox(e, Person)}
-                />
-            ),
-        });
+        const headers = (ReceversPersonsTableHeaders(t))?.map(a => { return { ...a, title: a.title } })
+        headers.push(
+            {
+                title: 'Email',
+                dataIndex: ['Person', 'IsReceiver'],
+                render: (_, { Person, IsReceiver }) => (
+                    <>
+                        {Person?.Email ? Person?.Email :
+                            <div className="blue hover-hand add-user-item " onClick={() => onAddPersonEmail(Person, IsReceiver)} >
+                                Add Email
+                                <i className="icon-plus-circled basket-table-icon" />
+                            </div>
+                        }
+                    </>
+                ),
+            },
+            {
+                title: 'Phone',
+                dataIndex: ['Person', 'IsReceiver'],
+                render: (_, { Person, IsReceiver }) => (
+                    <>
+                        {
+                            Person?.Phone ? Person?.Phone :
+                                <div className="blue hover-hand add-user-item " onClick={() => onAddPersonPhone(Person, IsReceiver)} >
+                                    Add Phone
+                                    <i className="icon-plus-circled basket-table-icon" />
+                                </div>
+                        }
+                    </>
+                ),
+            },
+            {
+                title: '',
+                width: 60,
+                dataIndex: ['Person', 'IsDisabled', 'CompanyContacts'],
+                render: (_, { Person, IsDisabled, CompanyContacts }) => (
+                    <>
+                        {Person?.Email && emailRegEx.test(Person?.Email) && !(selectedTemplate?.MessageTriggerPointId === 1 && CompanyContacts?.length === 0) &&
+                            <input type="checkbox" className="check-box"
+                                checked={isPersonChecked(Person?.PartyTId)}
+                                onChange={(e) => onClickPersonsTableCheckBox(e, Person)}
+                                disabled={IsDisabled}
+                            />
+                        }
+                    </>
+                )
+            })
 
-        return headers;
-    }, [personsData, checkedPersons]);
+        return headers
+    }, [displayPersons, checkedPersons]);
 
     const PersonsExpandedHeaders = useMemo(() => {
-        const headers = ReceversPersonsTableExpandedHeaders?.map((a) => {
-            return { ...a, title: a.title };
-        });
+        const headers = ReceversPersonsTableExpandedHeaders(t);
         headers.push({
-            title: "",
+            title: '',
             width: 60,
-            dataIndex: ["IsReceiver", "Company"],
-            render: (_, { Company }) => (
-                <input
-                    type="checkbox"
-                    className="check-box"
-                    checked={isCompanyChecked(Company?.PartyTId)}
-                    onChange={(e) => onClickPersonsTableCompanyCheckBox(e, Company)}
-                />
-            ),
-        });
+            dataIndex: ['Company', 'IsDisabled'],
+            render: (_, { Company, IsDisabled }) => (
+                <>
+                    {Company?.Email && emailRegEx.test(Company?.Email) &&
+                        <input type="checkbox" className="check-box"
+                            checked={isCompanyChecked(Company?.PartyTId)}
+                            onChange={(e) => onClickPersonsTableCompanyCheckBox(e, Company)}
+                            disabled={IsDisabled}
+                        />
+                    }
+                </>
+            )
+        })
 
-        return headers;
-    }, [personsData, checkedPersons]);
+        return headers
+    }, [displayPersons, checkedPersons]);
 
-    const onClickPersonsTableCheckBox = (e, person) => {        
-        const params = {
-            EntityPartyId: selectedCompany?.companyPartyId,
-            EntityName: selectedCompany?.name,
-            UserPartyId: currentUser?.PartyId,
-            BasketReceivers: [
-                {
-                    CompanyPartyTId: null,
-                    PersonPartyTId: person?.PartyTId,
-                    Name: person?.Name,
-                    Email: person?.Email,
-                    IsReceiver: e.target.checked,
-                },
-            ],
-        };
+    const onAddPersonEmail = (personData, isReceiver) => {
+        setSelectedFieldToUpdate({ 'isEmail': true, 'isPerson': true, 'personData': personData, 'isReceiver': isReceiver });
+        toggelModal();
+    }
 
+    const onAddPersonPhone = (personData, isReceiver) => {
+        setSelectedFieldToUpdate({ 'isEmail': false, 'isPerson': true, 'personData': personData, 'isReceiver': isReceiver });
+        toggelModal();
+    }
+
+    const toggelModal = () => {
+        setModalVisible(pre => !pre);
+        setModalTextField('');
+    }
+
+    const onChangeModalTextField = (e) => {
+        e.preventDefault()
+        setModalTextField({ value: e.target.value, error: '' })
+    }
+
+    const onOkModal = () => {
+        if (selectedFieldToUpdate?.isEmail) {
+            if (!emailRegEx.test(modalTextField?.value)) {
+                setModalTextField({ ...modalTextField, error: t('INVALID_EMAIL') });
+                return;
+            }
+        } else {
+            if (!phoneRegEx.test(modalTextField?.value)) {
+                setModalTextField({ ...modalTextField, error: t('INVALID_PHONE_NUMBER') });
+                return;
+            }
+        }
+
+        setLoading(true);
+        if (selectedFieldToUpdate?.isPerson) {
+            const params = {
+                "Person": selectedFieldToUpdate?.personData,
+                "CommunicationBasketId": null,
+                "UserPartyId": currentUser?.PartyId,
+                "IsReceiver": selectedFieldToUpdate?.isReceiver,
+                "CompanyPartyId": selectedCompany?.companyPartyId,
+                "SelectedCompany": null,
+            }
+
+            if (selectedFieldToUpdate?.isEmail) {
+                params.Person.Email = modalTextField?.value;
+            } else {
+                params.Person.Phone = modalTextField?.value;
+            }
+
+
+            updatePerson(params).then(() => {
+                message.success(t('MSG_PERSON_UPDATE_SUCCESS'))
+                setLoading(false);
+                getPersonsData();
+            }).catch(() => {
+                setLoading(false);
+                message.error(t('MSG_PERSON_UPDATE_FAIL'))
+            })
+        } else {
+
+        }
+
+        setSelectedFieldToUpdate({});
+        toggelModal()
+    }
+
+    const onClickPersonsTableCheckBox = (e, person) => {
         const newList = [...checkedPersons];
 
         if (e.target.checked) {
@@ -1013,21 +1068,6 @@ const PersonsPage = ({ countryList, currentUser, selectedCompany, updateRecipien
     };
 
     const onClickPersonsTableCompanyCheckBox = (e, company) => {
-        const params = {
-            EntityPartyId: selectedCompany?.companyPartyId,
-            EntityName: selectedCompany?.name,
-            UserPartyId: currentUser?.PartyId,
-            BasketReceivers: [
-                {
-                    CompanyPartyTId: company?.PartyTId,
-                    PersonPartyTId: null,
-                    Name: company?.Name,
-                    Email: company?.Email,
-                    IsReceiver: e.target.checked,
-                },
-            ],
-        };
-
         const newList = [...checkedPersons];
 
         if (e.target.checked) {
@@ -1054,88 +1094,104 @@ const PersonsPage = ({ countryList, currentUser, selectedCompany, updateRecipien
         updateRecipients(newList);
     };
 
-    const getPersonsData = () => {
+    const getPersonsData = (dispPersons = displayPersons) => {
         setLoading(true);
-        getPersons(selectedCompany?.companyPartyId, null, searchPersonsText)
+        getPersons(selectedCompany?.companyPartyId)
             .then((result) => {
                 setPersonsData(result?.Value);
+
+                const newDisplay = dispPersons?.map(person => {
+                    return result?.Value?.find(p => p?.Person?.Id === person?.Person?.Id)
+                })
+                setDisplayPersons(newDisplay)
             })
             .finally(() => setLoading(false));
     };
 
-    const onSearchPersons = () => {
-        getPersonsData(0);
-    };
-
-    const onChangesearchPersonsText = (e) => {
-        e.preventDefault();
-        setSearchPersonsText(e.target.value);
-    };
-
     const onChangeNewPersonData = (e, type) => {
         e.preventDefault();
+        setNewPersonErrors((pre) => ({ ...pre, [type]: '' }));
         setnewPersonData((pre) => ({ ...pre, [type]: e.target.value }));
     };
 
     const onChangeNewUserTitle = (e) => {
         e.preventDefault();
+        setNewPersonErrors((pre) => ({ ...pre, title: '' }));
         setnewPersonData((pre) => ({ ...pre, title: JSON.parse(e.target.value) }));
     };
 
     const onChangeNewPersonCountry = (e) => {
         e.preventDefault();
+        setNewPersonErrors((pre) => ({ ...pre, country: '' }));
         setnewPersonData((pre) => ({ ...pre, country: JSON.parse(e.target.value) }));
     };
 
     const validateFields = () => {
-        let validation = true;
-        if (!newPersonData.firstName || !newPersonData.lastName) {
-            message.error("Name cannot be empty");
+        let validation = true
+        if (!newPersonData.firstName) {
+            setNewPersonErrors(pre => ({ ...pre, firstName: t('FIRST_NAME_EMPTY') }))
             validation = false;
         }
-        if (!newPersonData.email) {
-            message.error("Email cannot be empty");
+        if (!newPersonData.lastName) {
+            setNewPersonErrors(pre => ({ ...pre, lastName: t('LAST_NAME_EMPTY') }))
             validation = false;
-        } else if (!emailRegEx.test(newPersonData.email)) {
-            message.error("Invalid email adress");
-            validation = false;
+        }
+        if (!emailRegEx.test(newPersonData.email) || !newPersonData.email) {
+            setNewPersonErrors(pre => ({ ...pre, email: t('INVALID_EMAIL') }))
+            validation = false
+        }
+        if (!newPersonData.title) {
+            setNewPersonErrors(pre => ({ ...pre, title: t('PLEASE_SELECT_TITLE') }))
+            validation = false
+        }
+        if (!newPersonData.country) {
+            setNewPersonErrors(pre => ({ ...pre, country: t('PLEASE_SELECT_COUNTRY') }))
+            validation = false
         }
         if (!newPersonData.mobileNumb) {
-            message.error("Mobile number cannot be empty");
-            validation = false;
+            setNewPersonErrors(pre => ({ ...pre, mobileNumb: 'Mobile number cannot be empty' }))
+            validation = false
         }
 
         return validation;
-    };
+    }
 
     const onAddNewPerson = () => {
         if (validateFields()) {
             setLoading(true);
             const params = {
-                Person: {
-                    Name: newPersonData.firstName + " " + newPersonData.lastName,
-                    TitleTId: newPersonData.title?.id,
-                    TitleTName: newPersonData.title?.title,
-                    FirstName: newPersonData.firstName,
-                    MiddleName: null,
-                    LastName: newPersonData.lastName,
-                    CountryTId: newPersonData.country?.Id,
-                    CountryTName: newPersonData.country?.Name,
-                    Email: newPersonData.email,
-                    Phone: newPersonData.mobileNumb,
+                "Person": {
+                    "Name": newPersonData.firstName + " " + newPersonData.lastName,
+                    "TitleTId": newPersonData.title?.id,
+                    "TitleTName": newPersonData.title?.title,
+                    "FirstName": newPersonData.firstName,
+                    "MiddleName": null,
+                    "LastName": newPersonData.lastName,
+                    "CountryTId": newPersonData.country?.Id,
+                    "CountryTName": newPersonData.country?.Name,
+                    "Email": newPersonData.email,
+                    "Phone": newPersonData.mobileNumb
                 },
-                SelectedCompany: null,
-                CompanyPartyId: selectedCompany?.companyPartyId,
-            };
+                "SelectedCompany": null,
+                "CommunicationBasketId": null,
+                "CompanyPartyId": selectedCompany?.companyPartyId
+            }
 
-            addPerson(params)
-                .then(() => {
-                    setnewPersonData(newPersonObject);
-                    message.success("Person created");
+            addPerson(params).then((result) => {
+                const newDisplayPersons = displayPersons ? JSON.parse(JSON.stringify(displayPersons || undefined)) : []
+                newDisplayPersons.push({'Person': result })
+                setDisplayPersons(newDisplayPersons)
+                
+                setnewPersonData(newPersonObject);
+                setNewPersonErrors(newPersonObject)
+                message.success(t('MSG_PERSON_CREATE_SUCCESS'));
+                setLoading(false);
 
-                    getPersonsData(0);
-                })
-                .catch(() => message.error("Create user failed please try again"));
+                getPersonsData(newDisplayPersons);
+            }).catch(() => {
+                setLoading(false);
+                message.error(t('MSG_PERSON_CREATE_FAIL'))
+            })
         }
     };
 
@@ -1143,44 +1199,58 @@ const PersonsPage = ({ countryList, currentUser, selectedCompany, updateRecipien
         return (
             <div className="recivers-user-footer user-input-box" style={{ marginLeft: 165 }}>
                 <div style={{ width: 150 }}>
-                    <Input
-                        placeholder="First name"
+                    <Input placeholder="FIRST_NAME"
                         value={newPersonData.firstName}
-                        onChange={(e) => onChangeNewPersonData(e, "firstName")}
+                        onChange={(e) => onChangeNewPersonData(e, 'firstName')}
+                        error={newPersonErrors.firstName}
                     />
                 </div>
                 <div style={{ width: 150 }}>
-                    <Input placeholder="Last name" value={newPersonData.lastName} onChange={(e) => onChangeNewPersonData(e, "lastName")} />
+                    <Input placeholder="LAST_NAME"
+                        value={newPersonData.lastName}
+                        onChange={(e) => onChangeNewPersonData(e, 'lastName')}
+                        error={newPersonErrors.lastName}
+                    />
                 </div>
                 <div className="user-drop-down" style={{ width: 150 }}>
                     <Dropdown
                         values={nameTitles}
                         onChange={onChangeNewUserTitle}
                         selected={JSON.stringify(newPersonData.title || undefined)}
-                        placeholder="Xxx"
+                        placeholder="TITLE"
                         dataName="title"
+                        error={newPersonErrors.title}
                     />
                 </div>
                 <div className="user-drop-down" style={{ width: 150 }}>
                     <Dropdown
                         values={countryList}
                         onChange={onChangeNewPersonCountry}
-                        placeholder="Xxx"
+                        placeholder="COUNTRY"
                         selected={JSON.stringify(newPersonData.country || undefined)}
                         dataName="Name"
+                        error={newPersonErrors.country}
                     />
                 </div>
                 <div style={{ width: 200 }}>
-                    <Input placeholder="Xxx" value={newPersonData.email} onChange={(e) => onChangeNewPersonData(e, "email")} />
+                    <Input placeholder="EMAIL"
+                        value={newPersonData.email}
+                        onChange={(e) => onChangeNewPersonData(e, 'email')}
+                        error={newPersonErrors.email}
+                    />
                 </div>
                 <div style={{ width: 150 }}>
-                    <Input placeholder="Xxx" value={newPersonData.mobileNumb} onChange={(e) => onChangeNewPersonData(e, "mobileNumb")} />
+                    <Input placeholder="MOBILE_NUMBER"
+                        value={newPersonData.mobileNumb}
+                        onChange={(e) => onChangeNewPersonData(e, 'mobileNumb')}
+                        error={newPersonErrors.mobileNumb}
+                    />
                 </div>
                 <div style={{ width: 20 }}>
                     <i className="icon-plus-circled blue basket-table-icon hover-hand" onClick={onAddNewPerson} />
                 </div>
             </div>
-        );
+        )
     };
 
     const expandedRowRender = (parentRow) => {
@@ -1205,13 +1275,27 @@ const PersonsPage = ({ countryList, currentUser, selectedCompany, updateRecipien
         else return true;
     };
 
-    const isPersonChecked = (personId) => {                
+    const isPersonChecked = (personId) => {
         const index = checkedPersons.findIndex((element) => {
             return element?.IsReceiver && element?.PersonPartyTId === personId;
         });
 
         if (index < 0) return false;
         else return true;
+    };
+
+    const onSelectSearchPerson = (values) => {
+        const personList = values.map((person) => {
+            return JSON.parse(person);
+        });
+
+        setDisplayPersons(personList);
+    };
+
+    const onSearchPerson = (inputValue, option) => {
+        return (JSON.parse(option?.value)?.Person?.Name?.toLowerCase().includes(inputValue.toLowerCase()) ||
+            JSON.parse(option?.value)?.Person?.FirstName?.toLowerCase().includes(inputValue.toLowerCase()) ||
+            JSON.parse(option?.value)?.Person?.LastName?.toLowerCase().includes(inputValue.toLowerCase()));
     };
 
     return (
@@ -1224,20 +1308,34 @@ const PersonsPage = ({ countryList, currentUser, selectedCompany, updateRecipien
                 </div>
             )}
             <div className="recivers-top-container m-b-20">
-                <div className="companies-search-input-containers user-input-box">
-                    <Input placeholder="Search" value={searchPersonsText} onChange={onChangesearchPersonsText} endImage="icon-search-1" />
+                <div className="companies-search-input-containers user-input-box m-r-10">
+                    {/* <Input placeholder="Search" value={searchCompaniesText} onChange={onChangesearchCompaniesText} endImage='icon-search-1' /> */}
+                    <Select
+                        mode="multiple"
+                        allowClear
+                        placeholder="SEARCH"
+                        onChange={onSelectSearchPerson}
+                        showArrow
+                        style={{ width: "100%", overflow: "visible" }}
+                        filterOption={onSearchPerson}
+                    >
+                        {personsData?.map((person) => {
+                            return (
+                                <Select.Option key={person?.Person?.Id} value={JSON.stringify(person)}>
+                                    {person?.Person.Name || person?.Person.FirstName}
+                                </Select.Option>
+                            );
+                        })}
+                    </Select>
                 </div>
-                <button className="add-btn m-r-10" onClick={onSearchPersons}>
-                    Filters
-                </button>
-                <button className="add-btn m-r-10 disable-div">Add New</button>
-                <button className="add-btn m-r-10 disable-div">Upload</button>
+                <button className="add-btn m-r-10 disable-div">{t('ADD_NEW')}</button>
+                <button className="add-btn m-r-10 disable-div">{t('UPLOAD')}</button>
             </div>
 
-            <div className="receivers-tablele-width">
+            <div className="receivers-tablele-width expandable-table-btn">
                 <Table
                     rowKey={(record, index) => index}
-                    dataSource={personsData}
+                    dataSource={displayPersons}
                     scroll={{
                         y: "40vh",
                     }}
@@ -1249,6 +1347,19 @@ const PersonsPage = ({ countryList, currentUser, selectedCompany, updateRecipien
                     footer={addNewPerson}
                 />
             </div>
+            <Modal
+                title={t(selectedFieldToUpdate?.isEmail ? 'ADD_EMAIL_ADRESS' : 'ADD_PHONE_NUMBER')}
+                visible={modalVisible}
+                onOk={onOkModal}
+                okText={t('OK')}
+                onCancel={toggelModal}
+                cancelText={t('CANCEL')}
+                closeIcon={< i className='icon-close close-icon' />}
+            >
+                <div className="user-input-box">
+                    <Input value={modalTextField?.value || ''} onChange={onChangeModalTextField} error={modalTextField?.error || ''} />
+                </div>
+            </Modal>
         </>
     );
 };

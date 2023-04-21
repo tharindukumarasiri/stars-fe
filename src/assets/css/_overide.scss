@@ -6,7 +6,7 @@
 }
 
 body {
-    font-size: 0.8rem !important;
+    font-size: 0.85rem !important;
 }
 
 .form-wrapper, .form-footer {
@@ -68,3 +68,16 @@ p {
     margin-top: 0;
     margin-bottom: 0.2em !important;
 }
+
+.ant-modal-close-x {
+    width: 30px !important;
+    height: 30px !important;
+    line-height: initial !important;
+}
+.ant-modal-close {
+    padding: 6px !important;
+}
+.ant-modal-footer {
+    padding: 20px 16px !important;
+}
+.input-container{margin-bottom:5px}

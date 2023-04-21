@@ -18,7 +18,7 @@ import { useTranslation } from "react-i18next";
 const { TabPane } = Tabs;
 
 const ProjectDetails = ({ params, loggedUser }) => {
-    const [editable, setEditable] = useState(false);
+    // const [editable, setEditable] = useState(false);
     const [status, setStatus] = useState(params.Status);
     const [closedDate, setClosedDate] = useState(params.ClosedDate);
     const [sectionData, setSectionData] = useState([]);    
@@ -39,64 +39,64 @@ const ProjectDetails = ({ params, loggedUser }) => {
         updateProject(newProjectData, loggedUser.PartyId )
             .then(() => {
                 setStatus(e.target.value);
-                message.success("Change status successful");
+                message.success(t('MSG_CHANGE_STATUS_SUCCESS'));
             })
             .catch(() => {
-                message.error("Change status faild please try again");
+                message.error(t('MSG_CHANGE_STATUS_FAIL'));
             });
     };   
 
     return (
         <>
-            <div className="g-row m-t-20 m-b-20 m-l-20">
+            <div className="g-row detail-stripe-tab-top">
                 <div className="g-col-3 fl body-text">
-                    {t("Project ID")}: <strong>{projectCodeFormat(params.Id)}</strong>
+                    {t("PROJECT_ID")}: <strong>{projectCodeFormat(params.Id)}</strong>
                 </div>
                 <div className="g-col-3 fl body-text">
-                    {t("Name")}: <strong>{params.Name}</strong>
+                    {t("NAME")}: <strong>{params.Name}</strong>
                 </div>
             </div>
             <div className="custom-tab-container">
                 <Tabs type="card">
-                    <TabPane tab={t("GENERAL")} key="1">
+                    <TabPane tab={t("GENERAL").toUpperCase()} key="1">
                         <div className="g-row m-l-20 m-r-20 p-a-20">
                             <div className="g-col-2">
-                                <div className="body-text-bold">{t("Type")}</div>
+                                <div className="body-text-bold">{t("TYPE")}</div>
                                 <div className="body-text">{params.TypeCode}</div>
                             </div>
                             <div className="g-col-2">
-                                <div className="body-text-bold">{t("Description")}</div>
+                                <div className="body-text-bold">{t("DESCRIPTION")}</div>
                                 <div className="body-text">{params.Description}</div>
                             </div>
                             <div className="g-col-2">
-                                <div className="body-text-bold">{t("From Date")}</div>
+                                <div className="body-text-bold">{t("FROM_DATE")}</div>
                                 <div className="body-text m-b-20">{formatDate(params.FromDate)}</div>
-                                <div className="body-text-bold m-t-20 p-t-20">{t("Due Date")}</div>
+                                <div className="body-text-bold m-t-20 p-t-20">{t("DUE_DATE")}</div>
                                 <div className="body-text">{formatDate(params.ToDate)}</div>
                             </div>
                             <div className="g-col-2">
-                                <div className="body-text-bold">{t("Closed Date")}</div>
+                                <div className="body-text-bold">{t("CLOSED_DATE")}</div>
                                 <div className="body-text">{formatDate(closedDate)}</div>
                             </div>
                             <div className="g-col-2">
-                                <div className="body-text-bold">{t("Permission Type")}</div>
+                                <div className="body-text-bold">{t("PERMISSION_TYPE")}</div>
                                 <div className="body-text m-b-20">{params.Permission}</div>
-                                <div className="body-text-bold m-t-20 p-t-20">{t("Responsible")}</div>
+                                <div className="body-text-bold m-t-20 p-t-20">{t("RESPONSIBLE")}</div>
                                 <div className="body-text">{params.Responsible}</div>
                             </div>
                             <div className="g-col-2">
-                                <div className="body-text-bold">{t("Status")}</div>
+                                <div className="body-text-bold m-b-10">{t("STATUS")}</div>
                                 <Dropdown
-                                    values={["Open", "Close"]}
+                                    values={["OPEN", "CLOSE"]}
                                     onChange={changeStateOfProject}
-                                    selected={status?.toUpperCase() === "OPEN" ? "Open" : "Close"}
-                                    placeholder="Status"
+                                    selected={status?.toUpperCase() === "OPEN" ? "OPEN" : "CLOSE"}
+                                    placeholder={"STATUS"}
                                 />
                             </div>
                         </div>
-                        <i className="icon-edit detail-edit-icon" onClick={() => setEditable((prev) => !prev)}></i>
+                        {/* <i className="icon-edit detail-edit-icon" onClick={() => setEditable((prev) => !prev)}></i> */}
                     </TabPane>
-                    <TabPane tab={t("SECTION")} key="2">
+                    <TabPane tab={t("SECTION").toUpperCase()} key="2">
                         <SectionView
                             projectName={params.Name}
                             projectId={projectCodeFormat(params.Id)}
@@ -108,7 +108,7 @@ const ProjectDetails = ({ params, loggedUser }) => {
                             loggedUser={loggedUser}
                         />
                     </TabPane>
-                    <TabPane tab={t("MEMBERS")} key="3">
+                    <TabPane tab={t("MEMBERS").toUpperCase()} key="3">
                         <MembersView
                             id={params.Id}
                             sectionId={params.Sections && params.Sections[0]?.id || ""}
@@ -151,9 +151,7 @@ const SectionView = (props) => {
     }, []);
 
     const tableHeaders = useMemo(() => {
-        const headers = sectionTableHeaders.map((a) => {
-            return { ...a, title: t(a.title) };
-        });
+        const headers = sectionTableHeaders(t);
 
         headers.push({
             title: "",
@@ -166,14 +164,14 @@ const SectionView = (props) => {
                         }}
                     >
                         <i className="icon-search serch-table-icon blue" />
-                        Search Engine
+                        { t('SEARCH_ENGINE')}
                     </div>
                     <i
                         className="icon-edit table-icon blue fl"
                         onClick={(e) => {
                             e.stopPropagation();
                             if (props.projectStatus?.toUpperCase() === "CLOSE") {
-                                message.error('Cannot edit closed Projects')
+                                message.error(t('MSG_CANT_EDIT_CLOSED_PROJECTS'))
                             } else {
                                 setEditData(true);
                                 setNewSectionData(record);
@@ -200,9 +198,9 @@ const SectionView = (props) => {
         const index = props.sectionData.findIndex(sec => sec.Name === newSectionData.Name);
 
         if (!newSectionData.Name) {
-            message.error("Section name cannot be empty");
+            message.error(t("MSG_SECTION_NAME_EMPTY"));
         } else if (index > -1 && !editData) {
-            message.error("Section name already exists");
+            message.error(t("MSG_SECTION_NAME_EXISTS"));
             return;
         } else {
             if (editData) {
@@ -211,15 +209,15 @@ const SectionView = (props) => {
                         getSections(props.id)
                             .then((result) => {
                                 props.setSectionData(result);
-                                message.success("Edit section successful");
+                                message.success(t("MSG_SECTION_SAVE_SUCCESS"));
                             })
                             .catch(() => {
-                                message.warning("Updated data fetch fail please reload");
+                                message.warning(t("MSG_SECTION_SAVE_WARNING"));
                             });
                         toggleModal();
                     })
                     .catch(() => {
-                        message.error("Edit section failed please try again");
+                        message.error(t("MSG_SECTION_SAVE_FAIL"));
                     });
             } else {
                 addNewSection({ ...newSectionDataUpdate, ProjectTId: projectId }, loggedUser.PartyId)
@@ -227,15 +225,15 @@ const SectionView = (props) => {
                         getSections(props.id)
                             .then((result) => {
                                 props.setSectionData(result);
-                                message.success("Create section successful");
+                                message.success(t('MSG_SECTION_SAVE_SUCCESS'));
                             })
                             .catch(() => {
-                                message.warning("Updated data fetch fail please reload");
+                                message.warning(t('MSG_SECTION_SAVE_WARNING'));
                             });
                         toggleModal();
                     })
                     .catch(() => {
-                        message.error("Create section failed please try again");
+                        message.error(t('MSG_SECTION_SAVE_FAIL'));
                     });
             }
         }
@@ -264,7 +262,7 @@ const SectionView = (props) => {
 
     const onAddSection = () => {
         if (props.projectStatus?.toUpperCase() === "CLOSE") {
-            message.error('Cannot edit closed Projects')
+            message.error(t('MSG_CANT_EDIT_CLOSED_PROJECTS'))
         } else {
             toggleModal();
         }
@@ -272,16 +270,22 @@ const SectionView = (props) => {
 
     return (
         <div>
-            <h3 className="icon-plus-circled hover-hand m-l-10" onClick={onAddSection}>
-                {t("Add Section")}
-            </h3>
-            <Tooltip title="Tile View">
-                <i className="icon-tile-view grid-view-icon fr hover-hand" onClick={() => setTableView(false)}></i>
-            </Tooltip>
-            <Tooltip title="Grid View">
-                <i className="icon-grid-view list-view-icon fr hover-hand" onClick={() => setTableView(true)}></i>
-            </Tooltip>
-            <h3 className="p-t-20 m-b-20 m-l-10 fl">{t("Sections List")}</h3>
+            <div className="g-row">
+                <div className="g-col-6">
+                    <h3 className="icon-plus-circled hover-hand m-l-10 fl" onClick={onAddSection}>
+                        {t("ADD_SECTION")}
+                    </h3>
+                </div>
+                <div className="g-col-6">
+                    <Tooltip title={t('TILE_VIEW')}>
+                        <i className="icon-tile-view grid-view-icon fr hover-hand" onClick={() => setTableView(false)}></i>
+                    </Tooltip>
+                    <Tooltip title={t('GRID_VIEW')}>
+                        <i className="icon-grid-view list-view-icon fr hover-hand" onClick={() => setTableView(true)}></i>
+                    </Tooltip>
+                </div>
+            </div>
+            <h3 className="p-t-20 m-b-20 m-l-10 fl">{t("SECTION_LIST")}</h3>
 
             {tableView ? (
                 <Table
@@ -317,54 +321,55 @@ const SectionView = (props) => {
                 </div>
             )}
             <Modal
-                title={editData ? "Update Section" :  "Add Section" }
+                title={editData ? t('UPDATE_SECTION') :  t('ADD_SECTION') }
                 visible={modalVisible}
                 onOk={handleOk}
-                okText={t("Save")}
+                okText={t("SAVE")}
                 onCancel={toggleModal}
-                cancelText={t("Cancel")}
+                cancelText={t("CANCEL")}
                 centered={true}
                 width={1000}
+                closeIcon={< i className='icon-close close-icon'/>}
             >
                 <div className="g-row">
                     <div className="g-col-6">
                         <Input
-                            placeholder="Name (Eg: Furniture, PC, etc...)"
+                            placeholder={t('NAME_PLACEhOLDER')}
                             value={newSectionData.Name || ""}
                             onChange={(e) => onNewElementChange(e, "Name")}
                         />
                         <Input
                             lines={3}
-                            placeholder="Description"
+                            placeholder={t('DESCRIPTION')}
                             value={newSectionData.Description || ""}
                             onChange={(e) => onNewElementChange(e, "Description")}
                         />
                         <Input
-                            placeholder="Purpose"
+                            placeholder={t('PURPOSE')}
                             value={newSectionData.Purpose || ""}
                             onChange={(e) => onNewElementChange(e, "Purpose")}
                         />
                     </div>
                     <div className="g-col-6">
                         <DatePickerInput
-                            placeholder={"From Date"}
+                            placeholder={t('FROM_DATE')}
                             value={newSectionData.FromDate ? new Date(newSectionData.FromDate) : ""}
                             onChange={(date) => onNewElementDateChange(date, "FromDate")}
                             minDate={new Date()}
                             maxDate={props.projectToDate !== null ? new Date(props.projectToDate) : false}
                         />
                         <DatePickerInput
-                            placeholder={"Due Date"}
+                            placeholder={t('DUE_DATE')}
                             value={newSectionData.ToDate ? new Date(newSectionData.ToDate) : ""}
                             onChange={(date) => onNewElementDateChange(date, "ToDate")}
                             minDate={new Date()}
                             maxDate={props.projectToDate !== null ? new Date(props.projectToDate) : false}
                         />
                         <Dropdown
-                            values={["Open", "Close"]}
+                            values={["OPEN", "CLOSE"]}
                             onChange={(e) => onNewElementChange(e, "Status")}
                             selected={newSectionData.Status || ""}
-                            placeholder="Status"
+                            placeholder={'STATUS'}
                         />
                     </div>
                 </div>
@@ -421,9 +426,7 @@ const MembersView = (props) => {
     }, []);
 
     const tableHeaders = useMemo(() => {
-        const headers = membersTableHeaders.map((a) => {
-            return { ...a, title: t(a.title) };
-        });
+        const headers = membersTableHeaders(t)
 
         headers.push({
             title: "",
@@ -468,7 +471,7 @@ const MembersView = (props) => {
 
     const addMember = () => {
         if (props.projectStatus?.toUpperCase() === "CLOSE") {
-            message.error('Cannot edit closed Projects')
+            message.error(t('MSG_CANT_EDIT_CLOSED_PROJECTS'))
         } else {
             toggleModal();
         }
@@ -481,15 +484,15 @@ const MembersView = (props) => {
                 getMembers(props.id)
                     .then((result) => {
                         setMembersData(result);
-                        message.success("Delete member successful");
+                        message.success(t('MSG_DELETE_MEMBER_SUCESS'));
                     })
                     .catch(() => {
-                        message.warning("Updated data fetch fail please reload");
+                        message.warning(t('MSG_DELETE_MEMBER_WARNING'));
                     });
 
             })
             .catch(() => {
-                message.error("Delete member failed please try again");
+                message.error(t('MSG_DELETE_MEMBER_FAIL'));
             });
     };
 
@@ -498,7 +501,7 @@ const MembersView = (props) => {
         //addMemberData.sections.map((val) => sectionIds.push(val.id));
 
         if (!selectedUser || Object.keys(selectedUser).length === 0) {
-            message.warning("Please select a user");
+            message.warning(t('MSG_SELECT_USER'));
             return;
         }
 
@@ -512,8 +515,7 @@ const MembersView = (props) => {
             PartyId: selectedUser?.key,
             ProjectTId: projectId
         };
-       
-        console.log(member)
+               
         addNewMember(member, loggedUser.PartyId)
                 .then(() => {
                     getMembers(props.id)
@@ -522,15 +524,15 @@ const MembersView = (props) => {
                             setSelectedUser({});
                             setText("");
                             setAddMemberData({ Sections: [], Responsible: "", FromDate: "", ToDate: null, Name: "", PartyId: "", Email: "" });
-                            message.success(t("Add member successful"));
+                            message.success(t("MSG_ADD_MEMBER_SUCCESS"));
                         })
                         .catch(() => {
-                            message.warning("Updated data fetch fail please reload");
+                            message.warning(t("MSG_ADD_MEMBER_WARNING"));
                         });
                     toggleModal();
                 })
                 .catch(() => {
-                    message.error("Add member failed please try again");
+                    message.error(t("MSG_ADD_MEMBER_FAIL"));
                 });
        
     };
@@ -569,15 +571,15 @@ const MembersView = (props) => {
     return (
         <div>
             <h3 className="icon-plus-circled hover-hand m-l-10" onClick={addMember}>
-                {t("Add Member")}
+                {t("ADD_MEMBER")}
             </h3>
-            <Tooltip title="Tile View">
+            <Tooltip title={t('TILE_VIEW')}>
                 <i className="icon-tile-view grid-view-icon fr hover-hand" onClick={() => setTableView(false)}></i>
             </Tooltip>
-            <Tooltip title="Grid View">
+            <Tooltip title={t('GRID_VIEW')}>
                 <i className="icon-grid-view list-view-icon fr hover-hand" onClick={() => setTableView(true)}></i>
             </Tooltip>
-            <h3 className="p-t-20 m-b-20 m-l-10 fl">{t("Members List")}</h3>
+            <h3 className="p-t-20 m-b-20 m-l-10 fl">{t("MEMBERS_LIST")}</h3>
 
             {tableView ? (
                 <Table
@@ -597,11 +599,18 @@ const MembersView = (props) => {
                             );
                         })
                     ) : (
-                        <EmptyTableView tableName="Members" onButtonClick={addMember} />
+                        <EmptyTableView tableName={t("MEMBERS")} onButtonClick={addMember} />
                     )}
                 </div>
             )}
-            <Modal title={"Add Member"} visible={modalVisible} onOk={handleOk} okText={t("Add")} onCancel={toggleModal} cancelText={t("Cancel")} centered={true}>
+            <Modal title={t('ADD_MEMBER')} 
+            visible={modalVisible} 
+            onOk={handleOk} 
+            okText={t("ADD")} 
+            onCancel={toggleModal} 
+            cancelText={t("CANCEL")} 
+            centered={true}
+            closeIcon={< i className='icon-close close-icon'/>}>
                 <div className="g-row">
                     <AutoComplete
                         value={text}
@@ -611,7 +620,7 @@ const MembersView = (props) => {
                         onChange={onUserChange}
                         style={{ width: "100%", marginBottom: 10 }}
                         className="mb-2"
-                        placeholder="Search User"
+                        placeholder={t('SEARCH_USER')}
                     />
                 </div>
                 <div className="n-float" />

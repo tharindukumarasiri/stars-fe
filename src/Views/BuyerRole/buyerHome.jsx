@@ -18,21 +18,21 @@ export default function BuyerHome() {
             <div className="g-row m-b-20">
                 <TitleCard title={"Buyer"} topIcon={"icon-buyer"} />
                 <div className="g-col-9 p-l-20">
-                    <h4>{t('Buyer Role Space')}</h4>
-                    <div>"Buyer" is a Role space, comes with several functionalities.</div>
-                    <div>Buyers are always looking for sellers and suppliers. As a buyer, you want to buy the best from the nearest at the lowest cost. To find that, you need better options in searching for sellers and suppliers. As the STAR Digital Centre, we have worked to give you the best search engine for this. Not only we give you a search engine, but also, we provide you space to keep your search queries saved in projects so that you can reach the suppliers at any time you want.</div>
+                    <h4>{t('BUYER_ROLE_SPACE')}</h4>
+                    <div>{t('BUYER_HEADER_1')}</div>
+                    <div>{t('BUYER_HEADER_2')}</div>
                 </div>
             </div>
             <div className="g-row">
                 <NavigationCard
-                    name={"SEARCH ENGINE"}
+                    name={"SEARCH_ENGINE"}
                     cardColour={"bg-vialot"}
                     imageName={"icon-search-module"}
                     onClick={() => onClickCard(NAVIGATION_PAGES.BUYER_SEARCH)}
                 />
                 <NavigationCard
                     name={"PROJECTS"}
-                    cardColour={"bg-green-lite"}
+                    cardColour={"bg-vialot-dark1"}
                     imageName={"icon-projects"}
                     onClick={() => onClickCard(NAVIGATION_PAGES.BUYER_PROJECTS)}
                 />

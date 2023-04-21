@@ -1,10 +1,13 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 
 const CountryDropDown = ({ dataList, selectedList, setSelectedState, apiCalls, containerStyle = '' } = {}) => {
+    const {t} = useTranslation();
+
     const getDropdownBar = () => {
         return (
             <select className="dropdown-list" onChange={handleDropdownSelect} value={"0"}>
-                <option value="0" disabled defaultValue="selected" hidden={true} className="disable-option" >Country</option>
+                <option value="0" disabled defaultValue="selected" hidden={true} className="disable-option" >{t('COUNTRY')}</option>
                 {
                     dataList.map(item => {
                         return <option value={`{"name":"${item.name}", "id":"${item.code}"}`} key={item.code} >{item.name}</option>
@@ -21,7 +24,7 @@ const CountryDropDown = ({ dataList, selectedList, setSelectedState, apiCalls, c
                     selectedList.selectedCountries?.map(item => {
                         return (
                             <div className="selected-item" key={item.id}>
-                                <i className="close-btn icon-close-small-x m-t-5" onClick={() => onCloseBtnClick(item)} > </i>
+                                <i className="close-btn  icon-x-bold m-t-5" onClick={() => onCloseBtnClick(item)} > </i>
                                 {item.name}
                             </div>
                         )

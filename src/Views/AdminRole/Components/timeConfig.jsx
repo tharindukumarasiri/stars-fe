@@ -1,5 +1,6 @@
 import React, { useState, useEffect  } from "react";
 import { Select, message } from 'antd';
+import { useTranslation } from "react-i18next";
 
 import DatePickerInput from "../../../common/datePickerInput";
 import StarDropdown from "../../../common/dropdown";
@@ -35,6 +36,8 @@ const TimeConfig = (props) => {
     const [customRecurringDate, setCustomRecurringDate] = useState([])
     const [loading, setLoading] = useState(true);
     const [currentUser] = FetchCurrentUser();
+
+    const {t} = useTranslation();
 
     useEffect(() => {
         if(currentUser?.PartyId){
@@ -168,17 +171,17 @@ const TimeConfig = (props) => {
                     type="radio" id="OneTime" name="OneTime"
                     checked={oneTimeType} className="m-l-20"
                     onChange={changeConfigType} />
-                <label className="p-r-20 p-l-20" htmlFor="OneTime">One Time</label>
+                <label className="p-r-20 p-l-20" htmlFor="OneTime">{t('ONE_TIME')}</label>
                 <input
                     type="radio" id="Recurring" name="Recurring"
                     checked={!oneTimeType} className="m-l-20"
                     onChange={changeConfigType} />
-                <label className="p-r-20 p-l-20" htmlFor="Recurring">Recurring</label>
+                <label className="p-r-20 p-l-20" htmlFor="Recurring">{t('RECURRING')}</label>
             </div>
             {oneTimeType ?
                 <div className="m-t-20">
                     <DatePickerInput
-                        placeholder='Date'
+                        placeholder='DATE'
                         value={oneTimeData.date}
                         onChange={(date) => onOneTimeDataChange(date, 'date')}
                         isClearable
@@ -186,7 +189,7 @@ const TimeConfig = (props) => {
                         error={fieldErrors.date}
                     />
                     <DatePickerInput
-                        placeholder='Time'
+                        placeholder='TIME'
                         value={oneTimeData.time}
                         onChange={(time) => onOneTimeDataChange(time, 'time')}
                         isClearable
@@ -197,7 +200,7 @@ const TimeConfig = (props) => {
                 </div> :
                 <div className="m-t-20">
                     <DatePickerInput
-                        placeholder='Start Date'
+                        placeholder='START_DATE'
                         value={recurringeData.startDate}
                         onChange={(date) => onRecurringDataChange(date, 'startDate')}
                         isClearable
@@ -205,7 +208,7 @@ const TimeConfig = (props) => {
                         error={fieldErrors.startDate}
                     />
                     <DatePickerInput
-                        placeholder='End Date'
+                        placeholder='END_DATE'
                         value={recurringeData.endDate}
                         onChange={(date) => onRecurringDataChange(date, 'endDate')}
                         isClearable
@@ -215,7 +218,7 @@ const TimeConfig = (props) => {
                     <div className="time-picker-container">
                         <div className="time-picker-width">
                             <DatePickerInput
-                                placeholder='Time'
+                                placeholder='TIME'
                                 value={recurringeData.time}
                                 onChange={(time) => onRecurringDataChange(time, 'time')}
                                 isClearable
@@ -231,7 +234,7 @@ const TimeConfig = (props) => {
                             {timesList.map(time => {
                                 return (
                                     <div className="closable-time-item">
-                                        <i className="icon-close-small-x blue hover-hand" onClick={() => onDeleteTime(time)} />
+                                        <i className="icon-x-bold blue hover-hand" onClick={() => onDeleteTime(time)} />
                                         {formatDate(time, 'HH.mm')}
                                     </div>
                                 )
@@ -245,7 +248,7 @@ const TimeConfig = (props) => {
                             onChange={e => onRecurringDataChange(JSON.parse(e.target.value), 'week')}
                             selected={JSON.stringify(recurringeData.week || undefined)}
                             dataName="Name"
-                            placeholder="Repeat"
+                            placeholder="REPEAT"
                             error={fieldErrors.week}
                         />
                     </div>
@@ -255,7 +258,7 @@ const TimeConfig = (props) => {
                                 <Select
                                     mode="multiple"
                                     allowClear
-                                    placeholder="Select Dates"
+                                    placeholder={t('SELECT_DATES')}
                                     onChange={onChangeDayOfTheWeek}
                                     options={DaysOfTheWeek}
                                     showArrow
@@ -272,10 +275,10 @@ const TimeConfig = (props) => {
                 </div>
             }
             <div className="m-t-20" style={{ alignSelf: 'center' }}>
-                <button className="primary-btn" style={{ width: 150 }} onClick={onUpdate} >Set</button>
+                <button className="primary-btn" style={{ width: 150 }} onClick={onUpdate} >{t('SET')}</button>
             </div>
             <div className="text-center m-t-20">
-                Message will be quesed only after “Recevers” are set
+                {t('CONFIG_MSG')}
             </div>
         </div >
     )

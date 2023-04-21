@@ -16,6 +16,10 @@
   color: #fff;
 }
 
+.bg-white {
+  background-color: #fff;
+}
+
 .blue {
   color: #2196F3;
 }
@@ -198,6 +202,10 @@
 
 .bg-vialot {
   background-color: #B572CD;
+}
+
+.bg-vialot-dark1 {
+  background-color: #8539a0;
 }
 
 .bluish-green {

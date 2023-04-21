@@ -78,7 +78,7 @@ const Summary = () => {
     const UnspscData = () => {
         return (
             <>
-                <CriteriaColorGuideTab dataArr={['Segmant', 'Family', 'Class', 'Commodity']} />
+                <CriteriaColorGuideTab dataArr={['SEGMENT', 'FAMILY', 'CLASS', 'COMMODITY']} />
                 <UserSelectedFields data={organizationData.unspscs} dataFeieldName='title' />
             </>
         )
@@ -87,7 +87,7 @@ const Summary = () => {
     const CpvData = () => {
         return (
             <>
-                <CriteriaColorGuideTab dataArr={['Division', 'Group', 'Class', 'Category', 'Sub Category']} />
+                <CriteriaColorGuideTab dataArr={['DIVISION', 'GROUP', 'CLASS', 'CATEGORY', 'SUB_CATEGORY']} />
                 <UserSelectedFields data={organizationData.cpvs} />
             </>
         )
@@ -96,7 +96,7 @@ const Summary = () => {
     const NaceData = () => {
         return (
             <>
-                <CriteriaColorGuideTab dataArr={['Division', 'Group', 'Class', 'Category', 'Sub Category']} />
+                <CriteriaColorGuideTab dataArr={['DIVISION', 'GROUP', 'CLASS', 'CATEGORY', 'SUB_CATEGORY']} />
                 <UserSelectedFields data={organizationData.naces} />
             </>
         )
@@ -179,9 +179,9 @@ const Summary = () => {
             </div>
             <div className="page-container">
                 <div className="g-row">
-                    <NavigationCard name={"UNSPSC CODES"} cardColour={"bg-blue-purple"} value={organizationData.unspscs?.length} onClick={() => onClickCard(NAVIGATION_PAGES.SUPPLIER_UNSPSC)} />
-                    <NavigationCard name={"CPV CODES"} cardColour={"bg-blue"} value={organizationData.cpvs?.length} onClick={() => onClickCard(NAVIGATION_PAGES.SUPPLIER_CPV)} />
-                    <NavigationCard name={"NACE CODES"} cardColour={"bg-vialot"} value={organizationData.naces?.length} onClick={() => onClickCard(NAVIGATION_PAGES.SUPPLIER_NACE)} />
+                    <NavigationCard name={'UNSPSC_CODES'} cardColour={"bg-blue-purple"} value={organizationData.unspscs?.length} onClick={() => onClickCard(NAVIGATION_PAGES.SUPPLIER_UNSPSC)} />
+                    <NavigationCard name={'CPV_CODES'} cardColour={"bg-blue"} value={organizationData.cpvs?.length} onClick={() => onClickCard(NAVIGATION_PAGES.SUPPLIER_CPV)} />
+                    <NavigationCard name={'NACE_CODES'} cardColour={"bg-vialot"} value={organizationData.naces?.length} onClick={() => onClickCard(NAVIGATION_PAGES.SUPPLIER_NACE)} />
                     <NavigationCard name={"MARKETS"} cardColour={"bg-green-lite"} value={marketsCount} onClick={() => onClickCard(NAVIGATION_PAGES.SUPPLIER_MARKET)} />
                 </div>
                 <Expandable title={"UNSPSC (United Nations Standard Products and Services Code )"} expandedItem={expandedItem} setExpandedItem={setExpandedItem} label='UNSPSC' >
@@ -193,7 +193,7 @@ const Summary = () => {
                 <Expandable title={"NACE"} expandedItem={expandedItem} setExpandedItem={setExpandedItem} label='NACE' >
                     <NaceData />
                 </Expandable>
-                <Expandable title={"Markets"} expandedItem={expandedItem} setExpandedItem={setExpandedItem} label='MKT' >
+                <Expandable title={t("MARKETS")} expandedItem={expandedItem} setExpandedItem={setExpandedItem} label='MKT' >
                     <div className="custom-tab-container">
                         <Tabs
                             onChange={onTabChange}

@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next'
+
 import Tabs from "../../common/tabComponent";
 import { TabContext, UserContext } from '../../utils/contextStore';
 import { NAVIGATION_PAGES } from '../../utils/enums';
@@ -29,10 +31,12 @@ const AdminRole = ({ openTab = NAVIGATION_PAGES.ADMIN_TEMPLATES }) => {
     //Users States
     const [users, setUsers] = useState([])
     const [totalResults, setTotalResults] = useState(0);
-    const [pageNumber, setPageNumber] = useState(0);
+    const [pageNumber, setPageNumber] = useState(1);
     const [usersLoading, setUsersLoading] = useState(false);
     const [searchText, setSearchText] = useState('');
     const [savedTemplates, setSavedTemplates] = useState([]);
+
+    const { t } = useTranslation();
 
     useEffect(() => {
         setActiveTab(openTab);
@@ -52,7 +56,7 @@ const AdminRole = ({ openTab = NAVIGATION_PAGES.ADMIN_TEMPLATES }) => {
 
     const closeTab = (tab) => {
         const index = openTabs.indexOf(tab)
-        if (index > -1 && openTabs.length > 1) {
+        if (index > -1 && openTabs.length > 0) {
             const newOpenTabs = Array.from(openTabs)
             newOpenTabs.splice(index, 1)
             setOpenTabs(newOpenTabs)
@@ -73,39 +77,37 @@ const AdminRole = ({ openTab = NAVIGATION_PAGES.ADMIN_TEMPLATES }) => {
         <TabContext.Provider value={{ activeTab: activeTab, changeActiveTab: changeActiveTab, closeTab: closeTab, openTabs: openTabs }}>
             <UserContext.Provider value={{ getUsersData, users, totalResults, pageNumber, setPageNumber, usersLoading, searchText, setSearchText, selectedCompany, currentUser, savedTemplates, setSavedTemplates }} >
                 <Tabs>
-                    <div label={"ECONNECT"} id={NAVIGATION_PAGES.E_CONNECT_HOME} >
+                    <div label={t('ECONNECT_TAB_ECONNECT')} id={NAVIGATION_PAGES.E_CONNECT_HOME} >
                         <EConnectHome />
                     </div>
-                    <div label={"TEMPLATES"} id={NAVIGATION_PAGES.ADMIN_TEMPLATES} >
+                    <div label={t('ECONNECT_TAB_TEMPLATE')} id={NAVIGATION_PAGES.ADMIN_TEMPLATES} >
                         <Templates />
                     </div>
-                    <div label={"USERS"} id={NAVIGATION_PAGES.ALL_USERS} >
-                        <Users changeActiveTab={changeActiveTab} setSelectedUsers={setSelectedUsers} setShowOnlyDefaultRecievers={setShowOnlyDefaultRecievers} />
+                    <div label={t('ECONNECT_TAB_USERS')} id={NAVIGATION_PAGES.ALL_USERS} >
+                        <Users setSelectedUsers={setSelectedUsers} setShowOnlyDefaultRecievers={setShowOnlyDefaultRecievers} />
                     </div>
-                    <div label={"USER DETAILED VIEW"} id={NAVIGATION_PAGES.ALL_USER_DETAILS} >
+                    <div label={t('ECONNECT_TAB_USER_DETAIL')} id={NAVIGATION_PAGES.ALL_USER_DETAILS} >
                         <UserDetails props={params[NAVIGATION_PAGES.ALL_USER_DETAILS]} />
                     </div>
-                    <div label={"COMMUNICATIONS"} id={NAVIGATION_PAGES.COMMUNICATIONS} >
+                    <div label={t('ECONNECT_TAB_COM')} id={NAVIGATION_PAGES.COMMUNICATIONS} >
                         <Communications />
                     </div>
-                    <div label={"COMMUNICATION BASKETS"} id={NAVIGATION_PAGES.COMMUNICATIONS_BASKET} >
+                    <div label={t('ECONNECT_TAB_BASKET')} id={NAVIGATION_PAGES.COMMUNICATIONS_BASKET} >
                         <CommunicationBaskets />
                     </div>
-                    <div label={`BASKET: ${params[NAVIGATION_PAGES.COMMUNICATIONS_BASKET_DETAILS]?.Id} ${params[NAVIGATION_PAGES.COMMUNICATIONS_BASKET_DETAILS]?.Name}`} id={NAVIGATION_PAGES.COMMUNICATIONS_BASKET_DETAILS} >
+                    <div label={`${t('ECONNECT_TAB_BASKET_DETAIL')}: ${params[NAVIGATION_PAGES.COMMUNICATIONS_BASKET_DETAILS]?.Id} ${params[NAVIGATION_PAGES.COMMUNICATIONS_BASKET_DETAILS]?.Name}`} id={NAVIGATION_PAGES.COMMUNICATIONS_BASKET_DETAILS} >
                         <CommunicationBasketDetails props={params[NAVIGATION_PAGES.COMMUNICATIONS_BASKET_DETAILS]} />
                     </div>
-                    <div label={"COMMUNICATIONS LOG"} id={NAVIGATION_PAGES.COMMUNICATIONS_LOG} >
+                    <div label={t('ECONNECT_TAB_LOG')} id={NAVIGATION_PAGES.COMMUNICATIONS_LOG} >
                         <CommunicationsLog props={params[NAVIGATION_PAGES.COMMUNICATIONS_LOG]} />
                     </div>
-                    <div label="NEW COMMUNICATION" id={NAVIGATION_PAGES.NEW_COMMUNICATION} >
+                    <div label={t('ECONNECT_TAB_NEW_COM')} id={NAVIGATION_PAGES.NEW_COMMUNICATION} >
                         <NewCommunication defaultRecievers={selectedUsers}
                             updateDefaultRecievers={setSelectedUsers}
-                            showOnlyDefaultRecievers={showOnlyDefaultRecievers}
-                            closeTab={() => { closeTab(NAVIGATION_PAGES.NEW_COMMUNICATION); changeActiveTab(NAVIGATION_PAGES.COMMUNICATIONS); }} />
+                            showOnlyDefaultRecievers={showOnlyDefaultRecievers} />
                     </div>
                 </Tabs>
             </UserContext.Provider>
-
         </TabContext.Provider >
     )
 }

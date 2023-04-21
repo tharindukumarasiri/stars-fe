@@ -25,7 +25,7 @@ const Dropdown = ({ values, selected = '', onChange, placeholder, disabled = fal
             </select>
             {error &&
                 <div className="error-text">
-                    {error}
+                    {t(error)}
                 </div>
             }
         </div>

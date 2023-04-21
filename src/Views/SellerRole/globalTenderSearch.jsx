@@ -109,14 +109,10 @@ const GlobalTenderSearch = () => {
     }
 
     const tableHeaders = useMemo(() => {
-        const headers = searchCriteriaVisible ? searchTendersTableHeaders.map((a) => {
-            return { ...a, title: t(a.title) };
-        }) : searchTendersTableHeadersExpanded.map((a) => {
-            return { ...a, title: t(a.title) };
-        });
+        const headers = searchCriteriaVisible ? searchTendersTableHeaders(t) : searchTendersTableHeadersExpanded(t);
 
         headers.push({
-            title: 'Mark As',
+            title: t('MARK_AS'),
             dataIndex: ['id', 'countryCode', 'noticeNumber', 'markerType'],
             fixed: 'right',
             width: 90,
@@ -283,7 +279,7 @@ const GlobalTenderSearch = () => {
     const getSource = () => {
         return (
             <div className="gray-container">
-                {getCriteriaHeader(t("Source"), () => toggleOpenCriteria('Source'), openCriteria.Source)}
+                {getCriteriaHeader(t("SOURCE"), () => toggleOpenCriteria('Source'), openCriteria.Source)}
                 {openCriteria.Source &&
                     <div className="g-row m-t-20">
                         <div className="g-col-4">
@@ -298,7 +294,7 @@ const GlobalTenderSearch = () => {
     const getMarketCriteria = () => {
         return (
             <div className="gray-container">
-                {getCriteriaHeader(t("Market Information"), () => toggleOpenCriteria('Market'), openCriteria.Market)}
+                {getCriteriaHeader(t("MARKET_INFORMATION"), () => toggleOpenCriteria('Market'), openCriteria.Market)}
                 {openCriteria.Market &&
                     <>
                         <div className="g-row m-t-20">
@@ -327,24 +323,24 @@ const GlobalTenderSearch = () => {
         return (
             <div className="g-col-12">
                 <div className="gray-container">
-                    {getCriteriaHeader(t("CPV Codes"), () => toggleOpenCriteria('ProductGroups'), openCriteria.ProductGroups)}
+                    {getCriteriaHeader(t("CPV_CODES"), () => toggleOpenCriteria('ProductGroups'), openCriteria.ProductGroups)}
                     {openCriteria.ProductGroups &&
                         <>
                             <div className="g-row  m-t-20">
                                 <div className="g-col-2">
-                                    {DropdownCPV({ placeholder: t('Division'), dataList: cpvData.division, dataName: 'desscription', selectedList: selectedCPVValues, setSelectedState: setSelectedCPVValues, selectedRows: selectedCPVRows, setSelectedRows: setSelectedCPVRows, apiCalls: getcpvCodesData, codelevel: 1, keyName: "code2" })}
+                                    {DropdownCPV({ placeholder: t('DIVISION'), dataList: cpvData.division, dataName: 'desscription', selectedList: selectedCPVValues, setSelectedState: setSelectedCPVValues, selectedRows: selectedCPVRows, setSelectedRows: setSelectedCPVRows, apiCalls: getcpvCodesData, codelevel: 1, keyName: "code2" })}
                                 </div>
                                 <div className="g-col-2">
-                                    {DropdownCPV({ placeholder: t('Group'), dataList: cpvData.cpvGroup, dataName: 'desscription', selectedList: selectedCPVValues, setSelectedState: setSelectedCPVValues, selectedRows: selectedCPVRows, setSelectedRows: setSelectedCPVRows, apiCalls: getcpvCodesData, codelevel: 2, keyName: "code2" })}
+                                    {DropdownCPV({ placeholder: t('GROUP'), dataList: cpvData.cpvGroup, dataName: 'desscription', selectedList: selectedCPVValues, setSelectedState: setSelectedCPVValues, selectedRows: selectedCPVRows, setSelectedRows: setSelectedCPVRows, apiCalls: getcpvCodesData, codelevel: 2, keyName: "code2" })}
                                 </div>
                                 <div className="g-col-2">
-                                    {DropdownCPV({ placeholder: t('Class'), dataList: cpvData.cpvClass, dataName: 'desscription', selectedList: selectedCPVValues, setSelectedState: setSelectedCPVValues, selectedRows: selectedCPVRows, setSelectedRows: setSelectedCPVRows, apiCalls: getcpvCodesData, codelevel: 3, keyName: "code2" })}
+                                    {DropdownCPV({ placeholder: t('CLASS'), dataList: cpvData.cpvClass, dataName: 'desscription', selectedList: selectedCPVValues, setSelectedState: setSelectedCPVValues, selectedRows: selectedCPVRows, setSelectedRows: setSelectedCPVRows, apiCalls: getcpvCodesData, codelevel: 3, keyName: "code2" })}
                                 </div>
                                 <div className="g-col-3">
-                                    {DropdownCPV({ placeholder: t('Category'), dataList: cpvData.category, dataName: 'desscription', selectedList: selectedCPVValues, setSelectedState: setSelectedCPVValues, selectedRows: selectedCPVRows, setSelectedRows: setSelectedCPVRows, apiCalls: getcpvCodesData, codelevel: 4, keyName: "code2" })}
+                                    {DropdownCPV({ placeholder: t('CATEGORY'), dataList: cpvData.category, dataName: 'desscription', selectedList: selectedCPVValues, setSelectedState: setSelectedCPVValues, selectedRows: selectedCPVRows, setSelectedRows: setSelectedCPVRows, apiCalls: getcpvCodesData, codelevel: 4, keyName: "code2" })}
                                 </div>
                                 <div className="g-col-3">
-                                    {DropdownCPV({ placeholder: t('Sub Category'), dataList: cpvData.subCategory, dataName: 'desscription', selectedList: selectedCPVValues, setSelectedState: setSelectedCPVValues, selectedRows: selectedCPVRows, setSelectedRows: setSelectedCPVRows, codelevel: 5, keyName: "code2" })}
+                                    {DropdownCPV({ placeholder: t('SUB_CATEGORY'), dataList: cpvData.subCategory, dataName: 'desscription', selectedList: selectedCPVValues, setSelectedState: setSelectedCPVValues, selectedRows: selectedCPVRows, setSelectedRows: setSelectedCPVRows, codelevel: 5, keyName: "code2" })}
                                 </div>
                             </div>
                             <SearchSelectedValues selectedValues={selectedCPVValues} setSelectedValues={setSelectedCPVValues} selectedRows={selectedCPVRows} setSelectedRows={setSelectedCPVRows} apiCalls={getcpvCodesData} />
@@ -399,7 +395,7 @@ const GlobalTenderSearch = () => {
                 <div className="gray-container">
                     <div className="g-row flex-align-center">
                         <div className="text-left sub-title-txt g-col-3">
-                            Notice Type
+                            {t('NOTICE_TYPE')}
                         </div>
                         <div className="g-col-4">
                             <DropdownComp values={noticeTypes} selected={selectedTypes.notice} onChange={(e) => onTypeSelect(e, 'notice')} placeholder='' />
@@ -415,32 +411,32 @@ const GlobalTenderSearch = () => {
                     </div> */}
                     <div className="g-row flex-align-center">
                         <div className="text-left sub-title-txt g-col-3">
-                            Reference
+                            {t('REFERENCE')}
                         </div>
                         <div className="g-col-4">
-                            <input type="text" onChange={handlereferenceNo} value={referenceNoText} placeholder={"Document Number"} />
+                            <input type="text" onChange={handlereferenceNo} value={referenceNoText} placeholder={t('DOCUMENT_NUMBER')} />
                         </div>
                     </div>
                     <div className="g-row fl flex-align-center ">
                         <div className="text-left sub-title-txt g-col-3">
-                            Published Date
+                            {t('PUBLISHED_DATE')}
                         </div>
                         <div className="g-col-4 m-t-10">
-                            <DatePickerInput placeholder={'From Date'} value={selectedDates.publishedFrom} onChange={(date) => onChangeDates(date, 'publishedFrom')} isClearable={true} />
+                            <DatePickerInput placeholder={t('FROM_DATE')} value={selectedDates.publishedFrom} onChange={(date) => onChangeDates(date, 'publishedFrom')} isClearable={true} />
                         </div>
                         <div className="g-col-4 m-t-10">
-                            <DatePickerInput placeholder={'To Date'} value={selectedDates.publishedTo} onChange={(date) => onChangeDates(date, 'publishedTo')} isClearable={true} />
+                            <DatePickerInput placeholder={t('TO_DATE')} value={selectedDates.publishedTo} onChange={(date) => onChangeDates(date, 'publishedTo')} isClearable={true} />
                         </div>
                     </div>
                     <div className="g-row fl flex-align-center">
                         <div className="text-left sub-title-txt g-col-3">
-                            Expiry Date
+                            {t('EXPIRY_DATE')}
                         </div>
                         <div className="g-col-4 m-t-10">
-                            <DatePickerInput placeholder={'From Date'} value={selectedDates.expiryFrom} onChange={(date) => onChangeDates(date, 'expiryFrom')} isClearable={true} />
+                            <DatePickerInput placeholder={t('FROM_DATE')} value={selectedDates.expiryFrom} onChange={(date) => onChangeDates(date, 'expiryFrom')} isClearable={true} />
                         </div>
                         <div className="g-col-4 m-t-10">
-                            <DatePickerInput placeholder={'To Date'} value={selectedDates.expiryTo} onChange={(date) => onChangeDates(date, 'expiryTo')} isClearable={true} />
+                            <DatePickerInput placeholder={t('TO_DATE')} value={selectedDates.expiryTo} onChange={(date) => onChangeDates(date, 'expiryTo')} isClearable={true} />
                         </div>
                     </div>
                 </div>
@@ -450,7 +446,7 @@ const GlobalTenderSearch = () => {
 
 
     return (
-        <div className={loading && 'loading-overlay'}>
+        <div className={loading ? 'loading-overlay' : ''}>
             {loading &&
                 <div className="loading center-loading">
                     <div></div>
@@ -466,7 +462,7 @@ const GlobalTenderSearch = () => {
                             <div className="g-row flex-center-middle m-b-15">
                                 <div className="search-bar g-col-10 m-r-10">
                                     <i className="search-btn icon-search" onClick={onShowResults}></i>
-                                    <input type="text" onChange={handleSearch} value={searchText} placeholder={"Search by Location, Product or Service"} />
+                                    <input type="text" onChange={handleSearch} value={searchText} placeholder={t('SEARCH_BY_PRODUCT_OR_SERVICE')} />
                                 </div>
                                 <div className="g-col-2 g-row hover-hand">
                                     <span className="fl g-col-6 m-r-10">English </span>
@@ -474,12 +470,11 @@ const GlobalTenderSearch = () => {
                                     <i className="g-col-1 icon-arrow-down fl" />
                                 </div>
                             </div>
-                            <h4>Narrow down your search by...</h4>
+                            <h4>{t('NARROW_DOWN_YOUR_SEARCH')}</h4>
                             {getSource()}
                             {getMarketCriteria()}
                             {getCPVCriteria()}
                             {typesCriteria()}
-                            <button className="primary-btn m-l-10" onClick={onShowResults} >Show Result</button>
                         </form>
                     </div>
                 </div>
@@ -487,19 +482,19 @@ const GlobalTenderSearch = () => {
                 < i className="icon-circle-arrow-r2 search-colaps-icon close-pane hover-hand" onClick={() => setSearchCriteriaVisible(prev => !prev)} />
             }
             <div style={{ height: '100%', paddingBottom: 10 }}>
-                <div className={searchCriteriaVisible ? "page-container collapsed-table-container" : "page-container expanded-table-container"} >
+                <div className={searchCriteriaVisible ? "page-container collapsed-table-container g-col-6" : "page-container expanded-table-container"} >
                     {!searchCriteriaVisible &&
                         <div className="g-row m-t-20 p-t-20 fr">
-                            <div className="g-col-1"><i className="icon-tender-new green" />New</div>
-                            <div className="g-col-2"><i className="icon-tender-open blue-dark" />Open for consideration</div>
-                            <div className="g-col-3"><i className="icon-tender-proposal blue-purple" />Decided to reply with a proposal</div>
-                            <div className="g-col-2"><i className="icon-tender-not-relevant" />Not relevant</div>
-                            <div className="g-col-1"><i className="icon-tender-closed red" />Closed</div>
+                            <div className="g-col-1"><i className="icon-tender-new green" />{t('NEW')}</div>
+                            <div className="g-col-2"><i className="icon-tender-open blue-dark" />{t('OPEN_FOR_CONSIDERATION')}</div>
+                            <div className="g-col-3"><i className="icon-tender-proposal blue-purple" />{t('DECIDED_TO_REPLY_WITH_PROPOSAL')}</div>
+                            <div className="g-col-2"><i className="icon-tender-not-relevant" />{t('NOT_RELEVANT')}</div>
+                            <div className="g-col-1"><i className="icon-tender-closed red" />{t('CLOSED')}</div>
                         </div>
                     }
                     <div className="g-row flex-align-center p-t-20">
                         <div className="text-left g-col-1">
-                            Sort By
+                            {t('SORT_BY')}
                         </div>
                         <div className="g-col-4">
                             <DropdownComp values={sortByTypes} selected={sortBy} onChange={onSortBySelect} placeholder='' />
@@ -522,7 +517,20 @@ const GlobalTenderSearch = () => {
                             }}
                         />
                     </div>
-                    <Pagination size="small" className="fr m-t-20 m-b-20" current={pageNumber} onChange={onPageChange} total={pageCount} showSizeChanger={false} />
+                    <div className="action-bar">
+                        <div className="g-row">
+                            {searchCriteriaVisible &&
+                                <div className="g-col-6">
+                                    <button className="primary-btn m-t-15" onClick={onShowResults} >{t('SHOW_RESULT')}</button>
+                                </div>
+                            }
+                            <div className={searchCriteriaVisible ? "g-col-6" : ""}>
+                                <div className="flex-center-middle">
+                                    <Pagination size="small" className="fr m-t-20 m-b-20" current={pageNumber} onChange={onPageChange} total={pageCount} showSizeChanger={false} />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

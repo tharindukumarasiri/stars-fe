@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { Tabs, Table, message, Modal, Tooltip, Select } from 'antd';
+import { useTranslation } from "react-i18next";
 
 import Input from '../../../common/input'
 import {
@@ -16,7 +17,6 @@ import {
     getGetCountries,
     addCompany,
     updateCompany,
-    getCommunicationBasket,
     updateAndSchedule
 } from "../../../services/communicationService";
 import { getOrganization } from "../../../services/organizationsService";
@@ -28,69 +28,27 @@ import { validatePhoneNumberInput } from "../../../utils";
 const { TabPane } = Tabs;
 
 const nameTitles = [{ id: 1, title: 'Mr.' }, { id: 2, title: 'Mrs.' }, { id: 3, title: 'Ms.' },]
+const userObj = { firstname: '', lastname: '', title: null, email: '', mobileNumb: '' }
 
 const CompaniesAndPersons = (props) => {
     const { basketId, fromDateTime, defaultRecievers, showOnlyDefaultRecievers } = props;
     const [countryList, setCountryList] = useState([])
-    const [basketData, setBasketData] = useState([])
-    const [selectedBasket, setSelectedBasket] = useState()
     const [currentUser] = FetchCurrentUser();
     const [selectedCompany] = FetchCurrentCompany();
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(true);   
+    const {t} = useTranslation();
 
     useEffect(() => {
         getGetCountries().then(result => {
             setCountryList(result);
         }).finally(() => setLoading(false))
-
-        console.log("showOnlyDefaultRecievers: " + showOnlyDefaultRecievers);
     }, [])
-
-    useEffect(() => {
-        if (selectedCompany?.companyPartyId && !basketId) {
-            setLoading(true)
-            const params = {
-                "PageSize": 1000,
-                "PageCount": 0,
-                "CompanyPartyId": selectedCompany?.companyPartyId
-            }
-
-            getCommunicationBasket(params).then(result => {
-                setBasketData(result?.Value);
-            }).finally(() => setLoading(false))
-        }
-    }, [selectedCompany])
-
-    const onChangeBasket = (e) => {
-        e.preventDefault();
-        setSelectedBasket(JSON.parse(e.target.value))
-    }
 
     const isUpdateBtnDisabled = () => {
         if (fromDateTime) {
             return false;
-        } else if (selectedBasket?.FromDateTime) {
-            return false;
         } else {
             return true;
-        }
-    }
-
-    const basketDropDown = () => {
-        if (basketId) {
-            return null;
-        } else {
-            return (
-                <div className="user-drop-down m-r-20" style={{ width: 250 }}>
-                    <Dropdown
-                        values={basketData}
-                        onChange={onChangeBasket}
-                        selected={JSON.stringify(selectedBasket || undefined)}
-                        placeholder="Basket"
-                        dataName="Name"
-                    />
-                </div>
-            )
         }
     }
 
@@ -106,25 +64,23 @@ const CompaniesAndPersons = (props) => {
             <Tabs type="card" style={{ width: '90vw' }} >
                 {(!showOnlyDefaultRecievers) &&
                     <>
-                        <TabPane tab="COMPANIES" key="3">
+                        <TabPane tab={t("COMPANIES")} key="3">
                             <CompaniesPage
-                                basketId={basketId ? basketId : selectedBasket?.Id}
+                                basketId={basketId}
                                 disableUpdateBtn={isUpdateBtnDisabled}
                                 countryList={countryList}
                                 currentUser={currentUser}
                                 selectedCompany={selectedCompany}
-                                basketDropDown={basketDropDown}
                             />
                         </TabPane>
 
-                        <TabPane tab="PERSONS" key="4">
+                        <TabPane tab={t("PERSONS_CAPS")} key="4">
                             <PersonsPage
-                                basketId={basketId ? basketId : selectedBasket?.Id}
+                                basketId={basketId}
                                 disableUpdateBtn={isUpdateBtnDisabled}
                                 countryList={countryList}
                                 currentUser={currentUser}
                                 selectedCompany={selectedCompany}
-                                basketDropDown={basketDropDown}
                             />
                         </TabPane>
                     </>
@@ -150,14 +106,16 @@ const CompaniesAndPersons = (props) => {
     )
 }
 
-const CompaniesPage = ({ basketId, countryList, currentUser, selectedCompany, basketDropDown, disableUpdateBtn }) => {
+const companyObj = { orgId: '', name: '', country: null, email: '', phone: '' }
+
+const CompaniesPage = ({ basketId, countryList, currentUser, selectedCompany, disableUpdateBtn }) => {
     const [allCompaniesData, setAllCompaniesData] = useState([]);
     // const [companiesData, setCompaniesData] = useState();
     const [displayCompanies, setDisplayCompanies] = useState();
-    const [newCompaniesData, setNewCompaniesData] = useState({ orgId: '', name: '', country: null, email: '', phone: '' });
-    const [newCompaniesErrors, setNewCompaniesErrors] = useState({ orgId: '', name: '', country: null, email: '', phone: '' });
-    const [newUserData, setnewUserData] = useState({ firstname: '', lastname: '', title: null, email: '', mobileNumb: '' });
-    const [newUserErrors, setNewUserErrors] = useState({ firstname: '', lastname: '', title: null, email: '', mobileNumb: '' });
+    const [newCompaniesData, setNewCompaniesData] = useState(companyObj);
+    const [newCompaniesErrors, setNewCompaniesErrors] = useState(companyObj);
+    const [newUserData, setnewUserData] = useState(userObj);
+    const [newUserErrors, setNewUserErrors] = useState(userObj);
     const [emailModalVisible, setEmailModalVisible] = useState(false);
     const [phoneModalVisible, setPhoneModalVisible] = useState(false);
     const [newUserEmail, setNewUserEmail] = useState('')
@@ -166,6 +124,7 @@ const CompaniesPage = ({ basketId, countryList, currentUser, selectedCompany, ba
     const [selectedCompanyToUpdate, setSelectedCompanyToUpdate] = useState({});
     const [checkedCompaniesUsers, setCheckedCompaniesUsers] = useState([]);
     const [loading, setLoading] = useState(false);
+    const {t} = useTranslation();
 
     const disableUpdate = disableUpdateBtn();
 
@@ -181,7 +140,7 @@ const CompaniesPage = ({ basketId, countryList, currentUser, selectedCompany, ba
     }, [selectedCompany, basketId])
 
     const companiesTableHeaders = useMemo(() => {
-        const headers = ReceversCompaniesTableHeaders[0].children?.map(a => { return { ...a, title: a.title } })
+        const headers = ReceversCompaniesTableHeaders(t)[0].children?.map(a => { return { ...a, title: a.title } })
 
         headers.push(
             {
@@ -191,7 +150,7 @@ const CompaniesPage = ({ basketId, countryList, currentUser, selectedCompany, ba
                     <>
                         {Company?.Email ? Company?.Email :
                             <div className="blue hover-hand add-user-item " onClick={() => onAddCompanyEmail(Company, IsReceiver)} >
-                                Add Email
+                                {t('ADD_EMAIL')}
                                 <i className="icon-plus-circled basket-table-icon" />
                             </div>
                         }
@@ -206,7 +165,7 @@ const CompaniesPage = ({ basketId, countryList, currentUser, selectedCompany, ba
                         {
                             Company?.Phone ? Company?.Phone :
                                 <div className="blue hover-hand add-user-item " onClick={() => onAddCompanyPhone(Company, IsReceiver)} >
-                                    Add Phone
+                                    {t('ADD_PHONE')}
                                     <i className="icon-plus-circled basket-table-icon" />
                                 </div>
                         }
@@ -216,13 +175,14 @@ const CompaniesPage = ({ basketId, countryList, currentUser, selectedCompany, ba
             {
                 title: '',
                 width: 60,
-                dataIndex: ['Company'],
-                render: (_, { Company }) => (
+                dataIndex: ['Company', 'IsDisabled'],
+                render: (_, { Company, IsDisabled }) => (
                     <>
                         {Company?.Email && emailRegEx.test(Company?.Email) &&
                             <input type="checkbox" className="check-box"
                                 checked={isCompanyChecked(Company?.PartyTId)}
                                 onChange={(e) => onClickCompaniesTableCheckBox(e, Company)}
+                                disabled={IsDisabled}
                             />
                         }
                     </>
@@ -235,16 +195,16 @@ const CompaniesPage = ({ basketId, countryList, currentUser, selectedCompany, ba
     }, [displayCompanies, checkedCompaniesUsers])
 
     const usersTableHeaders = useMemo(() => {
-        const headers = ReceversCompaniesSubTableHeaders[0].children?.map(a => { return { ...a, title: a.title } })
+        const headers = ReceversCompaniesSubTableHeaders(t)[0].children?.map(a => { return { ...a, title: a.title } })
         headers.push(
             {
                 title: 'Email',
-                dataIndex: ['Value', 'CompanyData', 'Key'],
-                render: (_, { Value, CompanyData, Key }) => (
+                dataIndex: ['Person', 'CompanyData', 'ReceiverId'],
+                render: (_, { Person, CompanyData, ReceiverId }) => (
                     <>
-                        {Value?.Email ? Value?.Email :
-                            <div className="blue hover-hand add-user-item " onClick={() => onAddUserEmail(CompanyData, Value, Key)} >
-                                Add Email
+                        {Person?.Email ? Person?.Email :
+                            <div className="blue hover-hand add-user-item " onClick={() => onAddUserEmail(CompanyData, Person, ReceiverId)} >
+                                {t('ADD_EMAIL')}
                                 <i className="icon-plus-circled basket-table-icon" />
                             </div>
                         }
@@ -254,12 +214,12 @@ const CompaniesPage = ({ basketId, countryList, currentUser, selectedCompany, ba
             },
             {
                 title: 'Mobile Number',
-                dataIndex: ['Value', 'CompanyData', 'Key'],
-                render: (_, { Value, CompanyData, Key }) => (
+                dataIndex: ['Person', 'CompanyData', 'ReceiverId'],
+                render: (_, { Person, CompanyData, ReceiverId }) => (
                     <>
-                        {Value?.Phone ? Value?.Phone :
-                            <div className="blue hover-hand add-user-item " onClick={() => onAddUserPhoneNumber(CompanyData, Value, Key)} >
-                                Add Phone
+                        {Person?.Phone ? Person?.Phone :
+                            <div className="blue hover-hand add-user-item " onClick={() => onAddUserPhoneNumber(CompanyData, Person, ReceiverId)} >
+                                {t('ADD_PHONE')}
                                 <i className="icon-plus-circled basket-table-icon" />
                             </div>
                         }
@@ -270,13 +230,15 @@ const CompaniesPage = ({ basketId, countryList, currentUser, selectedCompany, ba
             {
                 title: '',
                 width: 60,
-                dataIndex: ['Value', 'CompanyData'],
-                render: (_, { Value, CompanyData }) => (
+                dataIndex: ['Person', 'CompanyData', 'IsDisabled'],
+                render: (_, { Person, CompanyData, IsDisabled }) => (
                     <>
-                        {Value?.Email && emailRegEx.test(Value?.Email) &&
+                        {Person?.Email && emailRegEx.test(Person?.Email) &&
                             <input type="checkbox" className="check-box"
-                                checked={isPersonChecked(CompanyData?.Company?.PartyTId, Value?.PartyTId)}
-                                onChange={(e) => onClickUsersTableCheckBox(e, CompanyData?.Company, Value)} />
+                                checked={isPersonChecked(CompanyData?.Company?.PartyTId, Person?.PartyTId)}
+                                onChange={(e) => onClickUsersTableCheckBox(e, CompanyData?.Company, Person)} 
+                                disabled={IsDisabled}
+                                />
                         }
                     </>
                 )
@@ -576,23 +538,23 @@ const CompaniesPage = ({ basketId, countryList, currentUser, selectedCompany, ba
     const validateFields = () => {
         let validation = true
         if (!newUserData.firstname) {
-            setNewUserErrors(pre => ({ ...pre, firstname: 'Please enter name' }))
+            setNewUserErrors(pre => ({ ...pre, firstname: 'NAME_ERROR' }))
             validation = false;
         }
         if (!newUserData.lastname) {
-            setNewUserErrors(pre => ({ ...pre, lastname: 'Please enter name' }))
+            setNewUserErrors(pre => ({ ...pre, lastname: 'NAME_ERROR' }))
             validation = false;
         }
         if (!newUserData.title) {
-            setNewUserErrors(pre => ({ ...pre, title: 'Please select a title' }))
+            setNewUserErrors(pre => ({ ...pre, title: 'SELECT_TITLE_ERROR' }))
             validation = false;
         }
         if (!emailRegEx.test(newUserData.email) || !newUserData.email) {
-            setNewUserErrors(pre => ({ ...pre, email: 'Invalid email adress' }))
+            setNewUserErrors(pre => ({ ...pre, email: 'INVALID_EMAIL' }))
             validation = false
         }
         if (!phoneRegEx.test(newUserData.mobileNumb) || !newUserData.mobileNumb) {
-            setNewUserErrors(pre => ({ ...pre, mobileNumb: 'Invalid mobile number' }))
+            setNewUserErrors(pre => ({ ...pre, mobileNumb: 'MOBILE_NUMBER_ERROR' }))
             validation = false
         }
 
@@ -621,7 +583,8 @@ const CompaniesPage = ({ basketId, countryList, currentUser, selectedCompany, ba
             }
 
             addPerson(params).then(() => {
-                setnewUserData({ firstname: '', lastname: '', title: null, email: '', mobileNumb: '' });
+                setnewUserData(userObj);
+                setNewUserErrors(userObj)
                 message.success('User created');
                 getCompaniesData();
             }).catch(() => message.error('Create user failed please try again'))
@@ -633,13 +596,13 @@ const CompaniesPage = ({ basketId, countryList, currentUser, selectedCompany, ba
             return (
                 <div className="recivers-user-footer user-input-box">
                     <div className="basket-new-user-input">
-                        <Input placeholder="First name" value={newUserData.firstname}
+                        <Input placeholder="FIRST_NAME" value={newUserData.firstname}
                             onChange={(e) => onChangeNewUserData(e, 'firstname')}
                             error={newUserErrors.firstname}
                         />
                     </div>
                     <div className="basket-new-user-input">
-                        <Input placeholder="Last name" value={newUserData.lastname}
+                        <Input placeholder="LAST_NAME" value={newUserData.lastname}
                             onChange={(e) => onChangeNewUserData(e, 'lastname')}
                             error={newUserErrors.lastname}
                         />
@@ -649,19 +612,19 @@ const CompaniesPage = ({ basketId, countryList, currentUser, selectedCompany, ba
                             values={nameTitles}
                             onChange={onChangeNewUserTitle}
                             selected={JSON.stringify(newUserData.title || undefined)}
-                            placeholder="Title"
+                            placeholder="TITLE"
                             dataName="title"
                             error={newUserErrors.title}
                         />
                     </div>
                     <div className="basket-new-user-input">
-                        <Input placeholder="" value={newUserData.email}
+                        <Input placeholder="EMAIL" value={newUserData.email}
                             onChange={(e) => onChangeNewUserData(e, 'email')}
                             error={newUserErrors.email}
                         />
                     </div>
                     <div className="basket-new-user-input">
-                        <Input placeholder="Mobile number" value={newUserData.mobileNumb}
+                        <Input placeholder="MOBILE_NUMBER" value={newUserData.mobileNumb}
                             onChange={(e) => onChangeNewUserData(e, 'mobileNumb')}
                             error={newUserErrors.mobileNumb}
                         />
@@ -706,23 +669,23 @@ const CompaniesPage = ({ basketId, countryList, currentUser, selectedCompany, ba
     const validateCompanyFields = () => {
         let validation = true
         if (!newCompaniesData.name) {
-            setNewCompaniesErrors(pre => ({ ...pre, name: 'Please enter Name' }))
+            setNewCompaniesErrors(pre => ({ ...pre, name: 'NAME_ERROR' }))
             validation = false
         }
         if (!newCompaniesData.orgId) {
-            setNewCompaniesErrors(pre => ({ ...pre, orgId: 'Please enter Organization Id' }))
+            setNewCompaniesErrors(pre => ({ ...pre, orgId: 'ORG_ID_ERROR' }))
             validation = false
         }
         if (!newCompaniesData.country?.alpha2) {
-            setNewCompaniesErrors(pre => ({ ...pre, country: 'Please select a country' }))
+            setNewCompaniesErrors(pre => ({ ...pre, country: 'SELECT_COUNTRY_ERROR' }))
             validation = false
         }
         if (!phoneRegEx.test(newCompaniesData.phone) || !newCompaniesData.phone) {
-            setNewCompaniesErrors(pre => ({ ...pre, phone: 'Invalid phone number' }))
+            setNewCompaniesErrors(pre => ({ ...pre, phone: 'PHONE_NUMBER_ERROR' }))
             validation = false
         }
         if (!emailRegEx.test(newCompaniesData.email) || !newCompaniesData.email) {
-            setNewCompaniesErrors(pre => ({ ...pre, email: 'Invalid email adress' }))
+            setNewCompaniesErrors(pre => ({ ...pre, email: 'INVALID_EMAIL' }))
             validation = false
         }
 
@@ -747,7 +710,7 @@ const CompaniesPage = ({ basketId, countryList, currentUser, selectedCompany, ba
         const params = {
             "Company": {
                 "Name": newCompaniesData.name,
-                "CompanyId": newCompaniesData.orgId,
+                "CompanyRegistrationID": newCompaniesData.orgId,
                 "CompanyTypeTId": 1, //organization
                 "CountryTId": newCompaniesData.country?.Id,
                 "CountryTCode": newCompaniesData.country?.alpha2,
@@ -762,7 +725,8 @@ const CompaniesPage = ({ basketId, countryList, currentUser, selectedCompany, ba
         addCompany(params).then(() => {
             message.success('Company created')
             setLoading(false)
-            setNewCompaniesData({ orgId: '', name: '', country: null, email: '', phone: '' })
+            setNewCompaniesData(companyObj)
+            setNewCompaniesErrors(companyObj)
         }).catch(() => {
             message.error('Company creation failed')
             setLoading(false)
@@ -796,14 +760,14 @@ const CompaniesPage = ({ basketId, countryList, currentUser, selectedCompany, ba
         return (
             <div className="recivers-companies-footer user-input-box">
                 <div className="basket-new-company-input">
-                    <Input placeholder="Org ID"
+                    <Input placeholder='ORG_ID'
                         value={newCompaniesData.orgId}
                         onChange={(e) => onChangeNewOrgData(e, 'orgId')}
                         error={newCompaniesErrors.orgId}
                     />
                 </div>
                 <div className="basket-new-company-input">
-                    <Input placeholder="Name"
+                    <Input placeholder='NAME'
                         value={newCompaniesData.name}
                         onChange={(e) => onChangeNewOrgData(e, 'name')}
                         error={newCompaniesErrors.name}
@@ -814,19 +778,19 @@ const CompaniesPage = ({ basketId, countryList, currentUser, selectedCompany, ba
                         values={countryList}
                         onChange={onChangeCountry}
                         selected={JSON.stringify(newCompaniesData.country || undefined)}
-                        placeholder="Country"
+                        placeholder='COUNTRY'
                         dataName="Name"
                         error={newCompaniesErrors.country}
                     />
                 </div>
                 <div className="basket-new-company-input">
-                    <Input placeholder="Email" value={newCompaniesData.email}
+                    <Input placeholder='EMAIL' value={newCompaniesData.email}
                         onChange={(e) => onChangeNewOrgData(e, 'email')}
                         error={newCompaniesErrors.email}
                     />
                 </div>
                 <div className="basket-new-company-input">
-                    <Input placeholder="Phone"
+                    <Input placeholder='PHONE'
                         value={newCompaniesData.phone}
                         onChange={(e) => onChangeNewOrgData(e, 'phone')}
                         error={newCompaniesErrors.phone}
@@ -847,15 +811,12 @@ const CompaniesPage = ({ basketId, countryList, currentUser, selectedCompany, ba
                 </div>
             }
             <div className="recivers-top-container m-b-20">
-                {
-                    basketDropDown()
-                }
                 <div className="companies-search-input-containers user-input-box m-r-10" >
                     {/* <Input placeholder="Search" value={searchCompaniesText} onChange={onChangesearchCompaniesText} endImage='icon-search-1' /> */}
                     <Select
                         mode="multiple"
                         allowClear
-                        placeholder="Search"
+                        placeholder={t('SEARCH')}
                         onChange={onSelectSearchCompany}
                         showArrow
                         style={{ width: '100%', overflow: 'visible' }}
@@ -866,11 +827,11 @@ const CompaniesPage = ({ basketId, countryList, currentUser, selectedCompany, ba
                         })}
                     </Select>
                 </div>
-                <button className="add-btn m-r-10 disable-div" >Add New</button>
-                <button className="add-btn m-r-10 disable-div" >Upload</button>
+                <button className="add-btn m-r-10 disable-div" >{t('ADD_NEW')}</button>
+                <button className="add-btn m-r-10 disable-div" >{t('UPLOAD')}</button>
             </div>
 
-            <div className="receivers-tablele-width">
+            <div className="receivers-tablele-width expandable-table-btn">
                 <Table
                     rowKey={(record, index) => index}
                     dataSource={displayCompanies}
@@ -889,27 +850,32 @@ const CompaniesPage = ({ basketId, countryList, currentUser, selectedCompany, ba
             <div className="action-bar">
                 {disableUpdate ?
                     <Tooltip title='Basket not configured'>
-                        <button className="primary-btn actions-btn" disabled={true}>Update</button>
+                        <button className="primary-btn actions-btn" disabled={true}>{t('UPDATE')}</button>
                     </Tooltip> :
-                    <button className="primary-btn actions-btn" onClick={onUpdate}>Update</button>
+                    <button className="primary-btn actions-btn" onClick={onUpdate}>{t('UPDATE')}</button>
                 }
-
             </div>
             <Modal
-                title={'Add email address'}
+                title={t('ADD_EMAIL_ADRESS')}
                 visible={emailModalVisible}
                 onOk={onAddEmail}
+                okText={t('OK')}
                 onCancel={toggelEmailModal}
+                cancelText={t('CANCEL')}
+                closeIcon={< i className='icon-close close-icon'/>}
             >
                 <div className="user-input-box">
                     <Input value={newUserEmail} onChange={onChangeNewUserEmail} error={newUserFieldError} />
                 </div>
             </Modal>
             <Modal
-                title={'Add phone number'}
+                title={t('ADD_PHONE_NUMBER')}
                 visible={phoneModalVisible}
                 onOk={onAddPhone}
+                okText={t('OK')}
                 onCancel={toggelPhoneModal}
+                cancelText={t('CANCEL')}
+                closeIcon={< i className='icon-close close-icon'/>}
             >
                 <div className="user-input-box">
                     <Input value={newUserPhone} onChange={onChangeNewUserPhone} error={newUserFieldError} />
@@ -925,7 +891,7 @@ const CompaniesPage = ({ basketId, countryList, currentUser, selectedCompany, ba
 
 const newPersonObject = { firstName: '', lastName: '', title: null, country: null, email: '', mobileNumb: '', companyId: '', companyName: '' }
 
-const PersonsPage = ({ basketId, countryList, currentUser, selectedCompany, basketDropDown, disableUpdateBtn }) => {
+const PersonsPage = ({ basketId, countryList, currentUser, selectedCompany, disableUpdateBtn }) => {
     const [allPersonsData, setAllPersonsData] = useState();
     const [displayPersons, setDisplayPersons] = useState();
     const [selectedFieldToUpdate, setSelectedFieldToUpdate] = useState({});
@@ -936,6 +902,7 @@ const PersonsPage = ({ basketId, countryList, currentUser, selectedCompany, bask
     const [modalVisible, setModalVisible] = useState(false);
     const [modalTextField, setModalTextField] = useState({});
     const disableUpdate = disableUpdateBtn();
+    const {t} = useTranslation();
 
     useEffect(() => {
         if (selectedCompany?.companyPartyId) {
@@ -973,7 +940,7 @@ const PersonsPage = ({ basketId, countryList, currentUser, selectedCompany, bask
     }
 
     const personsTableHeaders = useMemo(() => {
-        const headers = ReceversPersonsTableHeaders?.map(a => { return { ...a, title: a.title } })
+        const headers = ReceversPersonsTableHeaders(t);
         headers.push(
             {
                 title: 'Email',
@@ -982,7 +949,7 @@ const PersonsPage = ({ basketId, countryList, currentUser, selectedCompany, bask
                     <>
                         {Person?.Email ? Person?.Email :
                             <div className="blue hover-hand add-user-item " onClick={() => onAddPersonEmail(Person, IsReceiver)} >
-                                Add Email
+                                {t('ADD_EMAIL')}
                                 <i className="icon-plus-circled basket-table-icon" />
                             </div>
                         }
@@ -997,7 +964,7 @@ const PersonsPage = ({ basketId, countryList, currentUser, selectedCompany, bask
                         {
                             Person?.Phone ? Person?.Phone :
                                 <div className="blue hover-hand add-user-item " onClick={() => onAddPersonPhone(Person, IsReceiver)} >
-                                    Add Phone
+                                    {t('ADD_PHONE')}
                                     <i className="icon-plus-circled basket-table-icon" />
                                 </div>
                         }
@@ -1007,13 +974,14 @@ const PersonsPage = ({ basketId, countryList, currentUser, selectedCompany, bask
             {
                 title: '',
                 width: 60,
-                dataIndex: ['Person', 'BasketReceiverId'],
-                render: (_, { Person, BasketReceiverId }) => (
+                dataIndex: ['Person', 'BasketReceiverId', 'IsDisabled'],
+                render: (_, { Person, BasketReceiverId, IsDisabled }) => (
                     <>
                         {Person?.Email && emailRegEx.test(Person?.Email) &&
-                            <input type="checkbox" className="check-box"
+                            <input type="checkbox" className='check-box'
                                 checked={isPersonChecked(Person?.PartyTId)}
-                                onChange={(e) => onClickPersonsTableCheckBox(e, Person, BasketReceiverId)}
+                                onChange={(e) => onClickPersonsTableCheckBox(e, Person, BasketReceiverId)} 
+                                disabled={IsDisabled}
                             />
                         }
                     </>
@@ -1025,17 +993,18 @@ const PersonsPage = ({ basketId, countryList, currentUser, selectedCompany, bask
     }, [displayPersons, checkedPersonsCompanies])
 
     const PersonsExpandedHeaders = useMemo(() => {
-        const headers = ReceversPersonsTableExpandedHeaders?.map(a => { return { ...a, title: a.title } })
+        const headers = ReceversPersonsTableExpandedHeaders(t);
         headers.push({
             title: '',
             width: 60,
-            dataIndex: ['BasketReceiverId', 'Company', 'PersonData'],
-            render: (_, { BasketReceiverId, Company, PersonData }) => (
+            dataIndex: ['BasketReceiverId', 'Company', 'PersonData', 'IsDisabled'],
+            render: (_, { BasketReceiverId, Company, PersonData, IsDisabled }) => (
                 <>
                     {Company?.Email && emailRegEx.test(Company?.Email) &&
                         <input type="checkbox" className="check-box"
                             checked={isCompanyChecked(Company?.PartyTId, PersonData)}
                             onChange={(e) => onClickCompanyCheckBox(e, Company, PersonData?.Person, BasketReceiverId)}
+                            disabled={IsDisabled}
                         />
                     }
                 </>
@@ -1268,27 +1237,27 @@ const PersonsPage = ({ basketId, countryList, currentUser, selectedCompany, bask
     const validateFields = () => {
         let validation = true
         if (!newPersonData.firstName) {
-            setNewPersonErrors(pre => ({ ...pre, firstname: 'First name cannot be empty' }))
+            setNewPersonErrors(pre => ({ ...pre, firstname: 'FIRST_NAME_CANNOT_BE_EMPTY' }))
             validation = false;
         }
         if (!newPersonData.lastName) {
-            setNewPersonErrors(pre => ({ ...pre, lastName: 'Last name cannot be empty' }))
+            setNewPersonErrors(pre => ({ ...pre, lastName: 'LAST_NAME_CANNOT_BE_EMPTY' }))
             validation = false;
         }
         if (!emailRegEx.test(newPersonData.email) || !newPersonData.email) {
-            setNewPersonErrors(pre => ({ ...pre, email: 'Invalid email' }))
+            setNewPersonErrors(pre => ({ ...pre, email: 'INVALID_EMAIL' }))
             validation = false
         }
         if (!newPersonData.title) {
-            setNewPersonErrors(pre => ({ ...pre, title: 'Please select title' }))
+            setNewPersonErrors(pre => ({ ...pre, title: 'SELECT_TITLE_ERROR' }))
             validation = false
         }
         if (!newPersonData.country) {
-            setNewPersonErrors(pre => ({ ...pre, country: 'Please select country' }))
+            setNewPersonErrors(pre => ({ ...pre, country: 'SELECT_COUNTRY_ERROR' }))
             validation = false
         }
         if (!newPersonData.mobileNumb) {
-            setNewPersonErrors(pre => ({ ...pre, mobileNumb: 'Mobile number cannot be empty' }))
+            setNewPersonErrors(pre => ({ ...pre, mobileNumb: 'MOBILE_NUMBER_ERROR' }))
             validation = false
         }
 
@@ -1318,6 +1287,7 @@ const PersonsPage = ({ basketId, countryList, currentUser, selectedCompany, bask
 
             addPerson(params).then(() => {
                 setnewPersonData(newPersonObject);
+                setNewPersonErrors(newPersonObject)
                 message.success('Person created');
 
                 getAllPersons();
@@ -1330,14 +1300,14 @@ const PersonsPage = ({ basketId, countryList, currentUser, selectedCompany, bask
         return (
             <div className="recivers-user-footer user-input-box" style={{ marginLeft: 165 }}>
                 <div style={{ width: 150 }}>
-                    <Input placeholder="First name"
+                    <Input placeholder='FIRST_NAME'
                         value={newPersonData.firstName}
                         onChange={(e) => onChangeNewPersonData(e, 'firstName')}
                         error={newPersonErrors.firstName}
                     />
                 </div>
                 <div style={{ width: 150 }}>
-                    <Input placeholder="Last name"
+                    <Input placeholder="LAST_NAME"
                         value={newPersonData.lastName}
                         onChange={(e) => onChangeNewPersonData(e, 'lastName')}
                         error={newPersonErrors.lastName}
@@ -1348,7 +1318,7 @@ const PersonsPage = ({ basketId, countryList, currentUser, selectedCompany, bask
                         values={nameTitles}
                         onChange={onChangeNewUserTitle}
                         selected={JSON.stringify(newPersonData.title || undefined)}
-                        placeholder="Title"
+                        placeholder="TITLE"
                         dataName="title"
                         error={newPersonErrors.title}
                     />
@@ -1357,21 +1327,21 @@ const PersonsPage = ({ basketId, countryList, currentUser, selectedCompany, bask
                     <Dropdown
                         values={countryList}
                         onChange={onChangeNewPersonCountry}
-                        placeholder="Country"
+                        placeholder="COUNTRY"
                         selected={JSON.stringify(newPersonData.country || undefined)}
                         dataName="Name"
                         error={newPersonErrors.country}
                     />
                 </div>
                 <div style={{ width: 200 }}>
-                    <Input placeholder="Email"
+                    <Input placeholder="EMAIL"
                         value={newPersonData.email}
                         onChange={(e) => onChangeNewPersonData(e, 'email')}
                         error={newPersonErrors.email}
                     />
                 </div>
                 <div style={{ width: 150 }}>
-                    <Input placeholder="Mobile number"
+                    <Input placeholder="MOBILE_NUMBER"
                         value={newPersonData.mobileNumb}
                         onChange={(e) => onChangeNewPersonData(e, 'mobileNumb')}
                         error={newPersonErrors.mobileNumb}
@@ -1410,14 +1380,11 @@ const PersonsPage = ({ basketId, countryList, currentUser, selectedCompany, bask
                 </div>
             }
             <div className="recivers-top-container m-b-20">
-                {
-                    basketDropDown()
-                }
                 <div className="companies-search-input-containers user-input-box m-r-10" >
                     <Select
                         mode="multiple"
                         allowClear
-                        placeholder="Search"
+                        placeholder={t('SEARCH')}
                         onChange={onSelectSearchPerson}
                         showArrow
                         style={{ width: '100%', overflow: 'visible' }}
@@ -1428,11 +1395,11 @@ const PersonsPage = ({ basketId, countryList, currentUser, selectedCompany, bask
                         })}
                     </Select>
                 </div>
-                <button className="add-btn m-r-10 disable-div" >Add New</button>
-                <button className="add-btn m-r-10 disable-div" >Upload</button>
+                <button className="add-btn m-r-10 disable-div" >{t('ADD_NEW')}</button>
+                <button className="add-btn m-r-10 disable-div" >{t('UPLOAD')}</button>
             </div>
 
-            <div className="receivers-tablele-width">
+            <div className="receivers-tablele-width expandable-table-btn">
                 <Table
                     rowKey={(record, index) => index}
                     dataSource={displayPersons}
@@ -1450,17 +1417,20 @@ const PersonsPage = ({ basketId, countryList, currentUser, selectedCompany, bask
             <div className="action-bar">
                 {disableUpdate ?
                     <Tooltip title='Basket not configured'>
-                        <button className="primary-btn actions-btn" disabled={true}>Update</button>
+                        <button className="primary-btn actions-btn" disabled={true}>{t('UPDATE')}</button>
                     </Tooltip> :
-                    <button className="primary-btn actions-btn" onClick={onUpdate}>Update</button>
+                    <button className="primary-btn actions-btn" onClick={onUpdate}>{t('UPDATE')}</button>
                 }
 
             </div>
             <Modal
-                title={selectedFieldToUpdate?.isEmail ? 'Add email address' : 'Add phone number'}
+                title={t(selectedFieldToUpdate?.isEmail ? 'ADD_EMAIL_ADRESS' : 'ADD_PHONE_NUMBER')}
                 visible={modalVisible}
                 onOk={onOkModal}
+                okText={t('OK')}
                 onCancel={toggelModal}
+                cancelText={t('CANCEL')}
+                closeIcon={< i className='icon-close close-icon'/>}
             >
                 <div className="user-input-box">
                     <Input value={modalTextField?.value || ''} onChange={onChangeModalTextField} error={modalTextField?.error || ''} />

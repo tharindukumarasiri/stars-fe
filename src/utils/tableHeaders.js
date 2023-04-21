@@ -1,11 +1,13 @@
 import React from "react";
 import { formatDate, getDateDiff, getCountryFlag, projectCodeFormat } from "../utils"
 import { Badge, Tooltip } from "antd";
-import logo_thumb from "../assets/images/logo_thumb.png"
+import logo_thumb from "../assets/images/logo_thumb.png";
 
-export const projectScreenTableHeaders = [
+const t = (text) => text;
+
+export const projectScreenTableHeaders = (t) => [
     {
-        title: 'Project Code',
+        title: t('PROJECT_CODE'),
         dataIndex: 'Id',
         render: (_, { Id }) => (
             projectCodeFormat(Id)
@@ -13,7 +15,7 @@ export const projectScreenTableHeaders = [
 
     },
     {
-        title: 'Name',
+        title: t('NAME'),
         dataIndex: 'Name',
     },
     // {
@@ -24,11 +26,11 @@ export const projectScreenTableHeaders = [
     //     ),
     // },
     {
-        title: 'OperationType',
+        title: t('OPERATION_TYPE'),
         dataIndex: 'TypeCode',
     },
     {
-        title: 'From Date',
+        title: t('FROM_DATE'),
         dataIndex: 'FromDate',
         sorter: (a, b) => {
             if (getDateDiff(a.FromDate, b.FromDate) > 0)
@@ -41,7 +43,7 @@ export const projectScreenTableHeaders = [
         ),
     },
     {
-        title: 'Due Date',
+        title: t('DUE_DATE'),
         dataIndex: 'ToDate',
         sorter: (a, b) => {
             if (getDateDiff(a.ToDate, b.ToDate) > 0)
@@ -53,7 +55,7 @@ export const projectScreenTableHeaders = [
         ),
     },
     {
-        title: 'Closed Date',
+        title: t('CLOSED_DATE'),
         dataIndex: 'ClosedDate',
         sorter: (a, b) => {
             if (getDateDiff(a.ClosedDate, b.ClosedDate) > 0)
@@ -65,34 +67,34 @@ export const projectScreenTableHeaders = [
         ),
     },
     {
-        title: 'Responsible',
+        title: t('RESPONSIBLE'),
         dataIndex: 'Responsible',
     },
     {
-        title: 'Status',
+        title: t('STATUS'),
         dataIndex: 'Status',
         render: (_, { Status }) => (
-            <Badge status={Status?.toUpperCase() === 'OPEN' ? "success" : "default"} text={Status?.toUpperCase() === 'OPEN' ? "Open" : "Close"} />
+            <Badge status={Status?.toUpperCase() === 'OPEN' ? "success" : "default"} text={Status?.toUpperCase() === 'OPEN' ? t('OPEN') : t('CLOSE')} />
         )
     },
 ];
 
-export const sectionTableHeaders = [
+export const sectionTableHeaders = (t) => [
     {
-        title: 'Name',
+        title: t('NAME'),
         dataIndex: 'Name',
     },
     {
-        title: 'Desription',
+        title: t('DESCRIPTION'),
         dataIndex: 'Description',
 
     },
     {
-        title: 'Purpose',
+        title: t('PURPOSE'),
         dataIndex: 'Purpose',
     },
     {
-        title: 'From Date',
+        title: t('FROM_DATE'),
         dataIndex: 'FromDate',
         sorter: (a, b) => {
             if (getDateDiff(a.FromDate, b.FromDate) > 0)
@@ -105,7 +107,7 @@ export const sectionTableHeaders = [
         ),
     },
     {
-        title: 'To Date',
+        title: t('TO_DATE'),
         dataIndex: 'ToDate',
         sorter: (a, b) => {
             if (getDateDiff(a.ToDate, b.ToDate) > 0)
@@ -117,14 +119,14 @@ export const sectionTableHeaders = [
         ),
     },
     {
-        title: 'Status',
+        title: t('STATUS'),
         dataIndex: 'Status',
         render: (_, { Status }) => (
-            <Badge status={Status?.toUpperCase() === 'OPEN' ? "success" : "default"} text={Status?.toUpperCase() === 'OPEN' ? "Open" : "Close"} />
+            <Badge status={Status?.toUpperCase() === 'OPEN' ? "success" : "default"} text={Status?.toUpperCase() === 'OPEN' ? t('OPEN') : t('CLOSE')} />
         )
     },
     {
-        title: 'Closed Date',
+        title: t('CLOSED_DATE'),
         dataIndex: 'ClosedDate',
         sorter: (a, b) => {
             if (getDateDiff(a.ClosedDate, b.ClosedDate) > 0)
@@ -137,7 +139,7 @@ export const sectionTableHeaders = [
     },
 ];
 
-export const membersTableHeaders = [
+export const membersTableHeaders = (t) => [
     // {
     //     title: 'User ID',
     //     dataIndex: 'id',
@@ -149,15 +151,15 @@ export const membersTableHeaders = [
         )
     },
     {
-        title: 'Name',
+        title: t('NAME'),
         dataIndex: 'Name',
     },
     {
-        title: 'Email',
+        title: t('EMAIL'),
         dataIndex: 'Email',
     },
     {
-        title: 'Assigned Date',
+        title: t('ASSIGNED_DATE'),
         dataIndex: 'FromDate',
         sorter: (a, b) => {
             if (getDateDiff(a.FromDate, b.FromDate) > 0)
@@ -170,7 +172,7 @@ export const membersTableHeaders = [
         ),
     },
     {
-        title: 'Last Date',
+        title: t('LAST_DATE'),
         dataIndex: 'ToDate',
         sorter: (a, b) => {
             if (getDateDiff(a.ToDate, b.ToDate) > 0)
@@ -183,17 +185,17 @@ export const membersTableHeaders = [
     },
 
     {
-        title: 'Status',
+        title: t('STATUS'),
         dataIndex: 'Status',
         render: (_, { Status }) => (
-            <Badge status={Status === 'active' || Status === 'Open' ? "success" : "default"} text={Status === 'active' || Status === 'Open' ? "Open" : "Close"} />
+            <Badge status={Status === 'active' || Status === 'Open' ? "success" : "default"} text={Status === 'active' || Status === 'Open' ? t('OPEN') : t('CLOSE')} />
         )
     },
 ];
 
-export const searchResultsTableHeaders = [
+export const searchResultsTableHeaders = (t) => [
     {
-        title: 'Date',
+        title: t('DATE'),
         dataIndex: 'createdDate',
         render: (_, { createdDate }) => (
             formatDate(createdDate)
@@ -201,9 +203,9 @@ export const searchResultsTableHeaders = [
     },
     {
         title: <div className="g-row">
-            <div className="g-col-4">Search Criteria</div>
-            <div className="g-col-4">Criteria Codes</div>
-            <div className="g-col-4">Criteria Name</div>
+            <div className="g-col-4">{ t('SEARCH_CRITERIA')}</div>
+            <div className="g-col-4">{ t('CRITERIA_CODES')}</div>
+            <div className="g-col-4">{ t('CRITERIA_NAME')}</div>
         </div>,
         dataIndex: ['searchFilter', 'removeCriteria', 'parentSearchId'],
         render: (_, { searchFilter, removeCriteria, parentSearchId }) => (
@@ -235,7 +237,7 @@ export const searchResultsTableHeaders = [
                 {
                     (searchFilter.regions.length > 0 || removeCriteria?.regions?.length > 0) &&
                     <div className="g-row m-b-5 table-separate">
-                        <div className={searchFilter.regions.length === 0 || parentSearchId ? "red g-col-4" : "blue g-col-4"} >Region</div>
+                        <div className={searchFilter.regions.length === 0 || parentSearchId ? "red g-col-4" : "blue g-col-4"} >{t('REGION')}</div>
                         <div className="g-col-8">
                             {searchFilter._regions?.map((region, index) => {
                                 return (
@@ -259,7 +261,7 @@ export const searchResultsTableHeaders = [
                 {
                     (searchFilter.cities.length > 0 || removeCriteria?.cities?.length > 0) &&
                     <div className="g-row m-b-5 table-separate">
-                        <div className={searchFilter.cities.length === 0 || parentSearchId ? "red g-col-4" : "blue g-col-4"} >City</div>
+                        <div className={searchFilter.cities.length === 0 || parentSearchId ? "red g-col-4" : "blue g-col-4"} >{t('CITY')}</div>
                         <div className="g-col-8">
                             {searchFilter._cities?.map((city, index) => {
                                 return (
@@ -283,7 +285,7 @@ export const searchResultsTableHeaders = [
                 {
                     (searchFilter.municipalities.length > 0 || removeCriteria?.municipalities?.length > 0) &&
                     <div className="g-row m-b-5 table-separate">
-                        <div className={searchFilter.municipalities.length === 0 || parentSearchId ? "red g-col-4" : "blue g-col-4"} >Municipality</div>
+                        <div className={searchFilter.municipalities.length === 0 || parentSearchId ? "red g-col-4" : "blue g-col-4"} >{t('MUNICIPALITY')}</div>
                         <div className="g-col-8">
                             {searchFilter._municipalities?.map((municipality, index) => {
                                 return (
@@ -412,129 +414,129 @@ export const searchResultsTableHeaders = [
                         searchFilter?.organizationTypeCode || removeCriteria?.organizationTypeCode ||
                         searchFilter?.organizationId || removeCriteria?.organizationId) &&
                     <div className="g-row m-b-5 table-separate">
-                        <div className="blue g-col-4" >Company Info</div>
+                        <div className="blue g-col-4" >{t('COMPANY_INFO')}</div>
                         <div className="g-col-8">
                             {searchFilter?.sectorCode &&
                                 <div>
                                     <div className={parentSearchId ? "red g-col-6" : "blue g-col-6"} >{searchFilter?.sectorCode}</div>
-                                    <div className={parentSearchId ? "red g-col-6" : "blue g-col-6"} >Sector code</div>
+                                    <div className={parentSearchId ? "red g-col-6" : "blue g-col-6"} >{t('SECTOR_CODE')}</div>
                                 </div>
                             }
                             {removeCriteria?.sectorCode &&
                                 <div>
                                     <div className="red g-col-6" >{removeCriteria?.sectorCode}</div>
-                                    <div className="red g-col-6" >Sector code</div>
+                                    <div className="red g-col-6" >{t('SECTOR_CODE')}</div>
                                 </div>
                             }
 
                             {searchFilter?.active &&
                                 <div>
                                     <div className={parentSearchId ? "red g-col-6" : "blue g-col-6"} >{searchFilter?.active}</div>
-                                    <div className={parentSearchId ? "red g-col-6" : "blue g-col-6"} >Active</div>
+                                    <div className={parentSearchId ? "red g-col-6" : "blue g-col-6"} >{t('STATUS')}</div>
                                 </div>
                             }
 
                             {searchFilter?.registrationDateFrom &&
                                 <div>
                                     <div className={parentSearchId ? "red g-col-6" : "blue g-col-6"} >{searchFilter?.registrationDateFrom}</div>
-                                    <div className={parentSearchId ? "red g-col-6" : "blue g-col-6"} >Registration Date From</div>
+                                    <div className={parentSearchId ? "red g-col-6" : "blue g-col-6"} >{t('REGISTRATION_DATE_FROM')}</div>
                                 </div>
                             }
                             {removeCriteria?.registrationDateFrom &&
                                 <div>
                                     <div className="red g-col-6" >{removeCriteria?.registrationDateFrom}</div>
-                                    <div className="red g-col-6" >Registration Date From</div>
+                                    <div className="red g-col-6" >{t('REGISTRATION_DATE_FROM')}</div>
                                 </div>
                             }
 
                             {searchFilter?.registrationDateTo &&
                                 <div>
                                     <div className={parentSearchId ? "red g-col-6" : "blue g-col-6"} >{searchFilter?.registrationDateTo}</div>
-                                    <div className={parentSearchId ? "red g-col-6" : "blue g-col-6"} >Registration Date TO</div>
+                                    <div className={parentSearchId ? "red g-col-6" : "blue g-col-6"} >{t('REGISTRATION_DATE_TO')}</div>
                                 </div>
                             }
                             {removeCriteria?.registrationDateTo &&
                                 <div>
                                     <div className="red g-col-6" >{removeCriteria?.registrationDateTo}</div>
-                                    <div className="red g-col-6" >Registration Date To</div>
+                                    <div className="red g-col-6" >{t('REGISTRATION_DATE_TO')}</div>
                                 </div>
                             }
 
                             {searchFilter?.inCorporationDateFrom &&
                                 <div>
                                     <div className={parentSearchId ? "red g-col-6" : "blue g-col-6"} >{searchFilter?.inCorporationDateFrom}</div>
-                                    <div className={parentSearchId ? "red g-col-6" : "blue g-col-6"} >inCorporation Date From</div>
+                                    <div className={parentSearchId ? "red g-col-6" : "blue g-col-6"} >{t('INCORPORATION_DATE_FROM')}</div>
                                 </div>
                             }
                             {removeCriteria?.inCorporationDateFrom &&
                                 <div>
                                     <div className="red g-col-6" >{removeCriteria?.inCorporationDateFrom}</div>
-                                    <div className="red g-col-6" >inCorporation Date From</div>
+                                    <div className="red g-col-6" >{t('INCORPORATION_DATE_FROM')}</div>
                                 </div>
                             }
 
                             {searchFilter?.inCorporationDateTo &&
                                 <div>
                                     <div className={parentSearchId ? "red g-col-6" : "blue g-col-6"} >{searchFilter?.inCorporationDateTo}</div>
-                                    <div className={parentSearchId ? "red g-col-6" : "blue g-col-6"} >inCorporation Date To</div>
+                                    <div className={parentSearchId ? "red g-col-6" : "blue g-col-6"} >{t('INCORPORATION_DATE_TO')}</div>
                                 </div>
                             }
                             {removeCriteria?.inCorporationDateTo &&
                                 <div>
                                     <div className="red g-col-6" >{removeCriteria?.inCorporationDateTo}</div>
-                                    <div className="red g-col-6" >inCorporation Date To</div>
+                                    <div className="red g-col-6" >{t('INCORPORATION_DATE_TO')}</div>
                                 </div>
                             }
 
                             {searchFilter?.noOfEmployeesFrom &&
                                 <div>
                                     <div className={parentSearchId ? "red g-col-6" : "blue g-col-6"} >{searchFilter?.noOfEmployeesFrom}</div>
-                                    <div className={parentSearchId ? "red g-col-6" : "blue g-col-6"} >Number Of Employees From</div>
+                                    <div className={parentSearchId ? "red g-col-6" : "blue g-col-6"} >{t('NUMBER_OF_EMPLOYEES_FROM')}</div>
                                 </div>
                             }
                             {removeCriteria?.noOfEmployeesFrom &&
                                 <div>
                                     <div className="red g-col-6" >{removeCriteria?.noOfEmployeesFrom}</div>
-                                    <div className="red g-col-6" >Number Of Employees From</div>
+                                    <div className="red g-col-6" >{t('NUMBER_OF_EMPLOYEES_FROM')}</div>
                                 </div>
                             }
 
                             {searchFilter?.noOfEmployeesTo &&
                                 <div>
                                     <div className={parentSearchId ? "red g-col-6" : "blue g-col-6"} >{searchFilter?.noOfEmployeesTo}</div>
-                                    <div className={parentSearchId ? "red g-col-6" : "blue g-col-6"} >Number Of Employees To</div>
+                                    <div className={parentSearchId ? "red g-col-6" : "blue g-col-6"} >{t('NUMBER_OF_EMPLOYEES_TO')}</div>
                                 </div>
                             }
                             {removeCriteria?.noOfEmployeesTo &&
                                 <div>
                                     <div className="red g-col-6" >{removeCriteria?.noOfEmployeesTo}</div>
-                                    <div className="red g-col-6" >Number Of Employees To</div>
+                                    <div className="red g-col-6" >{t('NUMBER_OF_EMPLOYEES_TO')}</div>
                                 </div>
                             }
 
                             {searchFilter?.organizationTypeCode &&
                                 <div>
                                     <div className={parentSearchId ? "red g-col-6" : "blue g-col-6"} >{searchFilter?.organizationTypeCode}</div>
-                                    <div className={parentSearchId ? "red g-col-6" : "blue g-col-6"} >Organization Type</div>
+                                    <div className={parentSearchId ? "red g-col-6" : "blue g-col-6"} >{t('ORGANIZATION_TYPE')}</div>
                                 </div>
                             }
                             {removeCriteria?.organizationTypeCode &&
                                 <div>
                                     <div className="red g-col-6" >{removeCriteria?.organizationTypeCode}</div>
-                                    <div className="red g-col-6" >Organization Type</div>
+                                    <div className="red g-col-6" >{t('ORGANIZATION_TYPE')}</div>
                                 </div>
                             }
 
                             {searchFilter?.organizationId &&
                                 <div>
                                     <div className={parentSearchId ? "red g-col-6" : "blue g-col-6"} >{searchFilter?.organizationId}</div>
-                                    <div className={parentSearchId ? "red g-col-6" : "blue g-col-6"} >Organization Id</div>
+                                    <div className={parentSearchId ? "red g-col-6" : "blue g-col-6"} >{t('ORGANIZATION_ID')}</div>
                                 </div>
                             }
                             {removeCriteria?.organizationId &&
                                 <div>
                                     <div className="red g-col-6" >{removeCriteria?.organizationId}</div>
-                                    <div className="red g-col-6" >Organization Id</div>
+                                    <div className="red g-col-6" >{t('ORGANIZATION_ID')}</div>
                                 </div>
                             }
 
@@ -577,24 +579,24 @@ export const searchResultsTableHeaders = [
     // },
 ];
 
-export const searchResultsListTableHeaders = [
+export const searchResultsListTableHeaders = (t) => [
     {
-        title: 'Company Name',
+        title: t('COMPANY_NAME'),
         dataIndex: 'organizationName',
     },
     {
-        title: 'Organisation ID',
+        title: t('ORGANIZATION_ID'),
         dataIndex: 'organizationId',
     },
     {
-        title: 'Country',
+        title: t('COUNTRY'),
         dataIndex: 'businessAddr',
         render: (_, { businessAddr }) => (
             businessAddr?.businessCountry
         ),
     },
     {
-        title: 'City',
+        title: t('CITY'),
         dataIndex: 'businessAddr',
         render: (_, { businessAddr }) => (
             businessAddr?.city
@@ -602,20 +604,20 @@ export const searchResultsListTableHeaders = [
     },
 ];
 
-export const matchinTendersTableHeaders = [
+export const matchinTendersTableHeaders = (t) => [
     {
-        title: 'Document Number',
+        title: t('DOCUMENT_NUMBER'),
         dataIndex: 'noticeNumber',
         width: 130,
         sorter: (a, b) => a?.noticeNumber?.split("_")[0] - b?.noticeNumber?.split("_")[0],
         defaultSortOrder: 'ascend',
     },
     {
-        title: 'Buyer Title',
+        title: t('BUYER_TITLE'),
         dataIndex: 'buyerTitle',
     },
     {
-        title: 'Buyer short description',
+        title: t('BUYER_SHORT_DESCRIPTION'),
         dataIndex: 'buyerShortDescription',
         ellipsis: {
             showTitle: false,
@@ -627,7 +629,7 @@ export const matchinTendersTableHeaders = [
         ),
     },
     {
-        title: 'Publication Date',
+        title: t('PUBLICATION_DATE'),
         dataIndex: 'publicationDate',
         sorter: (a, b) => {
             if (getDateDiff(a.publicationDate, b.publicationDate) > 0)
@@ -638,7 +640,7 @@ export const matchinTendersTableHeaders = [
         width: 130,
     },
     {
-        title: 'Deadline',
+        title: t('DEADLINE'),
         dataIndex: 'deletionDate',
         sorter: (a, b) => {
             if (getDateDiff(a.deletionDate, b.deletionDate) > 0)
@@ -649,21 +651,21 @@ export const matchinTendersTableHeaders = [
         width: 130,
     },
     {
-        title: 'CPV Name',
+        title: t('CPV_NAME'),
         dataIndex: 'cpv',
         render: (_, { cpv }) => (
             cpv[0]?.desscription
         ),
     },
     {
-        title: 'Published By \n(Buyer Name)',
+        title: t('PUBLISHED_BY_BUYER_NAME'),
         dataIndex: 'buyerDetails',
         render: (_, { buyerDetails }) => (
             buyerDetails?.name
         ),
     },
     {
-        title: 'Country',
+        title: t('COUNTRY'),
         dataIndex: ['countryName', 'countryCode'],
         render: (_, { countryName, countryCode }) => (
             <div>
@@ -674,36 +676,36 @@ export const matchinTendersTableHeaders = [
         width: 160,
     },
     {
-        title: 'Municipality / City',
+        title: `${t('MUNICIPALITY')} / ${t('CITY')}'`,
         dataIndex: 'buyerDetails',
         render: (_, { buyerDetails }) => (
             buyerDetails?.city
         ),
     },
     {
-        title: 'Service Provider',
+        title: t('SERVICE_PROVIDER'),
         dataIndex: 'serviceProvider',
     },
     {
-        title: 'Status',
+        title: t('STATUS'),
         dataIndex: 'noticeStatus',
     },
 ];
 
-export const searchTendersTableHeaders = [
+export const searchTendersTableHeaders = (t) => [
     {
-        title: 'Document Number',
+        title: t('DOCUMENT_NUMBER'),
         dataIndex: 'noticeNumber',
         width: 130,
         fixed: 'left',
     },
     {
-        title: 'Buyer Title',
+        title: t('BUYER_TITLE'),
         dataIndex: 'buyerTitle',
         width: 200,
     },
     {
-        title: 'Buyer short description',
+        title: t('BUYER_SHORT_DESCRIPTION'),
         dataIndex: 'buyerShortDescription',
         ellipsis: {
             showTitle: false,
@@ -716,17 +718,17 @@ export const searchTendersTableHeaders = [
         ),
     },
     {
-        title: 'Publication Date',
+        title: t('PUBLICATION_DATE'),
         dataIndex: 'publicationDate',
         width: 120,
     },
     {
-        title: 'Deadline',
+        title: t('DEADLINE'),
         dataIndex: 'deletionDate',
         width: 120,
     },
     {
-        title: 'CPV Name',
+        title: t('CPV_NAME'),
         dataIndex: 'cpv',
         width: 130,
         render: (_, { cpv }) => (
@@ -734,26 +736,26 @@ export const searchTendersTableHeaders = [
         ),
     },
     {
-        title: 'Status',
+        title: t('STATUS'),
         dataIndex: 'noticeStatus',
         width: 100,
     },
 ];
 
-export const searchTendersTableHeadersExpanded = [
+export const searchTendersTableHeadersExpanded = (t) => [
     {
-        title: 'Document Number',
+        title: t('DOCUMENT_NUMBER'),
         dataIndex: 'noticeNumber',
         fixed: 'left',
         width: 130,
     },
     {
-        title: 'Buyer Title',
+        title: t('BUYER_TITLE'),
         dataIndex: 'buyerTitle',
         width: 180,
     },
     {
-        title: 'Buyer short\n description',
+        title: t('BUYER_SHORT_DESCRIPTION'),
         dataIndex: 'buyerShortDescription',
         width: 130,
         ellipsis: {
@@ -766,17 +768,17 @@ export const searchTendersTableHeadersExpanded = [
         ),
     },
     {
-        title: 'Publication Date',
+        title: t('PUBLICATION_DATE'),
         dataIndex: 'publicationDate',
         width: 120,
     },
     {
-        title: 'Deadline',
+        title: t('DEADLINE'),
         dataIndex: 'deletionDate',
         width: 120,
     },
     {
-        title: 'CPV Name',
+        title: t('CPV_NAME'),
         dataIndex: 'cpv',
         width: 130,
         render: (_, { cpv }) => (
@@ -784,7 +786,7 @@ export const searchTendersTableHeadersExpanded = [
         ),
     },
     {
-        title: 'Published By \n(Buyer Name)',
+        title: t('PUBLISHED_BY_BUYER_NAME'),
         dataIndex: 'buyerDetails',
         width: 150,
         render: (_, { buyerDetails }) => (
@@ -792,7 +794,7 @@ export const searchTendersTableHeadersExpanded = [
         ),
     },
     {
-        title: 'Country',
+        title: t('COUNTRY'),
         dataIndex: ['countryName', 'countryCode'],
         render: (_, { countryName, countryCode }) => (
             <div>
@@ -803,7 +805,7 @@ export const searchTendersTableHeadersExpanded = [
         width: 160,
     },
     {
-        title: 'Municipality/ City',
+        itle: `${t('MUNICIPALITY')} / ${t('CITY')}'`,
         dataIndex: 'buyerDetails',
         render: (_, { buyerDetails }) => (
             buyerDetails?.city
@@ -811,61 +813,61 @@ export const searchTendersTableHeadersExpanded = [
         width: 100,
     },
     {
-        title: 'Service Provider',
+        title: t('SERVICE_PROVIDER'),
         dataIndex: 'serviceProvider',
         width: 90,
     },
     {
-        title: 'Status',
+        title: t('STATUS'),
         dataIndex: 'noticeStatus',
         width: 80,
     },
 ];
 
-export const usersTableHeaders = [
+export const usersTableHeaders = (t) => [
     {
-        title: 'User ID',
+        title: t('USER_ID'),
         dataIndex: 'UserId',
         fixed: 'left',
         width: 100,
     },
     {
-        title: 'Title',
+        title: t('TITLE'),
         dataIndex: 'TitleName',
         width: 60,
     },
     {
-        title: 'User Name',
+        title: t('USER_NAME'),
         dataIndex: 'UserName',
         width: 170,
     },
     {
-        title: 'First Name',
+        title: t('FIRST_NAME'),
         dataIndex: 'FirstName',
         width: 110,
     },
     {
-        title: 'Last Name',
+        title: t('LAST_NAME'),
         dataIndex: 'LastName',
         width: 110,
     },
     {
-        title: 'Country',
+        title: t('COUNTRY'),
         dataIndex: 'CountryName',
         width: 100,
     },
     {
-        title: 'Email',
+        title: t('EMAIL'),
         dataIndex: 'Email',
         width: 170,
     },
     {
-        title: 'Phone',
+        title: t('PHONE'),
         width: 135,
         dataIndex: 'PhoneNumber',
     },
     {
-        title: 'Assigned Companies',
+        title: t('ASSIGNED_COMPANIES'),
         dataIndex: 'Companies',
         width: 200,
         ellipsis: {
@@ -878,7 +880,7 @@ export const usersTableHeaders = [
         ),
     },
     {
-        title: 'Assigned Roles',
+        title: t('ASSIGNED_ROLES'),
         dataIndex: 'Roles',
         width: 150,
         ellipsis: {
@@ -891,12 +893,12 @@ export const usersTableHeaders = [
         ),
     },
     {
-        title: 'Culture ID',
+        title: t('CULTURE_ID'),
         dataIndex: 'CultureCode',
         width: 110,
     },
     {
-        title: 'Status',
+        title: t('STATUS'),
         dataIndex: 'IsActive',
         width: 100,
         fixed: 'right',
@@ -904,10 +906,10 @@ export const usersTableHeaders = [
             <>
                 {IsActive ?
                     <div>
-                        <a style={{ color: 'green' }}>&#x25CF;</a> Active
+                        <a style={{ color: 'green' }}>&#x25CF;</a> {t('ACTIVE')}
                     </div> :
                     <div>
-                        <a className="grey">&#x25CF;</a> Inactive
+                        <a className="grey">&#x25CF;</a> {t('INACTIVE')}
                     </div>
                 }
             </>
@@ -915,68 +917,164 @@ export const usersTableHeaders = [
     },
 ]
 
-export const TemplateTableHeaders = [
+export const TemplateTableHeaders = (t) => [
     {
-        title: 'ID',
+        title: t('ID'),
         dataIndex: 'Id',
     },
     {
-        title: 'Name',
+        title: t('NAME'),
         dataIndex: 'DisplayName',
     },
     {
-        title: 'Date Created',
+        title: t('DATE_CREATED'),
         dataIndex: 'CreatedDateTime',
         render: (_, { CreatedDateTime }) => (
             formatDate(CreatedDateTime)
         )
     },
     {
-        title: 'Default Language',
+        title: t('DEFAULT_LANGUAGE'),
         dataIndex: 'LanguageMessageTemplates',
     },
     {
-        title: 'Trigger Point',
+        title: t('TRIGGER_POINT'),
         dataIndex: 'MessageTriggerPoint',
         render: (_, { MessageTriggerPoint }) => (
             MessageTriggerPoint?.DisplayName
         ),
     },
     {
-        title: 'Message Medium',
+        title: t('MESSAGE_MEDIUM'),
         dataIndex: 'MessageMedium',
     },
 ]
 
-export const CommunicationsLogTableHeaders = [
+export const CommunicationsLogTableHeaders = (t) =>  [
     {
-        title: 'Communication ID',
+        title: t('COMMUNICATION_ID'),
         dataIndex: 'Id',
+        width: 100
     },
     {
-        title: 'Link ID',
-        dataIndex: 'CorrelationId',
-    },
-    {
-        title: 'Type',
+        title: t('TYPE'),
         dataIndex: 'MessageTemplate',
         render: (_, { MessageTemplate }) => (
             MessageTemplate?.MessageMedium?.Name
         ),
-        width: 150
+        width: 100
     },
     {
-        title: 'From',
+        title: t('FROM'),
         dataIndex: 'From',
+        width: 250
     },
     {
-        title: 'To',
+        title: t('TO'),
         dataIndex: 'To',
         sorter: true,
+        width: 250
+    },
+    {
+        title: t('DATE'),
+        dataIndex: 'CreatedDateTime',
+        render: (_, { CreatedDateTime }) => (
+            formatDate(CreatedDateTime)
+        ),
+        sorter: (a, b) => {
+            if (getDateDiff(a.CreatedDateTime, b.CreatedDateTime) > 0)
+                return 1
+            else
+                return -1
+        },
         width: 150
     },
     {
-        title: 'Date',
+        title: t('DESCRIPTION'),
+        dataIndex: 'MessageSubject',
+        width: 170
+    },
+    {
+        title: t('NOTIFICATION_TYPE'),
+        dataIndex: 'MessageType',
+        render: (_, { MessageType }) => (
+            MessageType?.Name
+        ),
+        width: 170
+    },
+    {
+        title: t('WORKFLOW_STATUS'),
+        dataIndex: 'WorkflowStatus',
+        render: (_, { WorkflowStatus }) => (
+            WorkflowStatus?.Name
+        ),
+        width: 100
+    },
+    {
+        title: t('DISTRIBUTION_STATUS'),
+        dataIndex: 'MessageStatus',
+        render: (_, { MessageStatus }) => (
+            MessageStatus?.Name
+        ),
+        sorter: true,
+        width: 100
+    },
+]
+
+export const CommunicationsSubTableHeaders = (t) => [
+    {
+        title: t('DATE'),
+        dataIndex: 'CreatedDateTime',
+        render: (_, { CreatedDateTime }) => (
+            formatDate(CreatedDateTime)
+        ),
+        width: 150
+    },
+    {
+        title: t('DESCRIPTION'),
+        dataIndex: 'MessageSubject',
+        width: 170
+    },
+    {
+        title: t('NOTIFICATION_TYPE'),
+        dataIndex: 'MessageType',
+        render: (_, { MessageType }) => (
+            MessageType?.Name
+        ),
+        width: 170
+    },
+    {
+        title: t('WORKFLOW_STATUS'),
+        dataIndex: 'Response',
+        width: 100
+    },
+    {
+        title: t('DISTRIBUTION_STATUS'),
+        dataIndex: 'MessageStatus',
+        render: (_, { MessageStatus }) => (
+            MessageStatus?.Name
+        ),
+        width: 100
+    },
+]
+
+export const CommunicationsTableHeaders = (t) => [
+    {
+        title: t('MESSAGE_ID'),
+        dataIndex: 'Id',
+        sorter: (a, b) => a.Id - b.Id,
+    },
+    {
+        title: t('SUBJECT'),
+        dataIndex: 'MessageSubject',
+    },
+    {
+        title: t('TO'),
+        dataIndex: 'To',
+        sorter: true,
+    },
+    {
+        title: t('DATE'),
         dataIndex: 'CreatedDateTime',
         render: (_, { CreatedDateTime }) => (
             formatDate(CreatedDateTime)
@@ -989,139 +1087,46 @@ export const CommunicationsLogTableHeaders = [
         },
     },
     {
-        title: 'Description',
-        dataIndex: 'MessageSubject',
-    },
-    {
-        title: 'Notification Type',
+        title: t('MESSAGE_TYPE'),
         dataIndex: 'MessageType',
         render: (_, { MessageType }) => (
             MessageType?.Name
-        )
+        ),
+        sorter: true,
     },
     {
-        title: 'Workflow Status',
+        title: t('EMAIL'),
+        dataIndex: 'FromName',
+    },
+    {
+        title: t('MESSAGE_METHOD'),
+        dataIndex: 'MessageTemplate',
+        render: (_, { MessageTemplate }) => (
+            MessageTemplate?.MessageMedium?.Name
+        ),
+        sorter: true,
+    },
+    {
+        title: t('STATUS'),
         dataIndex: 'WorkflowStatus',
         render: (_, { WorkflowStatus }) => (
             WorkflowStatus?.Name
         ),
     },
-    {
-        title: 'Distribution Status',
-        dataIndex: 'MessageStatus',
-        render: (_, { MessageStatus }) => (
-            MessageStatus?.Name
-        ),
-        sorter: true,
-    },
 ]
 
-export const CommunicationsSubTableHeaders = [
+export const CommunicationBasketsTableHeaders = (t) => [
     {
-        title: 'From',
-        dataIndex: 'From',
-    },
-    {
-        title: 'To',
-        dataIndex: 'To',
-    },
-    {
-        title: 'Date',
-        dataIndex: 'CreatedDateTime',
-        render: (_, { CreatedDateTime }) => (
-            formatDate(CreatedDateTime)
-        ),
-    },
-    {
-        title: 'Description',
-        dataIndex: 'MessageSubject',
-    },
-    {
-        title: 'Notification Type',
-        dataIndex: 'MessageType',
-        render: (_, { MessageType }) => (
-            MessageType?.Name
-        )
-    },
-    {
-        title: 'Workflow Status',
-        dataIndex: 'Response',
-    },
-    {
-        title: 'Distribution Status',
-        dataIndex: 'MessageStatus',
-        render: (_, { MessageStatus }) => (
-            MessageStatus?.Name
-        ),
-    },
-]
-
-export const CommunicationsTableHeaders = [
-    {
-        title: 'Message ID',
-        dataIndex: 'Id',
-        sorter: (a, b) => a.Id - b.Id,
-    },
-    {
-        title: 'Subject',
-        dataIndex: 'MessageSubject',
-    },
-    {
-        title: 'To',
-        dataIndex: 'To',
-        sorter: true,
-    },
-    {
-        title: 'Date',
-        dataIndex: 'CreatedDateTime',
-        render: (_, { CreatedDateTime }) => (
-            formatDate(CreatedDateTime)
-        ),
-        sorter: (a, b) => {
-            if (getDateDiff(a.CreatedDateTime, b.CreatedDateTime) > 0)
-                return 1
-            else
-                return -1
-        },
-    },
-    {
-        title: 'Message Type',
-        dataIndex: 'MessageType',
-        render: (_, { MessageType }) => (
-            MessageType?.Name
-        ),
-        sorter: true,
-    },
-    {
-        title: 'Email',
-        dataIndex: 'FromName',
-    },
-    {
-        title: 'Message method',
-        dataIndex: 'MessageTemplate',
-        render: (_, { MessageTemplate }) => (
-            MessageTemplate?.MessageMedium?.Name
-        ),
-        sorter: true,
-    },
-    {
-        title: 'Attachments',
-        dataIndex: 'MessageLinks',
-    },
-]
-
-export const CommunicationBasketsTableHeaders = [
-    {
-        title: 'Basket ID',
+        title: t('BASKET_ID'),
         dataIndex: 'Id',
     },
     {
-        title: 'Basket Name',
+        title: t('BASKET_NAME'),
         dataIndex: 'Name',
         sorter: true,
     },
     {
-        title: 'Created Date',
+        title: t('CREATED_DATE'),
         dataIndex: 'CreatedDateTime',
         render: (_, { CreatedDateTime }) => (
             formatDate(CreatedDateTime)
@@ -1134,35 +1139,35 @@ export const CommunicationBasketsTableHeaders = [
         },
     },
     {
-        title: 'Communication Type',
+        title: t('COMMUNICATION_TYPE'),
         dataIndex: 'CommunicationType',
         render: (_, { CommunicationType }) => (
             CommunicationType?.Name
         ),
     },
     {
-        title: 'Basket Type',
+        title: t('BASKET_TYPE'),
         dataIndex: 'BasketType',
         render: (_, { BasketType }) => (
             BasketType?.Name
         ),
     },
     {
-        title: 'Start Date',
+        title: t('START_DATE'),
         dataIndex: 'FromDateTime',
         render: (_, { FromDateTime }) => (
             formatDate(FromDateTime)
         ),
     },
     {
-        title: 'End Date',
+        title: t('END_DATE'),
         dataIndex: 'ToDateTime',
         render: (_, { ToDateTime }) => (
             formatDate(ToDateTime)
         ),
     },
     {
-        title: 'Status',
+        title: t('STATUS'),
         dataIndex: 'BasketStatus',
         render: (_, { BasketStatus }) => (
             BasketStatus?.Name
@@ -1171,26 +1176,26 @@ export const CommunicationBasketsTableHeaders = [
     },
 ]
 
-export const ReceversCompaniesTableHeaders = [
+export const ReceversCompaniesTableHeaders = (t) => [
     {
-        title: 'Company',
+        title: t('COMPANY'),
         children: [
             {
-                title: 'Organization ID',
+                title: t('ORGANIZATION_ID'),
                 dataIndex: 'Company',
                 render: (_, { Company }) => (
                     Company?.CompanyId
                 ),
             },
             {
-                title: 'Name',
+                title: t('NAME'),
                 dataIndex: 'Company',
                 render: (_, { Company }) => (
                     Company?.Name
                 ),
             },
             {
-                title: 'Country',
+                title: t('COUNTRY'),
                 dataIndex: 'Company',
                 render: (_, { Company }) => (
                     Company?.CountryTName
@@ -1200,39 +1205,39 @@ export const ReceversCompaniesTableHeaders = [
     }
 ]
 
-export const ReceversCompaniesSubTableHeaders = [
+export const ReceversCompaniesSubTableHeaders = (t) => [
     {
-        title: 'Users',
+        title: t('USERS'),
         children: [
             {
-                title: 'ID',
-                dataIndex: 'Value',
-                render: (_, { Value }) => (
-                    Value?.Id
+                title: t('ID'),
+                dataIndex: 'Person',
+                render: (_, { Person }) => (
+                    Person?.Id
                 ),
                 width: 120
             },
             {
-                title: 'First Name',
-                dataIndex: 'Value',
-                render: (_, { Value }) => (
-                    Value?.FirstName
+                title: t('FIRST_NAME'),
+                dataIndex: 'Person',
+                render: (_, { Person }) => (
+                    Person?.FirstName
                 ),
                 width: 200
             },
             {
-                title: 'Last Name',
-                dataIndex: 'Value',
-                render: (_, { Value }) => (
-                    Value?.LastName
+                title: t('LAST_NAME'),
+                dataIndex: 'Person',
+                render: (_, { Person }) => (
+                    Person?.LastName
                 ),
                 width: 200
             },
             {
-                title: 'Title',
-                dataIndex: 'Value',
-                render: (_, { Value }) => (
-                    Value?.TitleTName
+                title: t('TITLE'),
+                dataIndex: 'Person',
+                render: (_, { Person }) => (
+                    Person?.TitleTName
                 ),
                 width: 100
             },
@@ -1240,9 +1245,9 @@ export const ReceversCompaniesSubTableHeaders = [
     }
 ]
 
-export const ReceversPersonsTableHeaders = [
+export const ReceversPersonsTableHeaders = (t) => [
     {
-        title: 'ID',
+        title: t('ID'),
         dataIndex: 'Person',
         render: (_, { Person }) => (
             Person?.Id
@@ -1250,28 +1255,28 @@ export const ReceversPersonsTableHeaders = [
         width: 120
     },
     {
-        title: 'First Name',
+        title: t('FIRST_NAME'),
         dataIndex: 'Person',
         render: (_, { Person }) => (
             Person?.FirstName
         ),
     },
     {
-        title: 'Last Name',
+        title: t('LAST_NAME'),
         dataIndex: 'Person',
         render: (_, { Person }) => (
             Person?.LastName
         ),
     },
     {
-        title: 'Title',
+        title: t("TITLE"),
         dataIndex: 'Person',
         render: (_, { Person }) => (
             Person?.TitleTName
         ),
     },
     {
-        title: 'Country',
+        title: t('COUNTRY'),
         dataIndex: 'Person',
         render: (_, { Person }) => (
             Person?.CountryTName
@@ -1279,37 +1284,37 @@ export const ReceversPersonsTableHeaders = [
     },
 ]
 
-export const ReceversPersonsTableExpandedHeaders = [
+export const ReceversPersonsTableExpandedHeaders = (t) => [
     {
-        title: 'Organization ID',
+        title: t('ORGANIZATION_ID'),
         dataIndex: 'Company',
         render: (_, { Company }) => (
             Company?.CompanyRegistrationID
         ),
     },
     {
-        title: 'Name',
+        title: t('NAME'),
         dataIndex: 'Company',
         render: (_, { Company }) => (
             Company?.Name
         ),
     },
     {
-        title: 'Country',
+        title: t('COUNTRY'),
         dataIndex: 'Company',
         render: (_, { Company }) => (
             Company?.CountryTName
         ),
     },
     {
-        title: 'Email',
+        title: t('EMAIL'),
         dataIndex: 'Company',
         render: (_, { Company }) => (
             Company?.Email
         ),
     },
     {
-        title: 'Phone',
+        title: t('PHONE'),
         dataIndex: 'Company',
         render: (_, { Company }) => (
             Company?.Phone

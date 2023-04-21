@@ -16,7 +16,7 @@ export default function WhiteLabelHome() {
     return (
         <>
             <div className="g-row m-b-20">
-                <TitleCard title={"WHITE LABEL"} topIcon={"icon-buyer"} />
+                <TitleCard title={t('WHITE_LABEL')} topIcon={"icon-buyer"} />
                 <div className="g-col-9 p-l-20">
                     <h4>{t('White Label')}</h4>
                     <div>"White Label" Comes with several functionalities.</div>
@@ -25,7 +25,7 @@ export default function WhiteLabelHome() {
             </div>
             <div className="g-row">
                 <NavigationCard
-                    name={"White Label"}
+                    name={"WHITE_LABEL"}
                     cardColour={"bg-green-lite"}
                     imageName={"icon-search-module"}
                     onClick={() => onClickCard(NAVIGATION_PAGES.BUYER_SEARCH)}

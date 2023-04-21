@@ -1,33 +1,46 @@
 import React, { useRef, useState, useEffect, useContext } from "react";
-import { Switch, Collapse, message } from 'antd';
+import { Switch, Collapse, message, Modal } from 'antd';
+import { useTranslation } from "react-i18next";
+import { ExclamationCircleOutlined } from '@ant-design/icons';
 
 import Dropdown from "../../../common/dropdown"
 import image_thumb from "../../../assets/images/image_thumb.png"
-import { updateUser } from "../../../services/userService";
+import { updateUser, activateUsers, deActivateUsers, deleteUser } from "../../../services/userService";
 import Input from '../../../common/input'
 import { getGetCountries } from "../../../services/communicationService";
-import { UserContext } from "../../../utils/contextStore";
+import { UserContext, TabContext } from "../../../utils/contextStore";
+import { NAVIGATION_PAGES } from "../../../utils/enums";
 
 const { Panel } = Collapse;
+const { confirm } = Modal;
+
+let curentUser = {}
 
 const UserDetails = ({ props }) => {
-    const getChecked = () => {
-        return props?.UserRoles?.map(role => {
-            return { ...role, disabled: role?.DeletedUserPartyId === null && role?.IsActive === false }
-        })
-    }
-    const [status, setStatus] = useState(props?.IsActive ? "Active" : "Inactive");
+    const [status, setStatus] = useState(props?.IsActive ? "ACTIVE" : "INACTIVE");
     const [userData, setUserData] = useState({ firstName: props?.FirstName, lastName: props?.LastName, userName: props?.UserName, country: { Id: props?.CountryId, Name: props?.CountryName } })
     const [selectedFile, setSelectedFile] = useState(props?.PictureFileId || null);
     const [updateUserRoles, setUpdateUserRoles] = useState([]);
-    const [checked, setChecked] = useState(getChecked());
+    const [checked, setChecked] = useState([]);
     const [countryList, setCountryList] = useState([])
     const [editDetails, setEditDetails] = useState(false);
     const [loading, setLoading] = useState(false);
+    const { t } = useTranslation();
 
     const UPLOAD_BTN_REF = useRef(null);
 
-    const { getUsersData, currentUser } = useContext(UserContext);
+    const { getUsersData, currentUser, users, selectedCompany } = useContext(UserContext);
+    const { changeActiveTab } = useContext(TabContext);
+
+    useEffect(() => {
+        const curentUserData = users.find(usr => usr?.UserId === props?.UserId)
+        const newChecked = curentUserData?.UserRoles?.map(role => {
+            return { ...role, disabled: role?.DeletedUserPartyId === null && role?.IsActive === false }
+        })
+        curentUser = curentUserData
+        setChecked(newChecked)
+        setStatus(curentUserData?.IsActive ? "ACTIVE" : "INACTIVE")
+    }, [users])
 
     const userReqParams = {
         "UserId": props?.UserId,
@@ -41,7 +54,7 @@ const UserDetails = ({ props }) => {
         "CountryName": props?.CountryName,
         "IsActive": props?.IsActive,
         "PictureFileId": selectedFile,
-        "LoggedInUserPartyId": status === "Active" ? null : currentUser?.PartyId,
+        "LoggedInUserPartyId": currentUser?.PartyId,
         "UserPartyId": props?.UserPartyId
     }
 
@@ -52,19 +65,57 @@ const UserDetails = ({ props }) => {
     }, [])
 
     const onChangeStatus = (e) => {
-        setLoading(true)
-        setStatus(e.target.value);
+        if (e.target.value === 'ACTIVE') {
+            setLoading(true)
+            setStatus(e.target.value);
 
-        const params = userReqParams;
-        params.LoggedInUserPartyId = e.target.value === "Active" ? null : currentUser?.PartyId;
+            activateUsers([selectedCompany?.companyPartyId, props?.UserId]).then(() => {
+                message.success(t('MSG_USERS_ACTIVATED'));
+                getUsersData();
+                setLoading(false)
+            }).catch(() => {
+                message.error(t('MSG_USERS_ACTIVATE_FAIL'))
+                setLoading(false)
+            })
+        } else if (e.target.value === 'INACTIVE') {
+            setLoading(true)
+            setStatus(e.target.value);
 
-        updateUser(params).then(() => {
-            setLoading(false);
-            getUsersData();
-        }).catch(() => {
-            message.error('Update failed please try again')
-            setLoading(false);
-        })
+            deActivateUsers([selectedCompany?.companyPartyId, props?.UserId]).then(() => {
+                message.success(t('MSG_USERS_DEACTIVATE_SUCESS'))
+                getUsersData();
+                setLoading(false)
+            }).catch(() => {
+                message.error(t('MSG_USERS_DEACTIVATE_FAIL'))
+                setLoading(false)
+            })
+        } else if (e.target.value === 'DELETE') {
+            confirm({
+                title: (
+                    <>
+                        {t("ARE_YOU_SURE")} <strong className="red">{t("DELETE")}</strong>{" "}
+                        {t("USER")}?
+                    </>
+                ),
+                icon: <ExclamationCircleOutlined />,
+                okText: t("YES"),
+                okType: "danger",
+                cancelText: t("NO"),
+                onOk() {
+                    setLoading(true);
+                    const userLisyPayload = [selectedCompany?.companyPartyId, currentUser?.PartyId, props?.UserId]
+
+                    deleteUser(userLisyPayload).then(() => {
+                        message.success(t('DELETE_SUCCESSFUL'))
+                        getUsersData();
+                        changeActiveTab(NAVIGATION_PAGES.ALL_USERS);
+                    }).catch(() => {
+                        message.error(t('DELETE_FAILED'))
+                        setLoading(false)
+                    })
+                },
+            });
+        }
     }
 
     const handleImageUpload = () => {
@@ -91,12 +142,12 @@ const UserDetails = ({ props }) => {
                 setLoading(false);
                 getUsersData();
             }).catch(() => {
-                message.error('Update failed please try again')
+                message.error(t('UPDATE_FAIL'))
                 setLoading(false);
             })
         };
         reader.onerror = error => {
-            message.error('Image upload failed');
+            message.error(t('IMAGE_UPLOAD_FAIL'));
         };
     }
 
@@ -195,28 +246,28 @@ const UserDetails = ({ props }) => {
 
     const getPanel = (header, key = 1) => {
         return (
-            <Panel header={header} key={key} extra={panelSwitch()}>
+            <Panel header={header} key={key} 
+            // extra={panelSwitch()}
+            >
                 <div className="m-b-20">Role/s</div>
                 <div className="user-details-pannerl-container">
                     {checked?.map((role) => {
                         // const isChecked = checked.find(check => { return check?.EntityName === role?.EntityName && check?.RoleName === role?.RoleName })?.IsActive
                         const isChecked = role?.DeletedUserPartyId === null && role?.IsActive !== null
-                        const isDisabled = role?.DeletedUserPartyId === null && props?.UserRoles?.find(usrRole => { return usrRole?.EntityPartyId === role?.EntityPartyId && usrRole?.RoleId === role?.RoleId })?.IsActive === false
+                        const isDisabled = role?.DeletedUserPartyId === null && curentUser?.UserRoles?.find(usrRole => { return usrRole?.EntityPartyId === role?.EntityPartyId && usrRole?.RoleId === role?.RoleId })?.IsActive === false
 
                         return (
-                            <>
-                                <div className="user-details-item">
-                                    <div className={`user-details-item-content ${role?.disabled && 'disable-div'}`}>
-                                        <input type="checkbox" className="check-box"
-                                            checked={isChecked}
-                                            onChange={(e) => { onCheckRole(e, role) }} />
-                                        {role?.RoleName}
-                                    </div>
-                                    {isDisabled &&
-                                        <div className="blue hover-hand" onClick={() => onEdit(role)} >Edit</div>
-                                    }
+                            <div className={`user-details-item ${role?.RoleName?.toUpperCase() === 'USER' && 'disable-div'}`}>
+                                <div className={`user-details-item-content ${role?.disabled && 'disable-div'}`}>
+                                    <input type="checkbox" className="check-box"
+                                        checked={isChecked}
+                                        onChange={(e) => { onCheckRole(e, role) }} />
+                                    {role?.RoleName}
                                 </div>
-                            </>
+                                {isDisabled &&
+                                    <div className="blue hover-hand" onClick={() => onEdit(role)} >{t('EDIT')}</div>
+                                }
+                            </div>
                         )
                     })}
                 </div>
@@ -224,25 +275,30 @@ const UserDetails = ({ props }) => {
         )
     }
 
-    const panelSwitch = () => {
-        const toggleOn = checked?.findIndex(role => { return role?.IsActive === true }) > -1;
+    const panelSwitch = () => { //DO NOT REMOVE 
+        const toggleOn = curentUser?.UserRoles?.findIndex(role => role?.IsActive) > -1;
 
         return (
-            <div onClick={(event) => {
-                if (toggleOn)
-                    event.stopPropagation();
-            }}>
-                <Switch
-                    checkedChildren="Active"
-                    unCheckedChildren="Inactive"
-                    checked={toggleOn}
-                    onChange={onToggle}
-                />
+            // <div onClick={(event) => {
+            //     if (toggleOn)
+            //         event.stopPropagation();
+            // }}>
+            <div className="general-btns-container">
+                {t('INACTIVE')}
+                <div className="expandable-table-btn m-l-10 m-r-10">
+                    <Switch
+                        checked={toggleOn}
+                    // onChange={onToggle}
+                    />
+                </div>
+                {t('ACTIVE')}
             </div>
+
+            // </div>
         )
     }
 
-    const onToggle = (value) => {
+    const onToggle = (value) => { //Do not remove
         if (!value) {
             const newUpdateUserRoles = []
             const newChecked = JSON.parse(JSON.stringify(checked));
@@ -284,15 +340,15 @@ const UserDetails = ({ props }) => {
         params.CountryId = userData.country?.Id;
         params.CountryName = userData.country?.Name;
         params.UserRoles = updateUserRoles;
-        params.IsSendEmail = null;
+        // params.IsSendEmail = null;
 
         updateUser(params).then(() => {
-            message.success('User data updated')
+            message.success(t('USER_UPDATE_SUCCESS'))
             setLoading(false);
             setEditDetails(false);
             getUsersData();
         }).catch(() => {
-            message.error('User data update failed please try again')
+            message.error(t('USER_UPDATE_FAIL'))
             setLoading(false);
         })
     }
@@ -306,6 +362,8 @@ const UserDetails = ({ props }) => {
         e.preventDefault();
         setUserData(pre => ({ ...pre, country: JSON.parse(e.target.value) }))
     }
+
+    const onEditDetails = () => setEditDetails(pre => !pre)
 
     return (
         <div className={loading ? 'loading-overlay' : ''}>
@@ -331,81 +389,91 @@ const UserDetails = ({ props }) => {
                         </div>
                     </div>
                     <div className="user-details-container">
-                        <div>
-                            <div className="m-b-20">
-                                User ID
-                                <div className="bold">{props?.UserId}</div>
-                            </div>
-                            <div className="m-b-20 p-t-10">
-                                FIrst Name
-                                {editDetails ?
-                                    <Input placeholder="First Name"
-                                        value={userData.firstName}
-                                        onChange={(e) => onChangeUserData(e, 'firstName')}
-                                    /> :
+                        <div className="">
+                            {t('USER_ID')}
+                            <div className="bold">{props?.UserId}</div>
+                        </div>
+                        <div className="m-t-20">
+                            {editDetails ?
+                                <Input placeholder={'FIRST_NAME'}
+                                    value={userData.firstName}
+                                    onChange={(e) => onChangeUserData(e, 'firstName')}
+                                /> :
+                                <>
+                                    {t('FIRST_NAME')}
                                     <div className="bold">{userData.firstName}</div>
-                                }
-                            </div>
-                            <div className="p-t-10">
-                                Last Name
-                                {editDetails ?
-                                    <Input placeholder="Last Name"
-                                        value={userData.lastName}
-                                        onChange={(e) => onChangeUserData(e, 'lastName')}
-                                    /> :
+                                </>
+                            }
+                        </div>
+                        <div className="m-t-20">
+                            {editDetails ?
+                                <Input placeholder={'LAST_NAME'}
+                                    value={userData.lastName}
+                                    onChange={(e) => onChangeUserData(e, 'lastName')}
+                                /> :
+                                <>
+                                    {t('LAST_NAME')}
                                     <div className="bold">{userData.lastName}</div>
-                                }
-                            </div>
+                                </>
+                            }
                         </div>
-                        <div>
-                            <div className="m-b-20 m-t-20">
-                                User Name
-                                {editDetails ?
-                                    <Input placeholder="User Name"
-                                        value={userData.userName}
-                                        onChange={(e) => onChangeUserData(e, 'userName')}
-                                    /> :
+                        <div className="m-t-20">
+                            {editDetails ?
+                                <Input placeholder={'USER_NAME'}
+                                    value={userData.userName}
+                                    onChange={(e) => onChangeUserData(e, 'userName')}
+                                /> :
+                                <>
+                                    {t('USER_NAME')}
                                     <div className="bold">{userData.userName}</div>
-                                }
-                            </div>
-                            <div className="p-t-10">
-                                Country
-                                {editDetails ?
-                                    <div className="user-drop-down" style={{ width: 200 }}>
-                                        <Dropdown
-                                            values={countryList}
-                                            onChange={onChangeCountry}
-                                            selected={JSON.stringify(userData.country || undefined)}
-                                            placeholder="Country"
-                                            dataName="Name"
-                                        />
-                                    </div> :
-                                    <div className="bold">{userData.country?.Name}</div>
-                                }
-                            </div>
+                                </>
+                            }
                         </div>
-                        <div>
-                            <div className="m-t-20">
-                                <Dropdown
-                                    values={["Active", "Inactive"]}
-                                    onChange={onChangeStatus}
-                                    selected={status}
-                                    placeholder="Status"
-                                />
-                            </div>
+                        <div className="m-t-20">
+                            {editDetails ?
+                                <div className="user-drop-down" >
+                                    <Dropdown
+                                        values={countryList}
+                                        onChange={onChangeCountry}
+                                        selected={JSON.stringify(userData.country?.Name ? userData.country : undefined)}
+                                        placeholder={'COUNTRY'}
+                                        dataName="Name"
+                                    />
+                                </div> :
+                                <>
+                                    {t('COUNTRY')}
+                                    <div className="bold">{userData.country?.Name}</div>
+                                </>
+                            }
+                        </div>
+                        <div className=" m-t-20">
+                            {currentUser?.roles?.findIndex(role => role?.Name === 'Super Administrator') > -1 ?
+                                <div className="user-drop-down" >
+                                    <Dropdown
+                                        values={["ACTIVE", "INACTIVE", "DELETE"]}
+                                        onChange={onChangeStatus}
+                                        selected={status}
+                                        placeholder={'STATUS'}
+                                    />
+                                </div> :
+                                <>
+                                    {t('STATUS')}
+                                    <div className="bold">{status}</div>
+                                </>
+                            }
                         </div>
                     </div>
-                    <i type="file" className="icon-edit upload-image-btn hover-hand" onClick={() => setEditDetails(true)} />
+                    <i type="file" className="icon-edit upload-image-btn hover-hand" onClick={onEditDetails} />
                 </div>
                 <div className="user-data-table-container">
-                    <div className="m-b-20">Assigned company/ies</div>
-                    <Collapse>
+                    <div className="m-b-20">{t('ASSIGNED_COMPANIES')}</div>
+                    <Collapse defaultActiveKey={1}>
                         {getPanel(props?.Company?.Value)}
                     </Collapse>
                 </div>
             </div>
-            <div className="details-btn-container">
-                <button className="primary-btn" onClick={onUpdate} >Update</button>
+            <div className="action-bar">
+                <button className="primary-btn m-t-10 m-r-20" onClick={onUpdate} >{t('UPDATE')}</button>
             </div>
         </div>
     )

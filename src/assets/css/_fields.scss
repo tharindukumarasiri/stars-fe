@@ -25,8 +25,8 @@ input[type="color"],
 textarea,
 select {
     background-color: transparent;
-    border: 2px solid #e2e2e2;
-    padding: 6px;
+    border: 1px solid $input-border-color !important;
+    padding: 6px !important;
     width: 100%;
     background-color: $white;
 }

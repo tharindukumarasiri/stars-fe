@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo, useContext } from "react";
-import { Modal, Table, Tooltip, Switch, message, Pagination } from 'antd';
+import { Modal, Table, Tooltip, message, Pagination } from 'antd';
 
 import { CommunicationBasketsTableHeaders } from '../../../utils/tableHeaders'
 import StarDropdown from "../../../common/dropdown";
@@ -9,15 +9,14 @@ import { NAVIGATION_PAGES } from "../../../utils/enums";
 import { TabContext } from "../../../utils/contextStore";
 import {
     getCommunicationBasket,
-    getCommunicationBasketTypes,
     getCommunicationBasketStatuses,
     addCommunicationBasket,
-    getCommunicationMessageTypes,
-    deleteCommunicationBasket
+    deleteCommunicationBasket,
 } from "../../../services/communicationService";
-import { getTenantMessageTemplates } from "../../../services/templateService";
+import { GetCommunicationTemplatesByTenant } from "../../../services/templateService";
 import { FetchCurrentUser, FetchCurrentCompany } from "../../../hooks/index"
 import TimeConfig from "../Components/timeConfig";
+import { useTranslation } from "react-i18next";
 
 const pageSize = 10;
 
@@ -30,19 +29,16 @@ const CommunicationBaskets = () => {
     const [configModalVisible, setConfigModalVisible] = useState(false);
     const [newGroupData, setNewGroupData] = useState({ name: '', basketType: true, communicationType: null, description: '' });
     const [newGroupDataErrors, setNewGroupDataErrors] = useState({ name: '', communicationType: '' });
-    const [pageNumber, setPageNumber] = useState(0);
+    const [pageNumber, setPageNumber] = useState(1);
     const [totalResults, setTotalResults] = useState(0);
     const [configBasketId, setConfigBasketId] = useState('');
+    const {t} = useTranslation();
 
     const [currentUser] = FetchCurrentUser();
     const [selectedCompany] = FetchCurrentCompany();
-
     const { changeActiveTab } = useContext(TabContext);
 
     useEffect(() => {
-        getCommunicationBasketTypes().then(result => {
-            setDropDownData(pre => ({ ...pre, type: result }))
-        })
         getCommunicationBasketStatuses().then(result => {
             setDropDownData(pre => ({ ...pre, status: result }))
         })
@@ -50,8 +46,8 @@ const CommunicationBaskets = () => {
 
     useEffect(() => {
         if (selectedCompany?.companyPartyId) {
-            getTenantMessageTemplates(selectedCompany?.companyPartyId, 1).then(result => {
-                setDropDownData(pre => ({ ...pre, comType: result.Value }))
+            GetCommunicationTemplatesByTenant(selectedCompany?.companyPartyId, 1).then(result => {
+                setDropDownData(pre => ({ ...pre, comType: result }))
             })
             getCommunicationBasketData()
         }
@@ -86,11 +82,11 @@ const CommunicationBaskets = () => {
         const payload = [currentUser?.PartyId, id];
 
         deleteCommunicationBasket(payload).then(() => {
-            message.success('Delete Successful');
+            message.success(t('DELETE_SUCCESSFUL'));
             getCommunicationBasketData();
         }).catch(() => {
             setLoading(false);
-            message.error('Delete failed');
+            message.error(t('DELETE_FAILED'));
         })
     }
 
@@ -101,7 +97,7 @@ const CommunicationBaskets = () => {
     }
 
     const tableHeaders = useMemo(() => {
-        const headers = CommunicationBasketsTableHeaders?.map(a => { return { ...a, title: a.title } })
+        const headers = CommunicationBasketsTableHeaders(t);
         headers.push({
             title: 'Logs',
             dataIndex: 'Id',
@@ -153,7 +149,7 @@ const CommunicationBaskets = () => {
     const onFilter = (e) => {
         e.preventDefault();
         getCommunicationBasketData();
-        setPageNumber(0);
+        setPageNumber(1);
     }
 
     const toggleModal = () => {
@@ -189,35 +185,25 @@ const CommunicationBaskets = () => {
             const params = {
                 "Name": newGroupData.name,
                 "BasketTypeId": newGroupData.basketType ? 1 : 2,
-                "MessageTypeId": JSON.parse(newGroupData?.communicationType)?.Id,
+                "MessageTypeId": JSON.parse(newGroupData?.communicationType)?.MessageTypeId,
                 "Description": newGroupData.description,
                 "CompanyPartyId": selectedCompany?.companyPartyId
             }
 
             addCommunicationBasket(params).then(() => {
                 toggleModal();
-                message.success("Create basket successful");
+                message.success(t('CREATE_BASKET_SUCESS'));
                 setNewGroupData({ name: '', basketType: true, communicationType: null, description: '' })
                 getCommunicationBasketData();
             }).catch(() => {
-                message.error("Create basket failed please try again");
+                message.error(t('CREATE_BASKET_FAILED'));
                 setLoading(false);
             })
         }
     }
 
-    const onChangePage = (page) => {
+    const onChangePage = (pageNumb) => {
         setLoading(true);
-        const pageNumb = page - 1
-        const params = {
-            "BasketStatusId": filterTypes?.status?.Id,
-            "BasketTypeId": filterTypes?.type?.Id,
-            "FromDate": filterTypes.startDate,
-            "ToDate": filterTypes.endDate,
-            "PageSize": pageSize,
-            "PageCount": pageNumb
-        }
-
         setPageNumber(pageNumb)
         getCommunicationBasketData();
     }
@@ -228,7 +214,7 @@ const CommunicationBaskets = () => {
     }
 
     const onToggle = (val) => {
-        setNewGroupData({ ...newGroupData, basketType: val })
+        setNewGroupData({ ...newGroupData, basketType: !newGroupData.basketType })
     }
 
     const onClickRow = (params) => {
@@ -236,7 +222,7 @@ const CommunicationBaskets = () => {
     }
 
     return (
-        <>
+        <div className={loading ? 'loading-overlay' : ''}>
             {loading &&
                 <div className="loading center-loading">
                     <div></div>
@@ -246,13 +232,13 @@ const CommunicationBaskets = () => {
             }
             <div className="com-top-container user-input-box">
                 <div className="create-new-btn">
-                    <button className="add-btn" onClick={toggleModal} >Create New</button>
+                    <button className="add-btn" onClick={toggleModal} >{t('CREATE_NEW')}</button>
                 </div>
 
-                <div className="filter-by-text">Filter By:</div>
+                <div className="filter-by-text">{t('FILTER_BY')}:</div>
                 <div className="com-drop-down-width">
                     <DatePickerInput
-                        placeholder='Start Date'
+                        placeholder={t('START_DATE')}
                         value={filterTypes.startDate}
                         onChange={(date) => onFilterTypeDateChange(date, "startDate")}
                         isClearable
@@ -260,7 +246,7 @@ const CommunicationBaskets = () => {
                 </div>
                 <div className="com-drop-down-width">
                     <DatePickerInput
-                        placeholder='End Date'
+                        placeholder={t('END_DATE')}
                         value={filterTypes.endDate}
                         onChange={(date) => onFilterTypeDateChange(date, "endDate")}
                         isClearable
@@ -272,7 +258,7 @@ const CommunicationBaskets = () => {
                         onChange={e => onChangeFilterType(e, 'type')}
                         selected={JSON.stringify(filterTypes.type || undefined)}
                         dataName="Name"
-                        placeholder="Type"
+                        placeholder='TYPE'
                     />
                 </div>
                 <div className="com-drop-down-width">
@@ -281,10 +267,10 @@ const CommunicationBaskets = () => {
                         onChange={e => onChangeFilterType(e, 'status')}
                         selected={JSON.stringify(filterTypes.status || undefined)}
                         dataName="Name"
-                        placeholder="Status"
+                        placeholder='STATUS'
                     />
                 </div>
-                <button className="add-btn" onClick={onFilter} >Filters</button>
+                <button className="add-btn" onClick={onFilter} >{t('FILTERS')}</button>
 
             </div>
             <div className="page-container">
@@ -304,66 +290,73 @@ const CommunicationBaskets = () => {
                         pagination={false}
                     />
                 </div>
-                <div className="flex-center-middle m-t-20">
-                    <Pagination size="small" current={pageNumber + 1} onChange={onChangePage} total={totalResults} showSizeChanger={false} />
+                <div className="action-bar">
+                    <div className="flex-center-middle m-t-20">
+                        <Pagination size="small" current={pageNumber} onChange={onChangePage} total={totalResults} showSizeChanger={false} />
+                    </div>
                 </div>
             </div>
 
-            <Modal title={"Basket Config."}
+            <Modal title={t('BASKET_CONFIG')}
                 visible={configModalVisible}
                 onCancel={toggleConfigModal}
                 centered={true}
                 footer={null}
-                width={470} >
+                width={470}
+                closeIcon={< i className='icon-close close-icon' />}>
                 <div className="user-input-box create-basket-container" >
                     <TimeConfig Id={configBasketId} onUpdateSuccess={onUpdateSuccess} />
                     <div className="n-float" />
                 </div>
             </Modal>
 
-            <Modal title={"Create New Group"}
+            <Modal title={t('CREATE_NEW_BASKET')}
                 visible={modalVisible}
+                cancelText={t('CANCEL')}
                 onCancel={toggleModal}
-                okText='Done'
+                okText={t('DONE')}
                 onOk={onOk}
                 centered={true}
-                width={470} >
+                width={470}
+                closeIcon={< i className='icon-close close-icon' />}>
                 <div className="user-input-box create-basket-container" >
                     <div className="m-b-10">
-                        <Input placeholder="Basket Name"
+                        <Input placeholder='BASKET_NAME'
                             value={newGroupData.name}
                             onChange={(e) => onChangeNewGroupField(e, 'name')}
                             error={newGroupDataErrors?.name}
                         />
                     </div>
-                    <div className="m-b-10">Basket Type</div>
+                    <div className="m-b-10">{t('BASKET_TYPE')}</div>
                     <div className="m-b-10">
-                        <Switch
-                            checkedChildren='One Time'
-                            unCheckedChildren='Recurrning'
-                            checked={newGroupData.basketType}
-                            onChange={onToggle}
-                        />
+                        <input type="radio" id="OneTime" name="OneTime" checked={newGroupData.basketType} onChange={onToggle} />{" "}
+                        <label className="p-r-20 p-l-20 m-r-20" htmlFor="OneTime">
+                            {t('ONE_TIME')}
+                        </label>
+                        <input type="radio" id="Recurring" name="Recurring" checked={!newGroupData.basketType} onChange={onToggle} />{" "}
+                        <label className="p-r-20 p-l-20 m-r-20" htmlFor="Recurring">
+                            {t('RECURRING')}
+                        </label>
                     </div>
 
-                    <div className="group-hint-text m-b-10">You can set configuration once basket is created</div>
+                    <div className="group-hint-text m-b-10">{t('BASKET_CONFIG_MSG')}</div>
                     <div className="m-b-10">
                         <StarDropdown
                             values={dropDownData.comType}
                             onChange={(e) => onChangeNewGroupField(e, 'communicationType')}
                             selected={newGroupData.communicationType}
                             dataName="DisplayName"
-                            placeholder="Communication Template"
+                            placeholder='COMMUNICATION_TEMPLATE'
                             error={newGroupDataErrors.communicationType}
                         />
                     </div>
                     <div className="m-b-10">
-                        <Input placeholder="Description" value={newGroupData.description} onChange={(e) => onChangeNewGroupField(e, 'description')} lines={5} />
+                        <Input placeholder="DESCRIPTION" value={newGroupData.description} onChange={(e) => onChangeNewGroupField(e, 'description')} lines={5} />
                     </div>
                     <div className="n-float" />
                 </div>
             </Modal>
-        </>
+        </div>
 
     )
 }

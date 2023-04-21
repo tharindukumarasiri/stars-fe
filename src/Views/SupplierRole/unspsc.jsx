@@ -222,20 +222,20 @@ const Unspsc = () => {
             setLoading(false);
             setHaveUnsavedDataRef(false);
             if (result === 'Ok') {
-                message.success('Update successful');
+                message.success(t('UPDATE_SUCCESS'));
             } else {
-                message.error('Update failed please try again');
+                message.error(t('UPDATE_FAIL'));
             }
         }).catch(error => {
             setLoading(false);
-            message.error('Update failed please try again');
+            message.error(t('UPDATE_FAIL'));
         })
     }
 
     const YourUnspscData = () => {
         return (
             <>
-                <CriteriaColorGuideTab dataArr={['Segmant', 'Family', 'Class', 'Commodity']} containerStyle='selected-codes' />
+                <CriteriaColorGuideTab dataArr={['SEGMENT', 'FAMILY', 'CLASS', 'COMMODITY']} containerStyle='selected-codes' />
                 <UserSelectedFields data={organizationData.unspscs} dataFeieldName='title' closable={true} onClose={onDelete} />
             </>
         )
@@ -359,13 +359,13 @@ const Unspsc = () => {
                 }
                 <div className="g-row">
                     <div className="g-col-5">
-                        <h3 className="text-center">{t("UNSPSC Codes")}</h3>
+                        <h3 className="text-center">{t("UNSPSC_CODES")}</h3>
                         <div className="g-row flex-center-middle m-b-15">
                             <form onSubmit={onSearch} className="search-bar g-col-8 m-r-10">
                                 <i className="search-btn icon-search" onClick={onSearch} ></i>
-                                <input type="text" placeholder={t("Search by Location, Product or Service")} onChange={handleSearch} value={searchText} />
+                                <input type="text" placeholder={t("SEARCH_BY_LOCATION")} onChange={handleSearch} value={searchText} />
                             </form>
-                            <h3 className="g-col-2 hover-hand" onClick={clearSearch} >{t("Clear")}</h3>
+                            <h3 className="g-col-2 hover-hand" onClick={clearSearch} >{t("CLEAR")}</h3>
                             <div className="g-col-2 g-row hover-hand">
                                 <span className="fl g-col-6 m-r-10">English </span>
                                 <span className="fl g-col-3"><img src={gb_flag} className="flag-image fl m-r-5" alt='img' /></span>
@@ -375,7 +375,7 @@ const Unspsc = () => {
                         <UnspscData />
                     </div>
                     <div className="g-col-5">
-                        <h3 className="text-center">{t("Your selected UNSPSC Codes")}</h3>
+                        <h3 className="text-center">{t("SELECTED_UNSPSC_CODES")}</h3>
                         <YourUnspscData />
                     </div>
                     <div className="g-col-2 text-center">
@@ -383,27 +383,27 @@ const Unspsc = () => {
                         <div className="flex-center-middle"><img src={directional_sign} alt='img' className="directional-img" /></div>
 
                         <div className="static-content-container">
-                            <div className="body-text-bold  m-t-20">{t("What are UNSPSC Codes?")}</div>
-                            <div className="body-text m-t-20">{t("The United Nations Standard Products and Services Code (UNSPSC) is a taxonomy of products and services was created to cater to the many demands of organizations and corporations engaged in the global trade, analysis, and regulation of goods and services. It is an eight-digit number that represents a four-level structure.")}</div>
-                            <div className="body-text"><strong>XX</strong>000000 {t("the first two digits for")} <strong>{t("Segment")}</strong></div>
-                            <div className="body-text">XX<strong>XX</strong>0000 {t("second two digits for")} <strong>{t("Family")}</strong></div>
-                            <div className="body-text">XXXX<strong>XX</strong>00 {t("third two digits for")} <strong>{t("Class")}</strong></div>
-                            <div className="body-text m-b-20">XXXXXXXX<strong>XX</strong>{t("last two digits for")} <strong>{t("Commodity")}</strong></div>
+                            <div className="body-text-bold  m-t-20">{t("WHAT_ARE_UNSPSC_CODES")}</div>
+                            <div className="body-text m-t-20">{t("UNSPSC_INTRO")}</div>
+                            <div className="body-text"><strong>XX</strong>000000 {t("UNSPSC_INTRO_SUB_1")} <strong>{t("SEGMENT")}</strong></div>
+                            <div className="body-text">XX<strong>XX</strong>0000 {t("UNSPSC_INTRO_SUB_2")} <strong>{t("FAMILY")}</strong></div>
+                            <div className="body-text">XXXX<strong>XX</strong>00 {t("UNSPSC_INTRO_SUB_3")} <strong>{t("CLASS")}</strong></div>
+                            <div className="body-text m-b-20">XXXXXXXX<strong>XX</strong>{t("UNSPSC_INTRO_SUB_4")} <strong>{t("COMMODITY")}</strong></div>
 
-                            <div className="body-text-bold  m-t-20 ">{t("Why update UNSPSC Codes")}</div>
-                            <div className="body-text">{t("Your company will be listed on the \"Star Search Engine, \" which is also a global standard.")}</div>
+                            <div className="body-text-bold  m-t-20 ">{t("WHY_UPDATE_UNSPSC_CODES")}</div>
+                            <div className="body-text">{t("WHY_UPDATE_UNSPSC_CODES_REASON")}</div>
 
-                            <div className="body-text-bold  m-t-20 ">{t("How to update UNSPSC Codes?")}</div>
-                            <div className="body-text">1. {t("The UNSPSC Codes displays according to the hierarchy in selected language (Default language would be logged in language)")}</div>
-                            <div className="body-text">2. {t("Using \"+,\" make the codes expanded to discover your precise business domain, and \"-,\" make them unfold.")}</div>
-                            <div className="body-text">3. {t("Check all the boxes to choose the codes that apply to your business domain.")}</div>
-                            <div className="body-text">4. {t("You may uncheck/remove the unintended codes.")}</div>
-                            <div className="body-text">5. {t("To save your work, choose \"Update\". The UNSPSC Codes will be saved in selected Language.(Do a new update if you want to include a different language.)")}</div>
+                            <div className="body-text-bold  m-t-20 ">{t("HOW_TO_UPDATE_UNSPSC_CODES")}</div>
+                            <div className="body-text">1. {t("HOW_TO_UPDATE_UNSPSC_CODES_R1")}</div>
+                            <div className="body-text">2. {t("HOW_TO_UPDATE_UNSPSC_CODES_R2")}</div>
+                            <div className="body-text">3. {t("HOW_TO_UPDATE_UNSPSC_CODES_R3")}</div>
+                            <div className="body-text">4. {t("HOW_TO_UPDATE_UNSPSC_CODES_R4")}</div>
+                            <div className="body-text">5. {t("HOW_TO_UPDATE_UNSPSC_CODES_R5")}</div>
                         </div>
                     </div>
                 </div>
             </div>
-            <button className="primary-btn update-btn" onClick={onUpdate} >{t("Update")}</button>
+            <button className="primary-btn update-btn" onClick={onUpdate} >{t("UPDATE")}</button>
         </div>
     )
 }

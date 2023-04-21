@@ -4,7 +4,7 @@ import { ExclamationCircleOutlined } from '@ant-design/icons';
 import Input from "../../common/input";
 import Dropdown from "../../common/dropdown";
 import DatePickerInput from "../../common/datePickerInput";
-import {getAllProjects, addNewProject, updateProject, deleteProject } from "../../services/projectService";
+import { getAllProjects, addNewProject, updateProject, deleteProject } from "../../services/projectService";
 import { getContacts } from "../../services/userService";
 import { projectScreenTableHeaders } from "../../utils/tableHeaders"
 import NavigationCard from "../../common/navigationCard"
@@ -31,19 +31,19 @@ const Projects = (props) => {
     const { t } = useTranslation();
 
     const tableHeaders = useMemo(() => {
-        const headers = projectScreenTableHeaders.map(a => { return { ...a, title: t(a.title) } })
+        const headers = projectScreenTableHeaders(t);
         headers.push({
             title: '',
             render: (_, record) => (
                 <>
                     <i className="icon-edit table-icon" onClick={(e) => {
                         e.stopPropagation();
-                        if (record.Status === "Open") {
+                        if (record.Status.toUpperCase() === "OPEN") {
                             toggleModal();
                             setNewProjectData(record);
                             setEditData(true);
                         } else {
-                            message.warning('Cannot edit Closed projects ');
+                            message.warning(t('MSG_CANNOT_EDIT_CLOSED_PROJECT'));
                         }
 
                     }}></i>
@@ -61,7 +61,7 @@ const Projects = (props) => {
     }, [projectsData])
 
     useEffect(() => {
-        setLoading(true);       
+        setLoading(true);
 
         getAllProjects().then(result => {
             setProjectsData(result);
@@ -73,25 +73,25 @@ const Projects = (props) => {
 
     const showDeleteConfirm = (data) => {
         confirm({
-            title: <>{t("Are you sure")} <strong className="red">{t('delete')}</strong> {t("this Project?")}</>,
+            title: <>{t("ARE_YOU_SURE")} <strong className="red">{t('DELETE')}</strong> {t("THIS_PROJECT")}?</>,
             icon: <ExclamationCircleOutlined />,
             content: <div>
-                <div className="body-text">{t("All data will be lost on")}</div>
-                <div className="body-text">{t("Project ID")}: <strong>{projectCodeFormat(data.Id)}</strong></div>
-                <div className="body-text">{t("Name")}: <strong>{data.Name}</strong></div>
+                <div className="body-text">{t("ALL_DATA_WILLBE_LOST")}</div>
+                <div className="body-text">{t("PROJECT_ID")}: <strong>{projectCodeFormat(data.Id)}</strong></div>
+                <div className="body-text">{t("NAME")}: <strong>{data.Name}</strong></div>
             </div>,
-            okText: t('Yes'),
+            okText: t('YES'),
             okType: 'danger',
-            cancelText: t('No'),
+            cancelText: t('NO'),
 
             onOk() {
                 deleteProject(data, loggedUser.PartyId).then(() => {
                     getAllProjects().then(result => {
                         setProjectsData(result);
-                        message.success(t('Delete project successful'));
+                        message.success(t('MSG_DELETE_PROJECT_SUCCESS'));
                     }).catch(() => {
-                        message.warning('Updated data fetch fail please reload');
-                    });                   
+                        message.warning(t('MSG_DELETE_PROJECT_FAIL'));
+                    });
                 })
             },
 
@@ -108,34 +108,34 @@ const Projects = (props) => {
         const index = projectsData.findIndex(sec => sec.name === newProjectData.Name);
 
         if (!newProjectData.Name) {
-            message.error("project name cannot be empty");
+            message.error(t('MSG_PROJECT_NAME_CANNOT_BE_EMPTY'));
         } else if (index > -1 && !editData) {
-            message.error("project name already exists");
+            message.error(t('MSG_PROJECT_NAME_ALREADY_EXISTS'));
             return;
         } else {
             if (editData) {
-                
+
                 updateProject(newProjectData, loggedUser.PartyId).then(() => {
                     getAllProjects().then(result => {
                         setProjectsData(result);
-                        message.success('Edit project successful');
+                        message.success(t('MSG_EDIT_PROJECT_SUCCESS'));
                     }).catch(() => {
-                        message.warning('Updated data fetch fail please reload');
+                        message.warning(t('MSG_EDIT_PROJECT_FAIL'));
                     })
                     toggleModal();
                 })
-            } else {                           
-                
+            } else {
+
                 addNewProject(newProjectData, loggedUser.PartyId).then(() => {
                     getAllProjects().then(result => {
                         setProjectsData(result);
-                        message.success('Create project successful');
+                        message.success(t('MSG_CREATE_PROJECT_SUCCESS'));
                     }).catch(() => {
-                        message.warning('Updated data fetch fail please reload');
-                    })    
+                        message.warning(t('MSG_CREATE_PROJECT_FAIL'));
+                    })
                     toggleModal();
                 }).catch(() => {
-                    message.error('Create project failed please try again');
+                    message.error(t('MSG_CREATE_PROJECT_FAIL'));
                 })
             }
         }
@@ -206,17 +206,17 @@ const Projects = (props) => {
                 </div>
             }
             <div className="g-row">
-                <div className="g-col-6"> <h3 className="icon-plus-circled hover-hand fl" onClick={toggleModal} >{t("Create Project")}</h3></div>
+                <div className="g-col-6"> <h3 className="icon-plus-circled hover-hand fl" onClick={toggleModal} >{t("CREATE_PROJECT")}</h3></div>
                 <div className="g-col-6">
-                    <Tooltip title="Tile View">
+                    <Tooltip title={t('TILE_VIEW')}>
                         <i className="icon-tile-view grid-view-icon fr hover-hand" onClick={() => setTableView(false)} ></i>
                     </Tooltip>
-                    <Tooltip title="Grid View">
+                    <Tooltip title={t('GRID_VIEW')}>
                         <i className="icon-grid-view list-view-icon fr hover-hand" onClick={() => setTableView(true)} ></i>
                     </Tooltip>
                 </div>
             </div>
-            <h3 className="p-t-20 m-b-20 fl">{t("Projects List")}</h3>
+            <h3 className="p-t-20 m-b-20 fl">{t("PROJECT_LIST")}</h3>
 
             {tableView ?
                 <Table
@@ -224,7 +224,7 @@ const Projects = (props) => {
                     dataSource={projectsData}
                     columns={tableHeaders}
                     pagination={false}
-                    locale={{ emptyText: <EmptyTableView tableName="Projects" onButtonClick={toggleModal} /> }}
+                    locale={{ emptyText: <EmptyTableView tableName={t('PROJECTS')} onButtonClick={toggleModal} /> }}
                     onRow={(record, rowIndex) => {
                         return {
                             onClick: () => onClickProject(record),
@@ -239,31 +239,32 @@ const Projects = (props) => {
                                     <NavigationCard name={project.Name} cardColour={"bg-blue-purple"} value={project.Id} onClick={() => onClickProject(project)} />
                                 </div>
                             )
-                        }) : <EmptyTableView tableName="Projects" onButtonClick={toggleModal} />
+                        }) : <EmptyTableView tableName={t('PROJECTS')} onButtonClick={toggleModal} />
                     }
                 </div>
             }
             <Modal
-                title={t("Create New Search Project")}
+                title={t("CREATE_NEW_SEARCH_PROJECT")}
                 visible={modalVisible}
                 onOk={handleOk}
-                okText={t('Save')}
+                okText={t('SAVE')}
                 onCancel={toggleModal}
-                cancelText={t("Cancel")}
+                cancelText={t("CANCEL")}
                 centered={true}
                 width={1000}
+                closeIcon={< i className='icon-close close-icon' />}
             >
                 <div className="g-row">
                     <div className="g-col-6">
-                        <Input placeholder="Name (Eg: Furniture, PC, etc...)" value={newProjectData.Name || ''} onChange={(e) => onNewElementChange(e, 'Name')} />
-                        <Dropdown values={['Research project', 'Procurement project']} onChange={(e) => onNewElementChange(e, 'TypeCode')} selected={newProjectData.TypeCode || 'Research project'} placeholder="Type" />
-                        <Input lines={3} placeholder="Description" value={newProjectData.Description || ''} onChange={(e) => onNewElementChange(e, 'Description')} />
-                        <Dropdown values={['Public', 'Private']} onChange={(e) => onNewElementChange(e, 'Permission')} selected={newProjectData.Permission || 'Private'} placeholder="Permission Type" />
+                        <Input placeholder="NAME_PLACEhOLDER" value={newProjectData.Name || ''} onChange={(e) => onNewElementChange(e, 'Name')} />
+                        <Dropdown values={['RESEARCH_PROJECT', 'PROCUREMENT_PROJECT']} onChange={(e) => onNewElementChange(e, 'TypeCode')} selected={newProjectData.TypeCode || 'RESEARCH_PROJECT'} placeholder="TYPE" />
+                        <Input lines={3} placeholder="DESCRIPTION" value={newProjectData.Description || ''} onChange={(e) => onNewElementChange(e, 'Description')} />
+                        <Dropdown values={['PUBLIC', 'PRIVATE']} onChange={(e) => onNewElementChange(e, 'Permission')} selected={newProjectData.Permission || 'PRIVATE'} placeholder="PERMISSION_TYPE" />
                     </div>
                     <div className="g-col-6">
-                        <DatePickerInput placeholder={'From Date'} value={newProjectData.FromDate ? new Date(newProjectData.FromDate) : ''} minDate={new Date()} onChange={(date) => onNewElementDateChange(date, 'FromDate')} />
-                        <DatePickerInput placeholder={'Due Date'} value={newProjectData.ToDate ? new Date(newProjectData.ToDate) : ''} minDate={new Date()} onChange={(date) => onNewElementDateChange(date, 'ToDate')} />
-                        <AutoComplete
+                        <DatePickerInput placeholder={t('FROM_DATE')} value={newProjectData.FromDate ? new Date(newProjectData.FromDate) : ''} minDate={new Date()} onChange={(date) => onNewElementDateChange(date, 'FromDate')} />
+                        <DatePickerInput placeholder={t('DUE_DATE')} value={newProjectData.ToDate ? new Date(newProjectData.ToDate) : ''} minDate={new Date()} onChange={(date) => onNewElementDateChange(date, 'ToDate')} />
+                        {/* <AutoComplete
                             value={newProjectData.Responsible || ''}
                             options={filterdContacts}
                             onSelect={onContactSelect}
@@ -271,8 +272,14 @@ const Projects = (props) => {
                             onChange={onContactChange}
                             style={{ width: '100%', marginBottom: 10 }}
                             className='mb-2'
-                            placeholder={t("Responsible (Users for this Tenant)")} />
-                        <Dropdown values={['Open', 'Close']} onChange={(e) => onNewElementChange(e, 'Status')} selected={newProjectData.Status || ''} placeholder="Status" />
+                            placeholder={t("Responsible (Users for this Tenant)")} /> */}
+                        <Dropdown
+                            values={filterdContacts.map(a => a.label)}
+                            onChange={(e) => onNewElementChange(e, 'Responsible')}
+                            selected={newProjectData.Responsible || ''}
+                            placeholder={"RESPONSIBLE_USER"}
+                        />
+                        <Dropdown values={['OPEN', 'CLOSE']} onChange={(e) => onNewElementChange(e, 'Status')} selected={newProjectData.Status || ''} placeholder="STATUS" />
                     </div>
                 </div>
                 <div className="n-float" />
