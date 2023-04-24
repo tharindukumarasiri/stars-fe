@@ -1,15 +1,15 @@
-import React, { useRef, useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Switch, Collapse, message, Modal } from 'antd';
 import { useTranslation } from "react-i18next";
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 
 import Dropdown from "../../../common/dropdown"
-import image_thumb from "../../../assets/images/image_thumb.png"
 import { updateUser, activateUsers, deActivateUsers, deleteUser } from "../../../services/userService";
 import Input from '../../../common/input'
 import { getGetCountries } from "../../../services/communicationService";
 import { UserContext, TabContext } from "../../../utils/contextStore";
 import { NAVIGATION_PAGES } from "../../../utils/enums";
+import ImagePicker from "../../../common/imagePicker";
 
 const { Panel } = Collapse;
 const { confirm } = Modal;
@@ -19,15 +19,13 @@ let curentUser = {}
 const UserDetails = ({ props }) => {
     const [status, setStatus] = useState(props?.IsActive ? "ACTIVE" : "INACTIVE");
     const [userData, setUserData] = useState({ firstName: props?.FirstName, lastName: props?.LastName, userName: props?.UserName, country: { Id: props?.CountryId, Name: props?.CountryName } })
-    const [selectedFile, setSelectedFile] = useState(props?.PictureFileId || null);
+    const [userImage, setUserImage] = useState(props?.PictureFileId || null);
     const [updateUserRoles, setUpdateUserRoles] = useState([]);
     const [checked, setChecked] = useState([]);
     const [countryList, setCountryList] = useState([])
     const [editDetails, setEditDetails] = useState(false);
     const [loading, setLoading] = useState(false);
     const { t } = useTranslation();
-
-    const UPLOAD_BTN_REF = useRef(null);
 
     const { getUsersData, currentUser, users, selectedCompany } = useContext(UserContext);
     const { changeActiveTab } = useContext(TabContext);
@@ -53,7 +51,7 @@ const UserDetails = ({ props }) => {
         "CountryId": props?.CountryId,
         "CountryName": props?.CountryName,
         "IsActive": props?.IsActive,
-        "PictureFileId": selectedFile,
+        "PictureFileId": userImage,
         "LoggedInUserPartyId": currentUser?.PartyId,
         "UserPartyId": props?.UserPartyId
     }
@@ -116,39 +114,6 @@ const UserDetails = ({ props }) => {
                 },
             });
         }
-    }
-
-    const handleImageUpload = () => {
-        UPLOAD_BTN_REF.current.click();
-    }
-
-    const onSelectFile = e => {
-        setLoading(true);
-        if (!e.target.files || e.target.files.length === 0) {
-            setSelectedFile(undefined)
-            return
-        }
-
-        var reader = new FileReader();
-        reader.readAsDataURL(e.target.files[0]);
-
-        reader.onload = () => {
-            setSelectedFile(reader.result); //base64encoded string
-
-            const params = userReqParams;
-            params.PictureFileId = reader.result;
-
-            updateUser(params).then(() => {
-                setLoading(false);
-                getUsersData();
-            }).catch(() => {
-                message.error(t('UPDATE_FAIL'))
-                setLoading(false);
-            })
-        };
-        reader.onerror = error => {
-            message.error(t('IMAGE_UPLOAD_FAIL'));
-        };
     }
 
     const onEdit = (roleData) => {
@@ -246,7 +211,7 @@ const UserDetails = ({ props }) => {
 
     const getPanel = (header, key = 1) => {
         return (
-            <Panel header={header} key={key} 
+            <Panel header={header} key={key}
             // extra={panelSwitch()}
             >
                 <div className="m-b-20">Role/s</div>
@@ -376,18 +341,7 @@ const UserDetails = ({ props }) => {
             }
             <div className="user-details-main-container" >
                 <div className="user-data-container">
-                    <div className="upload-image-container">
-                        <input
-                            type="file"
-                            style={{ display: 'none' }}
-                            ref={UPLOAD_BTN_REF}
-                            onChange={onSelectFile}
-                        />
-                        <div className="user-image-container">
-                            <i type="file" className="icon-edit upload-image-btn hover-hand" onClick={handleImageUpload} />
-                            <img src={selectedFile ? selectedFile : image_thumb} className="user-image hover-hand" alt="img" onClick={handleImageUpload} />
-                        </div>
-                    </div>
+                    <ImagePicker setImage={setUserImage} />
                     <div className="user-details-container">
                         <div className="">
                             {t('USER_ID')}

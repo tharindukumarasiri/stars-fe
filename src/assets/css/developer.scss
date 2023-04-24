@@ -159,34 +159,34 @@
     width: 100%;
 }
 
-    .ant-tabs {
-        background-color: $white;
-    }
+.ant-tabs {
+    background-color: $white;
+}
 
-.ant-tabs > .ant-tabs-nav .ant-tabs-nav-wrap {
+.ant-tabs>.ant-tabs-nav .ant-tabs-nav-wrap {
     background-color: $theme-tint-85;
     padding: 4px 4px 0 4px;
 }
 
-    .ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn {
-        color: $blue-color;
-    }
+.ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn {
+    color: $blue-color;
+}
 
-    .ant-tabs-card > .ant-tabs-nav .ant-tabs-tab {
-        background-color: #81B1CA;
-        border-color: #81B1CA;
-    }
+.ant-tabs-card>.ant-tabs-nav .ant-tabs-tab {
+    background-color: #81B1CA;
+    border-color: #81B1CA;
+}
 
-    .ant-tabs-card.ant-tabs-top > .ant-tabs-nav .ant-tabs-tab-active {
-        background-color: $white;
-        border-color: $white;
-    }
+.ant-tabs-card.ant-tabs-top>.ant-tabs-nav .ant-tabs-tab-active {
+    background-color: $white;
+    border-color: $white;
+}
 
-    .ant-badge-status-text {
-        font-weight: 400;
-        font-size: 14px;
-        color: $base-gray;
-    }
+.ant-badge-status-text {
+    font-weight: 400;
+    font-size: 14px;
+    color: $base-gray;
+}
 
 
 .ant-message {
@@ -203,7 +203,7 @@ div.rsw-ce {
     padding-left: 10px;
 }
 
-div.rsw-ce li{   
+div.rsw-ce li {
     margin-left: 25px;
 }
 
@@ -211,3 +211,10 @@ div.rsw-ce li{
     z-index: 0;
 }
 
+.image-picker-img-container {
+    position: relative;
+    height: 300px;
+    width: 100%;
+    background-color: #333;
+    margin-bottom: 40px;
+}
