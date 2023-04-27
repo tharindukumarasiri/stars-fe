@@ -34,7 +34,7 @@ const nameTitles = [
 ];
 
 const CompaniesAndPersonsNoBasket = (props) => {
-    const { fromDateTime, defaultRecievers, showOnlyDefaultRecievers, updateRecipients } = props;
+    const { fromDateTime, defaultRecievers, showOnlyDefaultRecievers, updateRecipients, selectedTemplate } = props;
     const [countryList, setCountryList] = useState([]);
     const [currentUser] = FetchCurrentUser();
     const [selectedCompany] = FetchCurrentCompany();
@@ -76,6 +76,7 @@ const CompaniesAndPersonsNoBasket = (props) => {
                                 currentUser={currentUser}
                                 selectedCompany={selectedCompany}
                                 updateRecipients={updateRecipients}
+                                selectedTemplate={selectedTemplate}
                             />
                         </TabPane>
 
@@ -86,7 +87,7 @@ const CompaniesAndPersonsNoBasket = (props) => {
                                 currentUser={currentUser}
                                 selectedCompany={selectedCompany}
                                 updateRecipients={updateRecipients}
-                                selectedTemplate={props?.selectedTemplate}
+                                selectedTemplate={selectedTemplate}
                             />
                         </TabPane>
                     </>
@@ -110,7 +111,7 @@ const CompaniesAndPersonsNoBasket = (props) => {
     );
 };
 
-const CompaniesPage = ({ countryList, currentUser, selectedCompany, updateRecipients }) => {
+const CompaniesPage = ({ countryList, currentUser, selectedCompany, updateRecipients, selectedTemplate }) => {
     const [allCompaniesData, setAllCompaniesData] = useState([]);
     const [displayCompanies, setDisplayCompanies] = useState([]);
     const [newCompaniesData, setNewCompaniesData] = useState({ orgId: "", name: "", country: null, email: "", phone: "" });
@@ -494,7 +495,7 @@ const CompaniesPage = ({ countryList, currentUser, selectedCompany, updateRecipi
 
     const getCompaniesData = () => {
         setLoading(true);
-        getCompanies("", selectedCompany?.companyPartyId).then((result) => {
+        getCompanies("", selectedCompany?.companyPartyId, "", selectedTemplate?.MessageTriggerPointId).then((result) => {
             const newDisplay = displayCompanies?.map(company => {
                 return result?.Value?.find(c => c?.Company?.Id === company?.Company?.Id)
             })
@@ -1111,7 +1112,11 @@ const PersonsPage = ({ countryList, currentUser, selectedCompany, updateRecipien
     const onChangeNewPersonData = (e, type) => {
         e.preventDefault();
         setNewPersonErrors((pre) => ({ ...pre, [type]: '' }));
-        setnewPersonData((pre) => ({ ...pre, [type]: e.target.value }));
+        if (type === "mobileNumb") {
+            setnewPersonData((pre) => ({ ...pre, [type]: validatePhoneNumberInput(e.target.value) }));
+        } else {
+            setnewPersonData((pre) => ({ ...pre, [type]: e.target.value }));
+        }
     };
 
     const onChangeNewUserTitle = (e) => {
@@ -1148,8 +1153,8 @@ const PersonsPage = ({ countryList, currentUser, selectedCompany, updateRecipien
             setNewPersonErrors(pre => ({ ...pre, country: t('PLEASE_SELECT_COUNTRY') }))
             validation = false
         }
-        if (!newPersonData.mobileNumb) {
-            setNewPersonErrors(pre => ({ ...pre, mobileNumb: 'Mobile number cannot be empty' }))
+        if (!phoneRegEx.test(newPersonData.mobileNumb) || !newPersonData.mobileNumb) {
+            setNewPersonErrors(pre => ({ ...pre, mobileNumb:  t('INVALID_PHONE_NUMBER') }))
             validation = false
         }
 

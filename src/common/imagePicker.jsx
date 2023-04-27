@@ -4,14 +4,14 @@ import Cropper from 'react-easy-crop';
 
 import image_thumb from "../assets/images/image_thumb.png"
 
-const ImagePicker = ({ setImage }) => {
+const ImagePicker = ({ setImage, selectedImage = null }) => {
     const [modalVisible, setModalVisible] = useState(false)
     const [imageSrc, setImageSrc] = useState(null)
     const [crop, setCrop] = useState({ x: 0, y: 0 })
     const [rotation, setRotation] = useState(0)
     const [zoom, setZoom] = useState(1)
     const [croppedAreaPixels, setCroppedAreaPixels] = useState(null)
-    const [croppedImage, setCroppedImage] = useState(null)
+    const [croppedImage, setCroppedImage] = useState(selectedImage)
 
     const UPLOAD_BTN_REF = useRef(null);
 
@@ -110,6 +110,7 @@ const ImagePicker = ({ setImage }) => {
             )
             setCroppedImage(croppedImage)
             setImage(croppedImage)
+            setImageSrc(null)
             toggleImagePicker()
         } catch (e) {
             console.error(e)

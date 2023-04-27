@@ -77,8 +77,8 @@ export async function deleteCommunicationBasket(params) {
     return data;
 }
 
-export async function getCompanies(basketId = '', companyPartyId, searchText = '', messageTemplateId = '' ) {
-    const { data } = await http.get(`${config.GET_COMPANIES}${companyPartyId}&communicationBasketId=${basketId}&searchText=${searchText}&messageTemplateId=${messageTemplateId}`);
+export async function getCompanies(basketId = '', companyPartyId, searchText = '', triggerPointId = '' ) {
+    const { data } = await http.get(`${config.GET_COMPANIES}${companyPartyId}&communicationBasketId=${basketId}&searchText=${searchText}&triggerPointId=${triggerPointId}`);
     return data;
 }
 

@@ -2295,6 +2295,10 @@ div.rsw-ce li {
   margin-left: 25px;
 }
 
+.ant-table-column-title {
+  z-index: 0;
+}
+
 #sidebarMenu {
   height: 100%;
   position: fixed;
@@ -2644,6 +2648,18 @@ p {
 
 .input-container {
   margin-bottom: 5px;
+}
+
+.tile h3 {
+  text-align: left;
+}
+
+.datapicker-input {
+  max-height: 34px !important;
+  padding: 6px 14px !important;
+}
+.datapicker-input .datapicker-icon {
+  top: 5px !important;
 }
 
 html {

@@ -434,7 +434,7 @@ export default function Search(props) {
     };
 
     const onShowResults = (e = null) => {
-        if (e.preventDefault) e.preventDefault();
+        if (e?.preventDefault) e.preventDefault();
 
         if (props?.searchResults?.length > 0 && !props?.removeSearch) {
             confirm({

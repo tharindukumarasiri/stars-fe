@@ -681,7 +681,7 @@ const GetNotified = () => {
                     />
                 </div>
             </div>
-            <button className="primary-btn update-btn" onClick={onUpdate}>
+            <button className={`primary-btn update-btn ${(selectedUsers?.length === 0 || tenderCpvs?.length === 0) && 'disable-div'}`} disabled={selectedUsers?.length === 0 || tenderCpvs?.length === 0} onClick={onUpdate}>
                 {t('UPDATE')}
             </button>
         </div>

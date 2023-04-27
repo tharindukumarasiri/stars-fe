@@ -81,3 +81,13 @@ p {
     padding: 20px 16px !important;
 }
 .input-container{margin-bottom:5px}
+
+.tile h3{text-align:left}
+.datapicker-input {
+    max-height: 34px !important;
+    padding: 6px 14px !important;
+
+    .datapicker-icon {
+        top: 5px !important;
+    }
+}

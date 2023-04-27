@@ -341,7 +341,7 @@ const UserDetails = ({ props }) => {
             }
             <div className="user-details-main-container" >
                 <div className="user-data-container">
-                    <ImagePicker setImage={setUserImage} />
+                    <ImagePicker selectedImage={userImage} setImage={setUserImage} />
                     <div className="user-details-container">
                         <div className="">
                             {t('USER_ID')}

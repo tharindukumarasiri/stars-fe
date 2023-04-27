@@ -187,7 +187,8 @@ const CommunicationBaskets = () => {
                 "BasketTypeId": newGroupData.basketType ? 1 : 2,
                 "MessageTypeId": JSON.parse(newGroupData?.communicationType)?.MessageTypeId,
                 "Description": newGroupData.description,
-                "CompanyPartyId": selectedCompany?.companyPartyId
+                "CompanyPartyId": selectedCompany?.companyPartyId,
+                "MessageTemplateId": JSON.parse(newGroupData?.communicationType)?.Id
             }
 
             addCommunicationBasket(params).then(() => {

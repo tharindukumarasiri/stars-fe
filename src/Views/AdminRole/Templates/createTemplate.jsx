@@ -104,7 +104,7 @@ const CreateTemplate = ({ closeModal, getSavedTemplates, editTemplate }) => {
                 .then((result) => {
                     getSavedTemplates();
                     message.success(t('MSG_TEMPLATE_SAVE'));
-                    closeModal();
+                    onCloseModal();
                 })
                 .catch((err) => {
                     console.log(err);
@@ -114,7 +114,7 @@ const CreateTemplate = ({ closeModal, getSavedTemplates, editTemplate }) => {
                 .then((result) => {
                     getSavedTemplates();
                     message.success(t('MSG_TEMPLATE_SAVE'));
-                    closeModal();
+                    onCloseModal();
                 })
                 .catch((err) => {
                     console.log(err);
