@@ -7,10 +7,11 @@ import Input from "../../../common/input";
 import Dropdown from "../../../common/dropdown";
 import image_thumb from "../../../assets/images/image_thumb.png";
 import { GetCommunicationTemplatesByTenant } from "../../../services/templateService";
-import { sendImmediately } from "../../../services/communicationService";
+import { sendImmediately, companyJoinSendImmediately } from "../../../services/communicationService";
 import { FetchCurrentCompany, FetchCurrentUser } from "../../../hooks/index";
 import CompaniesAndPersonsNoBasket from "./companiesAndPersonsNoBasket";
 import { NAVIGATION_PAGES } from '../../../utils/enums';
+import { messageTriggerPoints } from "../../../utils/constants";
 import { TabContext } from "../../../utils/contextStore";
 
 const NewCommunication = (props) => {
@@ -131,6 +132,10 @@ const NewCommunication = (props) => {
         setSelectedRecipients([...selectedRecipients, ...clone]);
     };
 
+    const updateRecipientsWithNew = (newlyAddedRecipients) => {      
+        setSelectedRecipients([...newlyAddedRecipients]);
+    };
+
     const removeFromRecipients = (item) => {
         let newSet = [...selectedRecipients];
         let index = selectedRecipients.findIndex(r => r.Email === item.Email)
@@ -194,7 +199,9 @@ const NewCommunication = (props) => {
             return;
         }
         setLoading(true)
-        sendImmediately(dto).then(() => {
+        let sendFunc = selectedTemplate?.MessageTriggerPointId === messageTriggerPoints.CompanyInvitation ? companyJoinSendImmediately : sendImmediately;
+
+        sendFunc(dto).then(() => {
             message.info(t('MESSAGE_SENT_RECIPIENTS'))
             onCloseTab();
         }).catch((ex) => {
@@ -271,7 +278,7 @@ const NewCommunication = (props) => {
                             selectedTemplate={selectedTemplate}
                             defaultRecievers={props.defaultRecievers}
                             showOnlyDefaultRecievers={props.showOnlyDefaultRecievers}
-                            updateRecipients={updateRecipients}
+                            updateRecipients={updateRecipientsWithNew}
                         />
                     </div>
                 );

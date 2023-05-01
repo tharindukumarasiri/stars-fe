@@ -85,3 +85,8 @@ export const templateType = {
     LandingPage: 2,
     Communication: 3
 }
+
+export const messageTriggerPoints = {
+    UserInvitationNewUser: 1,
+    CompanyInvitation: 11
+}

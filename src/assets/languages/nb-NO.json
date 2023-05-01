@@ -330,7 +330,7 @@
 
     "ECONNECT": "no_eConnect",
     "ECONNECT_HOME_TITLE": "no_eConnect: The place where to connect with the business communities",
-    "ECONNECT_HOME_COM_TYPE_TITLE": "no_COMMUNICATION TYPES/TEMPLATES",
+    "ECONNECT_HOME_COM_TYPE_TITLE": "no_TEMPLATES",
     "ECONNECT_HOME_COM_TYPE_MESSAGE": "no_Here you can create Templates to use in your emails",
     "ECONNECT_HOME_COMUNICATIONS_TITLE": "no_COMMUNICATIONS",
     "ECONNECT_HOME_COMUNICATIONS_MESSAGE": "no_Here you can create emails using Templates and Baskets",
@@ -478,6 +478,7 @@
     "MARK_INACTIVE": "no_Mark Inactive",
     "SEND_INVITATION": "no_Send Invitation",
     "SEND_MESSAGE": "no_Send Message",
-    "MSG_TEMPLATE_TRIIGER_POINT": "no_Please select a trigger point!"
+    "MSG_TEMPLATE_TRIIGER_POINT": "no_Please select a trigger point!",
+    "MSG_ONLY_ONE_RECIEVER_FOR_TENANT_INVITATION": "no_Only one reciever can be added for the company join invitation!"
 
 }

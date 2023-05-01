@@ -478,6 +478,7 @@
     "MARK_INACTIVE": "sv_Mark Inactive",
     "SEND_INVITATION": "sv_Send Invitation",
     "SEND_MESSAGE": "sv_Send Message",
-    "MSG_TEMPLATE_TRIIGER_POINT": "sv_Please select a trigger point!"
+    "MSG_TEMPLATE_TRIIGER_POINT": "sv_Please select a trigger point!",
+    "MSG_ONLY_ONE_RECIEVER_FOR_TENANT_INVITATION": "sv_Only one reciever can be added for the company join invitation!"
 
 }

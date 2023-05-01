@@ -330,7 +330,7 @@
 
     "ECONNECT": "en_GB_eConnect",
     "ECONNECT_HOME_TITLE": "en_GB_eConnect: The place where to connect with the business communities",
-    "ECONNECT_HOME_COM_TYPE_TITLE": "en_GB_COMMUNICATION TYPES/TEMPLATES",
+    "ECONNECT_HOME_COM_TYPE_TITLE": "en_GB_TEMPLATES",
     "ECONNECT_HOME_COM_TYPE_MESSAGE": "en_GB_Here you can create Templates to use in your emails",
     "ECONNECT_HOME_COMUNICATIONS_TITLE": "en_GB_COMMUNICATIONS",
     "ECONNECT_HOME_COMUNICATIONS_MESSAGE": "en_GB_Here you can create emails using Templates and Baskets",
@@ -478,6 +478,7 @@
     "MARK_INACTIVE": "en_GB_Mark Inactive",
     "SEND_INVITATION": "en_GB_Send Invitation",
     "SEND_MESSAGE": "en_GB_Send Message",
-    "MSG_TEMPLATE_TRIIGER_POINT": "en_GB_Please select a trigger point!"
+    "MSG_TEMPLATE_TRIIGER_POINT": "en_GB_Please select a trigger point!",
+    "MSG_ONLY_ONE_RECIEVER_FOR_TENANT_INVITATION": "en_GB_Only one reciever can be added for the company join invitation!"
 
 }

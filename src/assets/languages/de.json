@@ -478,6 +478,7 @@
     "MARK_INACTIVE": "de_Mark Inactive",
     "SEND_INVITATION": "de_Send Invitation",
     "SEND_MESSAGE": "de_Send Message",
-    "MSG_TEMPLATE_TRIIGER_POINT": "de_Please select a trigger point!"
+    "MSG_TEMPLATE_TRIIGER_POINT": "de_Please select a trigger point!",
+    "MSG_ONLY_ONE_RECIEVER_FOR_TENANT_INVITATION": "de_Only one reciever can be added for the company join invitation!"
 
 }

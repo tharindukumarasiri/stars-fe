@@ -578,3 +578,31 @@ ul.custom-button-list {
     position: relative;
     padding: 30px
 }
+
+.tile {
+    position: relative !important;
+    width: 250px !important;
+    height: 170px !important;
+    margin: 0 10px 0 0 !important;
+    cursor: pointer !important;
+    float: left !important;
+    white-space: nowrap;
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    vertical-align: middle;
+    user-select: none;
+
+    .name {
+        font-size: 1em;
+        color: $white;
+    }
+
+    .icon-text {
+        position: unset !important;
+
+        i {
+            font-size: 2.8em !important;
+        }
+    }
+}

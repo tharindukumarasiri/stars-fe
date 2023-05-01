@@ -22,7 +22,7 @@ import {
 import { getOrganization } from "../../../services/organizationsService";
 import { FetchCurrentUser, FetchCurrentCompany } from "../../../hooks/index";
 import Dropdown from "../../../common/dropdown";
-import { emailRegEx, phoneRegEx } from "../../../utils/constants";
+import { emailRegEx, phoneRegEx, messageTriggerPoints } from "../../../utils/constants";
 import { validatePhoneNumberInput } from "../../../utils";
 
 const { TabPane } = Tabs;
@@ -191,7 +191,7 @@ const CompaniesPage = ({ countryList, currentUser, selectedCompany, updateRecipi
                 dataIndex: ["Company", "IsDisabled"],
                 render: (_, { Company, IsDisabled }) => (
                     <>
-                        {Company?.Email && emailRegEx.test(Company?.Email) && (
+                        {Company?.Email && emailRegEx.test(Company?.Email) && (selectedTemplate?.MessageTriggerPointId != messageTriggerPoints.CompanyInvitation) && (
                             <input
                                 type="checkbox"
                                 className="check-box"
@@ -442,6 +442,13 @@ const CompaniesPage = ({ countryList, currentUser, selectedCompany, updateRecipi
 
     const onClickUsersTableCheckBox = (e, company, person) => {
         const newList = [...checkedCompaniesUsers];
+        if(e.target.checked && selectedTemplate?.MessageTriggerPointId === messageTriggerPoints.CompanyInvitation){
+            let existingPersonForSameCompanyIndex = checkedCompaniesUsers.findIndex(p => p.CompanyPartyTId === company?.PartyTId);
+            if(existingPersonForSameCompanyIndex > -1){
+                message.error(t('MSG_ONLY_ONE_RECIEVER_FOR_TENANT_INVITATION'));
+                return;
+            }
+        }
         const index = checkedCompaniesUsers.findIndex((element) => {
             return (
                 element?.IsReceiver && element?.CompanyPartyTId === company?.PartyTId && element?.PersonPartyTId === person?.PartyTId
@@ -460,7 +467,6 @@ const CompaniesPage = ({ countryList, currentUser, selectedCompany, updateRecipi
             if (index < 0)
                 newList.push(personDataSet);
         } else {
-
             if (index > -1)
                 newList.splice(index, 1);
         }

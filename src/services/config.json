@@ -102,6 +102,7 @@
     "UPDATE_PERSON": "/actionapi/PersonTs/UpdatePersonT",
     "UPDATE_AND_SHEDULE": "/actionapi/BasketReceivers/UpdateAndSchedule",
     "SEND_IMMEDIATELY": "/actionapi/BasketReceivers/SendImmediately",
+    "COMPANY_JOIN_SEND_IMMEDIATELY": "/actionapi/BasketReceivers/JoinAsACompanySendImmediately",
     "GET_COUNTRIES": "/actionapi/countries/GetCountries",
 
     "GET_PROJECTS": "actionapi/Projects/GetAll",

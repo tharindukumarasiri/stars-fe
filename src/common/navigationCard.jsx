@@ -7,16 +7,15 @@ const NavigationCard = ({ name, cardColour, imageName, value = '', onClick = () 
     const { t } = useTranslation();
 
     return (
-        <div className="g-col-3" onClick={onClick}>
+        <div onClick={onClick}>
             <div className={tileContainer}>
-                <div className="dots"><i className="icon-more" /></div>
                 <div className="icon-text">
                     {value === '' ?
                         <i className={imageName}></i>
                         : <h1>{value}</h1>
                     }
-                    <h3>{t(name)}</h3>
                 </div>
+                <div className="name">{t(name)}</div>
             </div>
         </div>
     )

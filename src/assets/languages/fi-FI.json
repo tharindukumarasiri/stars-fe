@@ -478,6 +478,7 @@
     "MARK_INACTIVE": "fi_Mark Inactive",
     "SEND_INVITATION": "fi_Send Invitation",
     "SEND_MESSAGE": "fi_Send Message",
-    "MSG_TEMPLATE_TRIIGER_POINT": "fi_Please select a trigger point!"
+    "MSG_TEMPLATE_TRIIGER_POINT": "fi_Please select a trigger point!",
+    "MSG_ONLY_ONE_RECIEVER_FOR_TENANT_INVITATION": "fi_Only one reciever can be added for the company join invitation!"
 
 }

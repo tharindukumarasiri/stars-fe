@@ -122,6 +122,11 @@ export async function sendImmediately(params) {
     return data;
 }
 
+export async function companyJoinSendImmediately(params) {
+    const { data } = await http.post(config.COMPANY_JOIN_SEND_IMMEDIATELY, params);
+    return data;
+}
+
 export async function getGetCountries() {
     const { data } = await http.get(config.GET_COUNTRIES);
     return data;

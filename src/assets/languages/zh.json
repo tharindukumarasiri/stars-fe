@@ -478,6 +478,7 @@
     "MARK_INACTIVE": "cn_Mark Inactive",
     "SEND_INVITATION": "cn_Send Invitation",
     "SEND_MESSAGE": "cn_Send Message",
-    "MSG_TEMPLATE_TRIIGER_POINT": "cn_Please select a trigger point!"
+    "MSG_TEMPLATE_TRIIGER_POINT": "cn_Please select a trigger point!",
+    "MSG_ONLY_ONE_RECIEVER_FOR_TENANT_INVITATION": "cn_Only one reciever can be added for the company join invitation!"
 
 }
