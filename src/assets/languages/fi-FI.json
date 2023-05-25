@@ -479,6 +479,9 @@
     "SEND_INVITATION": "fi_Send Invitation",
     "SEND_MESSAGE": "fi_Send Message",
     "MSG_TEMPLATE_TRIIGER_POINT": "fi_Please select a trigger point!",
-    "MSG_ONLY_ONE_RECIEVER_FOR_TENANT_INVITATION": "fi_Only one reciever can be added for the company join invitation!"
+    "MSG_ONLY_ONE_RECIEVER_FOR_TENANT_INVITATION": "fi_Only one reciever can be added for the company join invitation!",
+    "MARK_AS_REMINDER": "fi_Enable Reminders",
+    "REMIND_INTERVAL": "fi_Remind Interval Days",
+    "REMIND_COUNT": "fi_Remind Count"
 
 }

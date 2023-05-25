@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useMemo } from "react";
-import { Tabs, Table, message, Modal, Tooltip, Select } from 'antd';
+import React, { useState, useEffect, useMemo, } from "react";
+import { Tabs, Table, message, Modal, Select } from 'antd';
 import { useTranslation } from "react-i18next";
 
 import Input from '../../../common/input'
@@ -17,7 +17,7 @@ import {
     getGetCountries,
     addCompany,
     updateCompany,
-    updateAndSchedule
+    updateBasketReceivers
 } from "../../../services/communicationService";
 import { getOrganization } from "../../../services/organizationsService";
 import { FetchCurrentUser, FetchCurrentCompany } from "../../../hooks/index"
@@ -31,26 +31,18 @@ const nameTitles = [{ id: 1, title: 'Mr.' }, { id: 2, title: 'Mrs.' }, { id: 3, 
 const userObj = { firstname: '', lastname: '', title: null, email: '', mobileNumb: '' }
 
 const CompaniesAndPersons = (props) => {
-    const { basketId, fromDateTime, defaultRecievers, showOnlyDefaultRecievers } = props;
+    const { basketId, basketDetails, defaultRecievers, showOnlyDefaultRecievers, updateRecipients } = props;
     const [countryList, setCountryList] = useState([])
     const [currentUser] = FetchCurrentUser();
     const [selectedCompany] = FetchCurrentCompany();
-    const [loading, setLoading] = useState(true);   
+    const [loading, setLoading] = useState(true);    
     const {t} = useTranslation();
 
-    useEffect(() => {
+    useEffect(() => {      
         getGetCountries().then(result => {
             setCountryList(result);
-        }).finally(() => setLoading(false))
+        }).finally(() => setLoading(false));
     }, [])
-
-    const isUpdateBtnDisabled = () => {
-        if (fromDateTime) {
-            return false;
-        } else {
-            return true;
-        }
-    }
 
     return (
         <div className="custom-tab-container sub-table-nav">
@@ -67,20 +59,21 @@ const CompaniesAndPersons = (props) => {
                         <TabPane tab={t("COMPANIES")} key="3">
                             <CompaniesPage
                                 basketId={basketId}
-                                disableUpdateBtn={isUpdateBtnDisabled}
                                 countryList={countryList}
                                 currentUser={currentUser}
                                 selectedCompany={selectedCompany}
+                                updateRecipients={updateRecipients}
+                                selectedTemplate={props?.selectedTemplate}
                             />
                         </TabPane>
 
                         <TabPane tab={t("PERSONS_CAPS")} key="4">
                             <PersonsPage
                                 basketId={basketId}
-                                disableUpdateBtn={isUpdateBtnDisabled}
                                 countryList={countryList}
                                 currentUser={currentUser}
                                 selectedCompany={selectedCompany}
+                                updateRecipients={updateRecipients}
                             />
                         </TabPane>
                     </>
@@ -108,7 +101,7 @@ const CompaniesAndPersons = (props) => {
 
 const companyObj = { orgId: '', name: '', country: null, email: '', phone: '' }
 
-const CompaniesPage = ({ basketId, countryList, currentUser, selectedCompany, disableUpdateBtn }) => {
+const CompaniesPage = ({ basketId, countryList, currentUser, selectedCompany, updateRecipients, selectedTemplate }) => {
     const [allCompaniesData, setAllCompaniesData] = useState([]);
     // const [companiesData, setCompaniesData] = useState();
     const [displayCompanies, setDisplayCompanies] = useState();
@@ -126,18 +119,16 @@ const CompaniesPage = ({ basketId, countryList, currentUser, selectedCompany, di
     const [loading, setLoading] = useState(false);
     const {t} = useTranslation();
 
-    const disableUpdate = disableUpdateBtn();
-
     useEffect(() => {
-        if (selectedCompany?.companyPartyId && basketId) {
+        if (selectedCompany?.companyPartyId) {
             setLoading(true)
             getCompaniesData();
-            getCompanies('', selectedCompany?.companyPartyId).then(result => {
+            getCompanies('', selectedCompany?.companyPartyId, '', selectedTemplate?.MessageTriggerPointId).then(result => {
                 setAllCompaniesData(result?.Value)
                 setLoading(false)
             })
         }
-    }, [selectedCompany, basketId])
+    }, [selectedCompany])
 
     const companiesTableHeaders = useMemo(() => {
         const headers = ReceversCompaniesTableHeaders(t)[0].children?.map(a => { return { ...a, title: a.title } })
@@ -441,6 +432,7 @@ const CompaniesPage = ({ basketId, countryList, currentUser, selectedCompany, di
         }
 
         setCheckedCompaniesUsers(newList)
+        updateRecipients(newList)
     }
 
     const onClickCompaniesTableCheckBox = (e, company) => {
@@ -465,12 +457,13 @@ const CompaniesPage = ({ basketId, countryList, currentUser, selectedCompany, di
         }
 
         setCheckedCompaniesUsers(newList)
+        updateRecipients(newList)
     }
 
     const getCompaniesData = () => {
         if (basketId) {
             setLoading(true);
-            getCompanies(basketId, selectedCompany?.companyPartyId, '').then(result => {
+            getCompanies(basketId, selectedCompany?.companyPartyId, '', selectedTemplate?.MessageTriggerPointId).then(result => {
                 const newCheckedCompaniesUsers = []
 
                 const companiesToShow = result?.Value?.filter(company => {
@@ -509,9 +502,7 @@ const CompaniesPage = ({ basketId, countryList, currentUser, selectedCompany, di
                 // setCompaniesData(result?.Value)
                 setDisplayCompanies(companiesToShow)
             }).finally(() => setLoading(false))
-        } else {
-            message.error('Please select a basket')
-        }
+        } 
     }
 
     const onSearchCompanies = (inputValue, option) => {
@@ -743,7 +734,7 @@ const CompaniesPage = ({ basketId, countryList, currentUser, selectedCompany, di
             "BasketReceivers": checkedCompaniesUsers
         }
 
-        updateAndSchedule(params).then(() => {
+        updateBasketReceivers(params).then(() => {
             getCompaniesData();
         }).catch(() => setLoading(false))
     }
@@ -827,8 +818,9 @@ const CompaniesPage = ({ basketId, countryList, currentUser, selectedCompany, di
                         })}
                     </Select>
                 </div>
-                <button className="add-btn m-r-10 disable-div" >{t('ADD_NEW')}</button>
-                <button className="add-btn m-r-10 disable-div" >{t('UPLOAD')}</button>
+                {/* <button className="add-btn m-r-10 disable-div" >{t('ADD_NEW')}</button>
+                <button className="add-btn m-r-10 disable-div" >{t('UPLOAD')}</button> */}
+                <button className="add-btn" onClick={onUpdate}>{t('UPDATE')}</button>
             </div>
 
             <div className="receivers-tablele-width expandable-table-btn">
@@ -846,14 +838,6 @@ const CompaniesPage = ({ basketId, countryList, currentUser, selectedCompany, di
                     }}
                     footer={addNewCompany}
                 />
-            </div>
-            <div className="action-bar">
-                {disableUpdate ?
-                    <Tooltip title='Basket not configured'>
-                        <button className="primary-btn actions-btn" disabled={true}>{t('UPDATE')}</button>
-                    </Tooltip> :
-                    <button className="primary-btn actions-btn" onClick={onUpdate}>{t('UPDATE')}</button>
-                }
             </div>
             <Modal
                 title={t('ADD_EMAIL_ADRESS')}
@@ -891,7 +875,7 @@ const CompaniesPage = ({ basketId, countryList, currentUser, selectedCompany, di
 
 const newPersonObject = { firstName: '', lastName: '', title: null, country: null, email: '', mobileNumb: '', companyId: '', companyName: '' }
 
-const PersonsPage = ({ basketId, countryList, currentUser, selectedCompany, disableUpdateBtn }) => {
+const PersonsPage = ({ basketId, countryList, currentUser, selectedCompany, updateRecipients  }) => {
     const [allPersonsData, setAllPersonsData] = useState();
     const [displayPersons, setDisplayPersons] = useState();
     const [selectedFieldToUpdate, setSelectedFieldToUpdate] = useState({});
@@ -901,7 +885,6 @@ const PersonsPage = ({ basketId, countryList, currentUser, selectedCompany, disa
     const [loading, setLoading] = useState(true);
     const [modalVisible, setModalVisible] = useState(false);
     const [modalTextField, setModalTextField] = useState({});
-    const disableUpdate = disableUpdateBtn();
     const {t} = useTranslation();
 
     useEffect(() => {
@@ -1123,6 +1106,7 @@ const PersonsPage = ({ basketId, countryList, currentUser, selectedCompany, disa
         }
 
         setCheckedPersonsCompanies(newList)
+        updateRecipients(newList)
     }
 
     const onClickCompanyCheckBox = (e, company, person, basketReceiverId) => {
@@ -1148,6 +1132,7 @@ const PersonsPage = ({ basketId, countryList, currentUser, selectedCompany, disa
         }
 
         setCheckedPersonsCompanies(newList)
+        updateRecipients(newList)
     }
 
     const onUpdate = () => {
@@ -1160,7 +1145,7 @@ const PersonsPage = ({ basketId, countryList, currentUser, selectedCompany, disa
             "BasketReceivers": checkedPersonsCompanies
         }
 
-        updateAndSchedule(params).then(() => {
+        updateBasketReceivers(params).then(() => {
             getPersonsData();
         }).catch(() => setLoading(false))
     }
@@ -1395,8 +1380,9 @@ const PersonsPage = ({ basketId, countryList, currentUser, selectedCompany, disa
                         })}
                     </Select>
                 </div>
-                <button className="add-btn m-r-10 disable-div" >{t('ADD_NEW')}</button>
-                <button className="add-btn m-r-10 disable-div" >{t('UPLOAD')}</button>
+                {/* <button className="add-btn m-r-10 disable-div" >{t('ADD_NEW')}</button>
+                <button className="add-btn m-r-10 disable-div" >{t('UPLOAD')}</button> */}
+                <button className="add-btn" onClick={onUpdate}>{t('UPDATE')}</button>
             </div>
 
             <div className="receivers-tablele-width expandable-table-btn">
@@ -1413,15 +1399,6 @@ const PersonsPage = ({ basketId, countryList, currentUser, selectedCompany, disa
                     pagination={false}
                     footer={addNewPerson}
                 />
-            </div>
-            <div className="action-bar">
-                {disableUpdate ?
-                    <Tooltip title='Basket not configured'>
-                        <button className="primary-btn actions-btn" disabled={true}>{t('UPDATE')}</button>
-                    </Tooltip> :
-                    <button className="primary-btn actions-btn" onClick={onUpdate}>{t('UPDATE')}</button>
-                }
-
             </div>
             <Modal
                 title={t(selectedFieldToUpdate?.isEmail ? 'ADD_EMAIL_ADRESS' : 'ADD_PHONE_NUMBER')}

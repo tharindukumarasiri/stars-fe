@@ -479,6 +479,9 @@
     "SEND_INVITATION": "da_Send Invitation",
     "SEND_MESSAGE": "da_Send Message",
     "MSG_TEMPLATE_TRIIGER_POINT": "da_Please select a trigger point!",
-    "MSG_ONLY_ONE_RECIEVER_FOR_TENANT_INVITATION": "da_Only one reciever can be added for the company join invitation!"
+    "MSG_ONLY_ONE_RECIEVER_FOR_TENANT_INVITATION": "da_Only one reciever can be added for the company join invitation!",
+    "MARK_AS_REMINDER": "da_Enable Reminders",
+    "REMIND_INTERVAL": "da_Remind Interval Days",
+    "REMIND_COUNT": "da_Remind Count"
 
 }

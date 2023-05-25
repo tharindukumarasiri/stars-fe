@@ -83,6 +83,11 @@
     overflow-y: auto;
     padding-bottom: 50px;
 }
+.scroll-y-container {
+    height: 330px;
+    overflow-y: scroll;
+    display: block;
+}
 
 .g-row {
     width: 100%;

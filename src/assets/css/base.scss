@@ -20,6 +20,7 @@
 @import 'typo.scss';
 @import 'custom-scroll.scss';
 @import 'template-creator.scss';
+@import 'common-landing-page.scss';
 
 *, *:before, *:after {
     -webkit-box-sizing: border-box;
@@ -532,6 +533,7 @@ ul.custom-button-list {
     right: 0;
     bottom: 0;
     min-height: 50px;
+    text-align:right;
 }
 
 .icon-search-1 {
@@ -583,7 +585,7 @@ ul.custom-button-list {
     position: relative !important;
     width: 250px !important;
     height: 170px !important;
-    margin: 0 10px 0 0 !important;
+    margin: 0 10px 10px 0 !important;
     cursor: pointer !important;
     float: left !important;
     white-space: nowrap;
@@ -605,4 +607,9 @@ ul.custom-button-list {
             font-size: 2.8em !important;
         }
     }
+}
+
+//errors
+.error-text {
+    color: $red
 }

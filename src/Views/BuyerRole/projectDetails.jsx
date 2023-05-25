@@ -272,9 +272,7 @@ const SectionView = (props) => {
         <div>
             <div className="g-row">
                 <div className="g-col-6">
-                    <h3 className="icon-plus-circled hover-hand m-l-10 fl" onClick={onAddSection}>
-                        {t("ADD_SECTION")}
-                    </h3>
+                    <div className="primary-btn" onClick={onAddSection} ><i className="icon-plus-circled"></i>{t("ADD_SECTION")}</div>
                 </div>
                 <div className="g-col-6">
                     <Tooltip title={t('TILE_VIEW')}>
@@ -570,9 +568,9 @@ const MembersView = (props) => {
 
     return (
         <div>
-            <h3 className="icon-plus-circled hover-hand m-l-10" onClick={addMember}>
-                {t("ADD_MEMBER")}
-            </h3>
+            <div className="fl">
+                <div className="primary-btn" onClick={addMember} ><i className="icon-plus-circled"></i>{t("ADD_MEMBER")}</div>
+            </div>
             <Tooltip title={t('TILE_VIEW')}>
                 <i className="icon-tile-view grid-view-icon fr hover-hand" onClick={() => setTableView(false)}></i>
             </Tooltip>

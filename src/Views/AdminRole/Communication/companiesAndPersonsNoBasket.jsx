@@ -700,7 +700,8 @@ const CompaniesPage = ({ countryList, currentUser, selectedCompany, updateRecipi
     const onAddCompany = () => {
         if (validateCompanyFields()) {
             setLoading(true);
-            getOrganization(newCompaniesData.orgId, newCompaniesData.country?.alpha2)
+            if(newCompaniesData.country?.alpha2 === "NO"){
+                getOrganization(newCompaniesData.orgId, newCompaniesData.country?.alpha2)
                 .then((result) => {
                     if (result) {
                         addCompanyData();
@@ -712,6 +713,11 @@ const CompaniesPage = ({ countryList, currentUser, selectedCompany, updateRecipi
                     }
                 })
                 .catch(() => setLoading(false));
+            }
+            else{
+                addCompanyData();
+            }
+           
         }
     };
 

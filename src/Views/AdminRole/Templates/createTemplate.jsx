@@ -20,6 +20,9 @@ const CreateTemplate = ({ closeModal, getSavedTemplates, editTemplate }) => {
     const [triggerPoints, setTriggerPoints] = useState([]);
     const [triggerPoint, setTriggerPoint] = useState("");
     const [isDefault, setIsDefault] = useState(false);
+    const [isReminder, setIsReminder] = useState(false);
+    const [remindInterval, setRemindInterval] = useState("");
+    const [remindCount, setRemindCount] = useState("");
 
     const { t } = useTranslation();
 
@@ -28,11 +31,17 @@ const CreateTemplate = ({ closeModal, getSavedTemplates, editTemplate }) => {
             setTemplateName(editTemplate.DisplayName || "");
             setTriggerPoint(editTemplate.MessageTriggerPointId);
             setIsDefault(editTemplate.IsDefault);
+            setIsReminder(editTemplate.IsReminderEnabled);
+            setRemindInterval(editTemplate.RemindInterval);
+            setRemindCount(editTemplate.RemindCount);
             setSelectedTemplateType(getMessageTemplateTypeName(editTemplate.MessageTemplateTypeId));
         } else {
             setTemplateName("");
             setTriggerPoint("");
             setIsDefault(false);
+            setIsReminder(false);
+            setRemindInterval("");
+            setRemindCount("");
         }
         onLoad();
     }, [editTemplate]);
@@ -56,7 +65,10 @@ const CreateTemplate = ({ closeModal, getSavedTemplates, editTemplate }) => {
                     MessageTriggerPointId: triggerPoint,
                     IsDefault: isDefault,
                     Name: getTemplateName(),
-                    MessageTypeId: getMessageType()
+                    MessageTypeId: getMessageType(),
+                    IsReminderEnabled: isReminder,
+                    RemindInterval: remindInterval,
+                    RemindCount: remindCount
                 }
                 : {
                     MessageTriggerPointId: triggerPoint,
@@ -80,6 +92,9 @@ const CreateTemplate = ({ closeModal, getSavedTemplates, editTemplate }) => {
                     DeletedUserPartyId: null,
                     IsDefault: isDefault,
                     MessageTemplateTypeId: getMessageTemplateType(),
+                    IsReminderEnabled: isReminder,
+                    RemindInterval: remindInterval,
+                    RemindCount: remindCount
                 };
 
             saveTemplate(params);
@@ -285,6 +300,18 @@ const CreateTemplate = ({ closeModal, getSavedTemplates, editTemplate }) => {
         setTemplateName(e.target.value);
     };
 
+    const onRemindIntervalChange = (e) => {
+        let interval = e.target.value;
+        if (isNaN(interval)) return;
+        setRemindInterval(interval);
+    }
+
+    const onRemindCountChange = (e) => {
+        let interval = e.target.value;
+        if (isNaN(interval)) return;
+        setRemindCount(interval);
+    }
+
     return (
         <div className={loading && "loading-overlay"}>
             {loading && (
@@ -349,7 +376,32 @@ const CreateTemplate = ({ closeModal, getSavedTemplates, editTemplate }) => {
                 <label className="p-l-20" htmlFor="Business">
                     {t('BUSINESS_COM_TEMPLATE')}
                 </label>
+            </div>           
+           {
+             selectedTemplateType !== getMessageTemplateTypeName(constants.templateType.LandingPage) &&            
+            <div className="g-row user-input-box m-b-10">
+                <div className="g-col-3">
+                    <input type="checkbox" className="check-box m-t-10 m-l-5 m-b-20 fl"
+                        checked={isReminder}
+                        onChange={() => setIsReminder(pre => !pre)}
+                    />
+                    <div className="fl m-t-10 hover-hand " onClick={() => setIsReminder(pre => !pre)}>{t('MARK_AS_REMINDER')}</div>
+                </div>
+                {
+                    isReminder && 
+                    <>
+                        <div className="g-col-5">
+                            <Input value={remindInterval} placeholder='REMIND_INTERVAL' onChange={onRemindIntervalChange} maxLength={2} />
+                        </div>
+                        <div className="g-col-4">
+                            <Input value={remindCount} placeholder='REMIND_COUNT' onChange={onRemindCountChange} maxLength={2} />
+                        </div>
+                    </>
+                }
+                
+                
             </div>
+            }
 
             <div className="n-float" />
 

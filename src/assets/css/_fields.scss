@@ -25,7 +25,7 @@ input[type="color"],
 textarea,
 select {
     background-color: transparent;
-    border: 1px solid $input-border-color !important;
+    border: 1px solid $input-border-color;
     padding: 6px !important;
     width: 100%;
     background-color: $white;
@@ -142,14 +142,27 @@ input[type="search"]:-webkit-search-decoration {
         background-color: transparent;
     }
 
-    select {
-        border: none;
-        -webkit-border-radius: 6px;
-        border-radius: 0;
-        font-size: 13px;
-        font-size: 0.8125rem;
-        padding: 7px 10px;
+select, .dropdown-list {
+    border: none;
+    -webkit-border-radius: 6px;
+    border-radius: 0;
+    font-size: 13px;
+    font-size: 0.8125rem;
+    padding: 7px 10px;
+    border: 1px solid $input-border-color;
+}
+
+
+
+.dropdown-list {
+    color: $base-gray;
+    font-family: $bod-font;
+
+    option {
+        color: black;
     }
 
-
-
+    .disable-option {
+        color: $base-gray;
+    }
+}

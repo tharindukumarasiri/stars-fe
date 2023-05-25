@@ -52,8 +52,18 @@ export async function getCommunicationBasket(params) {
     return data;
 }
 
+export async function getCommunicationBasketById(id) {
+    const { data } = await http.get(config.GET_COMMUNICATION_BASKET_BY_ID + id);
+    return data;
+}
+
 export async function addCommunicationBasket(params) {
     const { data } = await http.post(config.ADD_COMMUNICATION_BASKET, params);
+    return data;
+}
+
+export async function updateCommunicationBasket(params) {
+    const { data } = await http.post(config.UPDATE_BASKET_STATUSES, params);
     return data;
 }
 
@@ -114,6 +124,26 @@ export async function updatePerson(params) {
 
 export async function updateAndSchedule(params) {
     const { data } = await http.post(config.UPDATE_AND_SHEDULE, params);
+    return data;
+}
+
+export async function joinAsCompanySendImmediatly(params) {
+    const { data } = await http.post(config.JOIN_AS_COMPANY_SEND_IMMEDIATLY, params);
+    return data;
+}
+
+export async function activateSchedule(basketId) {
+    const { data } = await http.patch(config.ACTIVATE_SCHEDULE + basketId);
+    return data;
+}
+
+export async function deActivateSchedule(basketId) {
+    const { data } = await http.patch(config.DE_ACTIVATE_SCHEDULE + basketId);
+    return data;
+}
+
+export async function updateBasketReceivers(params) {
+    const { data } = await http.post(config.UPDATE_BASKET_RECEIVERS, params);
     return data;
 }
 

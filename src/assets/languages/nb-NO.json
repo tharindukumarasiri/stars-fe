@@ -479,6 +479,9 @@
     "SEND_INVITATION": "no_Send Invitation",
     "SEND_MESSAGE": "no_Send Message",
     "MSG_TEMPLATE_TRIIGER_POINT": "no_Please select a trigger point!",
-    "MSG_ONLY_ONE_RECIEVER_FOR_TENANT_INVITATION": "no_Only one reciever can be added for the company join invitation!"
+    "MSG_ONLY_ONE_RECIEVER_FOR_TENANT_INVITATION": "no_Only one reciever can be added for the company join invitation!",
+    "MARK_AS_REMINDER": "no_Enable Reminders",
+    "REMIND_INTERVAL": "no_Remind Interval Days",
+    "REMIND_COUNT": "no_Remind Count"
 
 }

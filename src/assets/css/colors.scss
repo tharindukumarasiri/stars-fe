@@ -23,7 +23,7 @@ $theme-dark2: darken($theme, 30%);
 $theme-darkest: darken($theme, 34%);
 $theme-light-dark: desaturate($theme, 10%);
 $theme-light: lighten($theme, 30%);
-$body-color: #EBEBEB;
+$body-color: #666;
 $theme-light-grey: desaturate($theme, 80%);
 
 $tab-content: #fff;
@@ -73,9 +73,7 @@ $red-dark: darken($red, 10%);
 $orange: #ff9900;
 $orange-dark: darken($orange, 0%);
 $white: #fff;
-$vialot: #B572CD;
-$vialot-lite: desaturate($vialot, 20%);
-$vialot-dark1: darken($vialot, 20%);
+
 //Green
 $green: #04bd00;
 /* #2bb201; */
@@ -292,6 +290,10 @@ $light-dark-blue: desaturate($base-color, 10%);
 }
 
 //Purples
+$vialot: #B572CD;
+$vialot-lite: desaturate($vialot, 20%);
+$vialot-dark1: darken($vialot, 20%);
+$vialot-dark2: darken($vialot, 30%);
 .vialot {
     color: $vialot;
 }
@@ -301,6 +303,9 @@ $light-dark-blue: desaturate($base-color, 10%);
 }
 .bg-vialot-dark1 {
     background-color: $vialot-dark1;
+}
+.bg-vialot-dark2 {
+    background-color: $vialot-dark2;
 }
 
 //

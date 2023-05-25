@@ -90,3 +90,25 @@ export const messageTriggerPoints = {
     UserInvitationNewUser: 1,
     CompanyInvitation: 11
 }
+
+export const schedulingTypes = {
+    IMMIDIATE: 'IMMIDIATE',
+    PLANNED: 'PLANNED',
+    RECURRING: 'RECURRING'
+}
+
+export const recurringTypes = {
+    DALY: 'DALY',
+    WEEKLY: 'WEEKLY',
+    MONTHLY: 'MONTHLY'
+}
+
+export const DaysOfTheWeek = [
+    { value: '1', label: 'Mo' },
+    { value: '2', label: 'Tu' },
+    { value: '3', label: 'We' },
+    { value: '4', label: 'Th' },
+    { value: '5', label: 'Fr' },
+    { value: '6', label: 'Sa' },
+    { value: '7', label: 'Su' },
+]

@@ -338,7 +338,7 @@
     "ECONNECT_COM_BASKET_MESSAGE": "en_GB_Here you can create Create and Schedule emails",
     "ECONNECT_COM_LOGS_TITLE": "en_GB_COMMUNICATIONS LOGS",
     "ECONNECT_COM_LOGS_MESSAGE": "en_GB_If you the Client Admin User, you can see all the logs reated to your Tenant",
-    "ECONNECT_HOME_NAV_CARD_TEMPLATE": "en_GB_COMMUNICATION TYPES/TEMPLATES",
+    "ECONNECT_HOME_NAV_CARD_TEMPLATE": "en_GB_TEMPLATES",
     "ECONNECT_HOME_NAV_CARD_BASKET": "en_GB_COMMUNICATION BASKET",
     "ECONNECT_HOME_NAV_CARD_COM": "en_GB_COMMUNICATIONS",
     "ECONNECT_HOME_NAV_CARD_LOGS": "en_GB_COMMUNICATIONS LOGS",
@@ -479,6 +479,9 @@
     "SEND_INVITATION": "en_GB_Send Invitation",
     "SEND_MESSAGE": "en_GB_Send Message",
     "MSG_TEMPLATE_TRIIGER_POINT": "en_GB_Please select a trigger point!",
-    "MSG_ONLY_ONE_RECIEVER_FOR_TENANT_INVITATION": "en_GB_Only one reciever can be added for the company join invitation!"
+    "MSG_ONLY_ONE_RECIEVER_FOR_TENANT_INVITATION": "en_GB_Only one reciever can be added for the company join invitation!",
+    "MARK_AS_REMINDER": "en_GB_Enable Reminders",
+    "REMIND_INTERVAL": "en_GB_Remind Interval Days",
+    "REMIND_COUNT": "en_GB_data_Remind Count"
 
 }

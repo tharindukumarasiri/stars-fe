@@ -206,13 +206,13 @@ const Projects = (props) => {
                 </div>
             }
             <div className="g-row">
-                <div className="g-col-6"> <h3 className="icon-plus-circled hover-hand fl" onClick={toggleModal} >{t("CREATE_PROJECT")}</h3></div>
+                <div className="g-col-6"> <div className="primary-btn" onClick={toggleModal} ><i className="icon-plus-circled"></i>{t("CREATE_PROJECT")}</div></div>
                 <div className="g-col-6">
                     <Tooltip title={t('TILE_VIEW')}>
-                        <i className="icon-tile-view grid-view-icon fr hover-hand" onClick={() => setTableView(false)} ></i>
+                        <i className="icon-tile-view grid-view-icon" onClick={() => setTableView(false)} ></i>
                     </Tooltip>
                     <Tooltip title={t('GRID_VIEW')}>
-                        <i className="icon-grid-view list-view-icon fr hover-hand" onClick={() => setTableView(true)} ></i>
+                        <i className="icon-grid-view list-view-icon" onClick={() => setTableView(true)} ></i>
                     </Tooltip>
                 </div>
             </div>

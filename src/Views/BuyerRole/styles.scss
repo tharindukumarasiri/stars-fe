@@ -124,7 +124,22 @@
     margin-right: 8px;
     cursor: pointer;
 }
+.icon-tile-view, .icon-grid-view {
+    float: right; margin-left:5px; font-size:18px}
+.icon-tile-view {
+    color: $theme-dark1;
+    &:hover {
+        color: $theme
+    }
+}
+.icon-grid-view {
+   color:$theme-dark2;
 
+    &:hover {
+        color: $theme
+    }
+}
+/*
 .grid-view-icon {
     font-size: 22px;
     margin-left: 8px;
@@ -135,7 +150,7 @@
     font-size: 22px;
     color: $orange;
 }
-
+    */
 .detail-edit-icon {
     font-size: 22px;
     margin-right: 8px;

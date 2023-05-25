@@ -1,0 +1,92 @@
+﻿.common-landing-page-container {
+    width: 60%;
+    margin: 0 auto;
+    display: block;
+    background-color: $white;
+    border-radius: 6px;
+    padding: 20px;
+
+
+    .l-tabs {
+        display: flex;
+        flex-wrap: wrap; // make sure it wraps
+        justify-content: center;
+    }
+
+    .l-tabs label {
+        order: 1; // Put the labels first
+        display: block;
+        padding: 1rem 3rem;
+        margin-right: 0.2rem;
+        cursor: pointer;
+        font-weight: bold;
+        transition: background ease 0.2s;
+        color: $theme;
+
+
+        &:before {
+            display: none
+        }
+
+        &after {
+            border: 0 !important;
+            background-color: transparent !important;
+        }
+        i{font-size:18px}
+    }
+
+    .circle-between-label {
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        display: block
+    }
+
+    .l-tabs .l-tab {
+        order: 99; // Put the tabs last
+        flex-grow: 1;
+        width: 100%;
+        display: none;
+        padding: 1rem;
+        background: #fff;
+    }
+
+    .l-tabs input[type="radio"] {
+        display: none;
+    }
+
+    .l-tabs input[type="radio"]:checked + label {
+        background: #fff;
+        color: $grey-light;
+    }
+
+    .l-tabs input[type="radio"]:checked + label::after {
+        border: 0 !important;
+        background-color: transparent !important;
+    }
+
+    .l-tabs input[type="radio"]:checked + label + .l-tab {
+        display: block;
+    }
+
+    @media (max-width: 45em) {
+        .l-tabs .l-tab,
+        .l-tabs label {
+            order: initial;
+        }
+
+        .l-tabs label {
+            width: 100%;
+            margin-right: 0;
+            margin-top: 0.2rem;
+        }
+    }
+}
+
+.bypass-landing-tabs {
+    label {
+        padding: 2px 2px 0 0 !important;
+        font-weight: normal !important;
+        color: $body-color !important;
+    }
+}

@@ -458,6 +458,7 @@
 .time-config-Container {
     display: flex;
     flex-direction: column;
+    width: 480px
 }
 
 .user-drop-down {
@@ -547,4 +548,38 @@
     button, .button, input[type=button] {
         padding: 0 !important;
     }
+}
+
+.basket-stepper-container {
+    width: 500px;
+}
+
+.basket-detail-genaral-body {
+    margin-top: 70px;
+    margin-left: 5vw;
+}
+
+.basket-detail-genaral-body-left {
+    width: 300px;
+    margin-right: 130px;
+    margin-left: 12vw;
+}
+
+.basket-detail-id-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.time-input-container {
+    width: 220px;
+}
+
+.recurr-weekly-container {
+    width: 320px;
+}
+
+.recurring-types-container {
+    border-right: 1px solid $input-border-color;
 }

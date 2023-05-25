@@ -29,19 +29,19 @@ export default function SellerHome() {
                 <NavigationCard
                     name={t("GET_NOTIFIED")}
                     cardColour={"bg-vialot"}
-                    // imageName={"icon-search-module"}
+                    imageName={"icon-get-notified"}
                     onClick={() => onClickCard(NAVIGATION_PAGES.SELLER_GET_NOTIFIED)}
                 />
                 <NavigationCard
                     name={t("MATCHING_TENDERS")}
-                    cardColour={"bg-vialot"}
-                    // imageName={"icon-projects"}
+                    cardColour={"bg-vialot-dark1"}
+                    imageName={"icon-matching-tender"}
                     onClick={() => onClickCard(NAVIGATION_PAGES.SELLER_MATCHING_TENDERS)}
                 />
                 <NavigationCard
                     name={t("GLOBAL_TENDER")}
-                    cardColour={"bg-vialot"}
-                    // imageName={"icon-projects"}
+                    cardColour={"bg-vialot-dark2"}
+                    imageName={"icon-global-tenders"}
                     onClick={() => onClickCard(NAVIGATION_PAGES.SELLER_GLOBAL_TENDER)}
                 />
             </div>

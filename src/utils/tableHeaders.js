@@ -1167,6 +1167,14 @@ export const CommunicationBasketsTableHeaders = (t) => [
         ),
     },
     {
+        title: 'Sent Date (Last)',
+        dataIndex: 'LastRunDateTime',
+        render: (_, { LastRunDateTime }) => (
+            formatDate(LastRunDateTime)
+        ),
+        sorter: true,
+    },
+    {
         title: t('STATUS'),
         dataIndex: 'BasketStatus',
         render: (_, { BasketStatus }) => (
