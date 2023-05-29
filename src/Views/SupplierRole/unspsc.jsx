@@ -232,6 +232,8 @@ const Unspsc = () => {
         })
     }
 
+    const stopPropagateCheckBox = (e) => e.stopPropagation();
+
     const YourUnspscData = () => {
         return (
             <>
@@ -246,12 +248,22 @@ const Unspsc = () => {
             segmentData.map((segmant, segIndex) => {
                 return (
                     <div key={segIndex}>
-                        <div className="result-item hover-hand bg-blue-light" onClick={() => { getFamilyData(segmant.code) }}>
-                            <div className="body-text">
+                        <div className="result-item hover-hand bg-blue-light g-row" onClick={() => { getFamilyData(segmant.code) }}>
+                            <div className="body-text g-col-11">
                                 <i className={expanded.segmant.includes(segmant.code) ? 'icon-minus-circled fl toggle-icon' : 'icon-plus-circled fl toggle-icon'} />
                                 <div className="body-text-bold m-r-10 fl">{segmant.code}</div>
                                 {segmant.title}
                             </div>
+                            <input type="checkbox" className="check-box g-col-1"
+                                checked={organizationData.unspscs?.findIndex(data => data.code === segmant.code) > -1} onClick={stopPropagateCheckBox}
+                                onChange={() => {
+                                    handleChekBox(
+                                        {
+                                            mostChild: { code: segmant.code, value: segmant.title },
+
+                                        })
+                                }}
+                            />
                         </div>
                         {expanded.segmant.includes(segmant.code) &&
                             unspscData.family.map((family) => {
@@ -266,6 +278,18 @@ const Unspsc = () => {
                                                             <div className="body-text-bold m-r-10 fl">{familyData.code}</div>
                                                             {familyData.title}
                                                         </div>
+                                                        <input type="checkbox" className="check-box"
+                                                            checked={organizationData.unspscs?.findIndex(data => data.code === familyData.code) > -1} onClick={stopPropagateCheckBox}
+                                                            onChange={() => {
+                                                                handleChekBox(
+                                                                    {
+                                                                        mostChild: { code: familyData.code, value: familyData.title },
+                                                                        parents: [
+                                                                            { code: segmant.code, value: segmant.title },
+                                                                        ]
+                                                                    })
+                                                            }}
+                                                        />
                                                     </div>
                                                     {expanded.family.includes(familyData.code) &&
                                                         unspscData.class.map((clas) => {
@@ -275,11 +299,24 @@ const Unspsc = () => {
                                                                         return (
                                                                             <div key={classIndex}>
                                                                                 <div className="result-item hover-hand bg-blue-lighter2" style={getIndent(3)} onClick={() => { getCommodityData(classData.code) }}>
-                                                                                    <div className="body-text">
+                                                                                    <div className="body-text ">
                                                                                         <i className={expanded.class.includes(classData.code) ? 'icon-minus-circled fl toggle-icon' : 'icon-plus-circled fl toggle-icon'} />
                                                                                         <div className="body-text-bold m-r-10 fl">{classData.code}</div>
                                                                                         {classData.title}
                                                                                     </div>
+                                                                                    <input type="checkbox" className="check-box"
+                                                                                        checked={organizationData.unspscs?.findIndex(data => data.code === classData.code) > -1} onClick={stopPropagateCheckBox}
+                                                                                        onChange={() => {
+                                                                                            handleChekBox(
+                                                                                                {
+                                                                                                    mostChild: { code: classData.code, value: classData.title },
+                                                                                                    parents: [
+                                                                                                        { code: segmant.code, value: segmant.title },
+                                                                                                        { code: familyData.code, value: familyData.title },
+                                                                                                    ]
+                                                                                                })
+                                                                                        }}
+                                                                                    />
                                                                                 </div>
                                                                                 {expanded.class.includes(classData.code) &&
                                                                                     unspscData.commodity.map((commodity) => {
@@ -287,18 +324,7 @@ const Unspsc = () => {
                                                                                             return (
                                                                                                 commodity.data.map((commodityData, comIndex) => {
                                                                                                     return (
-                                                                                                        <div className="result-item hover-hand bg-blue-lighter3" style={getIndent(4)} key={comIndex}
-                                                                                                            onClick={() =>
-                                                                                                                handleChekBox(
-                                                                                                                    {
-                                                                                                                        mostChild: { code: commodityData.code, value: commodityData.title },
-                                                                                                                        parents: [
-                                                                                                                            { code: segmant.code, value: segmant.title },
-                                                                                                                            { code: familyData.code, value: familyData.title },
-                                                                                                                            { code: classData.code, value: classData.title }
-                                                                                                                        ]
-                                                                                                                    })}
-                                                                                                        >
+                                                                                                        <div className="result-item hover-hand bg-blue-lighter3" style={getIndent(4)} key={comIndex}>
                                                                                                             <div className="body-text m-l-10">
                                                                                                                 <div className="body-text-bold m-r-10 fl">{commodityData.code}</div>
                                                                                                                 {commodityData.title}
