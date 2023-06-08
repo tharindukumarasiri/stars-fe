@@ -6,7 +6,7 @@ const Expandable = (props) => {
     const expanded = expandedItem === label;
     const { t } = useTranslation();
     const Arrow = () => {
-        const expandIcon = expanded ? 'icon-right-arrow fr m-t-15' : 'icon-arrow-down fr m-t-15'
+        const expandIcon = expanded ? 'icon-right-arrow fr m-t--18' : 'icon-arrow-down fr m-t--18'
         return <i className={expandIcon} />
     }
 
@@ -18,9 +18,9 @@ const Expandable = (props) => {
         }
     }
     return (
-        <div className="expandable hover-hand">
-            <div className="g-row" onClick={onHeaderClicked}>
-                <div className="h2-semi g-col-10 m-t-15">{t(title)}</div>
+        <div className="g-row">
+            <div className="expandable" onClick={onHeaderClicked}>
+                <div className="expandable-title">{t(title)}</div>
                 <Arrow />
             </div>
             {expanded ? children : null}

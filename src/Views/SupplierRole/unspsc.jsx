@@ -237,8 +237,10 @@ const Unspsc = () => {
     const YourUnspscData = () => {
         return (
             <>
-                <CriteriaColorGuideTab dataArr={['SEGMENT', 'FAMILY', 'CLASS', 'COMMODITY']} containerStyle='selected-codes' />
-                <UserSelectedFields data={organizationData.unspscs} dataFeieldName='title' closable={true} onClose={onDelete} />
+                <CriteriaColorGuideTab dataArr={['SEGMENT', 'FAMILY', 'CLASS', 'COMMODITY']} containerStyle=' selected-codes' />
+                <div className="supplier-dropdown-content-container">
+                    <UserSelectedFields data={organizationData.unspscs} dataFeieldName='title' closable={true} onClose={onDelete} />
+                </div>
             </>
         )
     }
@@ -371,10 +373,6 @@ const Unspsc = () => {
 
     return (
         <div className={loading && 'loading-overlay'}>
-            <div className="g-row m-l-10">
-                <i className="icon-cubes-1 header-icon m-t-10 m-r-15 fl" />
-                <h3 className="m-t-20">{t("(United Nations Standard Products and Services Code)")}</h3>
-            </div>
             <div className="page-container">
                 {loading &&
                     <div className="loading center-loading">
@@ -384,24 +382,36 @@ const Unspsc = () => {
                     </div>
                 }
                 <div className="g-row">
-                    <div className="g-col-5">
-                        <h3 className="text-center">{t("UNSPSC_CODES")}</h3>
+                    <div className="g-col-6">
+                        <div className="fl"><i className="icon-cubes-1 header-icon m-t-10" /></div>
+                        <div className="fl p-t-10"><h3 className="m-t-20 fl">{t("(United Nations Standard Products and Services Code)")}</h3></div>
+                    </div>
+                    <div className="g-col-6">
+                        <div className="action-bar"> <button className="primary-btn update-btn" onClick={onUpdate} >{t("UPDATE")}</button></div>
+                    </div>
+                </div>
+                
+                <div className="g-row">
+                    <div className="g-col-5 p-r-25-l-i">
+                        <h3 className="text-center p-b-10">{t("UNSPSC_CODES")}</h3>
                         <div className="g-row flex-center-middle m-b-15">
                             <form onSubmit={onSearch} className="search-bar g-col-8 m-r-10">
                                 <i className="search-btn icon-search" onClick={onSearch} ></i>
                                 <input type="text" placeholder={t("SEARCH_BY_LOCATION")} onChange={handleSearch} value={searchText} />
                             </form>
-                            <h3 className="g-col-2 hover-hand" onClick={clearSearch} >{t("CLEAR")}</h3>
+                            <div className="g-col-2" > <div className="secondary-btn filters-btn" onClick={clearSearch} >{t("CLEAR")}</div></div>
                             <div className="g-col-2 g-row hover-hand">
                                 <span className="fl g-col-6 m-r-10">English </span>
                                 <span className="fl g-col-3"><img src={gb_flag} className="flag-image fl m-r-5" alt='img' /></span>
                                 <i className="g-col-1 icon-arrow-down fl" />
                             </div>
                         </div>
-                        <UnspscData />
+                        <div className="supplier-dropdown-content-container">
+                            <UnspscData />
+                        </div>
                     </div>
                     <div className="g-col-5">
-                        <h3 className="text-center">{t("SELECTED_UNSPSC_CODES")}</h3>
+                        <h3 className="text-center p-b-10">{t("SELECTED_UNSPSC_CODES")}</h3>
                         <YourUnspscData />
                     </div>
                     <div className="g-col-2 text-center">
@@ -429,7 +439,7 @@ const Unspsc = () => {
                     </div>
                 </div>
             </div>
-            <button className="primary-btn update-btn" onClick={onUpdate} >{t("UPDATE")}</button>
+           
         </div>
     )
 }

@@ -62,3 +62,17 @@
 .expanded-table-container {
     border-left: 50px solid $bluish-green
 }
+
+.selected-codes {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 0 12px 0;
+
+    .sel-item {
+        width: 20%;
+        padding: 8px;
+        border-radius: 3px;
+        text-align: center;
+    }
+}

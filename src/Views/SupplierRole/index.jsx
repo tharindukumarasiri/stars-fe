@@ -24,27 +24,27 @@ const SupplireRole = () => {
 
     const changeActiveTab = (tab) => {
         const openNotification = (placement = 'top') => {
+            const onLeaveBtn = () => {
+                notification.close(key)
+                setHaveUnsavedDataRef(false);
+
+                if (openTabs.indexOf(tab) < 0) {
+                    const newOpenTabs = Array.from(openTabs)
+                    newOpenTabs.push(tab);
+                    setOpenTabs(newOpenTabs);
+                }
+
+                if (shouldBeClosed.current.state) {
+                    closeTab(shouldBeClosed.current.tab);
+                    shouldBeClosed.current = { state: false, tab: '' };
+                }
+                setActiveTab(tab);
+            }
+
             const key = `open${Date.now()}`;
-            const btn = (
-                <Button type="primary" size="small" onClick={() => {
-                    notification.close(key)
-                    setHaveUnsavedDataRef(false);
+            const btn = <button className="primary-btn" onClick={onLeaveBtn} >Leave</button>
+            const closeIcon = <i className="close-icon icon-close hover-hand" />;
 
-                    if (openTabs.indexOf(tab) < 0) {
-                        const newOpenTabs = Array.from(openTabs)
-                        newOpenTabs.push(tab);
-                        setOpenTabs(newOpenTabs);
-                    }
-
-                    if (shouldBeClosed.current.state) {
-                        closeTab(shouldBeClosed.current.tab);
-                        shouldBeClosed.current = { state: false, tab: '' };
-                    }
-                    setActiveTab(tab);
-                }}>
-                    Leave
-                </Button>
-            );
             const args = {
                 message: t('LEAVE_PAGE'),
                 description:
@@ -53,6 +53,7 @@ const SupplireRole = () => {
                 placement,
                 btn,
                 key,
+                closeIcon,
             };
             notification.warning(args);
         };

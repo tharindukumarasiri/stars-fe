@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next'
 
+import { useUserStore } from './adminRoleStore'
+
 import Tabs from "../../common/tabComponent";
 import { TabContext, UserContext } from '../../utils/contextStore';
 import { NAVIGATION_PAGES } from '../../utils/enums';
@@ -27,6 +29,8 @@ const AdminRole = ({ openTab = NAVIGATION_PAGES.ADMIN_TEMPLATES }) => {
 
     const [selectedCompany] = FetchCurrentCompany();
     const [currentUser] = FetchCurrentUser();
+    const setSelectedCompany = useUserStore((state) => state.setSelectedCompany)
+    const setCurrentUser = useUserStore((state) => state.setCurrentUser)
 
     //Users States
     const [users, setUsers] = useState([])
@@ -37,6 +41,18 @@ const AdminRole = ({ openTab = NAVIGATION_PAGES.ADMIN_TEMPLATES }) => {
     const [savedTemplates, setSavedTemplates] = useState([]);
 
     const { t } = useTranslation();
+
+    useEffect(() => {
+        if(selectedCompany) {
+            setSelectedCompany(selectedCompany);
+        }
+    }, [selectedCompany])
+
+    useEffect(() => {
+        if(currentUser) {
+            setCurrentUser(currentUser);
+        }
+    }, [currentUser])
 
     useEffect(() => {
         setActiveTab(openTab);
@@ -95,7 +111,7 @@ const AdminRole = ({ openTab = NAVIGATION_PAGES.ADMIN_TEMPLATES }) => {
                     <div label={t('ECONNECT_TAB_BASKET')} id={NAVIGATION_PAGES.COMMUNICATIONS_BASKET} >
                         <CommunicationBaskets />
                     </div>
-                    <div label={`${t('ECONNECT_TAB_BASKET_DETAIL')}: ${params[NAVIGATION_PAGES.COMMUNICATIONS_BASKET_DETAILS]?.Id} ${params[NAVIGATION_PAGES.COMMUNICATIONS_BASKET_DETAILS]?.Name}`} id={NAVIGATION_PAGES.COMMUNICATIONS_BASKET_DETAILS} >
+                    <div label={`${t('ECONNECT_TAB_BASKET_DETAIL')}: ${params[NAVIGATION_PAGES.COMMUNICATIONS_BASKET_DETAILS]?.Id || ''} ${params[NAVIGATION_PAGES.COMMUNICATIONS_BASKET_DETAILS]?.Name || ''}`} id={NAVIGATION_PAGES.COMMUNICATIONS_BASKET_DETAILS} >
                         <CommunicationBasketDetails props={params[NAVIGATION_PAGES.COMMUNICATIONS_BASKET_DETAILS]} />
                     </div>
                     <div label={t('ECONNECT_TAB_LOG')} id={NAVIGATION_PAGES.COMMUNICATIONS_LOG} >

@@ -49,6 +49,8 @@ const Cpv = () => {
         }
     }, [selectedCompany])
 
+    const stopPropagateCheckBox = (e) => e.stopPropagation();
+
     const getIndent = (level = 1) => {
         return {
             marginLeft: 20 * level
@@ -269,7 +271,9 @@ const Cpv = () => {
         return (
             <>
                 <CriteriaColorGuideTab dataArr={['DIVISION', 'GROUP', 'CLASS', 'CATEGORY', 'SUB_CATEGORY']} containerStyle='selected-codes' />
-                <UserSelectedFields data={organizationData.cpvs} dataFeieldName='description' closable={true} onClose={onDelete} />
+                <div className="supplier-dropdown-content-container">
+                    <UserSelectedFields data={organizationData.cpvs} dataFeieldName='description' closable={true} onClose={onDelete} />
+                </div>
             </>
         )
     }
@@ -279,12 +283,19 @@ const Cpv = () => {
             divisionData.map((division, divIndex) => {
                 return (
                     <div key={divIndex}>
-                        <div className="result-item hover-hand bg-blue-light" onClick={() => { getCpvGroupData(division.code) }}>
-                            <div className="body-text">
-                                <i className={expanded.division.includes(division.code) ? 'icon-minus-circled fl toggle-icon' : 'icon-plus-circled fl toggle-icon'} />
+                        <div className="result-item hover-hand bg-blue-light g-row" onClick={() => { getCpvGroupData(division.code) }}>
+                            <div className="body-text g-col-11">                                <i className={expanded.division.includes(division.code) ? 'icon-minus-circled fl toggle-icon' : 'icon-plus-circled fl toggle-icon'} />
                                 <div className="body-text-bold m-r-10 fl">{division.code}</div>
                                 {division.desscription}
                             </div>
+                            <input type="checkbox" className="check-box" onClick={stopPropagateCheckBox}
+                                checked={organizationData.cpvs?.findIndex(data => data.code === division.code) > -1}
+                                onChange={() =>
+                                    handleChekBox(
+                                        {
+                                            mostChild: { code: division.code, value: division.desscription },
+                                        })}
+                            />
                         </div>
                         {expanded.division.includes(division.code) &&
                             cpvData.cpvGroup.map((cpvGroup) => {
@@ -299,6 +310,17 @@ const Cpv = () => {
                                                             <div className="body-text-bold m-r-10 fl">{cpvGroupData.code}</div>
                                                             {cpvGroupData.desscription}
                                                         </div>
+                                                        <input type="checkbox" className="check-box" onClick={stopPropagateCheckBox}
+                                                            checked={organizationData.cpvs?.findIndex(data => data.code === cpvGroupData.code) > -1}
+                                                            onChange={() =>
+                                                                handleChekBox(
+                                                                    {
+                                                                        mostChild: { code: cpvGroupData.code, value: cpvGroupData.desscription },
+                                                                        parents: [
+                                                                            { code: division.code, value: division.desscription },
+                                                                        ]
+                                                                    })}
+                                                        />
                                                     </div>
                                                     {expanded.cpvGroup.includes(cpvGroupData.code) &&
                                                         cpvData.cpvClass.map((cpvClass) => {
@@ -313,6 +335,18 @@ const Cpv = () => {
                                                                                         <div className="body-text-bold m-r-10 fl">{cpvClassData.code}</div>
                                                                                         {cpvClassData.desscription}
                                                                                     </div>
+                                                                                    <input type="checkbox" className="check-box" onClick={stopPropagateCheckBox}
+                                                                                        checked={organizationData.cpvs?.findIndex(data => data.code === cpvClassData.code) > -1}
+                                                                                        onChange={() =>
+                                                                                            handleChekBox(
+                                                                                                {
+                                                                                                    mostChild: { code: cpvClassData.code, value: cpvClassData.desscription },
+                                                                                                    parents: [
+                                                                                                        { code: division.code, value: division.desscription },
+                                                                                                        { code: cpvGroupData.code, value: cpvGroupData.desscription },
+                                                                                                    ]
+                                                                                                })}
+                                                                                    />
                                                                                 </div>
                                                                                 {expanded.cpvClass.includes(cpvClassData.code) &&
                                                                                     cpvData.category.map((category) => {
@@ -327,6 +361,19 @@ const Cpv = () => {
                                                                                                                     <div className="body-text-bold m-r-10 fl">{categoryData.code}</div>
                                                                                                                     {categoryData.desscription}
                                                                                                                 </div>
+                                                                                                                <input type="checkbox" className="check-box" onClick={stopPropagateCheckBox}
+                                                                                                                    checked={organizationData.cpvs?.findIndex(data => data.code === categoryData.code) > -1}
+                                                                                                                    onChange={() =>
+                                                                                                                        handleChekBox(
+                                                                                                                            {
+                                                                                                                                mostChild: { code: categoryData.code, value: categoryData.desscription },
+                                                                                                                                parents: [
+                                                                                                                                    { code: division.code, value: division.desscription },
+                                                                                                                                    { code: cpvGroupData.code, value: cpvGroupData.desscription },
+                                                                                                                                    { code: cpvClassData.code, value: cpvClassData.desscription },
+                                                                                                                                ]
+                                                                                                                            })}
+                                                                                                                />
                                                                                                             </div>
                                                                                                             {expanded.category.includes(categoryData.code) &&
                                                                                                                 cpvData.subCategory.map((subCategory) => {
@@ -334,19 +381,7 @@ const Cpv = () => {
                                                                                                                         return (
                                                                                                                             subCategory.data.map((subCategoryData, subCategoryIndex) => {
                                                                                                                                 return (
-                                                                                                                                    <div className="result-item hover-hand bg-blue-lighter3" style={getIndent(5)} key={subCategoryIndex}
-                                                                                                                                        onClick={() =>
-                                                                                                                                            handleChekBox(
-                                                                                                                                                {
-                                                                                                                                                    mostChild: { code: subCategoryData.code, value: subCategoryData.desscription },
-                                                                                                                                                    parents: [
-                                                                                                                                                        { code: division.code, value: division.desscription },
-                                                                                                                                                        { code: cpvGroupData.code, value: cpvGroupData.desscription },
-                                                                                                                                                        { code: cpvClassData.code, value: cpvClassData.desscription },
-                                                                                                                                                        { code: categoryData.code, value: categoryData.desscription }
-                                                                                                                                                    ]
-                                                                                                                                                })}
-                                                                                                                                    >
+                                                                                                                                    <div className="result-item hover-hand bg-blue-lighter3" style={getIndent(5)} key={subCategoryIndex}>
                                                                                                                                         <div className="body-text m-l-10">
                                                                                                                                             <div className="body-text-bold m-r-10 fl">{subCategoryData.code}</div>
                                                                                                                                             {subCategoryData.desscription}
@@ -424,7 +459,9 @@ const Cpv = () => {
                                 <i className="g-col-1 icon-arrow-down fl" />
                             </div>
                         </div>
-                        <CPVData />
+                        <div className="supplier-dropdown-content-container">
+                            <CPVData />
+                        </div>
                     </div>
                     <div className="g-col-5">
                         <h3 className="text-center">{t("SELECTED_CPV_CODES")}</h3>

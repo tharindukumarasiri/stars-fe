@@ -22,7 +22,7 @@ const UserSelectedFields = ({ data = [], dataFeieldName = 'description', languag
     }
 
     return (
-        <div className="p-t-10 n-float">
+        <div className="n-float">
             {
                 data?.map((main) => {
                     return (

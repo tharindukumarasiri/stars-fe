@@ -383,12 +383,12 @@ const GetNotified = () => {
 
     const YourCpvData = () => {
         return (
-            <div className="m-t-10">
+            <div>
                 <CriteriaColorGuideTab
                     dataArr={["DIVISION", "GROUP", "CLASS", "CATEGORY", "SUB_CATEGORY"]}
                     containerStyle="selected-codes"
                 />
-                <UserSelectedFields data={tenderCpvs} dataFeieldName="description" closable={true} onClose={onDelete} />
+                <div className="overflow-scroll-y m-t-10 max-h-500"><UserSelectedFields data={tenderCpvs} dataFeieldName="description" closable={true} onClose={onDelete} /></div> 
             </div>
         );
     };
@@ -635,10 +635,17 @@ const GetNotified = () => {
                 </div>
             )}
             <div className="g-row">
-                <div className="g-col-5">
+                <div className="action-bar">
+                <button className={`primary-btn ${(selectedUsers?.length === 0 || tenderCpvs?.length === 0) && 'disable-div'}`} disabled={selectedUsers?.length === 0 || tenderCpvs?.length === 0} onClick={onUpdate}>
+                    {t('UPDATE')}
+                    </button>
+                </div>
+            </div>
+            <div className="g-row">
+                <div className="g-col-5 ">
                     <h3 className="text-center">{t('CPV_CODES')}</h3>
-                    <h6>{t('HOW_TO_GET_NOTIFIED_TENDERS')}</h6>
-                    <div className="g-row flex-center-middle m-b-15">
+                    { /*<i class="icon-question color-black m-l-5"></i><h6>{t('HOW_TO_GET_NOTIFIED_TENDERS')}</h6>*/}
+                    <div className="g-row flex-center-middle m-b-10 m-t-5">
                         <form onSubmit={onSearch} className="search-bar g-col-11">
                             <i className="search-btn icon-search" onClick={onSearch}></i>
                             <input type="text" placeholder={t('SEARCH_TEXT')} onChange={handleSearch} value={searchText} />
@@ -647,13 +654,16 @@ const GetNotified = () => {
                             {t('CLEAR')}
                         </button>
                     </div>
-                    <CPVData />
+                    <div className="overflow-scroll-y max-h-500">
+                        <CPVData />
+                    </div>
                 </div>
-                <div className="g-col-5">
-                    <h3 className="text-center p-b-20">{t('YOU_WILL_GET_NOTIFICATIONS')} </h3>
-                    <YourCpvData />
+                <div className="g-col-5 ">
+                    <h3 className="text-center">{t('YOU_WILL_GET_NOTIFICATIONS')} </h3>
+                    <div className="m-t-5"><YourCpvData /></div>
+                    
                 </div>
-                <div className="g-col-2 m-t-5">
+                <div className="g-col-2">
                     <h3>{t('RECEIVERS')}</h3>
                     {/* <div className="static-content-container">
                         <div className="body-text-bold  m-t-20">Get notified</div>
@@ -670,7 +680,8 @@ const GetNotified = () => {
                         <div className="body-text">Select the link on email notifications to navigate to the updated tenders.</div>
                         <div className="body-text">View the new tender notices. </div>
                     </div> */}
-                    <h6 className="m-t-20 text-left">{t('SELECT_USERS')}</h6>
+                    { /*  <h6 className="m-t-20 text-left">{t('SELECT_USERS')}</h6>*/}
+                    <div className="m-t-5">
                     <DropdownMultiSelect
                         placeholder={t('USERS')}
                         dataList={users}
@@ -678,12 +689,11 @@ const GetNotified = () => {
                         keyName="Key"
                         selectedList={selectedUsers}
                         setSelectedState={setSelectedUsers}
-                    />
+                        />
+                    </div>
                 </div>
             </div>
-            <button className={`primary-btn update-btn ${(selectedUsers?.length === 0 || tenderCpvs?.length === 0) && 'disable-div'}`} disabled={selectedUsers?.length === 0 || tenderCpvs?.length === 0} onClick={onUpdate}>
-                {t('UPDATE')}
-            </button>
+            
         </div>
     );
 };

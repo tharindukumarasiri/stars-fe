@@ -1,25 +1,32 @@
 @import '../../assets/css/colors.scss';
 
 .expandable {
-    border-top: 1px solid $tab-content;
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 3px;
+    background-color: $lighter-grey;
+
+    &:hover {
+        box-shadow: 1px 1px 2px $lighter-grey
+    }
+
+    .expandable-row {
+        float: left;
+        width: 90%;
+    }
 }
 
 .color-guide-container {
     border-right: 5px solid white;
+    padding:8px !important;
 }
 
-.result-item {
-    min-height: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 1px;
-    padding-left: 5px;
-}
+
 
 .header-icon {
     color: $blue-color;
-    font-size: 2.5em;
+    font-size: 2em;
 }
 
 .toggle-icon {
@@ -38,9 +45,6 @@
     height: 161px;
 }
 
-.selected-codes {
-    margin-bottom: 25px;
-}
 
 .center-loading {
     left: 20%;
@@ -60,12 +64,14 @@
     height: calc(80% - 300px);
 }
 
-.update-btn {
-    position: fixed;
-    right: 50px;
-    bottom: 20px;
-}
+
 
 .country-dropdown-container {
     width: 200px;
+}
+
+.supplier-dropdown-content-container {
+    overflow-y: scroll;
+    height: calc(100vh - 260px);
+    width: 100%;
 }

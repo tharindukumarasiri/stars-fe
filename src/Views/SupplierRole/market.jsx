@@ -67,6 +67,8 @@ const Market = () => {
 
     }, [selectedCompany, organizationData, selectedCountry]);
 
+    const stopPropagateCheckBox = (e) => e.stopPropagation();
+
     const onClickRow = (level, expandCode) => {
         const levelName = `lvl${level}`;
         const index = expanded.indexOf(expandCode);
@@ -296,7 +298,9 @@ const Market = () => {
         return (
             <>
                 <CriteriaColorGuideTab dataArr={colorGuidelevels} containerStyle='selected-codes' />
-                <UserSelecteNutsCodes />
+                <div className="supplier-dropdown-content-container">
+                    <UserSelecteNutsCodes />
+                </div>
             </>
         )
     }
@@ -306,12 +310,23 @@ const Market = () => {
             marketData[selectedCountry.code]?.lvl1?.map((lvl1Data, lvl1Index) => {
                 return (
                     <div key={lvl1Index}>
-                        <div className="result-item hover-hand bg-blue-light" onClick={() => { onClickRow(2, lvl1Data.code) }}>
+                        <div className="result-item hover-hand bg-blue-light g-row" onClick={() => { onClickRow(2, lvl1Data.code) }}>
                             <div className="body-text">
                                 <i className={expanded.includes(lvl1Data.code) ? 'icon-minus-circled fl toggle-icon' : 'icon-plus-circled fl toggle-icon'} />
                                 <div className="body-text-bold m-r-10 fl">{lvl1Data.code}</div>
                                 {lvl1Data.name}
                             </div>
+                            <input type="checkbox" className="check-box" onClick={stopPropagateCheckBox}
+                                checked={nutsCodes.children.findIndex(child => JSON.stringify(child) === JSON.stringify(getNutsCodeObj(
+                                    lvl1Data.code,
+                                    lvl1Data.name,
+                                ))) > -1}
+                                onChange={() => handleCheckBox(
+                                    getNutsCodeObj(
+                                        lvl1Data.code,
+                                        lvl1Data.name,
+                                    ))}
+                            />
                         </div>
                         {expanded.includes(lvl1Data.code) &&
                             marketData[selectedCountry.code]?.lvl2?.map((lvl2Data, lvl2Index) => {
@@ -326,25 +341,23 @@ const Market = () => {
                                                     <div className="body-text-bold m-r-10 fl">{lvl2Data.code}</div>
                                                     {lvl2Data.name}
                                                 </div>
-                                                {selectedCountry.maxLevels === 2 &&
-                                                    <input type="checkbox" className="check-box"
-                                                        checked={nutsCodes.children.findIndex(child => JSON.stringify(child) === JSON.stringify(getNutsCodeObj(
+                                                <input type="checkbox" className="check-box" onClick={stopPropagateCheckBox}
+                                                    checked={nutsCodes.children.findIndex(child => JSON.stringify(child) === JSON.stringify(getNutsCodeObj(
+                                                        lvl1Data.code,
+                                                        lvl1Data.name,
+                                                        getNutsCodeObj(
+                                                            lvl2Data.code,
+                                                            lvl2Data.name
+                                                        )))) > -1}
+                                                    onChange={() => handleCheckBox(
+                                                        getNutsCodeObj(
                                                             lvl1Data.code,
                                                             lvl1Data.name,
                                                             getNutsCodeObj(
                                                                 lvl2Data.code,
                                                                 lvl2Data.name
-                                                            )))) > -1}
-                                                        onChange={() => handleCheckBox(
-                                                            getNutsCodeObj(
-                                                                lvl1Data.code,
-                                                                lvl1Data.name,
-                                                                getNutsCodeObj(
-                                                                    lvl2Data.code,
-                                                                    lvl2Data.name
-                                                                )))}
-                                                    />
-                                                }
+                                                            )))}
+                                                />
                                             </div>
                                             {expanded.includes(lvl2Data.code) &&
                                                 marketData[selectedCountry.code]?.lvl3?.map((lvl3Data, lvl3Index) => {
@@ -358,11 +371,21 @@ const Market = () => {
                                                                         }
                                                                         <div className="body-text-bold m-r-10 fl">{lvl3Data.code}</div>
                                                                         {lvl3Data.name}
-
                                                                     </div>
-                                                                    {selectedCountry.maxLevels === 3 &&
-                                                                        <input type="checkbox" className="check-box"
-                                                                            checked={nutsCodes?.children?.findIndex(child => JSON.stringify(child) === JSON.stringify(getNutsCodeObj(
+                                                                    <input type="checkbox" className="check-box" onClick={stopPropagateCheckBox}
+                                                                        checked={nutsCodes?.children?.findIndex(child => JSON.stringify(child) === JSON.stringify(getNutsCodeObj(
+                                                                            lvl1Data.code,
+                                                                            lvl1Data.name,
+                                                                            getNutsCodeObj(
+                                                                                lvl2Data.code,
+                                                                                lvl2Data.name,
+                                                                                getNutsCodeObj(
+                                                                                    lvl3Data.code,
+                                                                                    lvl3Data.name,
+                                                                                )
+                                                                            )))) > -1}
+                                                                        onChange={() => handleCheckBox(
+                                                                            getNutsCodeObj(
                                                                                 lvl1Data.code,
                                                                                 lvl1Data.name,
                                                                                 getNutsCodeObj(
@@ -372,22 +395,8 @@ const Market = () => {
                                                                                         lvl3Data.code,
                                                                                         lvl3Data.name,
                                                                                     )
-                                                                                )))) > -1}
-                                                                            onChange={() => handleCheckBox(
-                                                                                getNutsCodeObj(
-                                                                                    lvl1Data.code,
-                                                                                    lvl1Data.name,
-                                                                                    getNutsCodeObj(
-                                                                                        lvl2Data.code,
-                                                                                        lvl2Data.name,
-                                                                                        getNutsCodeObj(
-                                                                                            lvl3Data.code,
-                                                                                            lvl3Data.name,
-                                                                                        )
-                                                                                    )))}
-
-                                                                        />
-                                                                    }
+                                                                                )))}
+                                                                    />
                                                                 </div>
                                                                 {expanded.includes(lvl3Data.code) &&
                                                                     marketData[selectedCountry.code]?.lvl4?.map((lvl4Data, lvl4Index) => {
@@ -403,9 +412,24 @@ const Market = () => {
                                                                                             {lvl4Data.name}
 
                                                                                         </div>
-                                                                                        {selectedCountry.maxLevels === 3 &&
-                                                                                            <input type="checkbox" className="check-box"
-                                                                                                checked={nutsCodes.children.findIndex(child => JSON.stringify(child) === JSON.stringify(getNutsCodeObj(
+                                                                                        <input type="checkbox" className="check-box" onClick={stopPropagateCheckBox}
+                                                                                            checked={nutsCodes.children.findIndex(child => JSON.stringify(child) === JSON.stringify(getNutsCodeObj(
+                                                                                                lvl1Data.code,
+                                                                                                lvl1Data.name,
+                                                                                                getNutsCodeObj(
+                                                                                                    lvl2Data.code,
+                                                                                                    lvl2Data.name,
+                                                                                                    getNutsCodeObj(
+                                                                                                        lvl3Data.code,
+                                                                                                        lvl3Data.name,
+                                                                                                        getNutsCodeObj(
+                                                                                                            lvl4Data.code,
+                                                                                                            lvl4Data.name,
+                                                                                                        )
+                                                                                                    )
+                                                                                                )))) > -1}
+                                                                                            onChange={() => handleCheckBox(
+                                                                                                getNutsCodeObj(
                                                                                                     lvl1Data.code,
                                                                                                     lvl1Data.name,
                                                                                                     getNutsCodeObj(
@@ -419,26 +443,8 @@ const Market = () => {
                                                                                                                 lvl4Data.name,
                                                                                                             )
                                                                                                         )
-                                                                                                    )))) > -1}
-                                                                                                onChange={() => handleCheckBox(
-                                                                                                    getNutsCodeObj(
-                                                                                                        lvl1Data.code,
-                                                                                                        lvl1Data.name,
-                                                                                                        getNutsCodeObj(
-                                                                                                            lvl2Data.code,
-                                                                                                            lvl2Data.name,
-                                                                                                            getNutsCodeObj(
-                                                                                                                lvl3Data.code,
-                                                                                                                lvl3Data.name,
-                                                                                                                getNutsCodeObj(
-                                                                                                                    lvl4Data.code,
-                                                                                                                    lvl4Data.name,
-                                                                                                                )
-                                                                                                            )
-                                                                                                        )))}
-
-                                                                                            />
-                                                                                        }
+                                                                                                    )))}
+                                                                                        />
                                                                                     </div>
                                                                                 </div>
                                                                             )
@@ -475,7 +481,9 @@ const Market = () => {
                     }
                     <div className="g-row">
                         <div className="g-col-5">
-                            <MarketData />
+                            <div className="supplier-dropdown-content-container">
+                                <MarketData />
+                            </div>
                         </div>
                         <div className="g-col-5">
                             <YourMarketData />

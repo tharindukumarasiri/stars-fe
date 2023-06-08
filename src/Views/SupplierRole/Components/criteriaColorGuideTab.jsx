@@ -29,7 +29,7 @@ const CriteriaColorGuideTab = ({ dataArr = [], containerStyle = '' }) => {
     }
 
     return (
-        <div className={"g-row " + containerStyle}>
+        <div className={"g-row" + containerStyle}>
             {dataArr.map((item, index) => {
                 return (
                     <div className={getColor(index)} key={index}>

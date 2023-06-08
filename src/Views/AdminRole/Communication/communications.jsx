@@ -2,12 +2,13 @@ import React, { useState, useEffect, useMemo, useContext } from "react";
 import { Table, Tabs, Dropdown, Menu, message, Pagination } from 'antd';
 import { useTranslation } from "react-i18next";
 
+import { useUserStore, useCommunicationsStore } from "../adminRoleStore"
+
 import StarDropdown from "../../../common/dropdown";
 import Input from '../../../common/input'
 import { CommunicationsTableHeaders } from '../../../utils/tableHeaders'
 import DatePickerInput from "../../../common/datePickerInput";
-import { getCommunicationsList, getCommunicationMessageTypes, getCommunicationMessageStatuses, deleteCommunicationLogs } from "../../../services/communicationService";
-import { FetchCurrentUser } from "../../../hooks/index"
+import { getCommunicationMessageTypes, getCommunicationMessageStatuses, deleteCommunicationLogs } from "../../../services/communicationService";
 import { NAVIGATION_PAGES } from "../../../utils/enums";
 import { TabContext } from "../../../utils/contextStore";
 
@@ -21,30 +22,34 @@ const initialPayload = {
 
 const Communications = () => {
     const { changeActiveTab } = useContext(TabContext);
+
+    const currentUser = useUserStore((state) => state.currentUser)
+
+    const communicationsData = useCommunicationsStore((state) => state.communicationsData)
+    const getCommunicationsList = useCommunicationsStore((state) => state.getCommunicationsList)
+    const loading = useCommunicationsStore((state) => state.loading)
+    const setLoading = useCommunicationsStore((state) => state.setLoading)
+    const totalResults = useCommunicationsStore((state) => state.totalResults)
+    const pageNumber = useCommunicationsStore((state) => state.pageNumber)
+    const setPageNumber = useCommunicationsStore((state) => state.totalResults)
+
     const [dropDownData, setDropDownData] = useState({ status: [], type: [] })
     const [dropDownSelected, setDropDownSelected] = useState({ status: null, type: null, fromDate: null, toDate: null })
     const [searchText, setSearchText] = useState('');
-    const [communicationsData, setCommunicationsData] = useState([]);
     const [selectedRows, setSelectedRows] = useState([])
-    const [loading, setLoading] = useState(true);
-    const [currentUser] = FetchCurrentUser();
-    const [pageNumber, setPageNumber] = useState(1);
-    const [totalResults, setTotalResults] = useState(0);
+    
     const { t } = useTranslation();
 
     useEffect(() => {
-        Promise.all([
-            getCommunicationsList(initialPayload).then(result => {
-                setCommunicationsData(result?.Value);
-                setTotalResults(result?.Key);
-            }),
-            getCommunicationMessageTypes().then(result => {
-                setDropDownData(pre => ({ ...pre, type: result }))
-            }),
-            getCommunicationMessageStatuses().then(result => {
-                setDropDownData(pre => ({ ...pre, status: result }))
-            })
-        ]).finally(() => setLoading(false));
+        if (communicationsData.length === 0)
+            getCommunicationsList(initialPayload)
+
+        getCommunicationMessageTypes().then(result => {
+            setDropDownData(pre => ({ ...pre, type: result }))
+        })
+        getCommunicationMessageStatuses().then(result => {
+            setDropDownData(pre => ({ ...pre, status: result }))
+        })
 
     }, []);
 
@@ -94,11 +99,8 @@ const Communications = () => {
             "PageCount": pageNumber
         }
         deleteCommunicationLogs(deleteList).then(() => {
-            getCommunicationsList(params).then(result => {
-                setCommunicationsData(result?.Value);
-                setTotalResults(result?.Key);
-                message.success(t('DELETE_SUCCESSFUL'));
-            }).finally(() => setLoading(false))
+            getCommunicationsList(params)
+            message.success(t('DELETE_SUCCESSFUL'));
         }).catch(() => {
             setLoading(false);
             message.error(t('DELETE_FAILED'));
@@ -129,8 +131,6 @@ const Communications = () => {
     };
 
     const onFilter = () => {
-        setLoading(true)
-
         const params = {
             "StatusId": dropDownSelected?.status?.Id,
             "MessageTypeId": dropDownSelected?.type?.Id,
@@ -141,12 +141,8 @@ const Communications = () => {
             "PageCount": 1
         }
 
-        getCommunicationsList(params).then(result => {
-            setCommunicationsData(result?.Value);
-            setTotalResults(result?.Value);
-            setLoading(false);
-            setPageNumber(1);
-        });
+        getCommunicationsList(params)
+        setPageNumber(1);
     }
 
     const createNew = () => {
@@ -154,8 +150,6 @@ const Communications = () => {
     }
 
     const onChangePage = (pageNumb) => {
-        setLoading(true);
-
         const params = {
             "StatusId": dropDownSelected?.status?.Id,
             "MessageTypeId": dropDownSelected?.type?.Id,
@@ -166,12 +160,8 @@ const Communications = () => {
             "PageCount": pageNumb
         }
 
-        getCommunicationsList(params).then(result => {
-            setLoading(false)
-            setPageNumber(pageNumb)
-            setCommunicationsData(result?.Value);
-            setTotalResults(result?.Key);
-        }).catch(() => setLoading(false))
+        getCommunicationsList(params)
+        setPageNumber(pageNumb)
     }
 
     return (

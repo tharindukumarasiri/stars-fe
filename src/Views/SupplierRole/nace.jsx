@@ -49,6 +49,8 @@ const Nace = () => {
         }
     }, [selectedCompany])
 
+    const stopPropagateCheckBox = (e) => e.stopPropagation();
+
     const getIndent = (level = 1) => {
         return {
             marginLeft: 20 * level
@@ -237,7 +239,9 @@ const Nace = () => {
         return (
             <>
                 <CriteriaColorGuideTab dataArr={['SECTION', 'DIVISION', 'GROUP', 'CLASS']} containerStyle='selected-codes' />
-                <UserSelectedFields data={organizationData.naces} dataFeieldName='description' closable={true} onClose={onDelete} />
+                <div className="supplier-dropdown-content-container">
+                    <UserSelectedFields data={organizationData.naces} dataFeieldName='description' closable={true} onClose={onDelete} />
+                </div>
             </>
         )
     }
@@ -247,12 +251,20 @@ const Nace = () => {
             sectionData.map((section, secIndex) => {
                 return (
                     <div key={secIndex}>
-                        <div className="result-item hover-hand bg-blue-light" onClick={() => { getDivitionData(section.code) }}>
-                            <div className="body-text">
+                        <div className="result-item hover-hand bg-blue-light g-row" onClick={() => { getDivitionData(section.code) }}>
+                            <div className="body-text g-col-11">
                                 <i className={expanded.section.includes(section.code) ? 'icon-minus-circled fl toggle-icon' : 'icon-plus-circled fl toggle-icon'} />
                                 <div className="body-text-bold m-r-10 fl">{section.code}</div>
                                 {section.desscription}
                             </div>
+                            <input type="checkbox" className="check-box g-col-1" onClick={stopPropagateCheckBox}
+                                checked={organizationData?.naces?.findIndex(data => data.code === section.code) > -1}
+                                onChange={() =>
+                                    handleChekBox(
+                                        {
+                                            mostChild: { code: section.code, value: section.desscription },
+                                        })}
+                            />
                         </div>
                         {expanded.section.includes(section.code) &&
                             naceData.divition.map((divition) => {
@@ -267,6 +279,17 @@ const Nace = () => {
                                                             <div className="body-text-bold m-r-10 fl">{divitionData.code}</div>
                                                             {divitionData.desscription}
                                                         </div>
+                                                        <input type="checkbox" className="check-box" onClick={stopPropagateCheckBox}
+                                                            checked={organizationData?.naces?.findIndex(data => data.code === divitionData.code) > -1}
+                                                            onChange={() =>
+                                                                handleChekBox(
+                                                                    {
+                                                                        mostChild: { code: divitionData.code, value: divitionData.desscription },
+                                                                        parents: [
+                                                                            { code: section.code, value: section.desscription },
+                                                                        ]
+                                                                    })}
+                                                        />
                                                     </div>
                                                     {expanded.divition.includes(divitionData.code) &&
                                                         naceData.group.map((group) => {
@@ -281,6 +304,18 @@ const Nace = () => {
                                                                                         <div className="body-text-bold m-r-10 fl">{groupData.code}</div>
                                                                                         {groupData.desscription}
                                                                                     </div>
+                                                                                    <input type="checkbox" className="check-box" onClick={stopPropagateCheckBox}
+                                                                                        checked={organizationData?.naces?.findIndex(data => data.code === groupData.code) > -1}
+                                                                                        onChange={() =>
+                                                                                            handleChekBox(
+                                                                                                {
+                                                                                                    mostChild: { code: groupData.code, value: groupData.desscription },
+                                                                                                    parents: [
+                                                                                                        { code: section.code, value: section.desscription },
+                                                                                                        { code: divitionData.code, value: divitionData.desscription },
+                                                                                                    ]
+                                                                                                })}
+                                                                                    />
                                                                                 </div>
                                                                                 {expanded.group.includes(groupData.code) &&
                                                                                     naceData.class.map((clas) => {
@@ -288,18 +323,7 @@ const Nace = () => {
                                                                                             return (
                                                                                                 clas.data.map((classData, clsIndex) => {
                                                                                                     return (
-                                                                                                        <div className="result-item hover-hand bg-blue-lighter3" style={getIndent(4)} key={clsIndex}
-                                                                                                            onClick={() =>
-                                                                                                                handleChekBox(
-                                                                                                                    {
-                                                                                                                        mostChild: { code: classData.code, value: classData.desscription },
-                                                                                                                        parents: [
-                                                                                                                            { code: section.code, value: section.desscription },
-                                                                                                                            { code: divitionData.code, value: divitionData.desscription },
-                                                                                                                            { code: groupData.code, value: groupData.desscription }
-                                                                                                                        ]
-                                                                                                                    })}
-                                                                                                        >
+                                                                                                        <div className="result-item hover-hand bg-blue-lighter3" style={getIndent(4)} key={clsIndex}>
                                                                                                             <div className="body-text m-l-10">
                                                                                                                 <div className="body-text-bold m-r-10 fl">{classData.code}</div>
                                                                                                                 {classData.desscription}
@@ -369,7 +393,9 @@ const Nace = () => {
                                 <i className="g-col-1 icon-arrow-down fl" />
                             </div>
                         </div>
-                        <NaceData />
+                        <div className="supplier-dropdown-content-container">
+                            <NaceData />
+                        </div>
                     </div>
                     <div className="g-col-5">
                         <h3 className="text-center">{t("SELECTED_NACE_CODES")}</h3>

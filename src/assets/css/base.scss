@@ -21,6 +21,7 @@
 @import 'custom-scroll.scss';
 @import 'template-creator.scss';
 @import 'common-landing-page.scss';
+@import 'dropdownList.scss';
 
 *, *:before, *:after {
     -webkit-box-sizing: border-box;
@@ -319,7 +320,7 @@ ul.custom-button-list {
 
 
 .white-logo {
-    max-width: 60px;
+    max-width: 48px;
     margin: auto
 }
 
@@ -359,7 +360,7 @@ ul.custom-button-list {
 }
 // home page
 .main-img-wrapper {
-    min-height: 400px
+    min-height: 302px
 }
 
 .home-img {
@@ -369,14 +370,16 @@ ul.custom-button-list {
     margin-top: 58px;
 
     img {
-        width: 32%;
+        width: auto;
+        max-height: 250px;
     }
 }
 
 .home-img-bg {
     width: 100%;
     text-align: center;
-
+    background: url(/Content/images/footer-email-template.svg) repeat-x;
+    
     img {
         width: 100%;
     }
@@ -403,11 +406,7 @@ ul.custom-button-list {
     text-decoration:none;
 }
 
-@media screen and (max-width: $desktop) {
-    .home-img > img {
-        width: 50%;
-    }
-}
+
 
 .scroll-to {
     position: fixed;
@@ -527,13 +526,10 @@ ul.custom-button-list {
 }
 
 .action-bar {
-    background-color: $theme-tint-95;
-    position: fixed;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    min-height: 50px;
-    text-align:right;
+   // background-color: $theme-tint-99;
+    position: relative;
+    text-align: right;
+    padding: 3px;
 }
 
 .icon-search-1 {
@@ -607,9 +603,29 @@ ul.custom-button-list {
             font-size: 2.8em !important;
         }
     }
+
+    h1 {
+        padding-top: 0px;
+        margin-right: 10px;
+    }
 }
 
 //errors
 .error-text {
     color: $red
+}
+
+.overflow-scroll-y{
+    display: block;
+    overflow-y: scroll;
+    width:100%;
+}
+
+.result-item {
+    min-height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1px;
+    padding-left: 5px;
 }

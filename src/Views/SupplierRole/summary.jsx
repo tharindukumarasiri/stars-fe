@@ -173,17 +173,19 @@ const Summary = () => {
 
     return (
         <>
-            <div className="g-row m-l-10">
-                <i className="icon-summary header-icon m-t-10 m-r-15 fl" />
+            {/*
+             <div className="g-row m-l-10">
+                <i className="icon-summary header-icon m-t-10 m-r-15" />
                 <h3 className="m-t-20">{t("SUMMARY")}</h3>
             </div>
-            <div className="page-container">
+             */} 
                 <div className="g-row">
                     <NavigationCard name={'UNSPSC_CODES'} cardColour={"bg-blue-purple"} value={organizationData.unspscs?.length} onClick={() => onClickCard(NAVIGATION_PAGES.SUPPLIER_UNSPSC)} />
                     <NavigationCard name={'CPV_CODES'} cardColour={"bg-blue"} value={organizationData.cpvs?.length} onClick={() => onClickCard(NAVIGATION_PAGES.SUPPLIER_CPV)} />
                     <NavigationCard name={'NACE_CODES'} cardColour={"bg-vialot"} value={organizationData.naces?.length} onClick={() => onClickCard(NAVIGATION_PAGES.SUPPLIER_NACE)} />
                     <NavigationCard name={"MARKETS"} cardColour={"bg-green-lite"} value={marketsCount} onClick={() => onClickCard(NAVIGATION_PAGES.SUPPLIER_MARKET)} />
                 </div>
+                <div className="overflow-scroll-y h-400">
                 <Expandable title={"UNSPSC (United Nations Standard Products and Services Code )"} expandedItem={expandedItem} setExpandedItem={setExpandedItem} label='UNSPSC' >
                     <UnspscData />
                 </Expandable>
@@ -203,8 +205,8 @@ const Summary = () => {
                             {countries.map(pane => <TabPane tab={tabName(pane.name, pane.code)} key={pane.code}>{UserSelecteNutsCodes()}</TabPane>)}
                         </Tabs>
                     </div>
-                </Expandable>
-            </div>
+                    </Expandable>
+                </div>
         </>
     )
 }

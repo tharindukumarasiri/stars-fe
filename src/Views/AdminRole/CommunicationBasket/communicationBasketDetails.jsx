@@ -1,6 +1,8 @@
-import React, { useState, useRef, useContext } from "react";
+import React, { useState, useRef, useContext, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { message, Badge } from "antd";
+
+import { useTimeConfigStore } from '../adminRoleStore'
 
 import TimeConfig from "../Components/timeConfig";
 import CompaniesAndPersons from "./companiesAndPersons";
@@ -8,6 +10,7 @@ import Input from "../../../common/input";
 import Dropdown from "../../../common/dropdown";
 import image_thumb from "../../../assets/images/image_thumb.png";
 import { joinAsCompanySendImmediatly, sendImmediately, activateSchedule, deActivateSchedule } from "../../../services/communicationService";
+import { GetCommunicationTemplatesByTenant } from "../../../services/templateService";
 
 import { NAVIGATION_PAGES } from "../../../utils/enums";
 import { messageTriggerPoints, schedulingTypes } from "../../../utils/constants";
@@ -15,16 +18,17 @@ import { messageTriggerPoints, schedulingTypes } from "../../../utils/constants"
 import { TabContext, UserContext } from "../../../utils/contextStore";
 
 const CommunicationBasketDetails = ({ props }) => {
-    const selectedTemplate = props?.templatesData?.filter(template => template?.Id === props?.MessageTemplateId)[0] ?? null;
+    const schedulingType = useTimeConfigStore((state) => state.schedulingType);
+
     const [currentStep, setCurrentStep] = useState(1);
-    const [schedulingType, setschedulingType] = useState(schedulingTypes.IMMIDIATE)
     const [selectedRecipients, setSelectedRecipients] = useState([]);
+    const [templatesData, setTemplatesData] = useState(null);
     const [loading, setLoading] = useState(false);
     const [basketDetails, setBasketDetails] = useState({
         "name": props?.Name ?? "",
         "description": props?.Description,
-        "template": selectedTemplate,
-        "basketStatus": props?.BasketStatus
+        "template": {},
+        "basketStatusId": props?.BasketStatusId
     });
     const [basketDataErrors, setBasketDataErrors] = useState({ name: '', template: '' })
     const [isSheduleActive, setIsSheduleActive] = useState(props?.IsScheduled || false)
@@ -33,6 +37,18 @@ const CommunicationBasketDetails = ({ props }) => {
     const { changeActiveTab, closeTab } = useContext(TabContext)
     const { selectedCompany, currentUser } = useContext(UserContext);
     const TIME_CONFIG_REF = useRef();
+
+    useEffect(() => {
+        if (selectedCompany?.companyPartyId) {
+            GetCommunicationTemplatesByTenant(selectedCompany?.companyPartyId, 1).then(result => {
+                setTemplatesData(result)
+
+                const selectedTemplate = result?.filter(template => template?.Id === props?.MessageTemplateId)[0]
+                setBasketDetails({...basketDetails, "template": selectedTemplate })
+            });
+
+        }
+    }, [selectedCompany])
 
     const updateRecipientsWithNew = (newlyAddedRecipients) => {
         setSelectedRecipients([...newlyAddedRecipients]);
@@ -209,7 +225,7 @@ const CommunicationBasketDetails = ({ props }) => {
                                 <Input placeholder='Description' value={basketDetails.description} onChange={(e) => onChangeBasketDetails(e, 'description')} lines={6} />
                             </div>
                             <Dropdown
-                                values={props?.templatesData}
+                                values={templatesData}
                                 onChange={onChangeTemplate}
                                 selected={JSON.stringify(basketDetails.template || undefined)}
                                 placeholder="Template"
@@ -222,9 +238,7 @@ const CommunicationBasketDetails = ({ props }) => {
                                 ref={TIME_CONFIG_REF}
                                 basketDetails={basketDetails}
                                 Id={props?.Id}
-                                setschedulingType={setschedulingType}
                                 setCurrentStep={setCurrentStep}
-                                basketData={props}
                             />
                         </div>
                     </div>

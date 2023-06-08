@@ -41,11 +41,11 @@
 }
 
 .blue-lighter {
-  color: #fbfdff;
+  color: #ecf6fe;
 }
 
 .blue-lighter2 {
-  color: white;
+  color: #f6fbff;
 }
 
 .bg-blue {
@@ -73,14 +73,18 @@
 }
 
 .bg-blue-lighter {
-  background-color: #fbfdff !important;
+  background-color: #ecf6fe !important;
 }
 
 .bg-blue-lighter2 {
-  background-color: white !important;
+  background-color: #f6fbff !important;
 }
 
 .bg-blue-lighter3 {
+  background-color: white !important;
+}
+
+.bg-blue-lighter4 {
   background-color: white !important;
 }
 
@@ -259,3 +263,5 @@
 .bg-bluish-green-light5 {
   background-color: #F6FAF9;
 }
+
+/*# sourceMappingURL=data:application/json;charset=utf-8,%7B%22version%22:3,%22sourceRoot%22:%22%22,%22sources%22:%5B%22file:///G:/Starframwork-Sep-B/StarWeb/Source/Robot.Star.Web/Client/Boot/assets/css/colors.scss%22%5D,%22names%22:%5B%5D,%22mappings%22:%22AAgFA;AAaA;AAKA;EACI,OAlGI;;;AAqGR;EACI;;;AAGJ;EACI,OAlFU;;;AAqFd;EACI,OAvBI;;;AAyBR;EACI,kBA1BI;;;AA+BR;EACI,OAlFS;;;AAqFb;EACI,OAnFS;;;AAsFb;EACI,OApFU;;;AAuFd;EACI,OAvFW;;;AA0Ff;EACI,OAvFS;;;AA0Fb;EACI,OA1FW;;;AA6Ff;EACI,OA7FY;;;AAgGhB;EACI,kBA9GS;;;AAiHb;EACI,kBA/GS;;;AAkHb;EACI;;;AAGJ;EACI,kBAjEc;;;AAoElB;EACI,kBAvHW;;;AA0Hf;EACI;;;AAGJ;EACI;;;AAGJ;EACI;;;AAGJ;EACI;;;AAEJ;EACI;;;AAKJ;EACI,OA7HQ;;;AAgIZ;EACI,OA/HS;;;AAkIb;EACI;;;AAGJ;EACI,kBAzIQ;;;AA4IZ;EACI,kBA3IS;;;AA8Ib;EACI,kBA9IW;;;AAiJf;EACI,kBApJQ;;;AAwJZ;EACI,OA3II;;;AA8IR;EACI,OAxIS;;;AA2Ib;EAAa,OAhJA;;;AAkJb;EACI,kBArJI;;;AAuJR;EACI,kBAtJS;;;AAwJb;EACI,kBAxJU;;;AA0Jd;EACI,kBA1JU;;;AA4Jd;EACI,kBA5JU;;;AA8Jd;EACI,kBA9JU;;;AAiKd;EACI;;;AAGJ;EACI;;;AAIJ;EACI,OAzLE;;;AA4LN;EACI,kBA7LE;;;AAgMN;EACI,OAhMQ;;;AAmMZ;EACI,kBApMQ;;;AAuMZ;EACI,OAvMO;;;AA0MX;EACI,kBA3MO;;;AA+MX;EACI,OA/MK;;;AAkNT;EACI,kBAnNK;;;AAsNT;EACI,OAtNU;;;AAyNd;EACI,kBA1NU;;;AAkOd;EACI,OALK;;;AAQT;EACI,kBATK;;;AAWT;EACI,kBAVW;;;AAYf;EACI,kBAZW;;;AAgBf;EACI,OAhQW;;;AAmQf;EACI,kBApQW;;;AAuQf;EACI,OAxQW;;;AA2Qf;EACI,kBA3QgB;;;AA8QpB;EACI,OAlRU;;;AAqRd;EACI,kBAtRU;;;AAyRd;EACI,kBAzRe;;;AA4RnB;EACI;;;AAGJ;EACI;;;AAGJ;EACI;;;AAGJ;EACI;;;AAGJ;EACI%22%7D */

@@ -24,7 +24,7 @@ const CountryDropDown = ({ dataList, selectedList, setSelectedState, apiCalls, c
                     selectedList.selectedCountries?.map(item => {
                         return (
                             <div className="selected-item" key={item.id}>
-                                <i className="close-btn  icon-x-bold m-t-5" onClick={() => onCloseBtnClick(item)} > </i>
+                                <i className="close-btn  icon-x-bold" onClick={() => onCloseBtnClick(item)} > </i>
                                 {item.name}
                             </div>
                         )

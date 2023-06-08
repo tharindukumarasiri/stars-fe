@@ -98,28 +98,16 @@ const SellerRole = () => {
             }}>
             <Tabs>
                 <div label={t('SELLER')} id={NAVIGATION_PAGES.SELLER_HOME} >
-                    <div className="page-container">
+                    <div className="">
                         <SellerHome />
                     </div>
                 </div>
                 <div label={t('GET_NOTIFIED')} id={NAVIGATION_PAGES.SELLER_GET_NOTIFIED}>
-                    <div className="page-container">
+                    <div className="">
                         <GetNotified />
                     </div>
                 </div>
-                <div label={t('MATCHING_TENDERS')} id={NAVIGATION_PAGES.SELLER_MATCHING_TENDERS}>
-                    <div className="page-container">
-                        <MatchingTenders />
-                    </div>
-                </div>
-                <div label={t('GLOBAL_TENDER')} id={NAVIGATION_PAGES.SELLER_GLOBAL_TENDER}>
-                    <GlobalTenderSearch />
-                </div>
-                <div label={`${t('MATCHING_TENDERS')} : ${params.SELLER_TENDER_DETAILS?.receiptionId}`} id={NAVIGATION_PAGES.SELLER_TENDER_DETAILS}>
-                    <div className="page-container">
-                        <TenderDetails {...params.SELLER_TENDER_DETAILS} />
-                    </div>
-                </div>
+               
             </Tabs>
         </TabContext.Provider >
     )

@@ -12,7 +12,7 @@ const UserSelectedFields = ({ data = [], dataFeieldName = 'description', languag
             case 3:
                 return 'bg-blue-lighter3';
             case 4:
-                return 'bg-grey-lighter';
+                return 'bg-grey-lighter4';
             default:
                 break;
         }

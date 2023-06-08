@@ -1,34 +1,73 @@
 import React, { useState, useEffect, useMemo, useContext } from "react";
 import { Table, Tooltip, message, Pagination } from 'antd';
 
+import { useUserStore, useBasketStore, useTimeConfigStore } from '../adminRoleStore'
+
 import { CommunicationBasketsTableHeaders } from '../../../utils/tableHeaders'
 import StarDropdown from "../../../common/dropdown";
 import DatePickerInput from "../../../common/datePickerInput";
 import { NAVIGATION_PAGES } from "../../../utils/enums";
 import { TabContext } from "../../../utils/contextStore";
 import {
-    getCommunicationBasket,
     getCommunicationBasketStatuses,
     getCommunicationBasketTypes,
     deleteCommunicationBasket,
 } from "../../../services/communicationService";
-import { GetCommunicationTemplatesByTenant } from "../../../services/templateService";
-import { FetchCurrentUser, FetchCurrentCompany } from "../../../hooks/index"
 import { useTranslation } from "react-i18next";
+import { schedulingTypes, recurringTypes } from "../../../utils/constants";
+
+const scheduleType = (typeId) => {
+    switch (typeId) {
+        case 1:
+            return schedulingTypes.IMMIDIATE
+        case 2:
+            return schedulingTypes.PLANNED
+        case 3:
+            return schedulingTypes.RECURRING
+        default:
+            return schedulingTypes.IMMIDIATE
+    }
+}
+
+const getBasketRecurringTypeId = (typeId) => {
+    switch (typeId) {
+        case 1:
+            return recurringTypes.DALY;
+        case 2:
+            return recurringTypes.WEEKLY;
+        case 3:
+            return recurringTypes.MONTHLY;
+        default:
+            return recurringTypes.DALY;
+    }
+}
 
 const pageSize = 10;
 
 const CommunicationBaskets = () => {
-    const [dropDownData, setDropDownData] = useState({ type: [], status: [], comType: [] })
-    const [filterTypes, setFilterTypes] = useState({ startDate: null, endDate: null, type: null, status: null })
-    const [communicationsData, setCommunicationsData] = useState([])
-    const [loading, setLoading] = useState(true);
-    const [pageNumber, setPageNumber] = useState(1);
-    const [totalResults, setTotalResults] = useState(0);
-    const {t} = useTranslation();
+    const selectedCompany = useUserStore((state) => state.selectedCompany);
+    const currentUser = useUserStore((state) => state.currentUser);
 
-    const [currentUser] = FetchCurrentUser();
-    const [selectedCompany] = FetchCurrentCompany();
+    const communicationsData = useBasketStore((state) => state.communicationBasketData);
+    const getCommunicationsData = useBasketStore((state) => state.getCommunicationBasketData);
+    const totalResults = useBasketStore((state) => state.communicationBasketTotalResults);
+    const loading = useBasketStore((state) => state.loading);
+    const setLoading = useBasketStore((state) => state.setLoading);
+    const pageNumber = useBasketStore((state) => state.pageNumber);
+    const setPageNumber = useBasketStore((state) => state.setPageNumber);
+
+    const setSchedulingType = useTimeConfigStore((state) => state.setSchedulingType);
+    const setoneTimeData = useTimeConfigStore((state) => state.setoneTimeData);
+    const setRecurringeData = useTimeConfigStore((state) => state.setRecurringeData);
+    const setRecurringeDaily = useTimeConfigStore((state) => state.setRecurringeDaily);
+    const setRecurringeWeekly = useTimeConfigStore((state) => state.setRecurringeWeekly);
+    const resetTimeConfigs = useTimeConfigStore((state) => state.resetTimeConfigs);
+
+    const [dropDownData, setDropDownData] = useState({ type: [], status: [] })
+    const [filterTypes, setFilterTypes] = useState({ startDate: null, endDate: null, type: null, status: null })
+
+    const { t } = useTranslation();
+
     const { changeActiveTab } = useContext(TabContext);
 
     useEffect(() => {
@@ -41,10 +80,7 @@ const CommunicationBaskets = () => {
     }, []);
 
     useEffect(() => {
-        if (selectedCompany?.companyPartyId) {
-            GetCommunicationTemplatesByTenant(selectedCompany?.companyPartyId, 1).then(result => {
-                setDropDownData(pre => ({ ...pre, comType: result }))
-            })
+        if (selectedCompany?.companyPartyId && communicationsData.length === 0) {
             getCommunicationBasketData()
         }
     }, [selectedCompany]);
@@ -61,15 +97,7 @@ const CommunicationBaskets = () => {
             "CompanyPartyId": selectedCompany?.companyPartyId
         }
 
-        getCommunicationBasket(params).then(result => {
-            setCommunicationsData(result?.Value);
-            setTotalResults(result?.Key);
-        }).finally(() => setLoading(false))
-    }
-
-    const onLogClick = (e, Id) => {
-        e.stopPropagation();
-        changeActiveTab(NAVIGATION_PAGES.COMMUNICATIONS_LOG, { "basketId": Id,  })
+        getCommunicationsData(params)
     }
 
     const onDelete = (e, id) => {
@@ -127,17 +155,41 @@ const CommunicationBaskets = () => {
     }
 
     const toggleModal = () => {
-        changeActiveTab(NAVIGATION_PAGES.COMMUNICATIONS_BASKET_DETAILS, {templatesData: dropDownData?.comType})
+        resetTimeConfigs()
+        changeActiveTab(NAVIGATION_PAGES.COMMUNICATIONS_BASKET_DETAILS, {})
     }
 
     const onChangePage = (pageNumb) => {
         setLoading(true);
         setPageNumber(pageNumb)
-        getCommunicationBasketData();
+        getCommunicationBasketData(pageNumb);
     }
 
     const onClickRow = (params) => {
-        changeActiveTab(NAVIGATION_PAGES.COMMUNICATIONS_BASKET_DETAILS, {...params, templatesData: dropDownData?.comType})
+        setSchedulingType(scheduleType(params?.BasketTypeId));
+        setoneTimeData({
+            date: params?.FromDateTime || null,
+            time: null,
+            deleteReciver: params?.IsDeleteReceivers || false
+        });
+        setRecurringeData({
+            startDate: params?.FromDateTime || null,
+            endDate: params?.ToDateTime || null,
+            recurringType: getBasketRecurringTypeId(params?.BasketRecurringTypeId)
+        });
+        setRecurringeDaily({
+            isEveryDay: true,
+            everyDayCount: params?.Frequency || 1,
+            nextTime: null
+        });
+        setRecurringeWeekly({
+            recurEveryCount: params?.Frequency || 1,
+            selectedDays: [],
+            nextDate: params?.NextScheduledDateTime || null,
+            nextTime: null
+        })
+
+        changeActiveTab(NAVIGATION_PAGES.COMMUNICATIONS_BASKET_DETAILS, { ...params })
     }
 
     return (

@@ -20,8 +20,8 @@ const DropdownMultiSelect = ({ placeholder, dataList, dataName = 'name', keyName
                 {
                     selectedList?.map(item => {
                         return (
-                            <div className="selected-item flex-align-center" key={item[keyName]}>
-                                <i className="close-btn icon-close-small-x m-t-5 m-r-10" onClick={() => onCloseBtnClick(item)} > </i>
+                            <div className="selected-item-hetti" key={item[keyName]}>
+                                <i className="close-btn icon-close-small-x fr" onClick={() => onCloseBtnClick(item)} > </i>
                                 {item[dataName]}
                             </div>
                         )

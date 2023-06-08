@@ -1,6 +1,7 @@
-import React, { useState, useEffect, forwardRef, useImperativeHandle, useContext } from "react";
+import React, { useState, forwardRef, useImperativeHandle, useContext } from "react";
 import { message } from 'antd';
-import { useTranslation } from "react-i18next";
+
+import { useBasketStore, useTimeConfigStore } from '../adminRoleStore'
 
 import DatePickerInput from "../../../common/datePickerInput";
 import { updateCommunicationBasket } from "../../../services/communicationService";
@@ -8,73 +9,23 @@ import { UserContext } from '../../../utils/contextStore';
 import { formatDate } from "../../../utils";
 import { messageTriggerPoints, schedulingTypes, recurringTypes, DaysOfTheWeek } from "../../../utils/constants";
 
-const scheduleType = (typeId) => {
-    switch (typeId) {
-        case 1:
-            return schedulingTypes.IMMIDIATE
-        case 2:
-            return schedulingTypes.PLANNED
-        case 3:
-            return schedulingTypes.RECURRING
-        default:
-            return schedulingTypes.IMMIDIATE
-    }
-}
-
-const getBasketRecurringTypeId = (typeId) => {
-    switch (typeId) {
-        case 1:
-            return recurringTypes.DALY;
-        case 2:
-            return recurringTypes.WEEKLY;
-        case 3:
-            return recurringTypes.MONTHLY;
-        default:
-            return recurringTypes.DALY;
-    }
-}
-
 const TimeConfig = forwardRef((props, ref) => {
     const basketDetails = props?.basketDetails
-    const basketData = props?.basketData
-    const [schedulingType, setSchedulingType] = useState(scheduleType(basketData?.BasketTypeId));
-    const [oneTimeData, setoneTimeData] = useState({
-        date: Date.parse(basketData?.FromDateTime) || null,
-        time: null,
-        deleteReciver: basketData?.IsDeleteReceivers || false
-    });
-    const [recurringeData, setRecurringeData] = useState({
-        startDate: Date.parse(basketData?.FromDateTime) || null,
-        endDate: Date.parse(basketData?.ToDateTime) || null,
-        recurringType: getBasketRecurringTypeId(basketData?.BasketRecurringTypeId)
-    });
-    const [recurringeDaily, setRecurringeDaily] = useState({
-        isEveryDay: true,
-        everyDayCount: basketData?.Frequency || 1,
-        nextTime: null
-    });
-    const [recurringeWeekly, setRecurringeWeekly] = useState({
-        recurEveryCount: basketData?.Frequency || 1,
-        selectedDays: [],
-        nextDate: Date.parse(basketData?.NextScheduledDateTime) || null,
-        nextTime: null
-    });
-    const [recurringeMonthly, setRecurringeMonthly] = useState({
-        day: 1,
-        nextDate: null,
-        nextTime: null,
-        isEndOfMonth: false
-    });
+
+    const getCommunicationBasketData = useBasketStore((state) => state.getCommunicationBasketData);
+    const {
+        schedulingType, setSchedulingType,
+        oneTimeData, setoneTimeData,
+        recurringeData, setRecurringeData,
+        recurringeDaily, setRecurringeDaily,
+        recurringeWeekly, setRecurringeWeekly,
+        recurringeMonthly, setRecurringeMonthly
+    } = useTimeConfigStore();
+
     const [fieldErrors, setFieldErrors] = useState({ date: null, startDate: null, endDate: null, time: null });
     const [loading, setLoading] = useState(false);
 
     const { selectedCompany, currentUser } = useContext(UserContext);
-
-    const { t } = useTranslation();
-
-    useEffect(() => {
-        props?.setschedulingType(schedulingType)
-    }, [schedulingType])
 
     const onOneTimeDataChange = (value, type) => {
         setFieldErrors(prev => ({ ...prev, [type]: '' }))
@@ -84,6 +35,14 @@ const TimeConfig = forwardRef((props, ref) => {
     const onRecurringDataChange = (value, type) => {
         setFieldErrors(prev => ({ ...prev, [type]: '' }))
         setRecurringeData({ ...recurringeData, [type]: value })
+    }
+
+    const getFormattedDateTime = (dateTime) => {
+        if(dateTime) {
+            return Date.parse(dateTime)
+        } else {
+            return null
+        }
     }
 
     const validate = () => {
@@ -218,8 +177,8 @@ const TimeConfig = forwardRef((props, ref) => {
                         "Id": props?.Id || 0,
                         "Name": basketDetails?.name,
                         "Description": basketDetails?.description,
-                        "BasketStatusId": basketDetails?.basketStatus?.Id || 0,
-                        "MessageTemplateId": basketDetails?.template?.MessageTemplateId,
+                        "BasketStatusId": basketDetails?.BasketStatusId || null,
+                        "MessageTemplateId": basketDetails?.template?.Id,
                         "MessageTypeId": basketDetails?.template?.MessageTypeId,
                         "MessageMediumId": basketDetails?.template?.MessageMediumId,
                         "CompanyPartyId": selectedCompany?.companyPartyId,
@@ -233,6 +192,13 @@ const TimeConfig = forwardRef((props, ref) => {
                     setLoading(false);
                     message.success('Configuration Success');
                     props?.setCurrentStep(pre => ++pre)
+
+                    const basketParams = {
+                        "PageSize": 10,
+                        "PageCount": 1,
+                        "CompanyPartyId": selectedCompany?.companyPartyId
+                    }
+                    getCommunicationBasketData(basketParams)
                 }).catch(() => {
                     setLoading(false);
                     message.error('Configuration Failed')
@@ -250,25 +216,25 @@ const TimeConfig = forwardRef((props, ref) => {
     }
 
     const changeRecurringType = (e) => {
-        setRecurringeData(prev => ({ ...prev, recurringType: e.target.name }))
+        setRecurringeData({ ...recurringeData, recurringType: e.target.name })
     }
 
     const changeRecurringDailyData = (type, value) => {
-        setRecurringeDaily(prev => ({ ...prev, [type]: value }))
+        setRecurringeDaily({ ...recurringeDaily, [type]: value })
     }
 
     const onEveryDayCountChange = (e) => {
         e.preventDefault();
-        setRecurringeDaily(prev => ({ ...prev, everyDayCount: e.target.value.replace(/[^0-9]+$/gi, '') }))
+        setRecurringeDaily({ ...recurringeDaily, everyDayCount: e.target.value.replace(/[^0-9]+$/gi, '') })
     }
 
     const onEveryWeekCountChange = (e) => {
         e.preventDefault();
-        setRecurringeWeekly(prev => ({ ...prev, recurEveryCount: e.target.value.replace(/[^0-9]+$/gi, '') }))
+        setRecurringeWeekly({ ...recurringeWeekly, recurEveryCount: e.target.value.replace(/[^0-9]+$/gi, '') })
     }
 
     const changeRecurringWeeklyData = (type, value) => {
-        setRecurringeWeekly(prev => ({ ...prev, [type]: value }))
+        setRecurringeWeekly({ ...recurringeWeekly, [type]: value })
     }
 
     const onWeekDayCheckBox = (day) => {
@@ -281,16 +247,16 @@ const TimeConfig = forwardRef((props, ref) => {
             newSelectedDays.splice(index, 1)
         }
 
-        setRecurringeWeekly(prev => ({ ...prev, selectedDays: newSelectedDays }))
+        setRecurringeWeekly({ ...recurringeWeekly, selectedDays: newSelectedDays })
     }
 
     const onEveryMonthCountChange = (e, type) => {
         e.preventDefault();
-        setRecurringeMonthly(prev => ({ ...prev, [type]: e.target.value.replace(/[^0-9]+$/gi, '') }))
+        setRecurringeMonthly({ ...recurringeMonthly, [type]: e.target.value.replace(/[^0-9]+$/gi, '') })
     }
 
     const changeRecurringMonthlyData = (type, value) => {
-        setRecurringeMonthly(prev => ({ ...prev, [type]: value }))
+        setRecurringeMonthly({ ...recurringeMonthly, [type]: value })
     }
 
     const recurringContent = () => {
@@ -323,7 +289,7 @@ const TimeConfig = forwardRef((props, ref) => {
                                 onChange={() => changeRecurringDailyData('isEveryDay', false)} />
                             <label className="p-l-20" htmlFor='EVERY_WEEKLY'>Every weekday</label>
                         </div>
-                        <div className="g-row">
+                        <div className={`g-row ${recurringeDaily.isEveryDay && 'disable-div'}`}>
                             <DatePickerInput
                                 placeholder='Next Time'
                                 value={recurringeDaily.nextTime}
@@ -370,7 +336,7 @@ const TimeConfig = forwardRef((props, ref) => {
                         <div className="m-b-20">
                             <DatePickerInput
                                 placeholder='Next Date'
-                                value={recurringeWeekly.nextDate}
+                                value={getFormattedDateTime(recurringeWeekly.nextDate)}
                                 onChange={(date) => changeRecurringWeeklyData('nextDate', date)}
                                 isClearable
                             />
@@ -407,7 +373,7 @@ const TimeConfig = forwardRef((props, ref) => {
                         <div  className={`m-b-20 ${recurringeMonthly.isEndOfMonth && 'disable-div'}`}>
                             <DatePickerInput
                                 placeholder='Next Date'
-                                value={recurringeMonthly.nextDate}
+                                value={getFormattedDateTime(recurringeMonthly.nextDate)}
                                 onChange={(date) => changeRecurringMonthlyData('nextDate', date)}
                                 isClearable
                             />
@@ -433,6 +399,66 @@ const TimeConfig = forwardRef((props, ref) => {
                 )
             default:
                 null
+        }
+    }
+
+    const renderRecurringContent = () => {
+        if(basketDetails.template === null ||
+            (basketDetails.template?.MessageTriggerPointId !== messageTriggerPoints.CompanyInvitation &&
+                basketDetails.template?.MessageTriggerPointId !== messageTriggerPoints.UserInvitationNewUser)){
+            return (
+                <>
+                    <div className="m-b-20">
+                        You can schedule a basket to send emails with a time interval
+                    </div>
+                    <div className="m-b-15 time-input-container">
+
+                        <DatePickerInput
+                            placeholder='START_DATE'
+                            value={getFormattedDateTime(recurringeData.startDate)}
+                            onChange={(date) => onRecurringDataChange(date, 'startDate')}
+                            isClearable
+                            minDate={new Date()}
+                            error={fieldErrors.startDate}
+                        />
+                        <DatePickerInput
+                            placeholder='END_DATE'
+                            value={getFormattedDateTime(recurringeData.endDate)}
+                            onChange={(date) => onRecurringDataChange(date, 'endDate')}
+                            isClearable
+                            minDate={new Date()}
+                            error={fieldErrors.endDate}
+                        />
+                    </div>
+                    <div className="g-row">
+                        <div className="g-col-3 m-b-10 recurring-types-container">
+                            <input
+                                type="radio" id={recurringTypes.DALY} name={recurringTypes.DALY}
+                                checked={recurringeData.recurringType === recurringTypes.DALY} className="m-l-20"
+                                onChange={changeRecurringType} />
+                            <label className="p-l-20" htmlFor={recurringTypes.DALY}>Daily</label>
+                            <input
+                                type="radio" id={recurringTypes.WEEKLY} name={recurringTypes.WEEKLY}
+                                checked={recurringeData.recurringType === recurringTypes.WEEKLY} className="m-l-20"
+                                onChange={changeRecurringType} />
+                            <label className="p-l-20" htmlFor={recurringTypes.WEEKLY}>Weekly</label>
+                            <input
+                                type="radio" id={recurringTypes.MONTHLY} name={recurringTypes.MONTHLY}
+                                checked={recurringeData.recurringType === recurringTypes.MONTHLY} className="m-l-20"
+                                onChange={changeRecurringType} />
+                            <label className="p-l-20" htmlFor={recurringTypes.MONTHLY}>Monthly</label>
+                        </div>
+                        <div className="g-col-9">
+                            {recurringContent()}
+                        </div>
+                    </div>
+                </>
+            )
+        } else {
+            if(schedulingType === schedulingTypes.RECURRING){
+                setSchedulingType(schedulingTypes.PLANNED)
+            }
+            return null
         }
     }
 
@@ -485,7 +511,7 @@ const TimeConfig = forwardRef((props, ref) => {
                             <div className="m-t-20 m-b-15 time-input-container">
                                 <DatePickerInput
                                     placeholder='Start Date'
-                                    value={oneTimeData.date}
+                                    value={getFormattedDateTime(oneTimeData.date)}
                                     onChange={(date) => onOneTimeDataChange(date, 'date')}
                                     isClearable
                                     minDate={new Date()}
@@ -513,52 +539,7 @@ const TimeConfig = forwardRef((props, ref) => {
                         <div className="g-col-11">Delete “Receivers list” after sent</div>
                     </div>
                 </>
-                : <>
-                    <div className="m-b-20">
-                        You can schedule a basket to send emails with a time interval
-                    </div>
-                    <div className="m-b-15 time-input-container">
-
-                        <DatePickerInput
-                            placeholder='START_DATE'
-                            value={recurringeData.startDate}
-                            onChange={(date) => onRecurringDataChange(date, 'startDate')}
-                            isClearable
-                            minDate={new Date()}
-                            error={fieldErrors.startDate}
-                        />
-                        <DatePickerInput
-                            placeholder='END_DATE'
-                            value={recurringeData.endDate}
-                            onChange={(date) => onRecurringDataChange(date, 'endDate')}
-                            isClearable
-                            minDate={new Date()}
-                            error={fieldErrors.endDate}
-                        />
-                    </div>
-                    <div className="g-row">
-                        <div className="g-col-3 m-b-10 recurring-types-container">
-                            <input
-                                type="radio" id={recurringTypes.DALY} name={recurringTypes.DALY}
-                                checked={recurringeData.recurringType === recurringTypes.DALY} className="m-l-20"
-                                onChange={changeRecurringType} />
-                            <label className="p-l-20" htmlFor={recurringTypes.DALY}>Daily</label>
-                            <input
-                                type="radio" id={recurringTypes.WEEKLY} name={recurringTypes.WEEKLY}
-                                checked={recurringeData.recurringType === recurringTypes.WEEKLY} className="m-l-20"
-                                onChange={changeRecurringType} />
-                            <label className="p-l-20" htmlFor={recurringTypes.WEEKLY}>Weekly</label>
-                            <input
-                                type="radio" id={recurringTypes.MONTHLY} name={recurringTypes.MONTHLY}
-                                checked={recurringeData.recurringType === recurringTypes.MONTHLY} className="m-l-20"
-                                onChange={changeRecurringType} />
-                            <label className="p-l-20" htmlFor={recurringTypes.MONTHLY}>Monthly</label>
-                        </div>
-                        <div className="g-col-9">
-                            {recurringContent()}
-                        </div>
-                    </div>
-                </>
+                : renderRecurringContent()
             }
         </div >
     )

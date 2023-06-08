@@ -1,6 +1,8 @@
 import React, { useContext } from "react";
 import { useTranslation } from 'react-i18next'
 
+import { useCommunicationsStore, useBasketStore, useUserStore } from './adminRoleStore'
+
 import { TabContext } from "../../utils/contextStore";
 import { NAVIGATION_PAGES } from "../../utils/enums";
 import NavigationCard from "../../common/navigationCard";
@@ -8,6 +10,15 @@ import TitleCard from "../../common/titleCard";
 
 const EConnectHome = () => {
     const { changeActiveTab } = useContext(TabContext);
+
+    const selectedCompany = useUserStore((state) => state.selectedCompany)
+
+    const communicationsData = useCommunicationsStore((state) => state.communicationsData)
+    const getCommunicationsList = useCommunicationsStore((state) => state.getCommunicationsList)
+
+    const communicationBasketData = useBasketStore((state) => state.communicationBasketData)
+    const getCommunicationBasketData = useBasketStore((state) => state.getCommunicationBasketData)
+
     const { t } = useTranslation();
 
     const onClickCard = (navigate = "") => {
@@ -34,7 +45,7 @@ const EConnectHome = () => {
                             <p>{t('ECONNECT_COM_LOGS_MESSAGE')}</p>
                         </div>
                     </div>
-                    
+
                 </div>
             </div>
             <div className="g-row">
@@ -48,13 +59,29 @@ const EConnectHome = () => {
                     name={t('ECONNECT_HOME_NAV_CARD_BASKET')}
                     cardColour={"bg-green-dark1"}
                     imageName={"icon-baskets"}
-                    onClick={() => onClickCard(NAVIGATION_PAGES.COMMUNICATIONS_BASKET)}
+                    onClick={() => {
+                        if (communicationBasketData?.length > 0)
+                            getCommunicationBasketData({
+                                    "PageSize": 10,
+                                    "PageCount": 1,
+                                    "CompanyPartyId": selectedCompany?.companyPartyId
+                                }
+                            )
+                        onClickCard(NAVIGATION_PAGES.COMMUNICATIONS_BASKET)
+                    }}
                 />
                 <NavigationCard
                     name={t('ECONNECT_HOME_NAV_CARD_COM')}
                     cardColour={"bg-green-dark2"}
                     imageName={"icon-communications"}
-                    onClick={() => onClickCard(NAVIGATION_PAGES.COMMUNICATIONS)}
+                    onClick={() => {
+                        if (communicationsData?.length > 0)
+                            getCommunicationsList({
+                                "PageSize": 10,
+                                "PageCount": 1
+                            })
+                        onClickCard(NAVIGATION_PAGES.COMMUNICATIONS)
+                    }}
                 />
                 <NavigationCard
                     name={t('ECONNECT_HOME_NAV_CARD_LOGS')}

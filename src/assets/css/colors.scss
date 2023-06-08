@@ -16,6 +16,7 @@ $theme-shade-15: shade( $theme, 15% );
 $theme-tint-75: tint( $theme, 75% );
 $theme-tint-85: tint( $theme, 85% );
 $theme-tint-95: tint( $theme, 95% );
+$theme-tint-99: tint( $theme, 99% );
 
 $theme-dark: darken($theme, 20%);
 $theme-dark1: darken($theme, 25%);
@@ -47,9 +48,10 @@ $blue-dark3: darken($blue-color, 33%);
 $light-dark-blue: darken($blue-color, 33%);
 $blue-light1: desaturate($blue-color, 10%);
 $light-blue: lighten($blue-color, 40%);
-$lighter-blue: lighten($blue-color, 45%);
-$lighter2-blue: lighten($blue-color, 50%);
-$lighter3-blue: lighten($blue-color, 53%);
+$lighter-blue: lighten($blue-color, 42%);
+$lighter2-blue: lighten($blue-color, 44%);
+$lighter3-blue: lighten($blue-color, 46%);
+$lighter4-blue: lighten($blue-color, 48%);
 $blue-light2: lighten($blue-color, 40%);
 $blue-light3: lighten($blue-color, 45%);
 $blue-light4: lighten($blue-color, 50%);
@@ -177,6 +179,9 @@ $light-dark-blue: desaturate($base-color, 10%);
 
 .bg-blue-lighter3 {
     background-color: $lighter3-blue !important;
+}
+.bg-blue-lighter4 {
+    background-color: $lighter4-blue !important;
 }
 
 
