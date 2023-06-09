@@ -1,4 +1,6 @@
 import React from "react";
+import arrowDrop from "../../../assets/images/drop-level-arrow.png"
+import lineDrop from "../../../assets/images/drop-level-line.png"
 
 const UserSelectedFields = ({ data = [], dataFeieldName = 'description', language = 'en', closable = false, onClose, } = {}) => {
     const getBgColor = (index) => {
@@ -28,7 +30,7 @@ const UserSelectedFields = ({ data = [], dataFeieldName = 'description', languag
                                 if (inner.parent) {
                                     let lastIndex;
                                     return (
-                                        <div key={index}>
+                                        <div key={index} className="m-b-20">
                                             {
                                                 inner.parent.map((parents, index) => {
                                                     const resultStyle = "result-item " + getBgColor(index);
@@ -36,6 +38,7 @@ const UserSelectedFields = ({ data = [], dataFeieldName = 'description', languag
                                                     return (
                                                         <div style={{ marginLeft: 20 * index }} className={resultStyle} key={index}>
                                                             <div className="body-text">
+                                                                <img src={index === 0 ? lineDrop : arrowDrop} className='fl m-r-20 m-t-5' style={{ width: index === 0 ? 6 : 10 }} alt='' />
                                                                 <div className="body-text-bold m-r-10 fl">{parents.code}</div>
                                                                 {parents.value}
                                                             </div>
@@ -45,6 +48,7 @@ const UserSelectedFields = ({ data = [], dataFeieldName = 'description', languag
                                             }
                                             <div style={{ marginLeft: 20 * (lastIndex + 1) }} className={"result-item " + getBgColor(lastIndex + 1)} >
                                                 <div className="body-text">
+                                                    <img src={arrowDrop} className='fl m-r-20 m-t-5' style={{ width: 10 }} alt='' />
                                                     <div className="body-text-bold m-r-10 fl">{main.code}</div>
                                                     {inner.value}
                                                 </div>
@@ -56,8 +60,9 @@ const UserSelectedFields = ({ data = [], dataFeieldName = 'description', languag
                                     )
                                 } else {
                                     return (
-                                        <div className="result-item bg-blue-light" key={index} >
+                                        <div className="result-item bg-blue-light m-b-20" key={index} >
                                             <div className="body-text">
+                                                <img src={index === 0 ? lineDrop : arrowDrop} className='fl m-r-20 m-t-5' style={{ width: index === 0 ? 6 : 10 }} alt='' />
                                                 <div className="body-text-bold m-r-10 fl">{main.code}</div>
                                                 {inner.value}
                                             </div>

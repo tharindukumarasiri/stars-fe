@@ -4,6 +4,7 @@ import { TabContext } from "../../utils/contextStore";
 import gb_flag from "../../assets/images/gb_flag.png";
 import CriteriaColorGuideTab from "./Components/criteriaColorGuideTab";
 import UserSelectedFields from "./Components/userSelectedFields";
+import CustomCheckBox from "./Components/customCheckBox"
 import { nacSectionReq } from "../../utils/constants";
 import { getOrganization, getNacCodes, updateNaceCodes, searchNaceCodes } from "../../services/organizationsService";
 import directional_sign from "../../assets/images/directional-sign.png";
@@ -49,7 +50,8 @@ const Nace = () => {
         }
     }, [selectedCompany])
 
-    const stopPropagateCheckBox = (e) => e.stopPropagation();
+    const isChecked = (value) => organizationData.naces?.some(data => data.code === value)
+    const isIndeterminate = (value) => organizationData.naces?.some(data => data?.description[0]?.parent?.some(items => items?.code === value))
 
     const getIndent = (level = 1) => {
         return {
@@ -257,8 +259,9 @@ const Nace = () => {
                                 <div className="body-text-bold m-r-10 fl">{section.code}</div>
                                 {section.desscription}
                             </div>
-                            <input type="checkbox" className="check-box g-col-1" onClick={stopPropagateCheckBox}
-                                checked={organizationData?.naces?.findIndex(data => data.code === section.code) > -1}
+                            <CustomCheckBox
+                                checked={isChecked(section.code)}
+                                indeterminate={isIndeterminate(section.code)}
                                 onChange={() =>
                                     handleChekBox(
                                         {
@@ -279,8 +282,9 @@ const Nace = () => {
                                                             <div className="body-text-bold m-r-10 fl">{divitionData.code}</div>
                                                             {divitionData.desscription}
                                                         </div>
-                                                        <input type="checkbox" className="check-box" onClick={stopPropagateCheckBox}
-                                                            checked={organizationData?.naces?.findIndex(data => data.code === divitionData.code) > -1}
+                                                        <CustomCheckBox
+                                                            checked={isChecked(divitionData.code)}
+                                                            indeterminate={isIndeterminate(divitionData.code)}
                                                             onChange={() =>
                                                                 handleChekBox(
                                                                     {
@@ -304,8 +308,9 @@ const Nace = () => {
                                                                                         <div className="body-text-bold m-r-10 fl">{groupData.code}</div>
                                                                                         {groupData.desscription}
                                                                                     </div>
-                                                                                    <input type="checkbox" className="check-box" onClick={stopPropagateCheckBox}
-                                                                                        checked={organizationData?.naces?.findIndex(data => data.code === groupData.code) > -1}
+                                                                                    <CustomCheckBox
+                                                                                        checked={isChecked(groupData.code)}
+                                                                                        indeterminate={isIndeterminate(groupData.code)}
                                                                                         onChange={() =>
                                                                                             handleChekBox(
                                                                                                 {
@@ -328,8 +333,8 @@ const Nace = () => {
                                                                                                                 <div className="body-text-bold m-r-10 fl">{classData.code}</div>
                                                                                                                 {classData.desscription}
                                                                                                             </div>
-                                                                                                            <input type="checkbox" className="check-box"
-                                                                                                                checked={organizationData?.naces?.findIndex(data => data.code === classData.code) > -1}
+                                                                                                            <CustomCheckBox
+                                                                                                                checked={isChecked(groupData.code)}
                                                                                                                 onChange={() =>
                                                                                                                     handleChekBox(
                                                                                                                         {

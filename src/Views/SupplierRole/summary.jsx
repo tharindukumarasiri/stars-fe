@@ -10,6 +10,9 @@ import UserSelectedFields from "./Components/userSelectedFields";
 import { FetchCurrentCompany } from "../../hooks/index";
 import { useTranslation } from "react-i18next";
 
+import arrowDrop from "../../assets/images/drop-level-arrow.png"
+import lineDrop from "../../assets/images/drop-level-line.png"
+
 const { TabPane } = Tabs;
 
 const Summary = () => {
@@ -109,6 +112,7 @@ const Summary = () => {
                     <div key={lvl1Index}>
                         <div className='result-item bg-blue-light' >
                             <div className="body-text">
+                                <img src={lineDrop} className='fl m-r-20 m-t-5' style={{ width: 6 }} alt='' />
                                 <div className="body-text-bold m-r-10 fl">{lvl1Codes.code}</div>
                                 {lvl1Codes.name}
                             </div>
@@ -118,6 +122,7 @@ const Summary = () => {
                                 <div key={lvl2Index}>
                                     <div className='result-item bg-blue-lighter' style={getIndent(2)}  >
                                         <div className="body-text">
+                                            <img src={arrowDrop} className='fl m-r-20 m-t-5' style={{ width: 10 }} alt='' />
                                             <div className="body-text-bold m-r-10 fl">{lvl2Codes.code}</div>
                                             {lvl2Codes.name}
                                         </div>
@@ -127,6 +132,7 @@ const Summary = () => {
                                             <div key={lvl3Index}>
                                                 <div className='result-item bg-blue-lighter2' style={getIndent(3)} >
                                                     <div className="body-text">
+                                                        <img src={arrowDrop} className='fl m-r-20 m-t-5' style={{ width: 10 }} alt='' />
                                                         <div className="body-text-bold m-r-10 fl">{lvl3Codes.code}</div>
                                                         {lvl3Codes.name}
                                                     </div>
@@ -136,6 +142,8 @@ const Summary = () => {
                                                         <div key={lvl4Index}>
                                                             <div className='result-item bg-blue-lighter3' style={getIndent(4)} >
                                                                 <div className="body-text">
+                                                                    <img src={arrowDrop} className='fl m-r-20 m-t-5' style={{ width: 10 }} alt='' />
+
                                                                     <div className="body-text-bold m-r-10 fl">{lvl4Codes.code}</div>
                                                                     {lvl4Codes.name}
                                                                 </div>
@@ -145,6 +153,8 @@ const Summary = () => {
                                                                     <div key={lvl5Index}>
                                                                         <div className='result-item bg-grey-lighter' style={getIndent(5)} >
                                                                             <div className="body-text">
+                                                                                <img src={arrowDrop} className='fl m-r-20 m-t-5' style={{ width: 10 }} alt='' />
+
                                                                                 <div className="body-text-bold m-r-10 fl">{lvl5Codes.code}</div>
                                                                                 {lvl5Codes.name}
                                                                             </div>
@@ -178,14 +188,14 @@ const Summary = () => {
                 <i className="icon-summary header-icon m-t-10 m-r-15" />
                 <h3 className="m-t-20">{t("SUMMARY")}</h3>
             </div>
-             */} 
-                <div className="g-row">
-                    <NavigationCard name={'UNSPSC_CODES'} cardColour={"bg-blue-purple"} value={organizationData.unspscs?.length} onClick={() => onClickCard(NAVIGATION_PAGES.SUPPLIER_UNSPSC)} />
-                    <NavigationCard name={'CPV_CODES'} cardColour={"bg-blue"} value={organizationData.cpvs?.length} onClick={() => onClickCard(NAVIGATION_PAGES.SUPPLIER_CPV)} />
-                    <NavigationCard name={'NACE_CODES'} cardColour={"bg-vialot"} value={organizationData.naces?.length} onClick={() => onClickCard(NAVIGATION_PAGES.SUPPLIER_NACE)} />
-                    <NavigationCard name={"MARKETS"} cardColour={"bg-green-lite"} value={marketsCount} onClick={() => onClickCard(NAVIGATION_PAGES.SUPPLIER_MARKET)} />
-                </div>
-                <div className="overflow-scroll-y h-400">
+             */}
+            <div className="g-row">
+                <NavigationCard name={'UNSPSC_CODES'} cardColour={"bg-blue-purple"} value={organizationData.unspscs?.length} onClick={() => onClickCard(NAVIGATION_PAGES.SUPPLIER_UNSPSC)} />
+                <NavigationCard name={'CPV_CODES'} cardColour={"bg-blue"} value={organizationData.cpvs?.length} onClick={() => onClickCard(NAVIGATION_PAGES.SUPPLIER_CPV)} />
+                <NavigationCard name={'NACE_CODES'} cardColour={"bg-vialot"} value={organizationData.naces?.length} onClick={() => onClickCard(NAVIGATION_PAGES.SUPPLIER_NACE)} />
+                <NavigationCard name={"MARKETS"} cardColour={"bg-green-lite"} value={marketsCount} onClick={() => onClickCard(NAVIGATION_PAGES.SUPPLIER_MARKET)} />
+            </div>
+            <div className="overflow-scroll-y h-400">
                 <Expandable title={"UNSPSC (United Nations Standard Products and Services Code )"} expandedItem={expandedItem} setExpandedItem={setExpandedItem} label='UNSPSC' >
                     <UnspscData />
                 </Expandable>
@@ -205,8 +215,8 @@ const Summary = () => {
                             {countries.map(pane => <TabPane tab={tabName(pane.name, pane.code)} key={pane.code}>{UserSelecteNutsCodes()}</TabPane>)}
                         </Tabs>
                     </div>
-                    </Expandable>
-                </div>
+                </Expandable>
+            </div>
         </>
     )
 }

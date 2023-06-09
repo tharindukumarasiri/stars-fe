@@ -8,6 +8,10 @@ import directional_sign from "../../assets/images/directional-sign.png";
 import CriteriaColorGuideTab from "./Components/criteriaColorGuideTab";
 import { FetchCurrentCompany } from "../../hooks/index";
 import { useTranslation } from "react-i18next";
+import CustomCheckBox from "./Components/customCheckBox";
+
+import arrowDrop from "../../assets/images/drop-level-arrow.png"
+import lineDrop from "../../assets/images/drop-level-line.png"
 
 const { TabPane } = Tabs;
 
@@ -68,6 +72,9 @@ const Market = () => {
     }, [selectedCompany, organizationData, selectedCountry]);
 
     const stopPropagateCheckBox = (e) => e.stopPropagation();
+    const isChecked = (value) => nutsCodes.children.some(child => JSON.stringify(child) === JSON.stringify(value))
+
+    const isIndeterminate = (value) => nutsCodes.children.some(child => child.code === JSON.stringify(value))
 
     const onClickRow = (level, expandCode) => {
         const levelName = `lvl${level}`;
@@ -214,22 +221,27 @@ const Market = () => {
         return (
             nutsCodes?.children.map((lvl1Codes, lvl1Index) => {
                 return (
-                    <div key={lvl1Index}>
+                    <div key={lvl1Index} className="m-b-20">
                         <div className='result-item bg-blue-light' >
                             <div className="body-text">
+                                <img src={lineDrop} className='fl m-r-20 m-t-5' style={{ width: 6 }} alt='' />
                                 <div className="body-text-bold m-r-10 fl">{lvl1Codes.code}</div>
                                 {lvl1Codes.name}
                             </div>
+                            {(selectedCountry.maxLevels === 2 || lvl1Codes.children?.length === 0) &&
+                                < i className='icon-close-1 close-icon' onClick={() => onClose(lvl1Codes)} />
+                            }
                         </div>
                         {lvl1Codes.children?.map((lvl2Codes, lvl2Index) => {
                             return (
                                 <div key={lvl2Index}>
                                     <div className='result-item bg-blue-lighter' style={getIndent(2)}  >
                                         <div className="body-text">
+                                            <img src={arrowDrop} className='fl m-r-20 m-t-5' style={{ width: 10 }} alt='' />
                                             <div className="body-text-bold m-r-10 fl">{lvl2Codes.code}</div>
                                             {lvl2Codes.name}
                                         </div>
-                                        {selectedCountry.maxLevels === 2 &&
+                                        {(selectedCountry.maxLevels === 2 || lvl2Codes.children?.length === 0) &&
                                             < i className='icon-close-1 close-icon' onClick={() => onClose(lvl1Codes)} />
                                         }
                                     </div>
@@ -238,10 +250,11 @@ const Market = () => {
                                             <div key={lvl3Index}>
                                                 <div className='result-item bg-blue-lighter2' style={getIndent(3)} >
                                                     <div className="body-text">
+                                                        <img src={arrowDrop} className='fl m-r-20 m-t-5' style={{ width: 10 }} alt='' />
                                                         <div className="body-text-bold m-r-10 fl">{lvl3Codes.code}</div>
                                                         {lvl3Codes.name}
                                                     </div>
-                                                    {selectedCountry.maxLevels === 3 &&
+                                                    {(selectedCountry.maxLevels === 3 || lvl3Codes.children?.length === 0) &&
                                                         < i className='icon-close-1 close-icon' onClick={() => onClose(lvl1Codes)} />
                                                     }
                                                 </div>
@@ -250,10 +263,11 @@ const Market = () => {
                                                         <div key={lvl4Index}>
                                                             <div className='result-item bg-blue-lighter3' style={getIndent(4)} >
                                                                 <div className="body-text">
+                                                                    <img src={arrowDrop} className='fl m-r-20 m-t-5' style={{ width: 10 }} alt='' />
                                                                     <div className="body-text-bold m-r-10 fl">{lvl4Codes.code}</div>
                                                                     {lvl4Codes.name}
                                                                 </div>
-                                                                {selectedCountry.maxLevels === 3 &&
+                                                                {(selectedCountry.maxLevels === 3 || lvl4Codes.children?.length === 0) &&
                                                                     < i className='icon-close-1 close-icon' onClick={() => onClose(lvl1Codes)} />
                                                                 }
                                                             </div>
@@ -262,10 +276,11 @@ const Market = () => {
                                                                     <div key={lvl5Index}>
                                                                         <div className='result-item bg-grey-lighter' style={getIndent(5)} >
                                                                             <div className="body-text">
+                                                                                <img src={arrowDrop} className='fl m-r-20 m-t-5' style={{ width: 10 }} alt='' />
                                                                                 <div className="body-text-bold m-r-10 fl">{lvl5Codes.code}</div>
                                                                                 {lvl5Codes.name}
                                                                             </div>
-                                                                            {selectedCountry.maxLevels === 3 &&
+                                                                            {(selectedCountry.maxLevels === 3 || lvl5Codes.children?.length === 0) &&
                                                                                 < i className='icon-close-1 close-icon' onClick={() => onClose(lvl1Codes)} />
                                                                             }
                                                                         </div>
@@ -316,11 +331,9 @@ const Market = () => {
                                 <div className="body-text-bold m-r-10 fl">{lvl1Data.code}</div>
                                 {lvl1Data.name}
                             </div>
-                            <input type="checkbox" className="check-box" onClick={stopPropagateCheckBox}
-                                checked={nutsCodes.children.findIndex(child => JSON.stringify(child) === JSON.stringify(getNutsCodeObj(
-                                    lvl1Data.code,
-                                    lvl1Data.name,
-                                ))) > -1}
+                            <CustomCheckBox
+                                checked={isChecked(getNutsCodeObj(lvl1Data.code, lvl1Data.name))}
+                                indeterminate={nutsCodes.children.some(child => child.code === lvl1Data.code)}
                                 onChange={() => handleCheckBox(
                                     getNutsCodeObj(
                                         lvl1Data.code,
@@ -341,14 +354,15 @@ const Market = () => {
                                                     <div className="body-text-bold m-r-10 fl">{lvl2Data.code}</div>
                                                     {lvl2Data.name}
                                                 </div>
-                                                <input type="checkbox" className="check-box" onClick={stopPropagateCheckBox}
-                                                    checked={nutsCodes.children.findIndex(child => JSON.stringify(child) === JSON.stringify(getNutsCodeObj(
+                                                <CustomCheckBox
+                                                    checked={isChecked(getNutsCodeObj(
                                                         lvl1Data.code,
                                                         lvl1Data.name,
                                                         getNutsCodeObj(
                                                             lvl2Data.code,
                                                             lvl2Data.name
-                                                        )))) > -1}
+                                                        )))}
+                                                    indeterminate={nutsCodes.children.some(child => child?.children?.some(child2 => child2.code === lvl2Data.code))}
                                                     onChange={() => handleCheckBox(
                                                         getNutsCodeObj(
                                                             lvl1Data.code,
@@ -372,8 +386,8 @@ const Market = () => {
                                                                         <div className="body-text-bold m-r-10 fl">{lvl3Data.code}</div>
                                                                         {lvl3Data.name}
                                                                     </div>
-                                                                    <input type="checkbox" className="check-box" onClick={stopPropagateCheckBox}
-                                                                        checked={nutsCodes?.children?.findIndex(child => JSON.stringify(child) === JSON.stringify(getNutsCodeObj(
+                                                                    <CustomCheckBox
+                                                                        checked={isChecked(getNutsCodeObj(
                                                                             lvl1Data.code,
                                                                             lvl1Data.name,
                                                                             getNutsCodeObj(
@@ -383,7 +397,8 @@ const Market = () => {
                                                                                     lvl3Data.code,
                                                                                     lvl3Data.name,
                                                                                 )
-                                                                            )))) > -1}
+                                                                            )))}
+                                                                        indeterminate={nutsCodes.children.some(child => child?.children?.some(child2 => child2.children?.some(child3 => child3.code === lvl3Data.code)))}
                                                                         onChange={() => handleCheckBox(
                                                                             getNutsCodeObj(
                                                                                 lvl1Data.code,
@@ -412,8 +427,8 @@ const Market = () => {
                                                                                             {lvl4Data.name}
 
                                                                                         </div>
-                                                                                        <input type="checkbox" className="check-box" onClick={stopPropagateCheckBox}
-                                                                                            checked={nutsCodes.children.findIndex(child => JSON.stringify(child) === JSON.stringify(getNutsCodeObj(
+                                                                                        <CustomCheckBox
+                                                                                            checked={isChecked(getNutsCodeObj(
                                                                                                 lvl1Data.code,
                                                                                                 lvl1Data.name,
                                                                                                 getNutsCodeObj(
@@ -427,7 +442,7 @@ const Market = () => {
                                                                                                             lvl4Data.name,
                                                                                                         )
                                                                                                     )
-                                                                                                )))) > -1}
+                                                                                                )))}
                                                                                             onChange={() => handleCheckBox(
                                                                                                 getNutsCodeObj(
                                                                                                     lvl1Data.code,

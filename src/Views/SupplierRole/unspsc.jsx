@@ -4,6 +4,7 @@ import { TabContext } from "../../utils/contextStore";
 import gb_flag from "../../assets/images/gb_flag.png";
 import CriteriaColorGuideTab from "./Components/criteriaColorGuideTab";
 import UserSelectedFields from "./Components/userSelectedFields";
+import CustomCheckBox from "./Components/customCheckBox"
 import { levelOneReq } from "../../utils/constants";
 import { getOrganization, getUnspscCodes, updateUnspscCodes, searchUnspscCodes } from "../../services/organizationsService";
 import directional_sign from "../../assets/images/directional-sign.png"
@@ -232,7 +233,9 @@ const Unspsc = () => {
         })
     }
 
-    const stopPropagateCheckBox = (e) => e.stopPropagation();
+    const isChecked = (value) => organizationData.unspscs?.some(data => data.code === value)
+
+    const isIndeterminate = (value) => organizationData.unspscs?.some(data => data?.title[0]?.parent?.some(items => items?.code === value))
 
     const YourUnspscData = () => {
         return (
@@ -256,8 +259,9 @@ const Unspsc = () => {
                                 <div className="body-text-bold m-r-10 fl">{segmant.code}</div>
                                 {segmant.title}
                             </div>
-                            <input type="checkbox" className="check-box g-col-1"
-                                checked={organizationData.unspscs?.findIndex(data => data.code === segmant.code) > -1} onClick={stopPropagateCheckBox}
+                            <CustomCheckBox
+                                checked={isChecked(segmant.code)}
+                                indeterminate={isIndeterminate(segmant.code)}
                                 onChange={() => {
                                     handleChekBox(
                                         {
@@ -280,8 +284,9 @@ const Unspsc = () => {
                                                             <div className="body-text-bold m-r-10 fl">{familyData.code}</div>
                                                             {familyData.title}
                                                         </div>
-                                                        <input type="checkbox" className="check-box"
-                                                            checked={organizationData.unspscs?.findIndex(data => data.code === familyData.code) > -1} onClick={stopPropagateCheckBox}
+                                                        <CustomCheckBox
+                                                            checked={isChecked(familyData.code)}
+                                                            indeterminate={isIndeterminate(familyData.code)}
                                                             onChange={() => {
                                                                 handleChekBox(
                                                                     {
@@ -306,8 +311,9 @@ const Unspsc = () => {
                                                                                         <div className="body-text-bold m-r-10 fl">{classData.code}</div>
                                                                                         {classData.title}
                                                                                     </div>
-                                                                                    <input type="checkbox" className="check-box"
-                                                                                        checked={organizationData.unspscs?.findIndex(data => data.code === classData.code) > -1} onClick={stopPropagateCheckBox}
+                                                                                    <CustomCheckBox
+                                                                                        checked={isChecked(classData.code)}
+                                                                                        indeterminate={isIndeterminate(classData.code)}
                                                                                         onChange={() => {
                                                                                             handleChekBox(
                                                                                                 {
@@ -331,8 +337,8 @@ const Unspsc = () => {
                                                                                                                 <div className="body-text-bold m-r-10 fl">{commodityData.code}</div>
                                                                                                                 {commodityData.title}
                                                                                                             </div>
-                                                                                                            <input type="checkbox" className="check-box"
-                                                                                                                checked={organizationData.unspscs?.findIndex(data => data.code === commodityData.code) > -1}
+                                                                                                            <CustomCheckBox
+                                                                                                                checked={isChecked(commodityData.code)}
                                                                                                                 onChange={() =>
                                                                                                                     handleChekBox(
                                                                                                                         {

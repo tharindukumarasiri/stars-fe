@@ -4,6 +4,7 @@ import { TabContext } from "../../utils/contextStore";
 import gb_flag from "../../assets/images/gb_flag.png";
 import CriteriaColorGuideTab from "./Components/criteriaColorGuideTab";
 import UserSelectedFields from "./Components/userSelectedFields";
+import CustomCheckBox from "./Components/customCheckBox"
 import { levelOneReq } from "../../utils/constants";
 import { getOrganization, getCpvCodes, updateCpvCodes, searchCpvCodes, updateOrganization } from "../../services/organizationsService";
 import directional_sign from "../../assets/images/directional-sign.png";
@@ -49,7 +50,8 @@ const Cpv = () => {
         }
     }, [selectedCompany])
 
-    const stopPropagateCheckBox = (e) => e.stopPropagation();
+    const isChecked = (value) => organizationData.cpvs?.some(data => data.code === value)
+    const isIndeterminate = (value) => organizationData.cpvs?.some(data => data?.description[0]?.parent?.some(items => items?.code === value))
 
     const getIndent = (level = 1) => {
         return {
@@ -288,8 +290,9 @@ const Cpv = () => {
                                 <div className="body-text-bold m-r-10 fl">{division.code}</div>
                                 {division.desscription}
                             </div>
-                            <input type="checkbox" className="check-box" onClick={stopPropagateCheckBox}
-                                checked={organizationData.cpvs?.findIndex(data => data.code === division.code) > -1}
+                            <CustomCheckBox
+                                checked={isChecked(division.code)}
+                                indeterminate={isIndeterminate(division.code)}
                                 onChange={() =>
                                     handleChekBox(
                                         {
@@ -310,8 +313,9 @@ const Cpv = () => {
                                                             <div className="body-text-bold m-r-10 fl">{cpvGroupData.code}</div>
                                                             {cpvGroupData.desscription}
                                                         </div>
-                                                        <input type="checkbox" className="check-box" onClick={stopPropagateCheckBox}
-                                                            checked={organizationData.cpvs?.findIndex(data => data.code === cpvGroupData.code) > -1}
+                                                        <CustomCheckBox
+                                                            checked={isChecked(cpvGroupData.code)}
+                                                            indeterminate={isIndeterminate(cpvGroupData.code)}
                                                             onChange={() =>
                                                                 handleChekBox(
                                                                     {
@@ -335,8 +339,9 @@ const Cpv = () => {
                                                                                         <div className="body-text-bold m-r-10 fl">{cpvClassData.code}</div>
                                                                                         {cpvClassData.desscription}
                                                                                     </div>
-                                                                                    <input type="checkbox" className="check-box" onClick={stopPropagateCheckBox}
-                                                                                        checked={organizationData.cpvs?.findIndex(data => data.code === cpvClassData.code) > -1}
+                                                                                    <CustomCheckBox
+                                                                                        checked={isChecked(cpvClassData.code)}
+                                                                                        indeterminate={isIndeterminate(cpvClassData.code)}
                                                                                         onChange={() =>
                                                                                             handleChekBox(
                                                                                                 {
@@ -361,8 +366,9 @@ const Cpv = () => {
                                                                                                                     <div className="body-text-bold m-r-10 fl">{categoryData.code}</div>
                                                                                                                     {categoryData.desscription}
                                                                                                                 </div>
-                                                                                                                <input type="checkbox" className="check-box" onClick={stopPropagateCheckBox}
-                                                                                                                    checked={organizationData.cpvs?.findIndex(data => data.code === categoryData.code) > -1}
+                                                                                                                <CustomCheckBox
+                                                                                                                    checked={isChecked(categoryData.code)}
+                                                                                                                    indeterminate={isIndeterminate(categoryData.code)}
                                                                                                                     onChange={() =>
                                                                                                                         handleChekBox(
                                                                                                                             {
@@ -386,8 +392,8 @@ const Cpv = () => {
                                                                                                                                             <div className="body-text-bold m-r-10 fl">{subCategoryData.code}</div>
                                                                                                                                             {subCategoryData.desscription}
                                                                                                                                         </div>
-                                                                                                                                        <input type="checkbox" className="check-box"
-                                                                                                                                            checked={organizationData.cpvs?.findIndex(data => data.code === subCategoryData.code) > -1}
+                                                                                                                                        <CustomCheckBox
+                                                                                                                                            checked={isChecked(subCategoryData.code)}
                                                                                                                                             onChange={() =>
                                                                                                                                                 handleChekBox(
                                                                                                                                                     {

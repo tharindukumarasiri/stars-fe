@@ -370,7 +370,7 @@ const TimeConfig = forwardRef((props, ref) => {
                             </div>
                             <div className="g-col-9"></div>
                         </div>
-                        <div  className={`m-b-20 ${recurringeMonthly.isEndOfMonth && 'disable-div'}`}>
+                        <div className={`m-b-20 ${recurringeMonthly.isEndOfMonth && 'disable-div'}`}>
                             <DatePickerInput
                                 placeholder='Next Date'
                                 value={getFormattedDateTime(recurringeMonthly.nextDate)}
@@ -378,7 +378,7 @@ const TimeConfig = forwardRef((props, ref) => {
                                 isClearable
                             />
                         </div>
-                        <div  className={`m-b-20 ${recurringeMonthly.isEndOfMonth && 'disable-div'}`}>
+                        <div className={`m-b-20 ${recurringeMonthly.isEndOfMonth && 'disable-div'}`}>
                             <DatePickerInput
                                 placeholder='Next Time'
                                 value={recurringeMonthly.nextTime}
@@ -398,7 +398,7 @@ const TimeConfig = forwardRef((props, ref) => {
                     </div>
                 )
             default:
-                null
+                return null
         }
     }
 
