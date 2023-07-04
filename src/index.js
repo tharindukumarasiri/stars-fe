@@ -15,6 +15,7 @@ import BuyerRole from "./Views/BuyerRole";
 import SupplireRole from "./Views/SupplierRole";
 import SellerRole from "./Views/SellerRole";
 import AdminRole from "./Views/AdminRole";
+import ChartDrawing from "./Views/ChartDrawing";
 
 import { NAVIGATION_PAGES } from './utils/enums';
 
@@ -51,6 +52,7 @@ const menuItems = [
     getItem('eConnect', '/eConnect'),
     getItem('Users', '/users'),
     getItem('Templates', '/template'),
+    getItem('Drawing Tool', '/drawing'),
 ];
 
 const AppRouter = () => {
@@ -62,6 +64,7 @@ const AppRouter = () => {
             <Route path='/eConnect' element={<AdminRole openTab={NAVIGATION_PAGES.E_CONNECT_HOME} />} />
             <Route path='/users' element={<AdminRole openTab={NAVIGATION_PAGES.ALL_USERS} />} />
             <Route path='/template' element={<AdminRole openTab={NAVIGATION_PAGES.ADMIN_TEMPLATES} />} />
+            <Route path='/drawing' element={<ChartDrawing openTab={NAVIGATION_PAGES.DRAWING_TOOL_HOME} />} />
         </Routes>
     )
 }

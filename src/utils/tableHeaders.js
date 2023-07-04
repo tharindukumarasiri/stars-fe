@@ -203,9 +203,9 @@ export const searchResultsTableHeaders = (t) => [
     },
     {
         title: <div className="g-row">
-            <div className="g-col-4">{ t('SEARCH_CRITERIA')}</div>
-            <div className="g-col-4">{ t('CRITERIA_CODES')}</div>
-            <div className="g-col-4">{ t('CRITERIA_NAME')}</div>
+            <div className="g-col-4">{t('SEARCH_CRITERIA')}</div>
+            <div className="g-col-4">{t('CRITERIA_CODES')}</div>
+            <div className="g-col-4">{t('CRITERIA_NAME')}</div>
         </div>,
         dataIndex: ['searchFilter', 'removeCriteria', 'parentSearchId'],
         render: (_, { searchFilter, removeCriteria, parentSearchId }) => (
@@ -950,7 +950,7 @@ export const TemplateTableHeaders = (t) => [
     },
 ]
 
-export const CommunicationsLogTableHeaders = (t) =>  [
+export const CommunicationsLogTableHeaders = (t) => [
     {
         title: t('COMMUNICATION_ID'),
         dataIndex: 'Id',
@@ -1327,5 +1327,28 @@ export const ReceversPersonsTableExpandedHeaders = (t) => [
         render: (_, { Company }) => (
             Company?.Phone
         ),
+    },
+]
+
+export const SavedDiagramsTableHeaders = (t) => [
+    {
+        title: 'ID',
+        dataIndex: 'id',
+        width: 130
+    },
+    {
+        title: t('NAME'),
+        dataIndex: 'name',
+    },
+    {
+        title: 'Created Date',
+        dataIndex: 'date',
+        render: (_, { date }) => (
+            formatDate(date)
+        ),
+    },
+    {
+        title: 'Type',
+        dataIndex: 'type',
     },
 ]
