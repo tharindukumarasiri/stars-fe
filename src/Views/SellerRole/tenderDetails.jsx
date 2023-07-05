@@ -9,7 +9,7 @@ import { useTranslation } from "react-i18next";
 
 const { TabPane } = Tabs;
 
-const TenderDetails = (props) => {
+const TenderDetails = ({props}) => {
     const [allTenders, setAllTenders] = useState([]);
     const [tenderDetails, setTenderDetails] = useState({});
     const [selectedLanguage, setSelectedLanguage] = useState("");
@@ -61,11 +61,15 @@ const TenderDetails = (props) => {
                         <div></div>
                     </div>
                 }
-                {currentLanguage !== selectedLanguage &&
-                    <div className="notification-box flex-center-middle">
-                        <div className="white">{t('TENDER_WARNING')}</div>
-                    </div>
-                }
+                <div className="overflow-scroll-y h-400">
+                    {currentLanguage !== selectedLanguage &&
+                        <div className="ant-alert ant-alert-warning">
+                            {t('TENDER_WARNING')}
+                        </div>
+                    }
+                    <div className="g-row">
+                    <div className="g-col-6">
+                
 
                 <div className="language-dropdown">
                     <Dropdown values={allLanguages}
@@ -75,22 +79,31 @@ const TenderDetails = (props) => {
                     />
                 </div>
                 <TextRow label={t('DESCRIPTION')} value={tenderDetails?.buyerDescription} />
-                <TextRow label={t('MAIN_CPV_CODE')} value={tenderDetails?.mainCPVCode} />
-                <TextRow label={t("EMAIL")} value={tenderDetails?.buyerDetails?.email} />
+                            <TextRow label={t('MAIN_CPV_CODE')} value={tenderDetails?.mainCPVCode} />
+                            <TextRow label={t("EMAIL")} value={tenderDetails?.buyerDetails?.email} />
                 <TextRow label={t('STAUS')} value={tenderDetails?.noticeStatus} />
                 <h3 className="fl m-t-20 p-t-20">{t('BUYER_DETAILS')}</h3>
                 <TextRow label={t('COMPANY_NAME')} value={tenderDetails?.buyerDetails?.name} />
                 <TextRow label={t('ORGANIZATION_ID')} />
                 <TextRow label={t('LOCATION')} value={tenderDetails?.buyerDetails?.postalAddress} />
-                <TextRow label={t('DATE')} value={""} />
-                <a className="fl m-t-20 p-t-20" href={downloadLink()} download >
-                    <div><FilePdfTwoTone className="m-r-5" />{t('DOWNLOAD_ORIGINAL_PDF')}</div>
-                </a>
-                <div className="fl m-t-20 p-t-20 m-l-20 hover-hand" onClick={() => { navigator.clipboard.writeText(downloadLink()) }} >
-                    <div><CopyTwoTone className="m-r-5" />{t('COPY_DOWNLOAD_LINK')}</div>
-                </div>
-                <div className="fl m-t-20 p-t-20 m-l-20 hover-hand" onClick={toggelModal} >
-                    <div className="share-btn"><ShareAltOutlined className="m-r-5" />{t('SHARE')}</div>
+                    <TextRow label={t('DATE')} value={""} />
+                    </div>
+                        <div className="g-col-6">
+                            <ul className="list-style-none">
+                                <li><a href={downloadLink()} download >
+                                    <FilePdfTwoTone className="m-r-5" />{t('DOWNLOAD_ORIGINAL_PDF')}
+                                </a></li>
+                                <li>
+                                    <div className="link" onClick={() => { navigator.clipboard.writeText(downloadLink()) }} >
+                                        <CopyTwoTone className="m-r-5" />{t('COPY_DOWNLOAD_LINK')}
+                                    </div>
+                                </li>
+                                <li>
+                                    <div className="btn g-btn-default" onClick={toggelModal}><ShareAltOutlined className="m-r-5" />{t('SHARE')}</div>
+                                  </li>
+                            </ul>
+                        </div>
+                    </div>
                 </div>
             </>
         )
@@ -124,14 +137,15 @@ const TenderDetails = (props) => {
 
     return (
         <>
-            <div className="g-row m-l-20 m-b-20 m-t-10">
+            <div className="g-row detail-view-header">
                 <TextColumn label={t('DOCUMENT_NUMBER')} value={tenderDetails?.noticeNumber} containerStyle="g-col-2" />
-                <TextColumn label={t('NUTS_CODE')} value={tenderDetails?.buyerDetails?.nutsCode} />
+                <TextColumn label={t('NUTS_CODE')} value={tenderDetails?.buyerDetails?.nutsCode} containerStyle="g-col-2" />
                 <TextColumn label={t('LOCATION')} value={tenderDetails?.buyerDetails?.country} />
                 <TextColumn label={t('PUBLISHED_DATE')} value={tenderDetails?.publicationDate} containerStyle="g-col-2" />
                 <TextColumn label={t('DEADLINE')} value={tenderDetails?.deletionDate} containerStyle="g-col-2" />
                 <TextColumn label={t('CONTACT_PERSON')} value={tenderDetails?.buyerDetails?.contactPerson} />
-                <TextColumn label={t('ORIGINAL_LANGUAGE')} value={tenderDetails?.originalLanguage} containerStyle="g-col-2 fr m-l-20" />
+                <TextColumn label={t('ORIGINAL_LANGUAGE')} value={tenderDetails?.originalLanguage} containerStyle="g-col-2 fr" />
+                
             </div>
             <div className="page-container">
                 <div className="custom-tab-container">

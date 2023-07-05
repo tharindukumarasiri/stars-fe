@@ -1,4 +1,4 @@
-import { memo, useCallback, useState } from 'react';
+import React, { memo, useCallback, useState } from 'react';
 import { Handle, Position, NodeResizer, useStore } from 'reactflow';
 
 import { useTextStore } from '../store'

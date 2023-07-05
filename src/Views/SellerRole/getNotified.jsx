@@ -388,7 +388,7 @@ const GetNotified = () => {
                     dataArr={["DIVISION", "GROUP", "CLASS", "CATEGORY", "SUB_CATEGORY"]}
                     containerStyle="selected-codes"
                 />
-                <div className="overflow-scroll-y m-t-10 max-h-500"><UserSelectedFields data={tenderCpvs} dataFeieldName="description" closable={true} onClose={onDelete} /></div> 
+                <div className="overflow-scroll-y max-h-500"><UserSelectedFields data={tenderCpvs} dataFeieldName="description" closable={true} onClose={onDelete} /></div> 
             </div>
         );
     };
@@ -650,9 +650,7 @@ const GetNotified = () => {
                             <i className="search-btn icon-search" onClick={onSearch}></i>
                             <input type="text" placeholder={t('SEARCH_TEXT')} onChange={handleSearch} value={searchText} />
                         </form>
-                        <button className="secondary-btn filters-btn g-col-3" onClick={clearSearch}>
-                            {t('CLEAR')}
-                        </button>
+                        <div className="g-col-3 text-left"> <button className="secondary-btn filters-btn" onClick={clearSearch}>{t('CLEAR')} </button></div>
                     </div>
                     <div className="overflow-scroll-y max-h-500">
                         <CPVData />

@@ -1,0 +1,1 @@
+export { home as DesignerHome } from './home'

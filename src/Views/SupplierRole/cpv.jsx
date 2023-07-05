@@ -450,15 +450,21 @@ const Cpv = () => {
                         <div></div>
                     </div>
                 }
+                <div className="action-bar m-r-20"><button className="primary-btn update-btn" onClick={onUpdate} >{t("UPDATE")}</button></div>
+                <div className="g-row">
+                    <div className="g-col-12">
+                        <div className="action-bar"> <button className="primary-btn" onClick={onUpdate} >{t("UPDATE")}</button></div>
+                    </div>
+                </div>
                 <div className="g-row">
                     <div className="g-col-5">
-                        <h3 className="text-center">{t("CPV_CODES")}</h3>
+                        <h3 className="p-b-10">{t("CPV_CODES")}</h3>
                         <div className="g-row flex-center-middle m-b-15">
                             <form onSubmit={onSearch} className="search-bar g-col-8 m-r-10">
                                 <i className="search-btn icon-search" onClick={onSearch} ></i>
                                 <input type="text" placeholder={t("SEARCH_BY_LOCATION")} onChange={handleSearch} value={searchText} />
                             </form>
-                            <h3 className="g-col-2 hover-hand" onClick={clearSearch} >{t("CLEAR")}</h3>
+                            <div className="g-col-2" > <div className="secondary-btn g-btn" onClick={clearSearch} >{t("CLEAR")}</div></div>
                             <div className="g-col-2 g-row hover-hand">
                                 <span className="fl g-col-6 m-r-10">English </span>
                                 <span className="fl g-col-3"><img src={gb_flag} className="flag-image fl m-r-5" alt='img' /></span>
@@ -470,11 +476,11 @@ const Cpv = () => {
                         </div>
                     </div>
                     <div className="g-col-5">
-                        <h3 className="text-center">{t("SELECTED_CPV_CODES")}</h3>
+                        <h3 className="text-center p-b-10">{t("SELECTED_CPV_CODES")}</h3>
                         <YourCpvData />
                     </div>
                     <div className="g-col-2 text-center">
-                        <h3>{t("HOW_TO_UPDATE_CPV_CODES")}</h3>
+                        <h3 className="p-b-10">{t("HOW_TO_UPDATE_CPV_CODES")}</h3>
                         <div className="flex-center-middle"><img src={directional_sign} alt='img' className="directional-img" /></div>
 
                         <div className="static-content-container">
@@ -500,7 +506,6 @@ const Cpv = () => {
                 </div>
 
             </div>
-            <button className="primary-btn update-btn" onClick={onUpdate} >{t("UPDATE")}</button>
         </ div>
     )
 }

@@ -628,4 +628,18 @@ ul.custom-button-list {
     justify-content: space-between;
     margin-bottom: 1px;
     padding-left: 5px;
+
+    &:hover {
+        background-color: $lighter-grey;
+    }
+}
+
+.detail-view-header {
+    background-color: $theme-tint-95;
+    padding: 10px;
+    border-top-left-radius: 3px;
+    border-top-right-radius: 3px;
+}
+.link{color:$link-color; cursor:pointer;
+      &:hover{}
 }

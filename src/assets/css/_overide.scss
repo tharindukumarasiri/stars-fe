@@ -106,3 +106,9 @@ p {
 .ant-pagination-item a {
     padding: 2px 6px !important;
 }
+
+.ant-table-row {
+    &:hover {
+       cursor:pointer
+    }
+}

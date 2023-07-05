@@ -525,7 +525,6 @@ const Market = () => {
                     </div>
 
                 </div>
-                <button className="primary-btn update-btn" onClick={onUpdate} >{t("UPDATE")}</button>
             </>
         )
     }
@@ -540,6 +539,7 @@ const Market = () => {
                     <div className="body-text">{t("COUNTRY_CODE")} ( {t('NUTS_LEVEL_0')} )</div>
                     <div className="body-text-bold">{selectedCountry?.code}</div>
                 </div>
+                <div className="action-bar m-r-20"><button className="primary-btn update-btn" onClick={onUpdate} >{t("UPDATE")}</button></div>
             </div>
             <div className="custom-tab-container">
                 <Tabs
@@ -549,11 +549,8 @@ const Market = () => {
                 >
                     {tabPanes.map(pane => <TabPane tab={pane.label} key={pane.key}>{tabView()}</TabPane>)}
                 </Tabs>
-
             </div>
         </div>
-
-
     )
 }
 

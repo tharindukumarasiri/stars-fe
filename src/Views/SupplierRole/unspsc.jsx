@@ -388,12 +388,12 @@ const Unspsc = () => {
                     </div>
                 }
                 <div className="g-row">
-                    <div className="g-col-6">
+                    {/* <div className="g-col-6">
                         <div className="fl"><i className="icon-cubes-1 header-icon m-t-10" /></div>
                         <div className="fl p-t-10"><h3 className="m-t-20 fl">{t("(United Nations Standard Products and Services Code)")}</h3></div>
-                    </div>
-                    <div className="g-col-6">
-                        <div className="action-bar"> <button className="primary-btn update-btn" onClick={onUpdate} >{t("UPDATE")}</button></div>
+                    </div>  */ }
+                    <div className="g-col-12">
+                        <div className="action-bar"> <button className="primary-btn" onClick={onUpdate} >{t("UPDATE")}</button></div>
                     </div>
                 </div>
                 
@@ -405,7 +405,7 @@ const Unspsc = () => {
                                 <i className="search-btn icon-search" onClick={onSearch} ></i>
                                 <input type="text" placeholder={t("SEARCH_BY_LOCATION")} onChange={handleSearch} value={searchText} />
                             </form>
-                            <div className="g-col-2" > <div className="secondary-btn filters-btn" onClick={clearSearch} >{t("CLEAR")}</div></div>
+                            <div className="g-col-2" > <div className="secondary-btn g-btn" onClick={clearSearch} >{t("CLEAR")}</div></div>
                             <div className="g-col-2 g-row hover-hand">
                                 <span className="fl g-col-6 m-r-10">English </span>
                                 <span className="fl g-col-3"><img src={gb_flag} className="flag-image fl m-r-5" alt='img' /></span>

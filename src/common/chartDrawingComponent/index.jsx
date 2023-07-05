@@ -120,7 +120,7 @@ const DnDFlow = ({ props }) => {
         <div className={style.dndflow}>
             <ReactFlowProvider>
                 <Sidebar diagramName={diagramName} onNameChange={onNameChange} onSave={onSave} />
-                <div className={style.reactflowrapper} ref={reactFlowWrapper} style={{ width: '90vw', height: '70vh' }}>
+                <div className={style.reactflowrapper} ref={reactFlowWrapper}>
                     <ReactFlow
                         nodes={nodes}
                         edges={edges}

@@ -1350,5 +1350,5 @@ export const SavedDiagramsTableHeaders = (t) => [
     {
         title: 'Type',
         dataIndex: 'type',
-    },
+    }
 ]

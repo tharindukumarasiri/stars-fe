@@ -19,10 +19,15 @@ export default function SellerHome() {
                 <TitleCard title={t("SELLER")} topIcon={"icon-seller"} />
                 <div className="g-col-9 p-l-20">
                     <h4>{t('SELLER_ROLE_SPACE')}</h4>
-                    <div>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque lacinia est vitae sapienursus,</div>
-                    <div>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque lacinia est vitae sapienursus,</div>
-                    <div>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque lacinia est vitae sapienursus,</div>
-                    <div>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque lacinia est vitae sapienursus,</div>
+                    <div>"Seller" is the role where you can update your business categorization and classification of products and services to the markets.
+                        We use CPV code (Common Procurement Vocabulary) which is used by  Governments, Public institutions, and Organizations in their procurement process.
+                        <span className="">&nbsp;</span>
+                        <ul>
+                            <li>- Under <span className="bold">"Get Notified"</span>, you will find a comprehensive list of Standard CPV codes for easy reference and set matching for your business</li>
+                            <li>- Under <span className="bold">"Matching Tenders"</span>, you will get the "Procurement notices" which is matching "your CPV codes" </li>
+                            <li>- All public procurement notices will be listed under <span className="bold">"Golbal Tenders"</span></li>
+                        </ul>
+                    </div>
                 </div>
             </div>
             <div className="g-row">

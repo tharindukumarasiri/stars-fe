@@ -383,6 +383,7 @@ const Nace = () => {
                         <div></div>
                     </div>
                 }
+                <div className="action-bar m-r-20"><button className="primary-btn update-btn" onClick={onUpdate} >{t("UPDATE")}</button></div>
                 <div className="g-row">
                     <div className="g-col-5">
                         <h3 className="text-center">{t("NACE_CODES")}</h3>
@@ -432,7 +433,6 @@ const Nace = () => {
                 </div>
 
             </div>
-            <button className="primary-btn update-btn" onClick={onUpdate} >{t("UPDATE")}</button>
         </div>
     )
 }

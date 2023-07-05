@@ -8,7 +8,7 @@ import GetNotified from './getNotified';
 import MatchingTenders from './matchingTenders';
 import TenderDetails from './tenderDetails';
 import GlobalTenderSearch from './globalTenderSearch';
-import { Button, notification } from 'antd';
+import { notification } from 'antd';
 import { FetchCurrentCompany } from "../../hooks/index";
 import { useTranslation } from "react-i18next";
 
@@ -23,10 +23,8 @@ const SellerRole = () => {
 
     const changeActiveTab = (tab, params = null) => {
         const openNotification = (placement = 'top') => {
-            const key = `open${Date.now()}`;
-            const btn = (
-                <Button type="primary" size="small" onClick={() => {
-                    notification.close(key)
+            const onLeaveBtn = () => {
+                notification.close(key)
                     setHaveUnsavedDataRef(false);
 
                     if (openTabs.indexOf(tab) < 0) {
@@ -40,10 +38,12 @@ const SellerRole = () => {
                         shouldBeClosed.current = { state: false, tab: '' };
                     }
                     setActiveTab(tab);
-                }}>
-                    {t('LEAVE')}
-                </Button>
-            );
+            }
+            
+            const key = `open${Date.now()}`;
+            const btn = <button className="primary-btn" onClick={onLeaveBtn} >{t('LEAVE')}</button>
+            const closeIcon = <i className="close-icon icon-close hover-hand" />;
+
             const args = {
                 message: t('LEAVE_PAGE'),
                 description:
@@ -52,6 +52,7 @@ const SellerRole = () => {
                 placement,
                 btn,
                 key,
+                closeIcon,
             };
             notification.warning(args);
         };
@@ -107,7 +108,15 @@ const SellerRole = () => {
                         <GetNotified />
                     </div>
                 </div>
-               
+                <div label={t('MATCHING_TENDERS')} id={NAVIGATION_PAGES.SELLER_MATCHING_TENDERS}>
+                    <MatchingTenders />
+                </div>
+                <div label={t('GLOBAL_TENDER')} id={NAVIGATION_PAGES.SELLER_GLOBAL_TENDER}>
+                    <GlobalTenderSearch />
+                </div>
+                <div label={`${t('MATCHING_TENDERS')}: ${params[NAVIGATION_PAGES.SELLER_TENDER_DETAILS]?.noticeNumber}`} id={NAVIGATION_PAGES.SELLER_TENDER_DETAILS}>
+                    <TenderDetails props={params[NAVIGATION_PAGES.SELLER_TENDER_DETAILS]} />
+                </div>
             </Tabs>
         </TabContext.Provider >
     )

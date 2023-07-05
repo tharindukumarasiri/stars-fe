@@ -122,13 +122,13 @@ const MatchingTenders = () => {
                     <div></div>
                 </div>
             }
-            <div className="g-row fr m-l-20 p-l-20">
-                <div className="g-col-3" />
-                <div className="g-col-1"><i className="icon-tender-new green" />{t('NEW')}</div>
-                <div className="g-col-2"><i className="icon-tender-open blue-dark" />{t('OPEN_FOR_CONSIDERATION')}</div>
-                <div className="g-col-3"><i className="icon-tender-proposal blue-purple" />{t('DECIDED_TO_REPLY_WITH_PROPOSAL')}</div>
-                <div className="g-col-2"><i className="icon-tender-not-relevant" />{t('NOT_RELEVANT')}</div>
-                <div className="g-col-1"><i className="icon-tender-closed red" />{t('CLOSED')}</div>
+            <div className="g-row p-a-20 matching-icons"> 
+                <div className="fr"><i className="icon-tender-new green" />{t('NEW')}</div>
+                <div className="fr m-r-10"><i className="icon-tender-open blue-dark" />{t('OPEN_FOR_CONSIDERATION')}</div>
+                <div className="fr m-r-10"><i className="icon-tender-proposal blue-purple" />{t('DECIDED_TO_REPLY_WITH_PROPOSAL')}</div>
+                <div className="fr m-r-10"><i className="icon-tender-not-relevant" />{t('NOT_RELEVANT')}</div>
+                    <div className="fr m-r-10"><i className="icon-tender-closed red" />{t('CLOSED')}</div>
+               
             </div>
             <Table
                 rowKey={(record) => record.id}
@@ -139,6 +139,9 @@ const MatchingTenders = () => {
                     return {
                         onClick: () => onClickTender(record),
                     };
+                }}
+                scroll={{
+                    y: "65vh",
                 }}
             />
             <div className="action-bar">

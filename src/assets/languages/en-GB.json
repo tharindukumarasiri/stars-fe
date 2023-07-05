@@ -115,7 +115,7 @@
   "MSG_CHANGE_STATUS_FAIL": "en_GB_Change status faild please try again",
   "PRODUCT_GROUPS": "en_GB_Product Groups (UNSPSC/ CPV Codes)",
   "PRODUCT_GROUPS_TOOLTIP": "en_GB_Filter according to the products manufactured/rented or raw materials provided by the companies",
-  "UNSPSC_CODES": "en_GB_UNSPSC Codes",
+  "UNSPSC_CODES": "en_GB_Standard UNSPSC Codes",
   "SEGMENT": "en_GB_Segment",
   "FAMILY": "en_GB_Family",
   "CLASS": "en_GB_Class",

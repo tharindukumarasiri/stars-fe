@@ -38,8 +38,12 @@ ol li>ul {
     margin-top: 0;
     margin-bottom: 0;
 }
-
-
+.list-style-none {
+    li {
+        list-style: none;
+        padding: 6px 0;
+    }
+}
 // positions
 .pos-r {
     position: relative
