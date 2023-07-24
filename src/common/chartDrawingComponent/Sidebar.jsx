@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import Input from "../../common/input";
 
 import style from './DndStyles.module.scss'
+import Shapes from './Shapes.js';
 
 export default ({ diagramName, onNameChange, onSave }) => {
     const [sidebarVisible, setSidebarVisible] = useState(true);
@@ -12,6 +13,14 @@ export default ({ diagramName, onNameChange, onSave }) => {
     };
 
     const onArrowClicked = () => setSidebarVisible(pre => !pre)
+
+    const CustomShape = ({ shape }) => {
+        return (
+            <svg viewBox={shape?.viewBox} fill="#434343" >
+                {shape?.image}
+            </svg>
+        )
+    }
 
     return (
         <aside className={sidebarVisible ? style.aside : ''}>
@@ -25,17 +34,14 @@ export default ({ diagramName, onNameChange, onSave }) => {
                     <div className={style.sideBarRow}>
                         <button className="add-btn" onClick={onSave} >Save</button>
                     </div>
-
-                    <div className={style.rectangle} onDragStart={(event) => onDragStart(event, 'Rectangle')} draggable>
-                        Rectangle
-                    </div>
-                    <div className={style.sideBarRow}>
-                        <div className={style.circle} onDragStart={(event) => onDragStart(event, 'Circle')} draggable>
-                            <div>Circle</div>
-                        </div>
-                        <div className={style.square} onDragStart={(event) => onDragStart(event, 'Square')} draggable>
-                            <div>Square</div>
-                        </div>
+                    <div className={style.sidebarCategoryContainer} >
+                        {Object.entries(Shapes)?.map(shape => {
+                            return (
+                                <div className={style.sidebarItemContainer} onDragStart={(event) => onDragStart(event, shape[0])} draggable key={shape[0]}>
+                                    <CustomShape shape={shape[1]} fill={'black'} />
+                                </div>
+                            )
+                        })}
                     </div>
                 </>
             }

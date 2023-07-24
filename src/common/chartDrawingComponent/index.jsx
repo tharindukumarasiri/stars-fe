@@ -1,4 +1,4 @@
-import React, { useState, useRef, useCallback } from 'react';
+import React, { useState, useRef, useCallback, useMemo } from 'react';
 import ReactFlow, {
     ReactFlowProvider,
     addEdge,
@@ -12,32 +12,23 @@ import ReactFlow, {
 import 'reactflow/dist/style.css';
 import { message } from 'antd';
 
-import Rectangle from './shapes/Rectangle.js';
-import Circle from './shapes/Circle.js';
-import Square from './shapes/Square.js';
-
+import CustomNode from './CustomNode.js';
+import Shapes from './Shapes.js';
 import FloatingEdge from './customElements/FloatingEdge';
 import CustomConnectionLine from './customElements/CustomConnectionLine';
 import Sidebar from './Sidebar';
+import ToolBar from './ToolBar';
 
 import { useDiagramStore } from '../../Views/ChartDrawing/chartDrawingStore'
 
 import style from './DndStyles.module.scss'
 
-const nodeTypes = {
-    Rectangle,
-    Circle,
-    Square,
-};
+const getId = () => `dndnode_${+new Date()}`;
 
-let id = 0;
-const getId = () => `dndnode_${id++}`;
-
-const nodeCommonStyles = { background: 'rgba(223, 212, 212, 0.573)', display: 'flex', justifyContent: 'center', alignItems: 'center' }
 const arrowColor = '#8f8f8f'
 
 const connectionLineStyle = {
-    strokeWidth: 3,
+    strokeWidth: 1,
     stroke: arrowColor,
 };
 
@@ -46,7 +37,7 @@ const edgeTypes = {
 };
 
 const defaultEdgeOptions = {
-    style: { strokeWidth: 3, stroke: arrowColor },
+    style: { strokeWidth: 1, stroke: arrowColor },
     type: 'floating',
     markerEnd: {
         type: MarkerType.ArrowClosed,
@@ -61,7 +52,6 @@ const DnDFlow = ({ props }) => {
     const [nodes, setNodes, onNodesChange] = useNodesState(props?.data?.nodes || []);
     const [edges, setEdges, onEdgesChange] = useEdgesState(props?.data?.edges || []);
 
-    const [inputs, setInputs] = useState([]);
     const [reactFlowInstance, setReactFlowInstance] = useState(null);
     const [diagramName, setDiagramName] = useState(props?.name);
 
@@ -70,6 +60,12 @@ const DnDFlow = ({ props }) => {
     const onDragOver = useCallback((event) => {
         event.preventDefault();
         event.dataTransfer.dropEffect = 'move';
+    }, []);
+
+    const nodeTypes = useMemo(() => {
+        const types = { ...Shapes }
+        Object.keys(types).forEach(key => types[key] = CustomNode);
+        return types;
     }, []);
 
     const onDrop = useCallback(
@@ -92,15 +88,7 @@ const DnDFlow = ({ props }) => {
                 id: getId(),
                 type: type,
                 position,
-                data: { label: `${type} node` },
             };
-
-            if (type === 'Rectangle' || type === 'Square')
-                newNode.style = { border: '1px solid black', borderRadius: 5 }
-            if (type === 'Circle')
-                newNode.style = { border: '1px solid black', borderRadius: '50%', height: 60, width: 60 }
-
-            newNode.style = { ...newNode.style, ...nodeCommonStyles }
 
             setNodes((nds) => nds.concat(newNode));
         }, [reactFlowInstance]
@@ -112,7 +100,7 @@ const DnDFlow = ({ props }) => {
     }
 
     const onSave = () => {
-        saveDiagram({ nodes: nodes, edges: edges, inputs: inputs }, diagramName);
+        saveDiagram({ nodes: nodes, edges: edges }, diagramName);
         message.success('Diagram Saved')
     }
 
@@ -120,6 +108,10 @@ const DnDFlow = ({ props }) => {
         <div className={style.dndflow}>
             <ReactFlowProvider>
                 <Sidebar diagramName={diagramName} onNameChange={onNameChange} onSave={onSave} />
+                <Panel position="top-center">
+                    <ToolBar />
+                </Panel>
+
                 <div className={style.reactflowrapper} ref={reactFlowWrapper}>
                     <ReactFlow
                         nodes={nodes}

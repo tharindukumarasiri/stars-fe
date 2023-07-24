@@ -22,41 +22,9 @@
     cursor: pointer;
 }
 
-.rectangle {
-    height: 60px;
-    padding: 5px;
-    border: 1px solid #1a192b;
-    background-color: rgba(223, 212, 212, 0.573);
-    border-radius: 5px;
-    margin-bottom: 15px;
+.customNodeContainer {
     display: flex;
-    justify-content: center;
     align-items: center;
-    cursor: grab;
-}
-
-.circle {
-    height: 80px;
-    width: 80px;
-    border-radius: 50%;
-    border: 1px solid black;
-    background-color: rgba(223, 212, 212, 0.573);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    cursor: grab;
-}
-
-.square {
-    height: 70px;
-    width: 70px;
-    border-radius: 5px;
-    border: 1px solid black;
-    background-color: rgba(223, 212, 212, 0.573);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    cursor: grab;
 }
 
 .dndflow .reactflowrapper {
@@ -74,15 +42,17 @@
     flex-direction: row;
     justify-content: space-around;
     align-items: center;
-    margin-bottom: 15px;
+    margin-bottom: 35px;
 }
 
 .dndflow .drawingTextArea {
+    position: absolute;
     border: transparent;
     text-align: center;
     resize: none;
     font-size: 8px;
     background-color: transparent;
+    margin-top: 10px;
 }
 
 @media screen and (min-width: 768px) {
@@ -111,10 +81,8 @@ div.customHandle {
 }
 
 div.customHandle2 {
-    top: 30px;
-    left: 105%;
-    width: 40px;
-    margin: 10px auto;
+    left: 101%;
+    width: 10px;
     height: 0;
 }
 
@@ -122,10 +90,83 @@ div.customHandle2::after {
     content: '';
     width: 0;
     height: 0;
-    border-top: 5px solid transparent;
-    border-bottom: 5px solid transparent;
-    border-left: 10px solid;
+    border-top: 3px solid transparent;
+    border-bottom: 3px solid transparent;
+    border-left: 5px solid;
     position: absolute;
-    right: 0px;
-    top: -3.5px;
+    right: -3px;
+    top: -1.5px;
+}
+
+.toolBarContainer {
+    width: 60vw;
+    margin-left: 50px;
+    height: 40px;
+    background-color: white;
+    border: 1px solid rgba(223, 212, 212, 0.573);
+    border-radius: 5px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.fontSizeContainer {
+    width: 85px;
+    display: flex;
+    flex-direction: row;
+    position: relative;
+}
+
+.sizeInputEndText {
+    position: absolute;
+    right: 30px;
+    top: 8px;
+}
+
+.colorPickerContainer {
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    width: 40px;
+
+    &:hover {
+        cursor: pointer;
+    }
+}
+
+.colorPickerBody {
+    height: 35px;
+}
+
+.sidebarCategoryContainer {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    flex-flow: wrap;
+}
+
+.sidebarItemContainer {
+    display: flex;
+    width: 40px;
+    height: 40px;
+}
+
+.fontColorFooter {
+    position: absolute;
+    bottom: 0;
+    left: -5px;
+    height: 5px;
+    width: 20px;
+}
+
+.fontBoldContainer {
+    font-weight: bolder;
+    width: 20px;
+    border-radius: 3px;
+    text-align: center;
+
+    &:hover {
+        cursor: pointer;
+    }
 }
