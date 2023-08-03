@@ -1,26 +1,39 @@
 import React, { useState, useMemo, useContext } from "react";
-import { Table } from 'antd';
+import { Table, Modal } from 'antd';
 
 import { useDiagramStore } from './chartDrawingStore'
 
 import { SavedDiagramsTableHeaders } from '../../utils/tableHeaders'
 import StarDropdown from "../../common/dropdown";
 import DatePickerInput from "../../common/datePickerInput";
+import Input from "../../common/input";
 import { NAVIGATION_PAGES } from "../../utils/enums";
 import { TabContext } from "../../utils/contextStore";
 import { useTranslation } from "react-i18next";
+
+const diagramTypes = [
+    'Flows',
+    'Structures and Hiarchies',
+    'Data Collection',
+    'Data Mapping',
+    'Data Object Structure',
+    'Data Visualization',
+]
 
 const DrawingToolHome = () => {
     const diagramData = useDiagramStore((state) => state.diagramData);
     const loading = useDiagramStore((state) => state.loading);
 
     const [dropDownData, setDropDownData] = useState({ type: [], status: [] })
+    const [showModel, setShowModel] = useState(false)
+    const [diagramName, setDiagramName] = useState('');
+    const [diagramType, setDiagramType] = useState('');
     const [filterTypes, setFilterTypes] = useState({ startDate: null, endDate: null, type: null, status: null })
 
     const { t } = useTranslation();
 
     const { changeActiveTab } = useContext(TabContext);
-    console.log(diagramData)
+
     const tableHeaders = useMemo(() => {
         const headers = SavedDiagramsTableHeaders(t);
         headers.push({
@@ -53,7 +66,24 @@ const DrawingToolHome = () => {
     }
 
     const toggleModal = () => {
-        changeActiveTab(NAVIGATION_PAGES.CHART_DRAWING, {})
+        setShowModel(pre => !pre);
+        setDiagramName('');
+        setDiagramType('');
+    }
+    const onSave = () => {
+        if (diagramName !== '' && diagramType !== '') {
+            changeActiveTab(NAVIGATION_PAGES.CHART_DRAWING, { name: diagramName })
+        }
+    }
+
+    const onNameChange = (e) => {
+        e.preventDefault();
+        setDiagramName(e.target.value)
+    }
+
+    const onChangeType = (e) => {
+        e.preventDefault();
+        setDiagramType(e.target.value)
     }
 
     const onClickRow = (params) => {
@@ -135,8 +165,28 @@ const DrawingToolHome = () => {
                     </div>
                 </div> */}
             </div>
+            <Modal
+                title="New Strategy"
+                visible={showModel}
+                width={350}
+                centered={true}
+                closeIcon={< i className='icon-close close-icon' />}
+                okText="Save"
+                onOk={onSave}
+                onCancel={toggleModal}
+            >
+                <div>
+                    <Input value={diagramName} placeholder='Name' onChange={onNameChange} />
+                    <StarDropdown
+                        placeholder='Type'
+                        values={diagramTypes}
+                        onChange={onChangeType}
+                        selected={diagramType}
+                    />
+                </div>
+                <div className="n-float" />
+            </Modal>
         </div>
-
     )
 }
 

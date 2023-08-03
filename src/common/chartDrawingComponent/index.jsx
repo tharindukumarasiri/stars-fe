@@ -1,4 +1,4 @@
-import React, { useState, useRef, useCallback, useMemo } from 'react';
+import React, { useState, useRef, useCallback, useMemo, useEffect } from 'react';
 import ReactFlow, {
     ReactFlowProvider,
     addEdge,
@@ -23,7 +23,7 @@ import { useDiagramStore } from '../../Views/ChartDrawing/chartDrawingStore'
 
 import style from './DndStyles.module.scss'
 
-const getId = () => `dndnode_${+new Date()}`;
+const getId = (type) => `${type}_${+new Date()}`;
 
 const arrowColor = '#8f8f8f'
 
@@ -47,13 +47,16 @@ const defaultEdgeOptions = {
 
 const DnDFlow = ({ props }) => {
     const reactFlowWrapper = useRef(null);
+    const dragRef = useRef(null);
     const saveDiagram = useDiagramStore((state) => state.saveDiagram);
 
     const [nodes, setNodes, onNodesChange] = useNodesState(props?.data?.nodes || []);
     const [edges, setEdges, onEdgesChange] = useEdgesState(props?.data?.edges || []);
 
+    const [target, setTarget] = useState(null);
     const [reactFlowInstance, setReactFlowInstance] = useState(null);
     const [diagramName, setDiagramName] = useState(props?.name);
+    const [deleteNodeId, setDeleteNodeId] = useState('')
 
     const onConnect = useCallback((params) => setEdges((eds) => addEdge(params, eds)), []);
 
@@ -85,19 +88,68 @@ const DnDFlow = ({ props }) => {
                 y: event.clientY - reactFlowBounds.top,
             });
             const newNode = {
-                id: getId(),
+                id: getId(type),
                 type: type,
                 position,
+                data: {
+                    setDeleteNodeId
+                },
             };
 
             setNodes((nds) => nds.concat(newNode));
         }, [reactFlowInstance]
     );
 
-    const onNameChange = (e) => {
-        e.preventDefault();
-        setDiagramName(e.target.value)
-    }
+    useEffect(() => {
+        if (deleteNodeId !== '') {
+            const nodeToDelete = nodes.find(node => node.id === deleteNodeId)
+            reactFlowInstance.deleteElements({ nodes: [nodeToDelete] })
+            setDeleteNodeId('')
+        }
+    }, [deleteNodeId])
+
+    const onNodeDragStart = (evt, node) => {
+        dragRef.current = node;
+    };
+
+    const onNodeDrag = (evt, node) => {
+        // calculate the center point of the node from position and dimensions
+        const centerX = node.position.x + node.width / 2;
+        const centerY = node.position.y + node.height / 2;
+
+        // find a node where the center point is inside
+        const targetNode = nodes.find(
+            (n) =>
+                centerX > n.position.x &&
+                centerX < n.position.x + n.width &&
+                centerY > n.position.y &&
+                centerY < n.position.y + n.height &&
+                n.id !== node.id // this is needed, otherwise we would always find the dragged node
+        );
+
+        setTarget(targetNode);
+    };
+
+    const onNodeDragStop = (evt, node) => {
+        setNodes((nodes) =>
+            nodes.map((n) => {
+                if (target && target?.id?.includes("Table") && node?.id === n?.id) {
+                    n.parentNode = target?.id;
+                    n.extent = 'parent';
+                    n.position = { x: 0, y: 0 }
+                }
+                return n;
+            })
+        );
+
+        setTarget(null);
+        dragRef.current = null;
+    };
+
+    // const onNameChange = (e) => { //TODO to be add later 
+    //     e.preventDefault();
+    //     setDiagramName(e.target.value)
+    // }
 
     const onSave = () => {
         saveDiagram({ nodes: nodes, edges: edges }, diagramName);
@@ -107,9 +159,9 @@ const DnDFlow = ({ props }) => {
     return (
         <div className={style.dndflow}>
             <ReactFlowProvider>
-                <Sidebar diagramName={diagramName} onNameChange={onNameChange} onSave={onSave} />
+                <Sidebar diagramName={diagramName} />
                 <Panel position="top-center">
-                    <ToolBar />
+                    <ToolBar onSave={onSave} />
                 </Panel>
 
                 <div className={style.reactflowrapper} ref={reactFlowWrapper}>
@@ -122,6 +174,9 @@ const DnDFlow = ({ props }) => {
                         onInit={setReactFlowInstance}
                         onDrop={onDrop}
                         onDragOver={onDragOver}
+                        onNodeDragStart={onNodeDragStart}
+                        onNodeDrag={onNodeDrag}
+                        onNodeDragStop={onNodeDragStop}
                         fitView
                         nodeTypes={nodeTypes}
                         edgeTypes={edgeTypes}

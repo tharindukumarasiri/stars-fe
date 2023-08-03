@@ -4,7 +4,7 @@ import Input from "../../common/input";
 import style from './DndStyles.module.scss'
 import Shapes from './Shapes.js';
 
-export default ({ diagramName, onNameChange, onSave }) => {
+export default ({ diagramName }) => {
     const [sidebarVisible, setSidebarVisible] = useState(true);
 
     const onDragStart = (event, nodeType) => {
@@ -16,7 +16,7 @@ export default ({ diagramName, onNameChange, onSave }) => {
 
     const CustomShape = ({ shape }) => {
         return (
-            <svg viewBox={shape?.viewBox} fill="#434343" >
+            <svg viewBox={shape?.viewBox} fill="#ffffff" stroke="#434343" >
                 {shape?.image}
             </svg>
         )
@@ -25,15 +25,14 @@ export default ({ diagramName, onNameChange, onSave }) => {
     return (
         <aside className={sidebarVisible ? style.aside : ''}>
             <div className={style.sidebarColapsBtnContainer}>
+                {sidebarVisible &&
+                    <h2 className='m-b-20'>{diagramName}</h2>
+                }
                 <i className={style.sidebarColapsBtn + (sidebarVisible ? ' icon-circle-arrow-left' : ' icon-circle-arrow-right')}
                     onClick={onArrowClicked} />
             </div>
             {sidebarVisible &&
                 <>
-                    <Input value={diagramName} placeholder='Name' onChange={onNameChange} />
-                    <div className={style.sideBarRow}>
-                        <button className="add-btn" onClick={onSave} >Save</button>
-                    </div>
                     <div className={style.sidebarCategoryContainer} >
                         {Object.entries(Shapes)?.map(shape => {
                             return (

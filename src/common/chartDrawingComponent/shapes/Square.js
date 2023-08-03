@@ -11,7 +11,6 @@ const sourceStyle = { zIndex: 1 };
 
 const Square = ({ id, selected }) => {
     const [inputSize, setInputSize] = useState({ height: 50, width: 50 });
-    console.log(id)
     const textdata = useTextStore((state) => state.textdata);
     const onTextChange = useTextStore((state) => state.onTextChange);
 

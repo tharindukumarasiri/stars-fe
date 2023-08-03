@@ -11,15 +11,17 @@
 }
 
 .sidebarColapsBtnContainer {
+    position: relative;
     display: flex;
     flex-direction: row;
-    justify-content: flex-end;
-    margin-bottom: 5px;
+    justify-content: center;
 }
 
 .sidebarColapsBtn {
+    position: absolute;
     font-size: 20px;
     cursor: pointer;
+    right: -10px;
 }
 
 .customNodeContainer {
@@ -35,14 +37,6 @@
 
 .dndflow .selectall {
     margin-top: 10px;
-}
-
-.dndflow .sideBarRow {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-around;
-    align-items: center;
-    margin-bottom: 35px;
 }
 
 .dndflow .drawingTextArea {
@@ -139,6 +133,16 @@ div.customHandle2::after {
     height: 35px;
 }
 
+.borderColorPickerBody {
+    margin-top: 10px;
+    height: 5px;
+    width: 65px;
+}
+
+.colorPickerInput {
+    visibility: hidden;
+}
+
 .sidebarCategoryContainer {
     display: flex;
     flex-direction: row;
@@ -169,4 +173,38 @@ div.customHandle2::after {
     &:hover {
         cursor: pointer;
     }
+}
+
+.nodeCloseBtn {
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    font-size: 7px;
+    color: red;
+
+    &:hover {
+        cursor: pointer;
+    }
+}
+
+.activityIcon {
+    position: absolute;
+}
+
+.activityContainer {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.toolBarIcon {
+    font-size: 20px;
+
+    &:hover {
+        cursor: pointer;
+    }
+}
+
+.handleHidden {
+    visibility: hidden;
 }

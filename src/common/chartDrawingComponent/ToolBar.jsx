@@ -6,7 +6,7 @@ import TextInput from "../../common/input";
 import { useTextStore } from './store'
 
 import style from './DndStyles.module.scss'
-// 'Poppins', sans-serif
+
 const fontTypes = [
     {
         label: 'Arial',
@@ -26,7 +26,28 @@ const fontTypes = [
     },
 ]
 
-export default ({ }) => {
+const markerTypes = [
+    { label: 'None', icon: '' },
+    {
+        label: 'Send',
+        icon: 'icon-email'
+    },
+    {
+        label: 'Recieve',
+        icon: 'icon-email-circle-solid'
+    },
+    {
+        label: 'Time',
+        icon: 'icon-hourly'
+
+    },
+    {
+        label: 'Share',
+        icon: 'icon-p2p'
+    },
+]
+
+export default ({ onSave }) => {
     const textdata = useTextStore((state) => state.textdata);
     const selectedNodeId = useTextStore((state) => state.selectedNodeId);
     const onTextChange = useTextStore((state) => state.onTextChange);
@@ -34,8 +55,11 @@ export default ({ }) => {
     const fonstSize = textdata.find(item => item.id === selectedNodeId)?.fonstSize?.[0] || 8
     const setFonstSize = (value) => onTextChange(selectedNodeId, { fonstSize: value })
 
-    const backgroundColor = textdata.find(item => item.id === selectedNodeId)?.backgroundColor?.[0] || ''
+    const backgroundColor = textdata.find(item => item.id === selectedNodeId)?.backgroundColor?.[0] || '#ffffff'
     const setBackgroundColor = (value) => onTextChange(selectedNodeId, { backgroundColor: value })
+
+    const borderColor = textdata.find(item => item.id === selectedNodeId)?.borderColor?.[0] || 'black'
+    const setBorderColor = (value) => onTextChange(selectedNodeId, { borderColor: value })
 
     const textType = textdata.find(item => item.id === selectedNodeId)?.textType?.[0] || { label: 'Poppins', type: 'Poppins' }
     const settextType = (value) => onTextChange(selectedNodeId, { textType: value })
@@ -46,7 +70,11 @@ export default ({ }) => {
     const textBold = textdata.find(item => item.id === selectedNodeId)?.textBold?.[0] || false
     const setBold = (value) => onTextChange(selectedNodeId, { textBold: value })
 
-    const textColorPickerRed = useRef()
+    const markerType = textdata.find(item => item.id === selectedNodeId)?.markerType?.[0]
+    const setMarkerType = (value) => onTextChange(selectedNodeId, { markerType: value })
+
+    const textColorPickerRef = useRef()
+    const borderColorPickerRef = useRef()
 
     const onFontSizeChange = (e) => {
         e.preventDefault();
@@ -76,9 +104,19 @@ export default ({ }) => {
         setBackgroundColor(e.target.value)
     }
 
+    const onChangeBorderColor = (e) => {
+        e.preventDefault();
+        setBorderColor(e.target.value)
+    }
+
     const onChangeTextType = (e) => {
         e.preventDefault();
         settextType(JSON.parse(e.target.value));
+    }
+
+    const onChangeMarker = (e) => {
+        e.preventDefault();
+        setMarkerType(JSON.parse(e.target.value));
     }
 
     const onChangeTextColor = (e) => {
@@ -113,17 +151,32 @@ export default ({ }) => {
             <div className={style.fontBoldContainer} style={{ backgroundColor: textBold ? '#D3D3D3' : '' }} onClick={onChangeTextBold}>B</div>
 
             <div className={style.colorPickerContainer}>
-                <div onClick={() => textColorPickerRed.current.click()} className='bold m-t-5' style={{ color: textColor }}>A</div>
+                <div onClick={() => textColorPickerRef.current.click()} className='bold m-t-5' style={{ color: textColor }}>A</div>
                 <div className={style.fontColorFooter} style={{ backgroundColor: textColor }} />
-                <input type='color' value={textColor} onChange={onChangeTextColor} ref={textColorPickerRed} style={{ visibility: 'hidden' }} />
+                <input type='color' value={textColor} onChange={onChangeTextColor} ref={textColorPickerRef} className={style.colorPickerInput} />
             </div>
 
             <div className={style.colorPickerContainer} >
                 <input type='color' value={backgroundColor} className={style.colorPickerBody} onChange={onChangeBackgroundColor} />
             </div>
 
+            <div className={style.colorPickerContainer} onClick={() => borderColorPickerRef.current.click()} >
+                <div className={style.borderColorPickerBody} style={{ backgroundColor: borderColor }} />
+                <input type='color' value={borderColor} className={style.colorPickerInput} onChange={onChangeBorderColor} ref={borderColorPickerRef} />
+            </div>
 
-
+            <div className={style.activityContainer}>
+                Activity
+                <div className='m-t-10 m-l-5'>
+                    <Dropdown
+                        values={markerTypes}
+                        onChange={onChangeMarker}
+                        dataName='label'
+                        selected={JSON.stringify(markerType)}
+                    />
+                </div>
+            </div>
+            <i className={style.toolBarIcon + ' icon-archive'} onClick={onSave} />
         </div>
     );
 };
