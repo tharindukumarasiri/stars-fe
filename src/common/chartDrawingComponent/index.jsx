@@ -18,12 +18,12 @@ import FloatingEdge from './customElements/FloatingEdge';
 import CustomConnectionLine from './customElements/CustomConnectionLine';
 import Sidebar from './Sidebar';
 import ToolBar from './ToolBar';
+import ContextMenu from './customElements/ContextMenu.js';
 
 import { useDiagramStore } from '../../Views/ChartDrawing/chartDrawingStore'
+import { getId } from './utils'
 
 import style from './DndStyles.module.scss'
-
-const getId = (type) => `${type}_${+new Date()}`;
 
 const arrowColor = '#8f8f8f'
 
@@ -43,6 +43,7 @@ const defaultEdgeOptions = {
         type: MarkerType.ArrowClosed,
         color: arrowColor,
     },
+    zIndex: 1001,
 };
 
 const DnDFlow = ({ props }) => {
@@ -54,6 +55,7 @@ const DnDFlow = ({ props }) => {
     const [edges, setEdges, onEdgesChange] = useEdgesState(props?.data?.edges || []);
 
     const [target, setTarget] = useState(null);
+    const [menu, setMenu] = useState(null);
     const [reactFlowInstance, setReactFlowInstance] = useState(null);
     const [diagramName, setDiagramName] = useState(props?.name);
     const [deleteNodeId, setDeleteNodeId] = useState('')
@@ -92,9 +94,13 @@ const DnDFlow = ({ props }) => {
                 type: type,
                 position,
                 data: {
-                    setDeleteNodeId
+                    setDeleteNodeId,
                 },
             };
+
+            if (type === 'Table') {
+                newNode.data = { ...newNode.data, addTableLine }
+            }
 
             setNodes((nds) => nds.concat(newNode));
         }, [reactFlowInstance]
@@ -133,10 +139,10 @@ const DnDFlow = ({ props }) => {
     const onNodeDragStop = (evt, node) => {
         setNodes((nodes) =>
             nodes.map((n) => {
-                if (target && target?.id?.includes("Table") && node?.id === n?.id) {
+                if (target && target?.id?.includes("Table") && node?.id === n?.id && !n?.parentNode) {
                     n.parentNode = target?.id;
                     n.extent = 'parent';
-                    n.position = { x: 0, y: 0 }
+                    n.position = { x: target.width * .4, y: target.height * .4 }
                 }
                 return n;
             })
@@ -150,6 +156,43 @@ const DnDFlow = ({ props }) => {
     //     e.preventDefault();
     //     setDiagramName(e.target.value)
     // }
+
+    const onNodeContextMenu = useCallback(
+        (event, node) => {
+            // Prevent native context menu from showing
+            event.preventDefault();
+
+            // Calculate position of the context menu
+            const pane = reactFlowWrapper.current.getBoundingClientRect();
+            setMenu({
+                id: node.id,
+                top: event.clientY - 80,
+                left: event.clientX - 50,
+            });
+        },
+        [setMenu]
+    );
+
+    // Close the context menu if it's open whenever the window is clicked.
+    const onPaneClick = useCallback(() => setMenu(null), [setMenu]);
+
+    const addTableLine = (type, parentId, parentSize, position) => {
+        const newNode = {
+            id: getId(type),
+            type: type,
+            position,
+            parentNode: parentId,
+            extent: 'parent',
+            data: {
+                setDeleteNodeId,
+                hideHandle: true,
+                size: parentSize,
+                resizeToParentId: parentId,
+            },
+        };
+
+        setNodes((nds) => nds.concat(newNode));
+    }
 
     const onSave = () => {
         saveDiagram({ nodes: nodes, edges: edges }, diagramName);
@@ -177,6 +220,8 @@ const DnDFlow = ({ props }) => {
                         onNodeDragStart={onNodeDragStart}
                         onNodeDrag={onNodeDrag}
                         onNodeDragStop={onNodeDragStop}
+                        onNodeContextMenu={onNodeContextMenu}
+                        onPaneClick={onPaneClick}
                         fitView
                         nodeTypes={nodeTypes}
                         edgeTypes={edgeTypes}
@@ -189,6 +234,7 @@ const DnDFlow = ({ props }) => {
                         <Panel />
                     </ReactFlow>
                 </div>
+                {menu && <ContextMenu onClick={onPaneClick} {...menu} />}
             </ReactFlowProvider>
         </div>
     );

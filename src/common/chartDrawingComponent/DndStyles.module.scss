@@ -15,6 +15,7 @@
     display: flex;
     flex-direction: row;
     justify-content: center;
+    margin-bottom: 10px;
 }
 
 .sidebarColapsBtn {
@@ -27,6 +28,11 @@
 .customNodeContainer {
     display: flex;
     align-items: center;
+    border: 0;
+}
+
+.tableContainer {
+    border: 2px solid;
 }
 
 .dndflow .reactflowrapper {
@@ -146,14 +152,29 @@ div.customHandle2::after {
 .sidebarCategoryContainer {
     display: flex;
     flex-direction: row;
-    justify-content: space-between;
+    justify-content: flex-start;
     flex-flow: wrap;
+    margin-bottom: 20px;
+}
+
+.sidebarCategoryheader {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin-bottom: 10px;
+
+    &:hover {
+        cursor: pointer;
+    }
 }
 
 .sidebarItemContainer {
     display: flex;
+    justify-content: center;
     width: 40px;
     height: 40px;
+    margin-bottom: 10px;
+    margin-right: 10px;
 }
 
 .fontColorFooter {
@@ -187,6 +208,40 @@ div.customHandle2::after {
     }
 }
 
+.textBtnRotate {
+    position: absolute;
+    top: -10px;
+    left: -10px;
+    font-size: 7px;
+
+    &:hover {
+        cursor: pointer;
+    }
+}
+
+.tableBtnVertical {
+    position: absolute;
+    top: -10px;
+    font-size: 6px;
+    padding: 0px 2px !important;
+
+    &:hover {
+        cursor: pointer;
+    }
+}
+
+.tableBtnHorizontal {
+    position: absolute;
+    bottom: 0px;
+    right: -40px;
+    font-size: 6px;
+    padding: 0px 2px !important;
+
+    &:hover {
+        cursor: pointer;
+    }
+}
+
 .activityIcon {
     position: absolute;
 }
@@ -207,4 +262,15 @@ div.customHandle2::after {
 
 .handleHidden {
     visibility: hidden;
+}
+
+.canvasContextMenu {
+    position: absolute;
+    z-index: 10;
+}
+
+.canvasContextMenu button {
+    display: block;
+    margin-bottom: 2px;
+    width: 100%;
 }

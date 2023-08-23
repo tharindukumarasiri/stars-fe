@@ -48,30 +48,31 @@ const markerTypes = [
 ]
 
 export default ({ onSave }) => {
-    const textdata = useTextStore((state) => state.textdata);
     const selectedNodeId = useTextStore((state) => state.selectedNodeId);
-    const onTextChange = useTextStore((state) => state.onTextChange);
+    const textdata = useTextStore((state) => state.textdata).find(item => item.id === selectedNodeId);
+    const changeTextData = useTextStore((state) => state.onTextChange);
+    const onTextChange = (value) => changeTextData(selectedNodeId, value)
 
-    const fonstSize = textdata.find(item => item.id === selectedNodeId)?.fonstSize?.[0] || 8
-    const setFonstSize = (value) => onTextChange(selectedNodeId, { fonstSize: value })
+    const fonstSize = textdata?.fonstSize || 8
+    const setFonstSize = (value) => onTextChange({ fonstSize: value })
 
-    const backgroundColor = textdata.find(item => item.id === selectedNodeId)?.backgroundColor?.[0] || '#ffffff'
-    const setBackgroundColor = (value) => onTextChange(selectedNodeId, { backgroundColor: value })
+    const backgroundColor = textdata?.backgroundColor || '#ffffff'
+    const setBackgroundColor = (value) => onTextChange({ backgroundColor: value })
 
-    const borderColor = textdata.find(item => item.id === selectedNodeId)?.borderColor?.[0] || 'black'
-    const setBorderColor = (value) => onTextChange(selectedNodeId, { borderColor: value })
+    const borderColor = textdata?.borderColor || 'black'
+    const setBorderColor = (value) => onTextChange({ borderColor: value })
 
-    const textType = textdata.find(item => item.id === selectedNodeId)?.textType?.[0] || { label: 'Poppins', type: 'Poppins' }
-    const settextType = (value) => onTextChange(selectedNodeId, { textType: value })
+    const textType = textdata?.textType || { label: 'Poppins', type: 'Poppins' }
+    const settextType = (value) => onTextChange({ textType: value })
 
-    const textColor = textdata.find(item => item.id === selectedNodeId)?.textColor?.[0] || 'black'
-    const setTextColor = (value) => onTextChange(selectedNodeId, { textColor: value })
+    const textColor = textdata?.textColor || 'black'
+    const setTextColor = (value) => onTextChange({ textColor: value })
 
-    const textBold = textdata.find(item => item.id === selectedNodeId)?.textBold?.[0] || false
-    const setBold = (value) => onTextChange(selectedNodeId, { textBold: value })
+    const textBold = textdata?.textBold || false
+    const setBold = (value) => onTextChange({ textBold: value })
 
-    const markerType = textdata.find(item => item.id === selectedNodeId)?.markerType?.[0]
-    const setMarkerType = (value) => onTextChange(selectedNodeId, { markerType: value })
+    const markerType = textdata?.markerType
+    const setMarkerType = (value) => onTextChange({ markerType: value })
 
     const textColorPickerRef = useRef()
     const borderColorPickerRef = useRef()

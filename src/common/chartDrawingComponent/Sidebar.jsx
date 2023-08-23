@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
-import Input from "../../common/input";
+import React, { useState, memo } from 'react';
 
 import style from './DndStyles.module.scss'
-import Shapes from './Shapes.js';
+import Shapes, { Categories } from './Shapes.js';
 
-export default ({ diagramName }) => {
+const SideBar = ({ diagramName }) => {
     const [sidebarVisible, setSidebarVisible] = useState(true);
+    const [closedCategories, setClosedCategories] = useState([]);
 
     const onDragStart = (event, nodeType) => {
         event.dataTransfer.setData('application/reactflow', nodeType);
@@ -22,6 +22,19 @@ export default ({ diagramName }) => {
         )
     }
 
+    const onCategoryClick = (category) => {
+        const index = closedCategories?.findIndex(cat => cat === category)
+        const newClosedCategories = [...closedCategories]
+
+        if (index < 0) {
+            newClosedCategories.push(category)
+        } else {
+            newClosedCategories.splice(index, 1)
+        }
+
+        setClosedCategories(newClosedCategories);
+    }
+
     return (
         <aside className={sidebarVisible ? style.aside : ''}>
             <div className={style.sidebarColapsBtnContainer}>
@@ -33,17 +46,35 @@ export default ({ diagramName }) => {
             </div>
             {sidebarVisible &&
                 <>
-                    <div className={style.sidebarCategoryContainer} >
-                        {Object.entries(Shapes)?.map(shape => {
-                            return (
-                                <div className={style.sidebarItemContainer} onDragStart={(event) => onDragStart(event, shape[0])} draggable key={shape[0]}>
-                                    <CustomShape shape={shape[1]} fill={'black'} />
+                    {Object.entries(Categories)?.map(category => {
+                        return (
+                            <div key={category[0]} >
+                                <div className={style.sidebarCategoryheader} onClick={() => { onCategoryClick(category[0]) }} >
+                                    <div className=''>{category[1]}</div>
+                                    <i className={(!closedCategories.includes(category[0]) ? ' icon-arrow-down' : ' icon-arrow-up')} />
                                 </div>
-                            )
-                        })}
-                    </div>
+
+                                {!closedCategories.includes(category[0]) &&
+                                    <div className={style.sidebarCategoryContainer}>
+                                        {
+                                            Object.entries(Shapes)?.map(shape => {
+                                                if (category[1] === shape[1]?.category)
+                                                    return (
+                                                        <div className={style.sidebarItemContainer} onDragStart={(event) => onDragStart(event, shape[0])} draggable key={shape[0]}>
+                                                            <CustomShape shape={shape[1]} fill={'black'} />
+                                                        </div>
+                                                    )
+                                            })
+                                        }
+                                    </div>
+                                }
+                            </div>
+                        )
+                    })}
                 </>
             }
         </aside>
     );
 };
+
+export default memo(SideBar);

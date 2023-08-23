@@ -21,9 +21,9 @@ function Circle({ id, selected }) {
     const isConnecting = !!connectionNodeId;
     const isTarget = connectionNodeId && connectionNodeId !== id;
 
-    const fonstSize = Number(textdata.find(item => item.id === id)?.fonstSize?.[0]) || 8
-    const backgroundColor = textdata.find(item => item.id === id)?.backgroundColor?.[0] || ''
-    const textColor = textdata.find(item => item.id === id)?.textColor?.[0] || 'black'
+    const fonstSize = Number(textdata.find(item => item.id === id)?.fonstSize) || 8
+    const backgroundColor = textdata.find(item => item.id === id)?.backgroundColor || ''
+    const textColor = textdata.find(item => item.id === id)?.textColor || 'black'
 
     useEffect(() => {
         if (selected)

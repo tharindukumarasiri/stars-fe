@@ -1,5 +1,7 @@
 import { Position, MarkerType } from 'reactflow';
 
+export const getId = (type) => `${type}_${+new Date()}`;
+
 // this helper function returns the intersection point
 // of the line between the center of the intersectionNode and the target node
 function getNodeIntersection(intersectionNode, targetNode) {
