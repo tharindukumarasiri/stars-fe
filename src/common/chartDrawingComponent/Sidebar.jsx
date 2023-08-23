@@ -58,7 +58,7 @@ const SideBar = ({ diagramName }) => {
                                     <div className={style.sidebarCategoryContainer}>
                                         {
                                             Object.entries(Shapes)?.map(shape => {
-                                                if (category[1] === shape[1]?.category)
+                                                if (shape[1]?.category?.includes(category[1]))
                                                     return (
                                                         <div className={style.sidebarItemContainer} onDragStart={(event) => onDragStart(event, shape[0])} draggable key={shape[0]}>
                                                             <CustomShape shape={shape[1]} fill={'black'} />

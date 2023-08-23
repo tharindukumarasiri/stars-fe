@@ -10,7 +10,7 @@ export default {
     Square: {
         image: <rect x="0.5" y="0.5" width="25" height="25" vectorEffect="non-scaling-stroke" />,
         viewBox: "0 0 26 26",
-        category: [Categories.FLOWCHART]
+        category: [Categories.FLOWCHART, Categories.SHAPES]
     },
     Bpmn: {
         image: <>
