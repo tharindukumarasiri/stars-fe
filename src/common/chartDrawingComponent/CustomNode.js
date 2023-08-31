@@ -1,8 +1,10 @@
-import React, { memo, useCallback, useEffect, useMemo } from 'react';
-import { Handle, Position, NodeResizer, useStore } from 'reactflow';
+import React, { memo, useCallback, useEffect, useRef } from 'react';
+import { Handle, Position, useUpdateNodeInternals, NodeResizer, useStore } from 'reactflow';
+import { drag } from 'd3-drag';
+import { select } from 'd3-selection';
 
-import { useTextStore } from './store'
-import Shapes from './Shapes.js';
+import { useNodeDataStore } from './store'
+import Shapes from './ShapesData.js';
 
 import style from './DndStyles.module.scss'
 
@@ -12,6 +14,9 @@ const sourceStyle = { zIndex: 2 };
 const targetStyle = { zIndex: 1 };
 
 function CustomNode({ id, selected, type, data }) {
+    const rotateControlRef = useRef(null);
+    const updateNodeInternals = useUpdateNodeInternals();
+
     const shapeData = Shapes[type]
     const initialHeight = shapeData.size?.height ?? 50;
     const initialWidth = shapeData.size?.width ?? 50;
@@ -26,17 +31,17 @@ function CustomNode({ id, selected, type, data }) {
 
     const handleContainerStyle = (!((selected || isTarget) && !isTable) || data?.hideHandle) ? style.handleHidden : '';
 
-    const sizes = useTextStore((state) => state.size);
-    const onSizeCahnge = useTextStore((state) => state.setSize);
+    const sizes = useNodeDataStore((state) => state.size);
+    const onSizeCahnge = useNodeDataStore((state) => state.setSize);
 
     const size = sizes.find(item => item.id === id) || { height: initialHeight, width: initialWidth };
     const setSize = (value) => onSizeCahnge(id, value)
 
-    const textdata = useTextStore((state) => state.textdata)?.find(item => item.id === id);
-    const onTextChange = useTextStore((state) => state.onTextChange);
-    const setSelectedNodeId = useTextStore((state) => state.setSelectedNodeId);
+    const textdata = useNodeDataStore((state) => state.textdata)?.find(item => item.id === id);
+    const onTextChange = useNodeDataStore((state) => state.onTextChange);
+    const setSelectedNodeId = useNodeDataStore((state) => state.setSelectedNodeId);
 
-    const rotate = textdata?.rotate || ''
+    const rotate = textdata?.rotate || '0'
     const setRotate = (value) => onTextChange(id, { rotate: value })
 
     const fonstSize = Number(textdata?.fonstSize) || 8
@@ -57,7 +62,7 @@ function CustomNode({ id, selected, type, data }) {
     const mainContainerStyle = {
         height: size?.height,
         width: size?.width,
-        transform: rotate,
+        transform: `rotate(${rotate}deg)`,
         backgroundColor: shapeData?.hideShape ? backgroundColor : '',
         borderColor: shapeData?.hideShape ? borderColor : '',
     }
@@ -107,6 +112,24 @@ function CustomNode({ id, selected, type, data }) {
         }
     });
 
+    useEffect(() => {
+        if (!rotateControlRef.current) {
+            return;
+        }
+
+        const selection = select(rotateControlRef.current);
+        const dragHandler = drag().on('drag', (evt) => {
+            const dx = evt.x - 100;
+            const dy = evt.y - 100;
+            const rad = Math.atan2(dx, dy);
+            const deg = rad * (180 / Math.PI);
+            setRotate(180 - deg);
+            updateNodeInternals(id);
+        });
+
+        selection.call(dragHandler);
+    }, [id, updateNodeInternals]);
+
     const CustomShape = ({ fill }) => {
         return (
             <svg viewBox={shapeData.viewBox} fill={fill} stroke={borderColor} width={size?.width} height={size?.height} >
@@ -132,10 +155,10 @@ function CustomNode({ id, selected, type, data }) {
     }
 
     const rotateText = () => {
-        if (rotate) {
-            setRotate('')
+        if (rotate !== '0') {
+            setRotate('0')
         } else {
-            setRotate('rotate(-90deg)')
+            setRotate('-90')
         }
     }
 
@@ -143,17 +166,25 @@ function CustomNode({ id, selected, type, data }) {
         <div style={mainContainerStyle}
             className={isTable ? style.tableContainer : style.customNodeContainer}
         >
-            {!data?.hideResizer &&
-                <NodeResizer
-                    isVisible={selected}
-                    minWidth={resizerBounds(true)?.width}
-                    minHeight={resizerBounds(true)?.height}
-                    maxWidth={resizerBounds(false)?.width}
-                    maxHeight={resizerBounds(false)?.height}
-                    onResizeEnd={onResize}
-                    keepAspectRatio={shapeData?.keepAspectRatio ?? true}
+            <NodeResizer
+                isVisible={selected}
+                minWidth={resizerBounds(true)?.width}
+                minHeight={resizerBounds(true)?.height}
+                maxWidth={resizerBounds(false)?.width}
+                maxHeight={resizerBounds(false)?.height}
+                onResizeEnd={onResize}
+                keepAspectRatio={shapeData?.keepAspectRatio ?? true}
+            />
+            {!data?.resizeToParentId &&
+                <div
+                    ref={rotateControlRef}
+                    style={{
+                        display: selected ? 'block' : 'none',
+                    }}
+                    className={`nodrag ${style.rotateHandle}`}
                 />
             }
+
             {markerType?.icon &&
                 <i className={markerType.icon + ' ' + style.activityIcon} style={{ top: size?.height / 50, left: size?.height / 50 }} />
             }

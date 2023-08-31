@@ -1,9 +1,10 @@
 import { create } from 'zustand'
 
-export const useTextStore = create((set, get) => ({
+export const useNodeDataStore = create((set, get) => ({
     size: [],
     textdata: [],
     selectedNodeId: '',
+    chartData: [],
     setSize: (id, size) => {
         const index = get().size.findIndex(item => item.id === id)
 
@@ -29,5 +30,18 @@ export const useTextStore = create((set, get) => ({
             set({ textdata: newTextData })
         }
     },
-    setSelectedNodeId: (id) => set({ selectedNodeId: id })
+    setSelectedNodeId: (id) => set({ selectedNodeId: id }),
+    setChartData: (id, value) => {
+        const index = get().chartData.findIndex(item => item.id === id)
+        const inputKey = [Object.keys(value)[0]];
+        const inputValue = [Object.values(value)[0]];
+
+        if (index < 0) {
+            set({ chartData: [...get().chartData, { id, ...value }] })
+        } else {
+            const newChartData = [...get().chartData];
+            newChartData[index][inputKey] = inputValue[0]
+            set({ chartData: newChartData })
+        }
+    },
 }))

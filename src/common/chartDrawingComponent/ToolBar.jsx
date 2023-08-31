@@ -1,9 +1,9 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef } from 'react';
 
 import Dropdown from '../dropdown';
 import TextInput from "../../common/input";
 
-import { useTextStore } from './store'
+import { useNodeDataStore } from './store'
 
 import style from './DndStyles.module.scss'
 
@@ -48,9 +48,9 @@ const markerTypes = [
 ]
 
 export default ({ onSave }) => {
-    const selectedNodeId = useTextStore((state) => state.selectedNodeId);
-    const textdata = useTextStore((state) => state.textdata).find(item => item.id === selectedNodeId);
-    const changeTextData = useTextStore((state) => state.onTextChange);
+    const selectedNodeId = useNodeDataStore((state) => state.selectedNodeId);
+    const textdata = useNodeDataStore((state) => state.textdata).find(item => item.id === selectedNodeId);
+    const changeTextData = useNodeDataStore((state) => state.onTextChange);
     const onTextChange = (value) => changeTextData(selectedNodeId, value)
 
     const fonstSize = textdata?.fonstSize || 8

@@ -274,3 +274,56 @@ div.customHandle2::after {
     margin-bottom: 2px;
     width: 100%;
 }
+
+.rotateHandle {
+    position: absolute;
+    width: 5px;
+    height: 5px;
+    background: #3367d9;
+    left: 50%;
+    top: -18px;
+    border-radius: 100%;
+    transform: translate(-50%, -50%);
+    cursor: alias;
+}
+
+.rotateHandle:after {
+    content: '';
+    display: block;
+    position: absolute;
+    width: 1px;
+    height: 15px;
+    background: #3367d9;
+    left: 2px;
+    top: 5px;
+}
+
+.lineChartContainer {
+    position: relative;
+    border: solid 2px;
+    border-color: #000 #000 transparent transparent;
+    overflow: hidden;
+}
+
+.lineChartCurveBox {
+    position: absolute;
+    border: solid 1px #000;
+    border-radius: 50%;
+    border-style: dotted;
+}
+
+.lineChartLine {
+    position: absolute;
+    left: -1.5px;
+    top: -3.5px;
+    height: 2px;
+    border: 0;
+    background-color: #000;
+}
+
+.lineChartLineToolbarItem {
+    width: 80px;
+    display: flex;
+    flex-direction: row;
+    position: relative;
+}

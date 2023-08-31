@@ -13,7 +13,8 @@ import 'reactflow/dist/style.css';
 import { message } from 'antd';
 
 import CustomNode from './CustomNode.js';
-import Shapes from './Shapes.js';
+import LineChart from './shapes/LineChart.js';
+import Shapes, { parentNodes } from './ShapesData.js';
 import FloatingEdge from './customElements/FloatingEdge';
 import CustomConnectionLine from './customElements/CustomConnectionLine';
 import Sidebar from './Sidebar';
@@ -70,6 +71,7 @@ const DnDFlow = ({ props }) => {
     const nodeTypes = useMemo(() => {
         const types = { ...Shapes }
         Object.keys(types).forEach(key => types[key] = CustomNode);
+        types['LineChart'] = LineChart
         return types;
     }, []);
 
@@ -139,7 +141,9 @@ const DnDFlow = ({ props }) => {
     const onNodeDragStop = (evt, node) => {
         setNodes((nodes) =>
             nodes.map((n) => {
-                if (target && target?.id?.includes("Table") && node?.id === n?.id && !n?.parentNode) {
+                const isParentNode = parentNodes.some(parent => target?.id?.includes(parent));
+
+                if (target && isParentNode && node?.id === n?.id && !n?.parentNode) {
                     n.parentNode = target?.id;
                     n.extent = 'parent';
                     n.position = { x: target.width * .4, y: target.height * .4 }

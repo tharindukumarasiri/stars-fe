@@ -2,16 +2,16 @@ import React, { useCallback } from 'react';
 import { useReactFlow } from 'reactflow';
 
 import style from '../DndStyles.module.scss'
-import { useTextStore } from '../store'
+import { useNodeDataStore } from '../store'
 import { getId } from '../utils'
 
 export default function ContextMenu({ id, top, left, ...props }) {
     const { getNode, setNodes, setEdges, getNodes } = useReactFlow();
 
-    const textdata = useTextStore((state) => state.textdata)?.find(item => item.id === id);
-    const onTextChange = useTextStore((state) => state.onTextChange);
-    const size = useTextStore((state) => state.size)?.find(item => item.id === id);
-    const setSize = useTextStore((state) => state.setSize);
+    const textdata = useNodeDataStore((state) => state.textdata)?.find(item => item.id === id);
+    const onTextChange = useNodeDataStore((state) => state.onTextChange);
+    const size = useNodeDataStore((state) => state.size)?.find(item => item.id === id);
+    const setSize = useNodeDataStore((state) => state.setSize);
 
     const duplicateNode = useCallback(() => {
         const node = getNode(id);

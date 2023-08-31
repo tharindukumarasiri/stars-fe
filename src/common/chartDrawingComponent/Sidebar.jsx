@@ -1,7 +1,7 @@
 import React, { useState, memo } from 'react';
 
 import style from './DndStyles.module.scss'
-import Shapes, { Categories } from './Shapes.js';
+import Shapes, { Categories } from './ShapesData.js';
 
 const SideBar = ({ diagramName }) => {
     const [sidebarVisible, setSidebarVisible] = useState(true);
