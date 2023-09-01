@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next'
-
+import { useLocation } from 'react-router-dom';
 import { useUserStore } from './adminRoleStore'
 
 import Tabs from "../../common/tabComponent";
@@ -22,6 +22,7 @@ import { getAllUsers } from "../../services/userService";
 import "./adminRole.styles.scss";
 
 const AdminRole = ({ openTab = NAVIGATION_PAGES.ADMIN_TEMPLATES }) => {
+    const { hash } = useLocation();
     const [activeTab, setActiveTab] = useState(openTab);
     const [openTabs, setOpenTabs] = useState([openTab]);
     const [params, setParams] = useState({})
@@ -42,6 +43,12 @@ const AdminRole = ({ openTab = NAVIGATION_PAGES.ADMIN_TEMPLATES }) => {
     const [savedTemplates, setSavedTemplates] = useState([]);
 
     const { t } = useTranslation();
+
+    useEffect(() => {
+        if(hash === '#2' ) {
+            changeActiveTab(NAVIGATION_PAGES.ADMIN_TEMPLATES);
+        }
+    }, [hash])
 
     useEffect(() => {
         if(selectedCompany) {
