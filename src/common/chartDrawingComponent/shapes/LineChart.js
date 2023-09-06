@@ -109,8 +109,9 @@ function LineChart({ id, selected, type, data }) {
                 isVisible={selected}
                 minWidth={initialHeight}
                 minHeight={initialWidth}
-                onResizeEnd={onResize}
+                onResize={onResize}
                 keepAspectRatio={shapeData?.keepAspectRatio ?? true}
+                handleClassName={style.resizerHandleStyle}
             />
             <NodeToolbar position={Position.Right}>
                 <div>Number of Lines</div>

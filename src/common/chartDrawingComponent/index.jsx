@@ -12,8 +12,10 @@ import ReactFlow, {
 import 'reactflow/dist/style.css';
 import { message } from 'antd';
 
-import CustomNode from './CustomNode.js';
+import CustomNode from './shapes/CustomNode.js';
 import LineChart from './shapes/LineChart.js';
+import Line from './shapes/Line.js';
+import Text from './shapes/Text.js';
 import Shapes, { parentNodes } from './ShapesData.js';
 import FloatingEdge from './customElements/FloatingEdge';
 import CustomConnectionLine from './customElements/CustomConnectionLine';
@@ -72,6 +74,9 @@ const DnDFlow = ({ props }) => {
         const types = { ...Shapes }
         Object.keys(types).forEach(key => types[key] = CustomNode);
         types['LineChart'] = LineChart
+        types['HorizontalLine'] = Line
+        types['VerticalLine'] = Line
+        types['Text'] = Text
         return types;
     }, []);
 

@@ -21,7 +21,8 @@
 }
 
 .hover-hand {
-    display:inline;
+    display: inline;
+
     &:hover {
         cursor: pointer;
     }
@@ -145,7 +146,7 @@
     margin-top: 3px;
     padding: 0 0 50px 0;
     /*overflow: scroll;*/
-    display:grid;
+    display: grid;
     height: calc(100% - 140px);
     width: 100%;
 }
@@ -208,4 +209,9 @@ div.rsw-ce li {
     width: 100%;
     background-color: #333;
     margin-bottom: 40px;
+}
+
+.color-picker-container {
+    position: absolute;
+    z-index: 2;
 }

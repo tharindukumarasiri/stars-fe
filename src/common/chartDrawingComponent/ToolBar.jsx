@@ -1,7 +1,9 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 
 import Dropdown from '../dropdown';
 import TextInput from "../../common/input";
+import ColorPicker from '../../common/colorPicker';
+import { getRgbaColor } from './utils';
 
 import { useNodeDataStore } from './store'
 
@@ -47,7 +49,15 @@ const markerTypes = [
     },
 ]
 
+const colorPickerTypes = {
+    TEXT: 'TEXT',
+    BACKGROUND: 'BACKGROUND',
+    LINE: 'LINE',
+}
+
 export default ({ onSave }) => {
+    const [colorPickerVisible, setColorPickerVisible] = useState('')
+
     const selectedNodeId = useNodeDataStore((state) => state.selectedNodeId);
     const textdata = useNodeDataStore((state) => state.textdata).find(item => item.id === selectedNodeId);
     const changeTextData = useNodeDataStore((state) => state.onTextChange);
@@ -74,9 +84,6 @@ export default ({ onSave }) => {
     const markerType = textdata?.markerType
     const setMarkerType = (value) => onTextChange({ markerType: value })
 
-    const textColorPickerRef = useRef()
-    const borderColorPickerRef = useRef()
-
     const onFontSizeChange = (e) => {
         e.preventDefault();
         const number = e.target.value
@@ -100,15 +107,9 @@ export default ({ onSave }) => {
             setFonstSize(newSize.toString())
     }
 
-    const onChangeBackgroundColor = (e) => {
-        e.preventDefault();
-        setBackgroundColor(e.target.value)
-    }
+    const onChangeBackgroundColor = (color) => setBackgroundColor(color?.rgb)
 
-    const onChangeBorderColor = (e) => {
-        e.preventDefault();
-        setBorderColor(e.target.value)
-    }
+    const onChangeBorderColor = (color) => setBorderColor(color?.rgb)
 
     const onChangeTextType = (e) => {
         e.preventDefault();
@@ -120,10 +121,11 @@ export default ({ onSave }) => {
         setMarkerType(JSON.parse(e.target.value));
     }
 
-    const onChangeTextColor = (e) => {
-        e.preventDefault();
-        setTextColor(e.target.value)
-    }
+    const onChangeTextColor = (color) => setTextColor(color?.rgb)
+
+    const onMouseLeave = () => setColorPickerVisible('')
+
+    const showColorPicker = (picker) => setColorPickerVisible(picker)
 
     const onChangeTextBold = () => setBold(!textBold)
 
@@ -151,19 +153,47 @@ export default ({ onSave }) => {
 
             <div className={style.fontBoldContainer} style={{ backgroundColor: textBold ? '#D3D3D3' : '' }} onClick={onChangeTextBold}>B</div>
 
-            <div className={style.colorPickerContainer}>
-                <div onClick={() => textColorPickerRef.current.click()} className='bold m-t-5' style={{ color: textColor }}>A</div>
-                <div className={style.fontColorFooter} style={{ backgroundColor: textColor }} />
-                <input type='color' value={textColor} onChange={onChangeTextColor} ref={textColorPickerRef} className={style.colorPickerInput} />
+            <div className={style.colorPickerContainer} onClick={() => showColorPicker(colorPickerTypes.TEXT)}>
+                <div className='bold' style={{ color: getRgbaColor(textColor) }}>A</div>
+                <div className={style.fontColorFooter} style={{ backgroundColor: getRgbaColor(textColor) }} />
+                {colorPickerVisible === colorPickerTypes.TEXT ?
+                    <div className={style.sketchPickerContainer}>
+                        <ColorPicker
+                            color={textColor}
+                            onChange={onChangeTextColor}
+                            onMouseLeave={onMouseLeave}
+                        />
+                    </div> : null
+                }
             </div>
 
-            <div className={style.colorPickerContainer} >
-                <input type='color' value={backgroundColor} className={style.colorPickerBody} onChange={onChangeBackgroundColor} />
+
+            <div className={style.colorPickerContainer} onClick={() => showColorPicker(colorPickerTypes.BACKGROUND)}>
+                <i className={style.toolBarIcon + ' icon-paint-bucket'} />
+                <div className={style.colorIconFooter} style={{ backgroundColor: getRgbaColor(backgroundColor) }} />
+                {colorPickerVisible === colorPickerTypes.BACKGROUND ?
+                    <div className={style.sketchPickerContainer}>
+                        <ColorPicker
+                            color={backgroundColor}
+                            onChange={onChangeBackgroundColor}
+                            onMouseLeave={onMouseLeave}
+                        />
+                    </div> : null
+                }
             </div>
 
-            <div className={style.colorPickerContainer} onClick={() => borderColorPickerRef.current.click()} >
-                <div className={style.borderColorPickerBody} style={{ backgroundColor: borderColor }} />
-                <input type='color' value={borderColor} className={style.colorPickerInput} onChange={onChangeBorderColor} ref={borderColorPickerRef} />
+            <div className={style.colorPickerContainer} onClick={() => showColorPicker(colorPickerTypes.LINE)}>
+                <i className={style.toolBarIcon + ' icon-paint-line'} />
+                <div className={style.colorIconFooter} style={{ backgroundColor: getRgbaColor(borderColor) }} />
+                {colorPickerVisible === colorPickerTypes.LINE ?
+                    <div className={style.sketchPickerContainer}>
+                        <ColorPicker
+                            color={borderColor}
+                            onChange={onChangeBorderColor}
+                            onMouseLeave={onMouseLeave}
+                        />
+                    </div> : null
+                }
             </div>
 
             <div className={style.activityContainer}>
@@ -177,7 +207,7 @@ export default ({ onSave }) => {
                     />
                 </div>
             </div>
-            <i className={style.toolBarIcon + ' icon-archive'} onClick={onSave} />
+            <i className={style.toolBarIcon + ' icon-save1'} onClick={onSave} />
         </div>
     );
 };

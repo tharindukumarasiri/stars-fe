@@ -102,3 +102,9 @@ export function createNodesAndEdges() {
 
     return { nodes, edges };
 }
+
+export const getRgbaColor = (color) => {
+    if (!color?.r || !color?.g || !color?.b)
+        return color
+    return `rgb(${color?.r}, ${color?.g}, ${color?.b}, ${color?.a})`
+}

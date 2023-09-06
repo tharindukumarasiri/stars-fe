@@ -3,15 +3,17 @@ import { Handle, Position, useUpdateNodeInternals, NodeResizer, useStore } from 
 import { drag } from 'd3-drag';
 import { select } from 'd3-selection';
 
-import { useNodeDataStore } from './store'
-import Shapes from './ShapesData.js';
+import { useNodeDataStore } from '../store'
+import Shapes from '../ShapesData.js';
+import { getRgbaColor } from '../utils';
 
-import style from './DndStyles.module.scss'
+import style from '../DndStyles.module.scss'
 
 const connectionNodeIdSelector = (state) => state.connectionNodeId;
 
 const sourceStyle = { zIndex: 2 };
 const targetStyle = { zIndex: 1 };
+const resizerHandleStyle = { width: 6, height: 6 }
 
 function CustomNode({ id, selected, type, data }) {
     const rotateControlRef = useRef(null);
@@ -21,9 +23,6 @@ function CustomNode({ id, selected, type, data }) {
     const initialHeight = shapeData.size?.height ?? 50;
     const initialWidth = shapeData.size?.width ?? 50;
     const isTable = type === 'Table';
-    const isText = type === 'Text';
-    const isLine = type === 'HorizontalLine' || type === 'VerticalLine'
-    const initialBackgroundColor = isLine ? '#000000' : '#ffffff'
 
     const connectionNodeId = useStore(connectionNodeIdSelector);
     const isConnecting = !!connectionNodeId;
@@ -45,10 +44,10 @@ function CustomNode({ id, selected, type, data }) {
     const setRotate = (value) => onTextChange(id, { rotate: value })
 
     const fonstSize = Number(textdata?.fonstSize) || 8
-    const backgroundColor = textdata?.backgroundColor || initialBackgroundColor
-    const borderColor = textdata?.borderColor || 'black'
+    const backgroundColor = getRgbaColor(textdata?.backgroundColor) || '#ffffff'
+    const borderColor = getRgbaColor(textdata?.borderColor) || 'black'
     const textType = textdata?.textType || { label: 'Poppins', type: 'Poppins' }
-    const textColor = textdata?.textColor || 'black'
+    const textColor = getRgbaColor(textdata?.textColor) || 'black'
     const textBold = textdata?.textBold || false
     const markerType = textdata?.markerType || { label: '', icon: '' }
 
@@ -67,23 +66,6 @@ function CustomNode({ id, selected, type, data }) {
         borderColor: shapeData?.hideShape ? borderColor : '',
     }
 
-    const resizerBounds = useCallback((isMinSize) => {
-        if (data?.resizeToParentId) {
-            const parentSize = sizes.find(item => item.id === data?.resizeToParentId);
-            if (type === 'HorizontalLine') {
-                return { width: parentSize?.width, height: undefined }
-            } else {
-                return { width: undefined, height: parentSize?.height }
-            }
-        } else {
-            if (isMinSize) {
-                return { width: initialWidth, height: initialHeight }
-            } else {
-                return { width: undefined, height: undefined }
-            }
-        }
-    }, [sizes])
-
     useEffect(() => {
         if (sizes.find(item => item.id === id)) return;
 
@@ -98,19 +80,6 @@ function CustomNode({ id, selected, type, data }) {
         if (selected)
             setSelectedNodeId(id);
     }, [selected]);
-
-    useEffect(() => {
-        if (data?.resizeToParentId) {
-            const parentSize = sizes.find(item => item.id === data?.resizeToParentId);
-
-            if (type === 'HorizontalLine' && parentSize?.width !== size?.width) {
-                setSize({ height: size?.height, width: parentSize?.width })
-            }
-            if (type === 'VerticalLine' && parentSize?.height !== size?.height) {
-                setSize({ width: size?.width, height: parentSize?.height })
-            }
-        }
-    });
 
     useEffect(() => {
         if (!rotateControlRef.current) {
@@ -154,36 +123,25 @@ function CustomNode({ id, selected, type, data }) {
         data.addTableLine('HorizontalLine', id, { width: size?.width }, { x: 0, y: 20 })
     }
 
-    const rotateText = () => {
-        if (rotate !== '0') {
-            setRotate('0')
-        } else {
-            setRotate('-90')
-        }
-    }
-
     return (
         <div style={mainContainerStyle}
             className={isTable ? style.tableContainer : style.customNodeContainer}
         >
             <NodeResizer
                 isVisible={selected}
-                minWidth={resizerBounds(true)?.width}
-                minHeight={resizerBounds(true)?.height}
-                maxWidth={resizerBounds(false)?.width}
-                maxHeight={resizerBounds(false)?.height}
-                onResizeEnd={onResize}
+                minWidth={initialWidth * 0.5}
+                minHeight={initialHeight * 0.5}
+                onResize={onResize}
                 keepAspectRatio={shapeData?.keepAspectRatio ?? true}
+                handleStyle={resizerHandleStyle}
             />
-            {!data?.resizeToParentId &&
-                <div
-                    ref={rotateControlRef}
-                    style={{
-                        display: selected ? 'block' : 'none',
-                    }}
-                    className={`nodrag ${style.rotateHandle}`}
-                />
-            }
+            <div
+                ref={rotateControlRef}
+                style={{
+                    display: selected ? 'block' : 'none',
+                }}
+                className={`nodrag ${style.rotateHandle}`}
+            />
 
             {markerType?.icon &&
                 <i className={markerType.icon + ' ' + style.activityIcon} style={{ top: size?.height / 50, left: size?.height / 50 }} />
@@ -192,9 +150,6 @@ function CustomNode({ id, selected, type, data }) {
                 <i className={style.nodeCloseBtn + " icon-close-small-x"} onClick={onDeleteNode} />
             }
 
-            {selected && isText &&
-                <i className={style.textBtnRotate + ' icon-update-search'} onClick={rotateText} />
-            }
             {selected && isTable &&
                 <button className={style.tableBtnHorizontal} onClick={addVerticalLine} >Vertical line</button>
             }

@@ -39,40 +39,42 @@ const SideBar = ({ diagramName }) => {
         <aside className={sidebarVisible ? style.aside : ''}>
             <div className={style.sidebarColapsBtnContainer}>
                 {sidebarVisible &&
-                    <h2 className='m-b-20'>{diagramName}</h2>
+                    <h2>{diagramName || 'Name'}</h2>
                 }
                 <i className={style.sidebarColapsBtn + (sidebarVisible ? ' icon-circle-arrow-left' : ' icon-circle-arrow-right')}
                     onClick={onArrowClicked} />
             </div>
-            {sidebarVisible &&
-                <>
-                    {Object.entries(Categories)?.map(category => {
-                        return (
-                            <div key={category[0]} >
-                                <div className={style.sidebarCategoryheader} onClick={() => { onCategoryClick(category[0]) }} >
-                                    <div className=''>{category[1]}</div>
-                                    <i className={(!closedCategories.includes(category[0]) ? ' icon-arrow-down' : ' icon-arrow-up')} />
-                                </div>
-
-                                {!closedCategories.includes(category[0]) &&
-                                    <div className={style.sidebarCategoryContainer}>
-                                        {
-                                            Object.entries(Shapes)?.map(shape => {
-                                                if (shape[1]?.category?.includes(category[1]))
-                                                    return (
-                                                        <div className={style.sidebarItemContainer} onDragStart={(event) => onDragStart(event, shape[0])} draggable key={shape[0]}>
-                                                            <CustomShape shape={shape[1]} fill={'black'} />
-                                                        </div>
-                                                    )
-                                            })
-                                        }
+            <div className={style.sidebarMainContainer}>
+                {sidebarVisible &&
+                    <>
+                        {Object.entries(Categories)?.map(category => {
+                            return (
+                                <div key={category[0]} >
+                                    <div className={style.sidebarCategoryheader} onClick={() => { onCategoryClick(category[0]) }} >
+                                        <div className=''>{category[1]}</div>
+                                        <i className={(!closedCategories.includes(category[0]) ? ' icon-arrow-down' : ' icon-arrow-up')} />
                                     </div>
-                                }
-                            </div>
-                        )
-                    })}
-                </>
-            }
+
+                                    {!closedCategories.includes(category[0]) &&
+                                        <div className={style.sidebarCategoryContainer}>
+                                            {
+                                                Object.entries(Shapes)?.map(shape => {
+                                                    if (shape[1]?.category?.includes(category[1]))
+                                                        return (
+                                                            <div className={style.sidebarItemContainer} onDragStart={(event) => onDragStart(event, shape[0])} draggable key={shape[0]}>
+                                                                <CustomShape shape={shape[1]} />
+                                                            </div>
+                                                        )
+                                                })
+                                            }
+                                        </div>
+                                    }
+                                </div>
+                            )
+                        })}
+                    </>
+                }
+            </div>
         </aside>
     );
 };

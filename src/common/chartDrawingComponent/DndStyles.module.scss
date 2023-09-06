@@ -15,7 +15,6 @@
     display: flex;
     flex-direction: row;
     justify-content: center;
-    margin-bottom: 10px;
 }
 
 .sidebarColapsBtn {
@@ -38,7 +37,7 @@
 .dndflow .reactflowrapper {
     flex-grow: 1;
     width: 90vw;
-    height: 90vh;
+    height: 85vh;
 }
 
 .dndflow .selectall {
@@ -94,8 +93,8 @@ div.customHandle2::after {
     border-bottom: 3px solid transparent;
     border-left: 5px solid;
     position: absolute;
-    right: -3px;
-    top: -1.5px;
+    right: -0.2vw;
+    top: -0.2vh;
 }
 
 .toolBarContainer {
@@ -135,37 +134,42 @@ div.customHandle2::after {
     }
 }
 
-.colorPickerBody {
-    height: 35px;
-}
-
-.borderColorPickerBody {
-    margin-top: 10px;
-    height: 5px;
-    width: 65px;
-}
-
-.colorPickerInput {
-    visibility: hidden;
+.sidebarMainContainer {
+    height: 77vh;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    padding-right: 10px;
 }
 
 .sidebarCategoryContainer {
+    background-color: #EAEAEA;
+    padding: 10px;
     display: flex;
     flex-direction: row;
-    justify-content: flex-start;
+    justify-content: space-around;
     flex-flow: wrap;
-    margin-bottom: 20px;
 }
 
 .sidebarCategoryheader {
+    background-color: #CCCCCC;
     display: flex;
     flex-direction: row;
     justify-content: space-between;
-    margin-bottom: 10px;
+    padding: 10px;
+    margin-top: 10px;
 
     &:hover {
         cursor: pointer;
     }
+}
+
+.colorIconFooter {
+    position: absolute;
+    bottom: 0;
+    left: 2.5px;
+    height: 5px;
+    width: 20px;
+    bottom: -2px;
 }
 
 .sidebarItemContainer {
@@ -183,6 +187,7 @@ div.customHandle2::after {
     left: -5px;
     height: 5px;
     width: 20px;
+    bottom: -5px;
 }
 
 .fontBoldContainer {
@@ -206,6 +211,11 @@ div.customHandle2::after {
     &:hover {
         cursor: pointer;
     }
+}
+
+.sketchPickerContainer {
+    position: absolute;
+    top: 40px;
 }
 
 .textBtnRotate {
