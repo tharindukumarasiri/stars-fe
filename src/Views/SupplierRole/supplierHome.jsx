@@ -2,7 +2,7 @@ import React, { useContext } from "react";
 import { useNavigate } from 'react-router-dom';
 
 import { TabContext } from "../../utils/contextStore";
-import { NAVIGATION_PAGES } from "../../utils/enums";
+import { NAVIGATION_PAGES, ROUTES } from "../../utils/enums";
 import TitleCard from "../../common/titleCard";
 import NavigationCard from "../../common/navigationCard";
 import { useTranslation } from "react-i18next";
