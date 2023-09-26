@@ -1,8 +1,10 @@
 import React, { useState, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
+
 import "./styles.scss"
 import Tabs from "../../common/tabComponent";
 import { TabContext } from '../../utils/contextStore';
-import { NAVIGATION_PAGES } from '../../utils/enums';
+import { NAVIGATION_PAGES, ROUTES } from '../../utils/enums';
 import SellerHome from './sellerHome';
 import GetNotified from './getNotified';
 import MatchingTenders from './matchingTenders';
@@ -12,14 +14,15 @@ import { notification } from 'antd';
 import { FetchCurrentCompany } from "../../hooks/index";
 import { useTranslation } from "react-i18next";
 
-const SellerRole = () => {
-    const [activeTab, setActiveTab] = useState(NAVIGATION_PAGES.SELLER_HOME);
+const SellerRole = ({ openTab = NAVIGATION_PAGES.SELLER_HOME }) => {
+    const [activeTab, setActiveTab] = useState(openTab);
     const [openTabs, setOpenTabs] = useState([NAVIGATION_PAGES.SELLER_HOME]);
     const [params, setParams] = useState({})
     const haveUnsavedDataRef = useRef(false);
     const shouldBeClosed = useRef({ state: false, tab: '' });
     const [selectedCompany] = FetchCurrentCompany();
     const { t } = useTranslation();
+    const navigate = useNavigate();
 
     const changeActiveTab = (tab, params = null) => {
         const openNotification = (placement = 'top') => {
@@ -69,6 +72,7 @@ const SellerRole = () => {
                 setOpenTabs(newOpenTabs);
             }
             setActiveTab(tab);
+            navigate(ROUTES[tab]);
         }
     };
 

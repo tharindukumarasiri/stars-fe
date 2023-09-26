@@ -1,10 +1,12 @@
 import React, { useState, useRef } from 'react';
-import { Button, notification } from 'antd';
+import { useNavigate } from 'react-router-dom';
+
+import { notification } from 'antd';
 import SupplierHome from './supplierHome';
 import Tabs from "../../common/tabComponent";
 import { TabContext } from '../../utils/contextStore';
 import "./styles.scss"
-import { NAVIGATION_PAGES } from '../../utils/enums';
+import { NAVIGATION_PAGES, ROUTES } from '../../utils/enums';
 import Summary from './summary';
 import Unspsc from './unspsc';
 import Cpv from './cpv';
@@ -21,6 +23,7 @@ const SupplireRole = () => {
     const shouldBeClosed = useRef({ state: false, tab: '' });
     const [selectedCompany] = FetchCurrentCompany();
     const { t } = useTranslation();
+    const navigate = useNavigate();
 
     const changeActiveTab = (tab) => {
         const openNotification = (placement = 'top') => {
@@ -67,6 +70,7 @@ const SupplireRole = () => {
                 setOpenTabs(newOpenTabs);
             }
             setActiveTab(tab);
+            navigate(ROUTES[tab]);
         }
     };
 

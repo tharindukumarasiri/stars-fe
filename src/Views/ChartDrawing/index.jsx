@@ -53,7 +53,7 @@ const ChartDrawing = ({ openTab = NAVIGATION_PAGES.DRAWING_TOOL_HOME }) => {
                 setHaveUnsavedDataRef,
             }}>
             <Tabs>
-                <div label="Drawing Tool" id={NAVIGATION_PAGES.DRAWING_TOOL_HOME} >
+                <div label="Biz Designer List" id={NAVIGATION_PAGES.DRAWING_TOOL_HOME} >
                     <DrawingToolHome />
                 </div>
                 <div label="Canvas" id={NAVIGATION_PAGES.CHART_DRAWING} >

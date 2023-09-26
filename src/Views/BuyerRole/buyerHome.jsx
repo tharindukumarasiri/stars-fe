@@ -1,6 +1,8 @@
 import React, { useContext } from "react";
+import { useNavigate } from 'react-router-dom';
+
 import { TabContext } from "../../utils/contextStore";
-import { NAVIGATION_PAGES } from "../../utils/enums";
+import { NAVIGATION_PAGES, ROUTES } from "../../utils/enums";
 import NavigationCard from "../../common/navigationCard";
 import TitleCard from "../../common/titleCard";
 import { useTranslation } from 'react-i18next'
@@ -8,9 +10,11 @@ import { useTranslation } from 'react-i18next'
 export default function BuyerHome() {
     const { changeActiveTab } = useContext(TabContext);
     const { t } = useTranslation();
+    const navigate = useNavigate();
 
-    const onClickCard = (navigate = "") => {
-        changeActiveTab(navigate);
+    const onClickCard = (nav = "") => {
+        changeActiveTab(nav);
+        navigate(ROUTES[nav])
     };
 
     return (

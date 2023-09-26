@@ -1,15 +1,17 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+
 import "./styles.scss"
 import BuyerHome from './buyerHome';
 import Search from './search'
 import Tabs from "../../common/tabComponent";
 import SearchResults from "./searchResults";
 import { TabContext } from '../../utils/contextStore';
-import { NAVIGATION_PAGES } from '../../utils/enums';
+import { NAVIGATION_PAGES, ROUTES } from '../../utils/enums';
 import Projects from './projects';
 import ProjectDetails from './projectDetails';
 import SectionSearch from './sectionSearch'
-import { FetchCurrentCompany, FetchCurrentUser } from "../../hooks/index";
+import { FetchCurrentUser } from "../../hooks/index";
 import { useTranslation } from 'react-i18next';
 
 
@@ -19,6 +21,7 @@ const BuyerRole = () => {
     const [params, setParams] = useState({});
     const [currentUser] = FetchCurrentUser();  
     const {t} = useTranslation();
+    const navigate = useNavigate();
 
     const changeActiveTab = (tab, params = null) => {
         if (openTabs.indexOf(tab) < 0) {
@@ -29,6 +32,7 @@ const BuyerRole = () => {
         if (params)
             setParams(pre => ({ ...pre, [tab]: params }))
         setActiveTab(tab);
+        navigate(ROUTES[tab]);
     };
 
     const closeTab = (tab) => {

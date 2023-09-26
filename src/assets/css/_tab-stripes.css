@@ -1,0 +1,321 @@
+﻿/*Tab stipes===*/
+/*#0592D9;*/
+/* #2bb201; */
+/*#ff9900*/
+.theme {
+  color: #2196F3;
+}
+
+.theme-alpha-50 {
+  color: rgba(33, 150, 243, 0.5);
+}
+
+.theme-light {
+  color: #b2dbfb;
+}
+
+.white {
+  color: #fff;
+}
+
+.bg-white {
+  background-color: #fff;
+}
+
+.blue {
+  color: #2196F3;
+}
+
+.blue-dark {
+  color: #0960a5;
+}
+
+.blue-darker {
+  color: #064475;
+}
+
+.blue-darkest {
+  color: #042d4e;
+}
+
+.blue-light {
+  color: #e3f2fd;
+}
+
+.blue-lighter {
+  color: #ecf6fe;
+}
+
+.blue-lighter2 {
+  color: #f6fbff;
+}
+
+.bg-blue {
+  background-color: #2196F3;
+}
+
+.bg-dark-blue {
+  background-color: #0960a5;
+}
+
+.bg-darker-blue {
+  background-color: #064475 !important;
+}
+
+.bg-light-dark-blue {
+  background-color: #108ece;
+}
+
+.bg-blue-darkest {
+  background-color: #042d4e;
+}
+
+.bg-blue-light {
+  background-color: #e3f2fd !important;
+}
+
+.bg-blue-lighter {
+  background-color: #ecf6fe !important;
+}
+
+.bg-blue-lighter2 {
+  background-color: #f6fbff !important;
+}
+
+.bg-blue-lighter3 {
+  background-color: white !important;
+}
+
+.bg-blue-lighter4 {
+  background-color: white !important;
+}
+
+.grey {
+  color: #666;
+}
+
+.grey-light {
+  color: #b3b3b3;
+}
+
+.grey-dark {
+  color: #4d4d4d !important;
+}
+
+.bg-grey {
+  background-color: #666;
+}
+
+.bg-grey-light {
+  background-color: #b3b3b3;
+}
+
+.bg-grey-lighter {
+  background-color: #f2f2f2;
+}
+
+.bg-grey-dark {
+  background-color: #4d4d4d;
+}
+
+.green {
+  color: #04bd00;
+}
+
+.green-lite {
+  color: #29ff24;
+}
+
+.green-dark {
+  color: #038a00;
+}
+
+.bg-green {
+  background-color: #04bd00;
+}
+
+.bg-green-dark {
+  background-color: #038a00;
+}
+
+.bg-green-dark1 {
+  background-color: #027100;
+}
+
+.bg-green-dark2 {
+  background-color: #025700;
+}
+
+.bg-green-dark3 {
+  background-color: #012400;
+}
+
+.bg-green-dark4 {
+  background-color: black;
+}
+
+.bg-green-lite {
+  background-color: #29ff24 !important;
+}
+
+.bg-green-dark {
+  background-color: #038a00 !important;
+}
+
+.red {
+  color: #ff0000;
+}
+
+.bg-red {
+  background-color: #ff0000;
+}
+
+.red-light {
+  color: #ff9999;
+}
+
+.bg-red-light {
+  background-color: #ff9999;
+}
+
+.red-dark {
+  color: #cc0000;
+}
+
+.bg-red-dark {
+  background-color: #cc0000;
+}
+
+.orange {
+  color: #ff9900;
+}
+
+.bg-orange {
+  background-color: #ff9900;
+}
+
+.orange-dark {
+  color: #ff9900;
+}
+
+.bg-orange-dark {
+  background-color: #ff9900;
+}
+
+.vialot {
+  color: #B572CD;
+}
+
+.bg-vialot {
+  background-color: #B572CD;
+}
+
+.bg-vialot-dark1 {
+  background-color: #8539a0;
+}
+
+.bg-vialot-dark2 {
+  background-color: #662b7b;
+}
+
+.bluish-green {
+  color: #0AA699;
+}
+
+.bg-bluish-green {
+  background-color: #0AA699;
+}
+
+.bluish-green-dark {
+  color: #0AA699;
+}
+
+.bg-bluish-green-dark {
+  background-color: #07766d;
+}
+
+.blue-purple {
+  color: #746AB2;
+}
+
+.bg-blue-purple {
+  background-color: #746AB2;
+}
+
+.bg-blue-purple-dark {
+  background-color: #5a4f9a;
+}
+
+.bg-bluish-green-light1 {
+  background-color: #BEE2DC;
+}
+
+.bg-bluish-green-light2 {
+  background-color: #D3EFEA;
+}
+
+.bg-bluish-green-light3 {
+  background-color: #E6F6F4;
+}
+
+.bg-bluish-green-light4 {
+  background-color: #F0FAF8;
+}
+
+.bg-bluish-green-light5 {
+  background-color: #F6FAF9;
+}
+
+.tabs {
+  position: relative;
+  height: 100%;
+}
+
+.k-content .tabs {
+  margin-top: 40px;
+}
+
+.tab-list-item {
+  display: inline-block;
+  list-style: none;
+  margin-bottom: -1px;
+  padding: 0.6em 0.8em 0.6em 1.2em;
+  cursor: pointer;
+  background-color: transparent;
+  border-top-left-radius: 2px;
+  border-top-right-radius: 2px;
+}
+
+.tab-content {
+  background-color: #fff !important;
+  position: relative;
+  width: 100%;
+  padding: 8px 4px 0 8px;
+  height: calc(100% - 34px);
+  top: 0;
+}
+
+.detail-stripe-tab-top {
+  padding: 15px;
+  height: 90px;
+  overflow-y: scroll;
+}
+
+.tab-list {
+  padding-left: 0;
+  margin-bottom: 0;
+}
+
+.tab-list-active {
+  background-color: #fff;
+}
+
+.ant-tabs-top > .ant-tabs-nav {
+  margin: 0 0 10px 0 !important;
+}
+
+.custom-tab-container {
+  height: calc(100% - 68px) !important;
+}
+
+/*# sourceMappingURL=data:application/json;charset=utf-8,%7B%22version%22:3,%22sourceRoot%22:%22%22,%22sources%22:%5B%22file:///G:/Starframwork-Sep-B/StarWeb/Source/Robot.Star.Web/Client/Boot/assets/css/_tab-stripes.scss%22,%22file:///G:/Starframwork-Sep-B/StarWeb/Source/Robot.Star.Web/Client/Boot/assets/css/colors.scss%22%5D,%22names%22:%5B%5D,%22mappings%22:%22AAAC;ACsCD;AAyCA;AAaA;AAKA;EACI,OAjGI;;;AAoGR;EACI;;;AAGJ;EACI,OAjFU;;;AAoFd;EACI,OAvBI;;;AAyBR;EACI,kBA1BI;;;AA+BR;EACI,OAlFS;;;AAqFb;EACI,OAnFS;;;AAsFb;EACI,OApFU;;;AAuFd;EACI,OAvFW;;;AA0Ff;EACI,OAvFS;;;AA0Fb;EACI,OA1FW;;;AA6Ff;EACI,OA7FY;;;AAgGhB;EACI,kBA9GS;;;AAiHb;EACI,kBA/GS;;;AAkHb;EACI;;;AAGJ;EACI,kBAjEc;;;AAoElB;EACI,kBAvHW;;;AA0Hf;EACI;;;AAGJ;EACI;;;AAGJ;EACI;;;AAGJ;EACI;;;AAEJ;EACI;;;AAKJ;EACI,OA7HQ;;;AAgIZ;EACI,OA/HS;;;AAkIb;EACI;;;AAGJ;EACI,kBAzIQ;;;AA4IZ;EACI,kBA3IS;;;AA8Ib;EACI,kBA9IW;;;AAiJf;EACI,kBApJQ;;;AAwJZ;EACI,OA3II;;;AA8IR;EACI,OAxIS;;;AA2Ib;EAAa,OAhJA;;;AAkJb;EACI,kBArJI;;;AAuJR;EACI,kBAtJS;;;AAwJb;EACI,kBAxJU;;;AA0Jd;EACI,kBA1JU;;;AA4Jd;EACI,kBA5JU;;;AA8Jd;EACI,kBA9JU;;;AAiKd;EACI;;;AAGJ;EACI;;;AAIJ;EACI,OAzLE;;;AA4LN;EACI,kBA7LE;;;AAgMN;EACI,OAhMQ;;;AAmMZ;EACI,kBApMQ;;;AAuMZ;EACI,OAvMO;;;AA0MX;EACI,kBA3MO;;;AA+MX;EACI,OA/MK;;;AAkNT;EACI,kBAnNK;;;AAsNT;EACI,OAtNU;;;AAyNd;EACI,kBA1NU;;;AAkOd;EACI,OALK;;;AAQT;EACI,kBATK;;;AAWT;EACI,kBAVW;;;AAYf;EACI,kBAZW;;;AAgBf;EACI,OAhQW;;;AAmQf;EACI,kBApQW;;;AAuQf;EACI,OAxQW;;;AA2Qf;EACI,kBA3QgB;;;AA8QpB;EACI,OAlRU;;;AAqRd;EACI,kBAtRU;;;AAyRd;EACI,kBAzRe;;;AA4RnB;EACI;;;AAGJ;EACI;;;AAGJ;EACI;;;AAGJ;EACI;;;AAGJ;EACI;;;ADrWJ;EACI;EACA;;;AAEJ;EAAkB;;;AAClB;EACI;EACA;EACA;EACA;EACA;EACA;EACA;EACA;;;AAIJ;EACI;EACA;EACA;EACA;EACA;EACA;;;AAGJ;EACI;EACA;EACA;;;AAKJ;EACI;EACA;;;AAIJ;EACI,kBCfU;;;ADkBd;EACI;;;AAGJ;EACI%22%7D */

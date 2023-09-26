@@ -112,3 +112,8 @@ p {
        cursor:pointer
     }
 }
+div[id^=tile-menu] {
+    button {
+        background-color: $theme-dark
+    }
+}
