@@ -59,6 +59,9 @@ const AppRouter = () => {
     return (
         <Routes>
             <Route path='/buyer' element={<BuyerRole />} />
+            <Route path='/Buyer/Projects' element={<BuyerRole />} />
+            <Route path='Buyer/Search' element={<BuyerRole />} />
+
             <Route path='/supplier' element={<SupplireRole />} />
             <Route path='/seller' element={<SellerRole />} />
             <Route path='/eConnect' element={<AdminRole openTab={NAVIGATION_PAGES.E_CONNECT_HOME} />} />

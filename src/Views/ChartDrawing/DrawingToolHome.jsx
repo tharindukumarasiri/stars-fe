@@ -1,5 +1,6 @@
-import React, { useState, useMemo, useContext } from "react";
+import React, { useState, useMemo, useContext, useEffect } from "react";
 import { Table, Modal } from 'antd';
+import moment from "moment";
 
 import { useDiagramStore } from './chartDrawingStore'
 
@@ -10,6 +11,7 @@ import Input from "../../common/input";
 import { NAVIGATION_PAGES } from "../../utils/enums";
 import { TabContext } from "../../utils/contextStore";
 import { useTranslation } from "react-i18next";
+import { getContacts } from "../../services/userService";
 
 const diagramTypes = [
     'Flows',
@@ -26,13 +28,17 @@ const DrawingToolHome = () => {
 
     const [dropDownData, setDropDownData] = useState({ type: [], status: [] })
     const [showModel, setShowModel] = useState(false)
-    const [diagramName, setDiagramName] = useState('');
-    const [diagramType, setDiagramType] = useState('');
+    const [newDiagramData, setNewDiagramData] = useState({ Name: '', TypeCode: '', Description: '', Permission: 'Private', FromDate: '', ToDate: '', Responsible: '', Status: '' });
+    const [filterdContacts, setFilteredContacts] = useState([]);
     const [filterTypes, setFilterTypes] = useState({ startDate: null, endDate: null, type: null, status: null })
 
     const { t } = useTranslation();
 
     const { changeActiveTab } = useContext(TabContext);
+
+    useEffect(() => {
+        getContactsList();
+    }, [])
 
     const tableHeaders = useMemo(() => {
         const headers = SavedDiagramsTableHeaders(t);
@@ -52,6 +58,19 @@ const DrawingToolHome = () => {
 
     }, [diagramData])
 
+    const getContactsList = async () => {
+        const response = await getContacts();
+        const options = response ? response.map((user) => {
+            return {
+                key: user.PartyTId,
+                label: user.Name,
+                value: user.Name
+            };
+        }) : [];
+
+        setFilteredContacts(options);
+    };
+
     const onChangeFilterType = (e, elementName) => {
         e.preventDefault();
         setFilterTypes({ ...filterTypes, [elementName]: JSON.parse(e.target.value) });
@@ -67,27 +86,25 @@ const DrawingToolHome = () => {
 
     const toggleModal = () => {
         setShowModel(pre => !pre);
-        setDiagramName('');
-        setDiagramType('');
+        setNewDiagramData({ Name: '', TypeCode: '', Description: '', Permission: 'Private', FromDate: '', ToDate: '', Responsible: '', Status: '' })
     }
     const onSave = () => {
-        if (diagramName !== '' && diagramType !== '') {
-            changeActiveTab(NAVIGATION_PAGES.CHART_DRAWING, { name: diagramName })
+        if (newDiagramData.Name !== '') {
+            changeActiveTab(NAVIGATION_PAGES.CHART_DRAWING, { name: newDiagramData.Name })
         }
-    }
-
-    const onNameChange = (e) => {
-        e.preventDefault();
-        setDiagramName(e.target.value)
-    }
-
-    const onChangeType = (e) => {
-        e.preventDefault();
-        setDiagramType(e.target.value)
     }
 
     const onClickRow = (params) => {
         changeActiveTab(NAVIGATION_PAGES.CHART_DRAWING, { ...params })
+    }
+
+    const onNewElementChange = (e, elementName) => {
+        e.preventDefault();
+        setNewDiagramData({ ...newDiagramData, [elementName]: e.target.value })
+    }
+
+    const onNewElementDateChange = (date, elementName) => {
+        setNewDiagramData({ ...newDiagramData, [elementName]: moment(date).local().format('YYYY-MM-DD') })
     }
 
     return (
@@ -168,22 +185,41 @@ const DrawingToolHome = () => {
             <Modal
                 title="New Strategy"
                 visible={showModel}
-                width={350}
                 centered={true}
                 closeIcon={< i className='icon-close close-icon' />}
                 okText="Save"
                 onOk={onSave}
                 onCancel={toggleModal}
+                width={1000}
             >
-                <div>
-                    <Input value={diagramName} placeholder='Name' onChange={onNameChange} />
-                    <StarDropdown
-                        placeholder='Type'
-                        values={diagramTypes}
-                        onChange={onChangeType}
-                        selected={diagramType}
-                    />
+                <div className="g-row">
+                    <div className="g-col-6">
+                        <Input
+                            value={newDiagramData?.Name || ''}
+                            placeholder='Name'
+                            onChange={(e) => onNewElementChange(e, 'Name')} />
+                        <StarDropdown
+                            placeholder="TYPE"
+                            values={diagramTypes}
+                            onChange={(e) => onNewElementChange(e, 'TypeCode')}
+                            selected={newDiagramData.TypeCode || ''}
+                        />
+                        <Input lines={3} placeholder="DESCRIPTION" value={newDiagramData.Description || ''} onChange={(e) => onNewElementChange(e, 'Description')} />
+                        <StarDropdown values={['PUBLIC', 'PRIVATE']} onChange={(e) => onNewElementChange(e, 'Permission')} selected={newDiagramData.Permission || 'PRIVATE'} placeholder="PERMISSION_TYPE" />
+                    </div>
+                    <div className="g-col-6">
+                        <DatePickerInput placeholder={t('FROM_DATE')} value={newDiagramData.FromDate ? new Date(newDiagramData.FromDate) : ''} minDate={new Date()} onChange={(date) => onNewElementDateChange(date, 'FromDate')} />
+                        <DatePickerInput placeholder={t('DUE_DATE')} value={newDiagramData.ToDate ? new Date(newDiagramData.ToDate) : ''} minDate={new Date()} onChange={(date) => onNewElementDateChange(date, 'ToDate')} />
+                        <StarDropdown
+                            values={filterdContacts.map(a => a.label)}
+                            onChange={(e) => onNewElementChange(e, 'Responsible')}
+                            selected={newDiagramData.Responsible || ''}
+                            placeholder={"RESPONSIBLE_USER"}
+                        />
+                        <StarDropdown values={['OPEN', 'CLOSE']} onChange={(e) => onNewElementChange(e, 'Status')} selected={newDiagramData.Status || ''} placeholder="STATUS" />
+                    </div>
                 </div>
+                <div className="n-float" />
                 <div className="n-float" />
             </Modal>
         </div>
