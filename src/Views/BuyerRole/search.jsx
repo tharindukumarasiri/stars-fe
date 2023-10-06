@@ -2162,54 +2162,6 @@ export default function Search(props) {
                         {getProductGroupsCriteria()}
                         {getProfessionCriteria()}
                         {getPeppolCriteria()}
-                        <div className="action-bar">
-                            <div className="g-row">
-                                <div className="g-col-6">
-                                    <button className="primary-btn m-l-10" onClick={onShowResults}>
-                                        {props?.removeSearch ? t("FILTER_RESULT") : t("SHOW_RESULT")}
-                                    </button>
-                                    {!props?.sectionSearch && (
-                                        <button
-                                            className="primary-btn"
-                                            onClick={() => {
-                                                changeActiveTab(NAVIGATION_PAGES.BUYER_SEARCHRESULTS);
-                                            }}
-                                        >
-                                            {t("VIEW_HISTORY")}
-                                        </button>
-                                    )}
-                                </div>
-                                <div className="g-col-6">
-                                    {props.removeSearch ?
-                                        <AntDropdown
-                                            overlay={actions} placement="topRight" arrow
-                                        >
-                                            <button className="primary-btn save-button fr" >Select Action</button>
-                                        </AntDropdown>
-                                        : <button className="primary-btn save-button fr" onClick={onSaveResults} disabled={disableSaveBtn}>
-                                            {t(saveButtonText)}
-                                        </button>
-                                    }
-
-                                    {/* {props.removeSearch && <div className="fr m-r-20 m-t-10">{t("ROWS_CHECKED_REMOVED")}</div>} */}
-                                    {!props.removeSearch && props?.searchResults?.length > 0 && (
-                                        <div className="fr m-r-20 m-t-10">{t("IF_YOU_DO_FRESH_SEARCH")}</div>
-                                    )}
-
-                                    <div className="buyer-search-result-pagination-container fl">
-                                        <Pagination
-                                            size="small"
-                                            current={actPage}
-                                            onChange={(pageNum) => {
-                                                onChangePage(pageNum);
-                                            }}
-                                            total={pageCount}
-                                            showSizeChanger={false}
-                                        />
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
                     </form>
                 </div>
             </div>
@@ -2336,6 +2288,54 @@ export default function Search(props) {
                             </div>
                         </>
                     )}
+                </div>
+            </div>
+            <div className="action-bar">
+                <div className="g-row">
+                    <div className="g-col-6">
+                        <button className="primary-btn m-l-10 m-r-20" onClick={onShowResults}>
+                            {props?.removeSearch ? t("FILTER_RESULT") : t("SHOW_RESULT")}
+                        </button>
+                        {!props?.sectionSearch && (
+                            <button
+                                className="primary-btn"
+                                onClick={() => {
+                                    changeActiveTab(NAVIGATION_PAGES.BUYER_SEARCHRESULTS);
+                                }}
+                            >
+                                {t("VIEW_HISTORY")}
+                            </button>
+                        )}
+                    </div>
+                    <div className="g-col-6">
+                        {props.removeSearch ?
+                            <AntDropdown
+                                overlay={actions} placement="topRight" arrow
+                            >
+                                <button className="primary-btn save-button fr" >Select Action</button>
+                            </AntDropdown>
+                            : <button className="primary-btn save-button fr" onClick={onSaveResults} disabled={disableSaveBtn}>
+                                {t(saveButtonText)}
+                            </button>
+                        }
+
+                        {/* {props.removeSearch && <div className="fr m-r-20 m-t-10">{t("ROWS_CHECKED_REMOVED")}</div>} */}
+                        {!props.removeSearch && props?.searchResults?.length > 0 && (
+                            <div className="fr m-r-20 m-t-10">{t("IF_YOU_DO_FRESH_SEARCH")}</div>
+                        )}
+
+                        <div className="buyer-search-result-pagination-container fl">
+                            <Pagination
+                                size="small"
+                                current={actPage}
+                                onChange={(pageNum) => {
+                                    onChangePage(pageNum);
+                                }}
+                                total={pageCount}
+                                showSizeChanger={false}
+                            />
+                        </div>
+                    </div>
                 </div>
             </div>
             {projectsData?.length === 0 ?
