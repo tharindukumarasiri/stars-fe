@@ -34,6 +34,8 @@ function LineChart({ id, selected, type, data }) {
     }
 
     useEffect(() => {
+        if (sizes.find(item => item.id === id)) return;
+
         setSize({ height: initialHeight, width: initialWidth })
     }, []);
 

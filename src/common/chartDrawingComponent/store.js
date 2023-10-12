@@ -5,6 +5,7 @@ export const useNodeDataStore = create((set, get) => ({
     textdata: [],
     selectedNodeId: '',
     chartData: [],
+    copiedNodes: [],
     setSize: (id, size) => {
         const index = get().size.findIndex(item => item.id === id)
 
@@ -44,4 +45,5 @@ export const useNodeDataStore = create((set, get) => ({
             set({ chartData: newChartData })
         }
     },
+    setCopiedNodes: (data) => set({ copiedNodes: data })
 }))

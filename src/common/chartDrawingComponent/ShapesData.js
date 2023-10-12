@@ -14,6 +14,7 @@ export default {
         image: <rect x="0.5" y="0.5" width="25" height="25" vectorEffect="non-scaling-stroke" />,
         viewBox: "0 0 26 26",
         category: [Categories.FLOWCHART, Categories.SHAPES],
+        keepAspectRatio: false,
     },
     // Bpmn: {
     //     image: <>
@@ -210,6 +211,7 @@ export default {
         </>,
         viewBox: "0 0 100 100",
         size: { width: 75, height: 75 },
+        keepAspectRatio: false,
         category: [Categories.BPMN]
     },
     Activity: {
@@ -221,6 +223,7 @@ export default {
 
         </>,
         viewBox: "0 0 100 100",
+        keepAspectRatio: false,
         category: [Categories.BPMN]
     },
     Transaction: {

@@ -12,6 +12,8 @@ export default function ContextMenu({ id, top, left, ...props }) {
     const onTextChange = useNodeDataStore((state) => state.onTextChange);
     const size = useNodeDataStore((state) => state.size)?.find(item => item.id === id);
     const setSize = useNodeDataStore((state) => state.setSize);
+    const chartData = useNodeDataStore((state) => state.chartData).find(item => item.id === id);
+    const changeChartData = useNodeDataStore((state) => state.setChartData);
 
     const duplicateNode = useCallback(() => {
         const node = getNode(id);
@@ -22,8 +24,12 @@ export default function ContextMenu({ id, top, left, ...props }) {
         };
 
         const newNodeId = getId(node.id?.split('_')[0]);
+
         const newNodeTextData = { ...textdata };
         delete newNodeTextData.id
+
+        const newChartData = { ...chartData };
+        delete newChartData.id
 
         const newNodeSize = { ...size };
         delete newNodeSize.id
@@ -38,8 +44,9 @@ export default function ContextMenu({ id, top, left, ...props }) {
         setNodes((nds) => nds.concat(newNode));
 
         onTextChange(newNodeId, newNodeTextData)
+        changeChartData(newNodeId, newChartData)
         setSize(newNodeId, newNodeSize)
-    }, [id, getNode, setNodes, textdata]);
+    }, [id, getNode, setNodes, textdata, chartData]);
 
     const deleteNode = useCallback(() => {
         setNodes((nodes) => nodes.filter((node) => node.id !== id));

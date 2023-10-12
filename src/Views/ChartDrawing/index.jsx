@@ -56,7 +56,7 @@ const ChartDrawing = ({ openTab = NAVIGATION_PAGES.DRAWING_TOOL_HOME }) => {
                 <div label="Biz Designer List" id={NAVIGATION_PAGES.DRAWING_TOOL_HOME} >
                     <DrawingToolHome />
                 </div>
-                <div label="Canvas" id={NAVIGATION_PAGES.CHART_DRAWING} >
+                <div label={params[NAVIGATION_PAGES.CHART_DRAWING]?.name} id={NAVIGATION_PAGES.CHART_DRAWING} >
                     <DrawingTool props={params[NAVIGATION_PAGES.CHART_DRAWING]} />
                 </div>
             </Tabs>

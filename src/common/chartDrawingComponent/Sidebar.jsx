@@ -3,7 +3,7 @@ import React, { useState, memo } from 'react';
 import style from './DndStyles.module.scss'
 import Shapes, { Categories } from './ShapesData.js';
 
-const SideBar = ({ diagramName }) => {
+const SideBar = () => {
     const [sidebarVisible, setSidebarVisible] = useState(true);
     const [closedCategories, setClosedCategories] = useState([]);
 
@@ -38,9 +38,6 @@ const SideBar = ({ diagramName }) => {
     return (
         <aside className={sidebarVisible ? style.aside : ''}>
             <div className={style.sidebarColapsBtnContainer}>
-                {sidebarVisible &&
-                    <h2>{diagramName || 'Name'}</h2>
-                }
                 <i className={style.sidebarColapsBtn + (sidebarVisible ? ' icon-circle-arrow-left' : ' icon-circle-arrow-right')}
                     onClick={onArrowClicked} />
             </div>

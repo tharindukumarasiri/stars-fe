@@ -15,6 +15,7 @@
     display: flex;
     flex-direction: row;
     justify-content: center;
+    height: 20px;
 }
 
 .sidebarColapsBtn {
@@ -81,20 +82,16 @@ div.customHandle {
 
 div.customHandle2 {
     left: 101%;
-    width: 10px;
+    width: 0;
     height: 0;
 }
 
-div.customHandle2::after {
-    content: '';
-    width: 0;
-    height: 0;
-    border-top: 3px solid transparent;
-    border-bottom: 3px solid transparent;
-    border-left: 5px solid;
+div.customHandle2:after {
+    content: '\2192';
     position: absolute;
-    right: -0.2vw;
-    top: -0.2vh;
+    font-size: 25px;
+    right: -20px;
+    top: -15px;
 }
 
 .toolBarContainer {
@@ -336,4 +333,15 @@ div.customHandle2::after {
     display: flex;
     flex-direction: row;
     position: relative;
+}
+
+.copyPasteContainer {
+    border: solid 1px;
+    border-radius: 3px;
+    padding: 5px;
+    border-color: #434343;
+
+    &:hover {
+        cursor: pointer;
+    }
 }

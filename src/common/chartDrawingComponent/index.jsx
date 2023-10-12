@@ -22,6 +22,7 @@ import CustomConnectionLine from './customElements/CustomConnectionLine';
 import Sidebar from './Sidebar';
 import ToolBar from './ToolBar';
 import ContextMenu from './customElements/ContextMenu.js';
+import { useNodeDataStore } from './store'
 
 import { useDiagramStore } from '../../Views/ChartDrawing/chartDrawingStore'
 import { getId } from './utils'
@@ -60,8 +61,15 @@ const DnDFlow = ({ props }) => {
     const [target, setTarget] = useState(null);
     const [menu, setMenu] = useState(null);
     const [reactFlowInstance, setReactFlowInstance] = useState(null);
-    const [diagramName, setDiagramName] = useState(props?.name);
     const [deleteNodeId, setDeleteNodeId] = useState('')
+
+    const textdata = useNodeDataStore((state) => state.textdata);
+    const onTextChange = useNodeDataStore((state) => state.onTextChange);
+    const size = useNodeDataStore((state) => state.size);
+    const setSize = useNodeDataStore((state) => state.setSize);
+    const chartData = useNodeDataStore((state) => state.chartData);
+    const changeChartData = useNodeDataStore((state) => state.setChartData);
+    const copiedNodes = useNodeDataStore((state) => state.copiedNodes);
 
     const onConnect = useCallback((params) => setEdges((eds) => addEdge(params, eds)), []);
 
@@ -204,16 +212,58 @@ const DnDFlow = ({ props }) => {
     }
 
     const onSave = () => {
-        saveDiagram({ nodes: nodes, edges: edges }, diagramName);
+        saveDiagram({ nodes: nodes, edges: edges }, props?.name);
         message.success('Diagram Saved')
+    }
+
+    const pasteCopiedNodes = () => {
+        //Clear selected nodes
+        setNodes((nodes) =>
+            nodes.map((n) => {
+                const newNode = { ...n }
+                newNode.selected = false;
+                return newNode;
+            })
+        );
+
+        const newNodes = copiedNodes?.map((node, index) => {
+            const newNodeData = { ...node }
+            const newNodeId = getId(newNodeData.id.split('_')[0]) + index
+
+            const txtData = textdata?.find(item => item.id === node?.id)
+            if (txtData) {
+                const newTextData = { ...txtData }
+                delete newTextData.id
+                onTextChange(newNodeId, newTextData)
+            }
+
+            const chrtData = chartData?.find(item => item.id === node?.id)
+            if (chrtData) {
+                const newChartData = { ...chrtData }
+                delete newChartData.id
+                changeChartData(newNodeId, newChartData)
+            }
+
+            const nodeSize = size?.find(item => item.id === node?.id)
+            if (nodeSize) {
+                const newSize = { ...nodeSize }
+                delete newSize.id
+                setSize(newNodeId, newSize)
+            }
+
+            newNodeData.id = newNodeId
+            return newNodeData
+        })
+
+        setNodes((nds) => nds.concat(newNodes));
     }
 
     return (
         <div className={style.dndflow}>
             <ReactFlowProvider>
-                <Sidebar diagramName={diagramName} />
+                <Sidebar />
                 <Panel position="top-center">
-                    <ToolBar onSave={onSave} />
+                    <ToolBar onSave={onSave} pasteNodes={pasteCopiedNodes} />
                 </Panel>
 
                 <div className={style.reactflowrapper} ref={reactFlowWrapper}>

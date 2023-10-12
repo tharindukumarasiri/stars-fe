@@ -101,7 +101,12 @@ function CustomNode({ id, selected, type, data }) {
 
     const CustomShape = ({ fill }) => {
         return (
-            <svg viewBox={shapeData.viewBox} fill={fill} stroke={borderColor} width={size?.width} height={size?.height} >
+            <svg viewBox={shapeData.viewBox}
+                fill={fill}
+                stroke={borderColor}
+                width={size?.width}
+                height={size?.height}
+                preserveAspectRatio="none"  >
                 {Shapes[type].image}
             </svg >
         )

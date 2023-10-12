@@ -1,4 +1,5 @@
-import React, { useRef, useState } from 'react';
+import React, { useState } from 'react';
+import { useOnSelectionChange } from 'reactflow';
 
 import Dropdown from '../dropdown';
 import TextInput from "../../common/input";
@@ -55,10 +56,13 @@ const colorPickerTypes = {
     LINE: 'LINE',
 }
 
-export default ({ onSave }) => {
+let selectedNodes = [];
+
+export default ({ onSave, pasteNodes }) => {
     const [colorPickerVisible, setColorPickerVisible] = useState('')
 
     const selectedNodeId = useNodeDataStore((state) => state.selectedNodeId);
+    const setCopiedNodes = useNodeDataStore((state) => state.setCopiedNodes);
     const textdata = useNodeDataStore((state) => state.textdata).find(item => item.id === selectedNodeId);
     const changeTextData = useNodeDataStore((state) => state.onTextChange);
     const onTextChange = (value) => changeTextData(selectedNodeId, value)
@@ -83,6 +87,10 @@ export default ({ onSave }) => {
 
     const markerType = textdata?.markerType
     const setMarkerType = (value) => onTextChange({ markerType: value })
+
+    useOnSelectionChange({
+        onChange: ({ nodes, edges }) => selectedNodes = nodes,
+    });
 
     const onFontSizeChange = (e) => {
         e.preventDefault();
@@ -119,6 +127,10 @@ export default ({ onSave }) => {
     const onChangeMarker = (e) => {
         e.preventDefault();
         setMarkerType(JSON.parse(e.target.value));
+    }
+
+    const onCopy = () => {
+        setCopiedNodes(selectedNodes)
     }
 
     const onChangeTextColor = (color) => setTextColor(color?.rgb)
@@ -207,6 +219,8 @@ export default ({ onSave }) => {
                     />
                 </div>
             </div>
+            <div className={style.copyPasteContainer} onClick={onCopy} >Copy</div>
+            <div className={style.copyPasteContainer} onClick={pasteNodes}>Paste</div>
             <i className={style.toolBarIcon + ' icon-save1'} onClick={onSave} />
         </div>
     );
