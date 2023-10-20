@@ -313,7 +313,7 @@ const Market = () => {
         return (
             <>
                 <CriteriaColorGuideTab dataArr={colorGuidelevels} containerStyle='selected-codes' />
-                <div className="supplier-dropdown-content-container">
+                <div className="supplier-dropdown-content-container supplier-dropdown-content-container-market-view">
                     <UserSelecteNutsCodes />
                 </div>
             </>
@@ -496,7 +496,7 @@ const Market = () => {
                     }
                     <div className="g-row">
                         <div className="g-col-5">
-                            <div className="supplier-dropdown-content-container">
+                            <div className="supplier-dropdown-content-container supplier-dropdown-content-container-market-view">
                                 <MarketData />
                             </div>
                         </div>

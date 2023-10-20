@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import "./styles.scss"
 import BuyerHome from './buyerHome';
 import Search from './search'
-import Tabs from "../../common/tabComponent";
+import Tabs, { changeTab, tabClose } from "../../common/tabComponent";
 import SearchResults from "./searchResults";
 import { TabContext } from '../../utils/contextStore';
 import { NAVIGATION_PAGES, ROUTES } from '../../utils/enums';
@@ -19,33 +19,36 @@ const BuyerRole = () => {
     const [activeTab, setActiveTab] = useState(NAVIGATION_PAGES.BUYER_HOME);
     const [openTabs, setOpenTabs] = useState([NAVIGATION_PAGES.BUYER_HOME]);
     const [params, setParams] = useState({});
-    const [currentUser] = FetchCurrentUser();  
-    const {t} = useTranslation();
+    const [currentUser] = FetchCurrentUser();
+    const { t } = useTranslation();
     const navigate = useNavigate();
 
-    const changeActiveTab = (tab, params = null) => {
-        if (openTabs.indexOf(tab) < 0) {
-            const newOpenTabs = Array.from(openTabs)
-            newOpenTabs.push(tab);
-            setOpenTabs(newOpenTabs);
-        }
-        if (params)
-            setParams(pre => ({ ...pre, [tab]: params }))
-        setActiveTab(tab);
+    const changeActiveTab = (tab, params = null, multiple = false, label) => {
+        changeTab({
+            tab,
+            params,
+            multiple,
+            label,
+            openTabs,
+            setOpenTabs,
+            setActiveTab,
+            setParams
+        });
         navigate(ROUTES[tab]);
     };
 
     const closeTab = (tab) => {
-        const index = openTabs.indexOf(tab)
-        if (index > -1 && openTabs.length > 0) {
-            const newOpenTabs = Array.from(openTabs)
-            newOpenTabs.splice(index, 1)
-            setOpenTabs(newOpenTabs)
-        }
+        tabClose({ tab, openTabs, setOpenTabs })
     }
 
     return (
-        <TabContext.Provider value={{ activeTab: activeTab, changeActiveTab: changeActiveTab, closeTab: closeTab, openTabs: openTabs }}>
+        <TabContext.Provider value={{
+            params,
+            activeTab,
+            changeActiveTab,
+            closeTab,
+            openTabs
+        }}>
             <Tabs>
                 <div label={t('BUYER')} id={NAVIGATION_PAGES.BUYER_HOME} >
                     <div className="page-container">

@@ -2,7 +2,7 @@ import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import "./styles.scss"
-import Tabs from "../../common/tabComponent";
+import Tabs, { changeTab, tabClose } from "../../common/tabComponent";
 import { TabContext } from '../../utils/contextStore';
 import { NAVIGATION_PAGES, ROUTES } from '../../utils/enums';
 import SellerHome from './sellerHome';
@@ -24,25 +24,25 @@ const SellerRole = ({ openTab = NAVIGATION_PAGES.SELLER_HOME }) => {
     const { t } = useTranslation();
     const navigate = useNavigate();
 
-    const changeActiveTab = (tab, params = null) => {
+    const changeActiveTab = (tab, params = null, multiple = false, label) => {
         const openNotification = (placement = 'top') => {
             const onLeaveBtn = () => {
                 notification.close(key)
-                    setHaveUnsavedDataRef(false);
+                setHaveUnsavedDataRef(false);
 
-                    if (openTabs.indexOf(tab) < 0) {
-                        const newOpenTabs = Array.from(openTabs)
-                        newOpenTabs.push(tab);
-                        setOpenTabs(newOpenTabs);
-                    }
+                if (openTabs.indexOf(tab) < 0) {
+                    const newOpenTabs = Array.from(openTabs)
+                    newOpenTabs.push(tab);
+                    setOpenTabs(newOpenTabs);
+                }
 
-                    if (shouldBeClosed.current.state) {
-                        closeTab(shouldBeClosed.current.tab);
-                        shouldBeClosed.current = { state: false, tab: '' };
-                    }
-                    setActiveTab(tab);
+                if (shouldBeClosed.current.state) {
+                    closeTab(shouldBeClosed.current.tab);
+                    shouldBeClosed.current = { state: false, tab: '' };
+                }
+                setActiveTab(tab);
             }
-            
+
             const key = `open${Date.now()}`;
             const btn = <button className="primary-btn" onClick={onLeaveBtn} >{t('LEAVE')}</button>
             const closeIcon = <i className="close-icon icon-close hover-hand" />;
@@ -60,31 +60,25 @@ const SellerRole = ({ openTab = NAVIGATION_PAGES.SELLER_HOME }) => {
             notification.warning(args);
         };
 
-        if (params)
-            setParams(pre => ({ ...pre, [tab]: params }))
-
         if (haveUnsavedDataRef.current) {
             openNotification()
         } else {
-            if (openTabs.indexOf(tab) < 0) {
-                const newOpenTabs = Array.from(openTabs)
-                newOpenTabs.push(tab);
-                setOpenTabs(newOpenTabs);
-            }
-            setActiveTab(tab);
+            changeTab({
+                tab,
+                params,
+                multiple,
+                label,
+                openTabs,
+                setOpenTabs,
+                setActiveTab,
+                setParams
+            })
             navigate(ROUTES[tab]);
         }
     };
 
     const closeTab = (tab) => {
-        const index = openTabs.indexOf(tab);
-        if (haveUnsavedDataRef.current) {
-            shouldBeClosed.current = { state: true, tab };
-        } else if (index > -1 && openTabs.length > 0) {
-            const newOpenTabs = Array.from(openTabs)
-            newOpenTabs.splice(index, 1)
-            setOpenTabs(newOpenTabs)
-        }
+        tabClose({ tab, openTabs, haveUnsavedDataRef, shouldBeClosed, setOpenTabs })
     }
 
     const setHaveUnsavedDataRef = (value) => {
@@ -94,6 +88,7 @@ const SellerRole = ({ openTab = NAVIGATION_PAGES.SELLER_HOME }) => {
     return (
         <TabContext.Provider
             value={{
+                params,
                 activeTab,
                 changeActiveTab,
                 closeTab,

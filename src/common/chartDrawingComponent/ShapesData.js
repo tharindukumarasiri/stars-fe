@@ -16,14 +16,6 @@ export default {
         category: [Categories.FLOWCHART, Categories.SHAPES],
         keepAspectRatio: false,
     },
-    // Bpmn: {
-    //     image: <>
-    //         <rect x="5" y="5.9" class="st0" width="90" height="88.6" />
-    //         <rect x="10.5" y="11.6" class="st1" width="79" height="77.1" />
-    //     </>,
-    //     viewBox: "0 0 100 100",
-    //     category: [Categories.BPMN]
-    // },
     Circle: {
         image: <rect x="0.5" y="0.5" width="25" height="25" rx="12.5" vectorEffect="non-scaling-stroke" />,
         viewBox: "0 0 26 26",
@@ -46,16 +38,6 @@ export default {
         viewBox: "0 0 28 26",
         category: [Categories.SHAPES]
     },
-    // Database: {
-    //     image: <>
-    //         <ellipse class="st0" cx="50" cy="26.8" rx="40.2" ry="22.5" />
-    //         <path class="st0" d="M88.2,35c1.3,2.2,2,4.6,2,7c0,12.4-18,22.5-40.2,22.5S9.8,54.4,9.8,42c0-2.6,0.8-5.1,2.2-7.4" />
-    //         <path class="st0" d="M88.2,51.4c1.3,2.2,2,4.6,2,7C90.2,70.9,72.2,81,50,81S9.8,70.9,9.8,58.5c0-2.6,0.8-5.1,2.2-7.4" />
-    //         <path class="st0" d="M88.2,67.2c1.3,2.2,2,4.6,2,7c0,12.4-18,22.5-40.2,22.5S9.8,86.6,9.8,74.2c0-2.6,0.8-5.1,2.2-7.4" />
-    //     </>,
-    //     viewBox: "0 0 100 100",
-    //     category: [Categories.BPMN]
-    // },
     Tick: {
         image: <>
             <g>

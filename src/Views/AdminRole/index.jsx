@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { useLocation } from 'react-router-dom';
 import { useUserStore } from './adminRoleStore'
 
-import Tabs from "../../common/tabComponent";
+import Tabs, { changeTab, tabClose } from "../../common/tabComponent";
 import { TabContext, UserContext } from '../../utils/contextStore';
 import { NAVIGATION_PAGES } from '../../utils/enums';
 import Templates from './Templates/templates';
@@ -45,19 +45,19 @@ const AdminRole = ({ openTab = NAVIGATION_PAGES.ADMIN_TEMPLATES }) => {
     const { t } = useTranslation();
 
     useEffect(() => {
-        if(hash === '#2' ) {
+        if (hash === '#2') {
             changeActiveTab(NAVIGATION_PAGES.ADMIN_TEMPLATES);
         }
     }, [hash])
 
     useEffect(() => {
-        if(selectedCompany) {
+        if (selectedCompany) {
             setSelectedCompany(selectedCompany);
         }
     }, [selectedCompany])
 
     useEffect(() => {
-        if(currentUser) {
+        if (currentUser) {
             setCurrentUser(currentUser);
         }
     }, [currentUser])
@@ -67,24 +67,21 @@ const AdminRole = ({ openTab = NAVIGATION_PAGES.ADMIN_TEMPLATES }) => {
         setOpenTabs([openTab]);
     }, [openTab])
 
-    const changeActiveTab = (tab, params = null) => {
-        if (openTabs.indexOf(tab) < 0) {
-            const newOpenTabs = Array.from(openTabs)
-            newOpenTabs.push(tab);
-            setOpenTabs(newOpenTabs);
-        }
-        if (params)
-            setParams(pre => ({ ...pre, [tab]: params }))
-        setActiveTab(tab);
+    const changeActiveTab = (tab, params = null, multiple = false, label) => {
+        changeTab({
+            tab,
+            params,
+            multiple,
+            label,
+            openTabs,
+            setOpenTabs,
+            setActiveTab,
+            setParams
+        })
     };
 
     const closeTab = (tab) => {
-        const index = openTabs.indexOf(tab)
-        if (index > -1 && openTabs.length > 0) {
-            const newOpenTabs = Array.from(openTabs)
-            newOpenTabs.splice(index, 1)
-            setOpenTabs(newOpenTabs)
-        }
+        tabClose({ tab, openTabs, setOpenTabs })
     }
 
     //User functions
@@ -98,7 +95,13 @@ const AdminRole = ({ openTab = NAVIGATION_PAGES.ADMIN_TEMPLATES }) => {
     }
 
     return (
-        <TabContext.Provider value={{ activeTab: activeTab, changeActiveTab: changeActiveTab, closeTab: closeTab, openTabs: openTabs }}>
+        <TabContext.Provider value={{
+            params,
+            activeTab,
+            changeActiveTab,
+            closeTab,
+            openTabs,
+        }}>
             <UserContext.Provider value={{ getUsersData, users, totalResults, pageNumber, setPageNumber, usersLoading, searchText, setSearchText, selectedCompany, currentUser, savedTemplates, setSavedTemplates }} >
                 <Tabs>
                     <div label={t('ECONNECT_TAB_ECONNECT')} id={NAVIGATION_PAGES.E_CONNECT_HOME} >

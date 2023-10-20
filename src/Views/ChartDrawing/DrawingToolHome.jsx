@@ -88,14 +88,16 @@ const DrawingToolHome = () => {
         setShowModel(pre => !pre);
         setNewDiagramData({ Name: '', TypeCode: '', Description: '', Permission: 'Private', FromDate: '', ToDate: '', Responsible: '', Status: '' })
     }
+
     const onSave = () => {
         if (newDiagramData.Name !== '') {
-            changeActiveTab(NAVIGATION_PAGES.CHART_DRAWING, { name: newDiagramData.Name })
+            toggleModal()
+            changeActiveTab(NAVIGATION_PAGES.CHART_DRAWING, { name: newDiagramData.Name }, true, newDiagramData.Name)
         }
     }
 
     const onClickRow = (params) => {
-        changeActiveTab(NAVIGATION_PAGES.CHART_DRAWING, { ...params })
+        changeActiveTab(NAVIGATION_PAGES.CHART_DRAWING, { ...params }, true)
     }
 
     const onNewElementChange = (e, elementName) => {

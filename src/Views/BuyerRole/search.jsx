@@ -2166,19 +2166,19 @@ export default function Search(props) {
                 </div>
             </div>
             <div className="g-col-6 bg-white">
-                <div>
-                    <div className="title-txt text-center">{t("RESULTS")}</div>
-                    {getGroupingCriteria()}
-                    {loading && (
-                        <div className="loading">
-                            <div></div>
-                            <div></div>
-                            <div></div>
-                        </div>
-                    )}
-                    {noSearchResults && (
-                        <div className="sub-title-txt text-center">{removeAllResultsChecked ? t('ALL_RESULTS_REMOVED') : t("NO_RESULTS")}</div>
-                    )}
+                <div className="title-txt text-center">{t("RESULTS")}</div>
+                {getGroupingCriteria()}
+                {loading && (
+                    <div className="loading">
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                    </div>
+                )}
+                {noSearchResults && (
+                    <div className="sub-title-txt text-center">{removeAllResultsChecked ? t('ALL_RESULTS_REMOVED') : t("NO_RESULTS")}</div>
+                )}
+                <div className="buyer-search-result-container">
                     {Object.values(grouping).length !== 0 && (
                         <>
                             <div className={props?.sectionSearch ? "section-search-results-container" : "search-results-container"}>

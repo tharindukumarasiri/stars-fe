@@ -72,6 +72,10 @@
 
 .supplier-dropdown-content-container {
     overflow-y: scroll;
-    height: calc(100vh - 260px);
+    height: calc(100vh - 335px);
     width: 100%;
+}
+
+.supplier-dropdown-content-container-market-view {
+    height: calc(100vh - 405px);
 }

@@ -141,7 +141,7 @@ const MatchingTenders = () => {
                     };
                 }}
                 scroll={{
-                    y: "65vh",
+                    y: "55vh",
                 }}
             />
             <div className="action-bar">

@@ -26,7 +26,9 @@ export default function Tab(props) {
   return (
     <div className={className} onClick={onClick}>
       {props.label}
-          <i className="icon-x-bold m-l-5" onClick={onCloseBtnClick} > </i>
+      {openTabs?.length > 1 ?
+        <i className="icon-x-bold m-l-5" onClick={onCloseBtnClick} /> : null
+      }
     </div>
   );
 }

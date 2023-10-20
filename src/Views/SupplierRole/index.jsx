@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 
 import { notification } from 'antd';
 import SupplierHome from './supplierHome';
-import Tabs from "../../common/tabComponent";
+import Tabs, { changeTab, tabClose } from "../../common/tabComponent";
 import { TabContext } from '../../utils/contextStore';
 import "./styles.scss"
 import { NAVIGATION_PAGES, ROUTES } from '../../utils/enums';
@@ -25,7 +25,7 @@ const SupplireRole = () => {
     const { t } = useTranslation();
     const navigate = useNavigate();
 
-    const changeActiveTab = (tab) => {
+    const changeActiveTab = (tab, params = null, multiple = false, label) => {
         const openNotification = (placement = 'top') => {
             const onLeaveBtn = () => {
                 notification.close(key)
@@ -64,25 +64,21 @@ const SupplireRole = () => {
         if (haveUnsavedDataRef.current) {
             openNotification()
         } else {
-            if (openTabs.indexOf(tab) < 0) {
-                const newOpenTabs = Array.from(openTabs)
-                newOpenTabs.push(tab);
-                setOpenTabs(newOpenTabs);
-            }
-            setActiveTab(tab);
+            changeTab({
+                tab,
+                params,
+                multiple,
+                label,
+                openTabs,
+                setOpenTabs,
+                setActiveTab,
+            })
             navigate(ROUTES[tab]);
         }
     };
 
     const closeTab = (tab) => {
-        const index = openTabs.indexOf(tab);
-        if (haveUnsavedDataRef.current) {
-            shouldBeClosed.current = { state: true, tab };
-        } else if (index > -1 && openTabs.length > 0) {
-            const newOpenTabs = Array.from(openTabs)
-            newOpenTabs.splice(index, 1)
-            setOpenTabs(newOpenTabs)
-        }
+        tabClose({ tab, openTabs, haveUnsavedDataRef, shouldBeClosed, setOpenTabs })
     }
 
     const setHaveUnsavedDataRef = (value) => {

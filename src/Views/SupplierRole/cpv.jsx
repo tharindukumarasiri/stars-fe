@@ -450,7 +450,6 @@ const Cpv = () => {
                         <div></div>
                     </div>
                 }
-                <div className="action-bar m-r-20"><button className="primary-btn update-btn" onClick={onUpdate} >{t("UPDATE")}</button></div>
                 <div className="g-row">
                     <div className="g-col-12">
                         <div className="action-bar"> <button className="primary-btn" onClick={onUpdate} >{t("UPDATE")}</button></div>

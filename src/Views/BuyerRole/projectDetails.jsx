@@ -17,15 +17,15 @@ import { useTranslation } from "react-i18next";
 
 const { TabPane } = Tabs;
 
-const ProjectDetails = ({ params, loggedUser }) => {
+const ProjectDetails = ({ props, loggedUser }) => {
     // const [editable, setEditable] = useState(false);
-    const [status, setStatus] = useState(params.Status);
-    const [closedDate, setClosedDate] = useState(params.ClosedDate);
+    const [status, setStatus] = useState(props?.Status);
+    const [closedDate, setClosedDate] = useState(props.ClosedDate);
     const [sectionData, setSectionData] = useState([]);    
     const { t } = useTranslation();
 
     const changeStateOfProject = (e) => {
-        const newProjectData = { ...params };
+        const newProjectData = { ...props };
         newProjectData.Status = e.target.value;
         if (e.target.value.toUpperCase() === "OPEN") {
             newProjectData.closedDate = null;
@@ -50,10 +50,10 @@ const ProjectDetails = ({ params, loggedUser }) => {
         <>
             <div className="g-row detail-stripe-tab-top">
                 <div className="g-col-3 fl body-text">
-                    {t("PROJECT_ID")}: <strong>{projectCodeFormat(params.Id)}</strong>
+                    {t("PROJECT_ID")}: <strong>{projectCodeFormat(props.Id)}</strong>
                 </div>
                 <div className="g-col-3 fl body-text">
-                    {t("NAME")}: <strong>{params.Name}</strong>
+                    {t("NAME")}: <strong>{props.Name}</strong>
                 </div>
             </div>
             <div className="custom-tab-container">
@@ -62,17 +62,17 @@ const ProjectDetails = ({ params, loggedUser }) => {
                         <div className="g-row m-l-20 m-r-20 p-a-20">
                             <div className="g-col-2">
                                 <div className="body-text-bold">{t("TYPE")}</div>
-                                <div className="body-text">{params.TypeCode}</div>
+                                <div className="body-text">{props.TypeCode}</div>
                             </div>
                             <div className="g-col-2">
                                 <div className="body-text-bold">{t("DESCRIPTION")}</div>
-                                <div className="body-text">{params.Description}</div>
+                                <div className="body-text">{props.Description}</div>
                             </div>
                             <div className="g-col-2">
                                 <div className="body-text-bold">{t("FROM_DATE")}</div>
-                                <div className="body-text m-b-20">{formatDate(params.FromDate)}</div>
+                                <div className="body-text m-b-20">{formatDate(props.FromDate)}</div>
                                 <div className="body-text-bold m-t-20 p-t-20">{t("DUE_DATE")}</div>
-                                <div className="body-text">{formatDate(params.ToDate)}</div>
+                                <div className="body-text">{formatDate(props.ToDate)}</div>
                             </div>
                             <div className="g-col-2">
                                 <div className="body-text-bold">{t("CLOSED_DATE")}</div>
@@ -80,9 +80,9 @@ const ProjectDetails = ({ params, loggedUser }) => {
                             </div>
                             <div className="g-col-2">
                                 <div className="body-text-bold">{t("PERMISSION_TYPE")}</div>
-                                <div className="body-text m-b-20">{params.Permission}</div>
+                                <div className="body-text m-b-20">{props.Permission}</div>
                                 <div className="body-text-bold m-t-20 p-t-20">{t("RESPONSIBLE")}</div>
-                                <div className="body-text">{params.Responsible}</div>
+                                <div className="body-text">{props.Responsible}</div>
                             </div>
                             <div className="g-col-2">
                                 <div className="body-text-bold m-b-10">{t("STATUS")}</div>
@@ -98,10 +98,10 @@ const ProjectDetails = ({ params, loggedUser }) => {
                     </TabPane>
                     <TabPane tab={t("SECTION").toUpperCase()} key="2">
                         <SectionView
-                            projectName={params.Name}
-                            projectId={projectCodeFormat(params.Id)}
-                            id={params.Id}
-                            projectToDate={params.ToDate}
+                            projectName={props.Name}
+                            projectId={projectCodeFormat(props.Id)}
+                            id={props.Id}
+                            projectToDate={props.ToDate}
                             sectionData={sectionData}
                             setSectionData={setSectionData}
                             projectStatus={status}
@@ -110,8 +110,8 @@ const ProjectDetails = ({ params, loggedUser }) => {
                     </TabPane>
                     <TabPane tab={t("MEMBERS").toUpperCase()} key="3">
                         <MembersView
-                            id={params.Id}
-                            sectionId={params.Sections && params.Sections[0]?.id || ""}
+                            id={props.Id}
+                            sectionId={props.Sections && props.Sections[0]?.id || ""}
                             sectionData={sectionData}
                             setSectionData={setSectionData}
                             loggedUser={loggedUser}

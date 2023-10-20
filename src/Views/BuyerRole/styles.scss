@@ -185,7 +185,12 @@
 }
 
 .buyer-search-crieteria-container {
-    max-height: 80vh;
+    max-height: calc(100vh - 382px);
+    overflow: scroll;
+}
+
+.buyer-search-result-container {
+    max-height: calc(100vh - 455px);
     overflow: scroll;
 }
 

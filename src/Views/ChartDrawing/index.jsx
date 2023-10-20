@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import Tabs from "../../common/tabComponent";
+import Tabs, { changeTab, tabClose } from "../../common/tabComponent";
 import { TabContext } from '../../utils/contextStore';
 import { NAVIGATION_PAGES } from '../../utils/enums';
 import DrawingTool from '../../common/chartDrawingComponent';
@@ -16,26 +16,21 @@ const ChartDrawing = ({ openTab = NAVIGATION_PAGES.DRAWING_TOOL_HOME }) => {
     const [selectedCompany] = FetchCurrentCompany();
     const { t } = useTranslation();
 
-    const changeActiveTab = (tab, params = null) => {
-        if (openTabs.indexOf(tab) < 0) {
-            const newOpenTabs = Array.from(openTabs)
-            newOpenTabs.push(tab);
-            setOpenTabs(newOpenTabs);
-        }
-        if (params)
-            setParams(pre => ({ ...pre, [tab]: params }))
-        setActiveTab(tab);
+    const changeActiveTab = (tab, params = null, multiple = false, label) => {
+        changeTab({
+            tab,
+            params,
+            multiple,
+            label,
+            openTabs,
+            setOpenTabs,
+            setActiveTab,
+            setParams
+        })
     };
 
     const closeTab = (tab) => {
-        const index = openTabs.indexOf(tab);
-        if (haveUnsavedDataRef.current) {
-            shouldBeClosed.current = { state: true, tab };
-        } else if (index > -1 && openTabs.length > 0) {
-            const newOpenTabs = Array.from(openTabs)
-            newOpenTabs.splice(index, 1)
-            setOpenTabs(newOpenTabs)
-        }
+        tabClose({ tab, openTabs, haveUnsavedDataRef, shouldBeClosed, setOpenTabs })
     }
 
     const setHaveUnsavedDataRef = (value) => {
@@ -45,6 +40,7 @@ const ChartDrawing = ({ openTab = NAVIGATION_PAGES.DRAWING_TOOL_HOME }) => {
     return (
         <TabContext.Provider
             value={{
+                params,
                 activeTab,
                 changeActiveTab,
                 closeTab,
@@ -56,8 +52,8 @@ const ChartDrawing = ({ openTab = NAVIGATION_PAGES.DRAWING_TOOL_HOME }) => {
                 <div label="Biz Designer List" id={NAVIGATION_PAGES.DRAWING_TOOL_HOME} >
                     <DrawingToolHome />
                 </div>
-                <div label={params[NAVIGATION_PAGES.CHART_DRAWING]?.name} id={NAVIGATION_PAGES.CHART_DRAWING} >
-                    <DrawingTool props={params[NAVIGATION_PAGES.CHART_DRAWING]} />
+                <div id={NAVIGATION_PAGES.CHART_DRAWING} >
+                    <DrawingTool />
                 </div>
             </Tabs>
         </TabContext.Provider >

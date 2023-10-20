@@ -289,7 +289,7 @@ const DnDFlow = ({ props }) => {
                         connectionLineStyle={connectionLineStyle}
                     >
                         <Controls />
-                        <Background variant="dots" gap={8} size={0.5} />
+                        <Background variant="dots" gap={8} size={0.5} id={props?.name} />
                         <Panel />
                     </ReactFlow>
                 </div>

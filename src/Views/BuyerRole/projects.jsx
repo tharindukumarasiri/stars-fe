@@ -151,7 +151,7 @@ const Projects = (props) => {
     }
 
     const onClickProject = (params) => {
-        changeActiveTab(NAVIGATION_PAGES.BUYER_PROJECT_DETAILS, params)
+        changeActiveTab(NAVIGATION_PAGES.BUYER_PROJECT_DETAILS, params, true, params?.Name)
     }
     const getContactsList = async () => {
         const response = await getContacts();
