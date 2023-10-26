@@ -108,3 +108,9 @@ export const getRgbaColor = (color) => {
         return color
     return `rgb(${color?.r}, ${color?.g}, ${color?.b}, ${color?.a})`
 }
+
+export const getGradientRgbaColor = (color) => {
+    if (!color?.r || !color?.g || !color?.b)
+        return color
+    return `linear-gradient(90deg, rgb(${color?.r}, ${color?.g}, ${color?.b}, ${color?.a}), rgb(255,255,255,1))`
+}
