@@ -14,6 +14,7 @@ import { message } from 'antd';
 
 import CustomNode from './shapes/CustomNode.js';
 import LineChart from './shapes/LineChart.js';
+import MatrixChart from './shapes/MatrixChart.js';
 import Line from './shapes/Line.js';
 import Text from './shapes/Text.js';
 import Shapes, { parentNodes } from './ShapesData.js';
@@ -82,6 +83,7 @@ const DnDFlow = ({ props }) => {
         const types = { ...Shapes }
         Object.keys(types).forEach(key => types[key] = CustomNode);
         types['LineChart'] = LineChart
+        types['MatrixChart'] = MatrixChart
         types['HorizontalLine'] = Line
         types['VerticalLine'] = Line
         types['Text'] = Text
@@ -287,6 +289,7 @@ const DnDFlow = ({ props }) => {
                         defaultEdgeOptions={defaultEdgeOptions}
                         connectionLineComponent={CustomConnectionLine}
                         connectionLineStyle={connectionLineStyle}
+                        zoomOnDoubleClick={false}
                     >
                         <Controls />
                         <Background variant="dots" gap={8} size={0.5} id={props?.name} />

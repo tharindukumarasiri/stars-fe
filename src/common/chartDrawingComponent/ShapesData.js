@@ -178,6 +178,26 @@ export default {
         size: { width: 100, height: 100 },
         category: [Categories.STRUCTURES]
     },
+    MatrixChart: {
+        image: <>
+            <polyline class="st0" points="10.2,14.7 88.4,14.7 88.4,87.1 " />
+            <path class="st1" d="M87.9,52.8C67,52.8,50,35.9,50,15" />
+            <g>
+                <g>
+                    <path class="st2" d="M87.7,80.7c-0.2,0-0.3,0-0.5,0" />
+                    <path class="st3" d="M85.2,80.7c-34.6-1.3-62.3-29.4-63.1-64" />
+                    <path class="st2" d="M22.1,15.6c0-0.2,0-0.3,0-0.5" />
+                </g>
+            </g>
+            <line class="st4" x1="88.4" y1="14.7" x2="17.8" y2="57.5" />
+            <line class="st4" x1="88" y1="15.2" x2="42.1" y2="83.8" />
+        </>
+        ,
+        viewBox: "0 0 100 100",
+        size: { width: 300, height: 300 },
+        keepAspectRatio: false,
+        category: [Categories.STRUCTURES]
+    },
     Annotation: {
         image: <>
             <path class="st0" d="M20.4,93.6c-6.6,0-12-5.4-12-12V19.7c0-6.6,5.4-12,12-12" />

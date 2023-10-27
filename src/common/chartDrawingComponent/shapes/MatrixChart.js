@@ -1,0 +1,318 @@
+import React, { memo, useEffect, useCallback, useMemo, useState, useRef } from 'react';
+import { NodeResizer, NodeToolbar, Position } from 'reactflow';
+
+import TextInput from "../../../common/input";
+import { useNodeDataStore } from '../store'
+import Shapes from '../ShapesData.js';
+import { getRgbaColor, getGradientRgbaColor } from '../utils';
+import ColorPicker from '../../../common/colorPicker';
+
+import style from '../DndStyles.module.scss'
+
+//Bellow is the data structure of nodeData
+// nodeData = [
+//     [// section 1
+//         [ //column 1
+//             { text: 'Aaa' }, // row 1
+//             { text: 'Bbb' }, //row 2
+//         ],
+//         [ //column 2
+//             { text: 'Bob' }, // row 1
+//             { text: 'sam' }, //row 2
+//             { text: 'fam' }, //row 3
+//         ]
+//     ],
+// ];
+
+function MatrixChart({ id, selected, type, data }) {
+    const shapeData = Shapes[type]
+    const initialHeight = shapeData.size?.height;
+    const initialWidth = shapeData.size?.width;
+
+    const setSelectedNodeId = useNodeDataStore((state) => state.setSelectedNodeId);
+
+    const [openColorPicker, setOpenColorPicker] = useState('');
+    const [focusedInput, setFocusedInput] = useState('')
+    const [hideTools, setHideTools] = useState(false)
+
+    const sizes = useNodeDataStore((state) => state.size);
+    const onSizeCahnge = useNodeDataStore((state) => state.setSize);
+
+    const size = sizes.find(item => item.id === id) || { height: initialHeight, width: initialWidth };
+    const setSize = (value) => onSizeCahnge(id, value)
+
+    const chartData = useNodeDataStore((state) => state.chartData).find(item => item.id === id);
+    const changeChartData = useNodeDataStore((state) => state.setChartData);
+    const onChangeChartData = (value) => changeChartData(id, value)
+
+    const nodeData = chartData?.nodeData || []
+    const setNodeData = (value) => onChangeChartData({ nodeData: value })
+
+    const sectionsCount = chartData?.sectionsCount || 1
+    const setSectionsCount = (value) => onChangeChartData({ sectionsCount: value })
+
+    const columnsCount = chartData?.columnsCount || 1
+    const setColumnsCount = (value) => onChangeChartData({ columnsCount: value })
+
+    const textdata = useNodeDataStore((state) => state.textdata)?.find(item => item.id === id);
+    const backgroundColor = getRgbaColor(textdata?.backgroundColor) || '#E7E7BF'
+    const borderColor = getRgbaColor(textdata?.borderColor) || '#d3d3d3'
+
+    const INPUT_REF = useRef()
+
+    const mainContainerStyle = {
+        height: size?.height,
+        width: size?.width,
+        backgroundColor: backgroundColor,
+        borderColor: borderColor,
+    }
+
+    useEffect(() => {
+        if (sizes.find(item => item.id === id)) return;
+
+        setSize({ height: initialHeight, width: initialWidth })
+    }, []);
+
+    useEffect(() => {
+        if (selected)
+            setSelectedNodeId(id);
+    }, [selected]);
+
+    const onChangeHeader = useCallback((evt) => {
+        onChangeChartData({ header: evt.target.value })
+    }, []);
+
+    const sectionList = useMemo(() => {
+        return (
+            Array.from(Array(sectionsCount))
+        )
+    }, [sectionsCount])
+
+    const columnList = useMemo(() => {
+        return (
+            Array.from(Array(columnsCount))
+        )
+    }, [columnsCount])
+
+    const onResize = (_, size) => setSize(size);
+
+    const onSectionsCountIncrese = () => setSectionsCount(sectionsCount + 1);
+    const onSectionsCountDecrease = () => setSectionsCount(sectionsCount - 1 > 0 ? sectionsCount - 1 : 0);
+    const onSectionsCountChange = (e) => {
+        e.preventDefault();
+        const number = e.target.value
+
+        if (!isNaN(number) && Number(number) > 0) {
+            setSectionsCount(Number(number))
+        }
+    };
+
+    const onColumnsCountIncrese = () => setColumnsCount(columnsCount + 1);
+    const onColumnsCountDecrease = () => setColumnsCount(columnsCount - 1 > 0 ? columnsCount - 1 : 0);
+    const onColumnsCountChange = (e) => {
+        e.preventDefault();
+        const number = e.target.value
+
+        if (!isNaN(number) && Number(number) > 0) {
+            setColumnsCount(Number(number))
+        }
+    };
+
+    const addNewItem = (section, column) => {
+        const newNodeData = [...nodeData];
+
+        const newSection = newNodeData[section] || [];
+        const newColumn = newSection[column] || [];
+
+        newColumn.push({ text: '', color: newColumn[0]?.color || '' })
+
+        newSection[column] = newColumn
+        newNodeData[section] = newSection;
+
+        setNodeData(newNodeData)
+    }
+
+    const onChangeItemText = (value, section, column, row) => {
+        const newNodeData = [...nodeData];
+
+        const newSection = newNodeData[section] || [];
+        const newColumn = newSection[column] || [];
+
+        newColumn[row] = { text: value, color: newColumn[row] || '' }
+
+        newSection[column] = newColumn
+        newNodeData[section] = newSection;
+
+        setNodeData(newNodeData)
+    }
+
+    const onDeleteItem = (section, column, row) => {
+        const newNodeData = [...nodeData];
+
+        const newSection = newNodeData[section] || [];
+        const newColumn = newSection[column] || [];
+
+        newColumn?.splice(row, 1)
+
+        newSection[column] = newColumn
+        newNodeData[section] = newSection;
+
+        setNodeData(newNodeData)
+    }
+
+    const onMouseLeave = () => {
+        setOpenColorPicker('')
+    }
+
+    const onChangeColumnColor = (color, section, column) => {
+        const newNodeData = [...nodeData];
+
+        const newSection = newNodeData[section] || [];
+        const newColumn = newSection[column] || [];
+
+        newColumn.map(row => {
+            row.color = getGradientRgbaColor(color)
+        })
+
+        newSection[column] = newColumn
+        newNodeData[section] = newSection;
+
+        setNodeData(newNodeData)
+    }
+
+    const onFocusInput = (e) => {
+        setFocusedInput(e?.target?.id)
+    }
+
+    const handleCheckboxCLick = (e) => {
+        e?.stopPropagation()
+        setHideTools(e.target?.checked)
+    };
+
+    return (
+        <div className={style.matrixChartContainer} style={mainContainerStyle}>
+            <NodeResizer
+                isVisible={selected}
+                onResize={onResize}
+                keepAspectRatio={shapeData?.keepAspectRatio ?? true}
+                handleClassName={style.resizerHandleStyle}
+            />
+            <NodeToolbar position={Position.Right}>
+                <div>Number of Sections</div>
+                <div className={style.lineChartLineToolbarItem + ' m-t-10'}>
+                    <div
+                        className='hover-hand m-r-10 m-t-10 bold'
+                        onClick={onSectionsCountDecrease}> - </div>
+                    <TextInput value={sectionsCount} onChange={onSectionsCountChange} />
+                    <div
+                        className='hover-hand m-l-10 m-t-10 bold'
+                        onClick={onSectionsCountIncrese}
+                    > + </div>
+                </div>
+
+                <div className='m-t-20'>Number of Columns</div>
+                <div className={style.lineChartLineToolbarItem + ' m-t-10'}>
+                    <div
+                        className='hover-hand m-r-10 m-t-10 bold'
+                        onClick={onColumnsCountDecrease}> - </div>
+                    <TextInput value={columnsCount} onChange={onColumnsCountChange} />
+                    <div
+                        className='hover-hand m-l-10 m-t-10 bold'
+                        onClick={onColumnsCountIncrese}
+                    > + </div>
+                </div>
+                <div className={'flex-align-center m-t-10'}>
+                    <input type="checkbox" className="check-box"
+                        checked={hideTools}
+                        onChange={handleCheckboxCLick}
+                    />
+                    Hide Options
+                </div>
+            </NodeToolbar>
+
+            <div className={style.matrixChartHeader}>
+                <textarea
+                    id="textarea"
+                    type="textarea"
+                    name="textarea"
+                    placeholder='Title'
+                    className={style.matrixChartHeaderText}
+                    value={chartData?.header}
+                    onChange={onChangeHeader}
+                    multiple
+                />
+            </div>
+            {sectionList.map((_, sectionIndex) => {
+                return (
+                    <div className={style.matrixChartSection} id={sectionIndex}>
+                        {columnList.map((_, columnIndex) => {
+                            const sectiondata = nodeData[sectionIndex] || [];
+                            const rowsdata = sectiondata[columnIndex] || [];
+                            const columnId = `${sectionIndex}${columnIndex}`
+
+                            return (
+                                <div id={columnId}>
+                                    {rowsdata?.map((item, rowIndex) => {
+                                        const rowId = `${sectionIndex}${columnIndex}${rowIndex}`;
+
+                                        return (
+                                            <div
+                                                className={`${style.matrixChartItem} ${sectiondata?.some(section => section.length > 1) ? {} : style.matrixChartItemLarge}`}
+                                                style={{ backgroundImage: item?.color }}
+                                                id={rowId}>
+                                                {rowId === focusedInput && !hideTools &&
+                                                    <i className={style.matrixItemClose + " icon-close-small-x"}
+                                                        onClick={() => onDeleteItem(sectionIndex, columnIndex, rowIndex)}
+                                                    />
+                                                }
+                                                <textarea
+                                                    id={rowId}
+                                                    onFocus={onFocusInput}
+                                                    placeholder='Name'
+                                                    className={style.matrixItemText}
+                                                    value={item?.text}
+                                                    onChange={(e) => onChangeItemText(e.target.value, sectionIndex, columnIndex, rowIndex)}
+                                                    multiple
+                                                />
+                                            </div>
+                                        )
+                                    })
+                                    }
+                                    <div className={style.matrixToolbarContainer}>
+                                        {!hideTools &&
+                                            <div>
+                                                <div className={style.matrixAddNewItem}
+                                                    onClick={() => addNewItem(sectionIndex, columnIndex)}
+                                                >
+                                                    +
+                                                </div>
+                                                {rowsdata?.length > 0 &&
+                                                    <div className={style.matrixColorPickerContainer}
+                                                        onClick={() => setOpenColorPicker(columnId)}>
+                                                        <i className={style.matrixPaintBucket + ' icon-paint-bucket'} />
+                                                        {columnId === openColorPicker &&
+                                                            <div className={style.sketchPickerContainer}>
+                                                                <ColorPicker
+                                                                    color={backgroundColor}
+                                                                    onChange={(color) => onChangeColumnColor(color?.rgb, sectionIndex, columnIndex,)}
+                                                                    onMouseLeave={onMouseLeave}
+                                                                />
+                                                            </div>
+                                                        }
+                                                    </div>
+                                                }
+                                            </div>
+                                        }
+
+                                    </div>
+                                </div>
+                            )
+                        })}
+                    </div>
+                )
+            })}
+        </div>
+    );
+}
+
+export default memo(MatrixChart);

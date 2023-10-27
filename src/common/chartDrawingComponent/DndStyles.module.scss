@@ -345,3 +345,127 @@ div.customHandle2:after {
         cursor: pointer;
     }
 }
+
+.matrixChartContainer {
+    display: flex;
+    flex-direction: column;
+    border: solid 1.5px;
+    border-radius: 3px;
+    padding: 20px;
+}
+
+.matrixChartHeader {
+    border: solid 1px;
+    margin-bottom: 10px;
+    background-color: #a2a2a2;
+    border-color: #434343;
+}
+
+.matrixChartHeaderText {
+    border: transparent;
+    text-align: center;
+    resize: none;
+    font-size: 16px;
+    line-height: 16px;
+    font-weight: bolder;
+    background-color: transparent;
+    margin-top: 5px;
+    height: 30px;
+}
+
+.matrixChartSection {
+    display: flex;
+    flex: 1;
+    justify-content: space-around;
+    flex-direction: row;
+    border: solid 1px;
+    border-color: #434343;
+    background-color: #EAEAEA;
+    margin-bottom: 10px;
+    padding-bottom: 10px;
+}
+
+.matrixChartItem {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100px;
+    height: 30px;
+    border: solid 1px;
+    border-color: #434343;
+    background-image: linear-gradient(90deg, lightcoral, white);
+    margin-top: 10px;
+    border-radius: 7px;
+}
+
+.matrixChartItemLarge {
+    padding-top: 20px;
+    height: 70px;
+}
+
+.matrixAddNewItem {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 60px;
+    height: 20px;
+    border: solid 1px;
+    border-color: #D3D3D3;
+    margin-top: 10px;
+    border-radius: 10px;
+    font-size: 20px;
+    color: #808080;
+
+    &:hover {
+        cursor: pointer;
+        background-color: #c6bcbc;
+    }
+}
+
+.matrixItemText {
+    height: 100%;
+    border: transparent;
+    text-align: center;
+    resize: none;
+    font-size: 11px;
+    background-color: transparent;
+}
+
+.matrixItemClose {
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    font-size: 8px;
+    z-index: 200;
+
+    &:hover {
+        cursor: pointer;
+    }
+}
+
+.matrixToolbarContainer {
+    width: 100px;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    position: relative;
+}
+
+.matrixColorPickerContainer {
+    position: absolute;
+    right: -5px;
+    top: 10px;
+
+    &:hover {
+        cursor: pointer;
+    }
+}
+
+.matrixPaintBucket {
+    font-size: 15px;
+    color: #434343;
+
+    &:hover {
+        cursor: pointer;
+    }
+}
