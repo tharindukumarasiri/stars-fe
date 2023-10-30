@@ -1,4 +1,4 @@
-import React, { memo, useEffect, useCallback, useMemo, useState, useRef } from 'react';
+import React, { memo, useEffect, useCallback, useMemo, useState } from 'react';
 import { NodeResizer, NodeToolbar, Position } from 'reactflow';
 
 import TextInput from "../../../common/input";
@@ -57,8 +57,6 @@ function MatrixChart({ id, selected, type, data }) {
     const textdata = useNodeDataStore((state) => state.textdata)?.find(item => item.id === id);
     const backgroundColor = getRgbaColor(textdata?.backgroundColor) || '#E7E7BF'
     const borderColor = getRgbaColor(textdata?.borderColor) || '#d3d3d3'
-
-    const INPUT_REF = useRef()
 
     const mainContainerStyle = {
         height: size?.height,
@@ -119,7 +117,7 @@ function MatrixChart({ id, selected, type, data }) {
     };
 
     const addNewItem = (section, column) => {
-        const newNodeData = [...nodeData];
+        const newNodeData = JSON.parse(JSON.stringify(nodeData));
 
         const newSection = newNodeData[section] || [];
         const newColumn = newSection[column] || [];
@@ -133,7 +131,7 @@ function MatrixChart({ id, selected, type, data }) {
     }
 
     const onChangeItemText = (value, section, column, row) => {
-        const newNodeData = [...nodeData];
+        const newNodeData = JSON.parse(JSON.stringify(nodeData));
 
         const newSection = newNodeData[section] || [];
         const newColumn = newSection[column] || [];
@@ -147,7 +145,7 @@ function MatrixChart({ id, selected, type, data }) {
     }
 
     const onDeleteItem = (section, column, row) => {
-        const newNodeData = [...nodeData];
+        const newNodeData = JSON.parse(JSON.stringify(nodeData));
 
         const newSection = newNodeData[section] || [];
         const newColumn = newSection[column] || [];
@@ -164,18 +162,18 @@ function MatrixChart({ id, selected, type, data }) {
         setOpenColorPicker('')
     }
 
-    const onChangeColumnColor = (color, section, column) => {
-        const newNodeData = [...nodeData];
+    const onChangeColumnColor = (color, column) => {
+        const newNodeData = JSON.parse(JSON.stringify(nodeData));
 
-        const newSection = newNodeData[section] || [];
-        const newColumn = newSection[column] || [];
+        newNodeData?.map(section => {
+            const newColumn = section[column] || [];
 
-        newColumn.map(row => {
-            row.color = getGradientRgbaColor(color)
+            newColumn?.map(row => {
+                row.color = getGradientRgbaColor(color)
+            })
+
+            return newColumn
         })
-
-        newSection[column] = newColumn
-        newNodeData[section] = newSection;
 
         setNodeData(newNodeData)
     }
@@ -286,21 +284,6 @@ function MatrixChart({ id, selected, type, data }) {
                                                 >
                                                     +
                                                 </div>
-                                                {rowsdata?.length > 0 &&
-                                                    <div className={style.matrixColorPickerContainer}
-                                                        onClick={() => setOpenColorPicker(columnId)}>
-                                                        <i className={style.matrixPaintBucket + ' icon-paint-bucket'} />
-                                                        {columnId === openColorPicker &&
-                                                            <div className={style.sketchPickerContainer}>
-                                                                <ColorPicker
-                                                                    color={backgroundColor}
-                                                                    onChange={(color) => onChangeColumnColor(color?.rgb, sectionIndex, columnIndex,)}
-                                                                    onMouseLeave={onMouseLeave}
-                                                                />
-                                                            </div>
-                                                        }
-                                                    </div>
-                                                }
                                             </div>
                                         }
 
@@ -311,7 +294,26 @@ function MatrixChart({ id, selected, type, data }) {
                     </div>
                 )
             })}
-        </div>
+            {!hideTools &&
+                <div className={style.matrixColorPickerRow}>
+                    {columnList?.map((_, columnId) => {
+                        return (
+                            <div onClick={() => setOpenColorPicker(columnId)}>
+                                <i className={style.matrixPaintBucket + ' icon-paint-bucket'} />
+                                {columnId === openColorPicker &&
+                                    <ColorPicker
+                                        color={backgroundColor}
+                                        onChange={(color) => onChangeColumnColor(color?.rgb, columnId)}
+                                        onMouseLeave={onMouseLeave}
+                                    />
+                                }
+                            </div>
+                        )
+                    })
+                    }
+                </div>
+            }
+        </div >
     );
 }
 

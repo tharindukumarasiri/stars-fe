@@ -451,14 +451,10 @@ div.customHandle2:after {
     position: relative;
 }
 
-.matrixColorPickerContainer {
-    position: absolute;
-    right: -5px;
-    top: 10px;
-
-    &:hover {
-        cursor: pointer;
-    }
+.matrixColorPickerRow {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
 }
 
 .matrixPaintBucket {
