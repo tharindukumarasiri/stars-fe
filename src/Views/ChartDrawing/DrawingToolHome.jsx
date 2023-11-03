@@ -97,7 +97,7 @@ const DrawingToolHome = () => {
     }
 
     const onClickRow = (params) => {
-        changeActiveTab(NAVIGATION_PAGES.CHART_DRAWING, { ...params }, true)
+        changeActiveTab(NAVIGATION_PAGES.CHART_DRAWING, { ...params }, true, params.name)
     }
 
     const onNewElementChange = (e, elementName) => {

@@ -49,8 +49,8 @@ export default function ContextMenu({ id, top, left, ...props }) {
     }, [id, getNode, setNodes, textdata, chartData]);
 
     const deleteNode = useCallback(() => {
-        setNodes((nodes) => nodes.filter((node) => node.id !== id));
-        setEdges((edges) => edges.filter((edge) => edge.source !== id));
+        setNodes((nodes) => nodes.filter((node) => node?.id !== id && node?.parentNode !== id));
+        setEdges((edges) => edges.filter((edge) => edge?.source !== id));
     }, [id, setNodes, setEdges]);
 
     const moveToBack = useCallback(() => {

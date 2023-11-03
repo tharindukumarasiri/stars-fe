@@ -107,6 +107,12 @@ div.customHandle2:after {
     align-items: center;
 }
 
+.toolBarSeparator {
+    height: 80%;
+    width: 1px;
+    background-color: rgba(180, 165, 165, 0.477);
+}
+
 .fontSizeContainer {
     width: 85px;
     display: flex;
@@ -162,6 +168,7 @@ div.customHandle2:after {
 
 .colorIconFooter {
     position: absolute;
+    border: 1px solid rgba(223, 212, 212, 0.573);
     bottom: 0;
     left: 2.5px;
     height: 5px;

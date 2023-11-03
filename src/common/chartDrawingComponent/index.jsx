@@ -26,11 +26,9 @@ import ContextMenu from './customElements/ContextMenu.js';
 import { useNodeDataStore } from './store'
 
 import { useDiagramStore } from '../../Views/ChartDrawing/chartDrawingStore'
-import { getId } from './utils'
+import { getId, arrowColor } from './utils'
 
 import style from './DndStyles.module.scss'
-
-const arrowColor = '#8f8f8f'
 
 const connectionLineStyle = {
     strokeWidth: 1,
@@ -131,6 +129,10 @@ const DnDFlow = ({ props }) => {
         }
     }, [deleteNodeId])
 
+    const getAllData = useCallback(() => {
+        return { nodes: nodes, edges: edges, nodesData: textdata }
+    }, [nodes, edges, textdata]);
+
     const onNodeDragStart = (evt, node) => {
         dragRef.current = node;
     };
@@ -218,8 +220,7 @@ const DnDFlow = ({ props }) => {
         message.success('Diagram Saved')
     }
 
-    const pasteCopiedNodes = () => {
-        //Clear selected nodes
+    const clearSelectedNodes = () => {
         setNodes((nodes) =>
             nodes.map((n) => {
                 const newNode = { ...n }
@@ -227,6 +228,10 @@ const DnDFlow = ({ props }) => {
                 return newNode;
             })
         );
+    }
+
+    const pasteCopiedNodes = () => {
+        clearSelectedNodes();
 
         const newNodes = copiedNodes?.map((node, index) => {
             const newNodeData = { ...node }
@@ -265,7 +270,14 @@ const DnDFlow = ({ props }) => {
             <ReactFlowProvider>
                 <Sidebar />
                 <Panel position="top-center">
-                    <ToolBar onSave={onSave} pasteNodes={pasteCopiedNodes} />
+                    <ToolBar
+                        onSave={onSave}
+                        pasteNodes={pasteCopiedNodes}
+                        clearSelectedNodes={clearSelectedNodes}
+                        getAllData={getAllData}
+                        edges={edges}
+                        setEdges={setEdges}
+                    />
                 </Panel>
 
                 <div className={style.reactflowrapper} ref={reactFlowWrapper}>
@@ -283,6 +295,7 @@ const DnDFlow = ({ props }) => {
                         onNodeDragStop={onNodeDragStop}
                         onNodeContextMenu={onNodeContextMenu}
                         onPaneClick={onPaneClick}
+                        onNodeClick={onPaneClick}
                         fitView
                         nodeTypes={nodeTypes}
                         edgeTypes={edgeTypes}

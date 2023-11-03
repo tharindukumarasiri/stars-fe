@@ -1,5 +1,101 @@
 import { Position, MarkerType } from 'reactflow';
 
+//Constants
+export const arrowColor = '#8f8f8f'
+
+export const fontTypes = [
+    {
+        label: 'Arial',
+        type: 'Arial'
+    },
+    {
+        label: 'Sans serif',
+        type: 'sans-serif'
+    },
+    {
+        label: 'Poppins',
+        type: 'Poppins'
+    },
+    {
+        label: 'Times New Roman',
+        type: 'Times New Roman'
+    },
+]
+
+export const markerTypes = [
+    { label: 'None' },
+    {
+        label: 'Send',
+        icon: 'icon-email'
+    },
+    {
+        label: 'Recieve',
+        icon: 'icon-email-circle-solid'
+    },
+    {
+        label: 'Time',
+        icon: 'icon-hourly'
+
+    },
+    {
+        label: 'Share',
+        icon: 'icon-p2p'
+    },
+]
+
+export const arrowStartTypes = [
+    { label: 'None' },
+    {
+        label: 'Arrow closed',
+        icon: 'icon-point-arrow-right',
+        markerId: 'arrowclosed'
+    },
+    {
+        label: 'Arrow',
+        icon: 'icon-circle-arrow-r2',
+        markerId: 'arrow'
+    },
+    {
+        label: 'Relation',
+        icon: 'icon-minus-1',
+        markerId: 'linestart'
+    },
+    {
+        label: 'Circle',
+        icon: 'icon-inst-circle-solid',
+        markerId: 'circlestart'
+    },
+]
+
+export const arrowEndTypes = [
+    {
+        label: 'Arrow closed',
+        icon: 'icon-point-arrow-right',
+        markerId: 'arrowclosed'
+    },
+    {
+        label: 'Arrow',
+        icon: 'icon-circle-arrow-r2',
+        markerId: 'arrow'
+    },
+    {
+        label: 'Relation',
+        icon: 'icon-minus-1',
+        markerId: 'lineend'
+    },
+    {
+        label: 'Circle',
+        icon: 'icon-inst-circle-solid',
+        markerId: 'circleend'
+    },
+]
+
+export const colorPickerTypes = {
+    TEXT: 'TEXT',
+    BACKGROUND: 'BACKGROUND',
+    LINE: 'LINE',
+}
+
 export const getId = (type) => `${type}_${+new Date()}`;
 
 // this helper function returns the intersection point
@@ -114,3 +210,22 @@ export const getGradientRgbaColor = (color) => {
         return color
     return `linear-gradient(90deg, rgb(${color?.r}, ${color?.g}, ${color?.b}, ${color?.a}), rgb(255,255,255,1))`
 }
+
+export const downloadImage = (dataUrl) => {
+    const a = document.createElement('a');
+
+    a.setAttribute('download', 'reactflow.png');
+    a.setAttribute('href', dataUrl);
+    a.click();
+}
+
+export const downloadJson = (data) => {
+    const jsonString = `data:text/json;chatset=utf-8,${encodeURIComponent(
+        JSON.stringify(data)
+    )}`;
+    const link = document.createElement("a");
+    link.href = jsonString;
+    link.download = "data.json";
+
+    link.click();
+};

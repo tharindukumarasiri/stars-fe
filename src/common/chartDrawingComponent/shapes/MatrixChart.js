@@ -255,7 +255,7 @@ function MatrixChart({ id, selected, type, data }) {
 
                                         return (
                                             <div
-                                                className={`${style.matrixChartItem} ${sectiondata?.some(section => section.length > 1) ? {} : style.matrixChartItemLarge}`}
+                                                className={`${style.matrixChartItem} ${sectiondata?.some(section => section?.length > 1) ? {} : style.matrixChartItemLarge}`}
                                                 style={{ backgroundImage: item?.color }}
                                                 id={rowId}>
                                                 {rowId === focusedInput && !hideTools &&

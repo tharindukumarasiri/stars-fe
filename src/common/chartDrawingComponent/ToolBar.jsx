@@ -1,65 +1,38 @@
-import React, { useState } from 'react';
-import { useOnSelectionChange } from 'reactflow';
+import React, { useMemo, useState } from 'react';
+import { useReactFlow, getRectOfNodes, getTransformForBounds, useOnSelectionChange, MarkerType } from 'reactflow';
+import { FileTextOutlined, DownloadOutlined } from '@ant-design/icons';
+import { toPng } from 'html-to-image';
 
 import Dropdown from '../dropdown';
+import CustomDropdown from '../customDropdown';
 import TextInput from "../../common/input";
 import ColorPicker from '../../common/colorPicker';
-import { getRgbaColor } from './utils';
+import {
+    getRgbaColor,
+    downloadImage,
+    downloadJson,
+    fontTypes,
+    markerTypes,
+    arrowStartTypes,
+    arrowEndTypes,
+    colorPickerTypes,
+    arrowColor
+} from './utils';
 
 import { useNodeDataStore } from './store'
 
 import style from './DndStyles.module.scss'
 
-const fontTypes = [
-    {
-        label: 'Arial',
-        type: 'Arial'
-    },
-    {
-        label: 'Sans serif',
-        type: 'sans-serif'
-    },
-    {
-        label: 'Poppins',
-        type: 'Poppins'
-    },
-    {
-        label: 'Times New Roman',
-        type: 'Times New Roman'
-    },
-]
-
-const markerTypes = [
-    { label: 'None', icon: '' },
-    {
-        label: 'Send',
-        icon: 'icon-email'
-    },
-    {
-        label: 'Recieve',
-        icon: 'icon-email-circle-solid'
-    },
-    {
-        label: 'Time',
-        icon: 'icon-hourly'
-
-    },
-    {
-        label: 'Share',
-        icon: 'icon-p2p'
-    },
-]
-
-const colorPickerTypes = {
-    TEXT: 'TEXT',
-    BACKGROUND: 'BACKGROUND',
-    LINE: 'LINE',
-}
-
 let selectedNodes = [];
+let selectedEdges = []
 
-export default ({ onSave, pasteNodes }) => {
+const imageWidth = 1024;
+const imageHeight = 768;
+
+export default ({ onSave, pasteNodes, clearSelectedNodes, getAllData, edges, setEdges }) => {
     const [colorPickerVisible, setColorPickerVisible] = useState('')
+
+    const { getNodes } = useReactFlow();
 
     const selectedNodeId = useNodeDataStore((state) => state.selectedNodeId);
     const setCopiedNodes = useNodeDataStore((state) => state.setCopiedNodes);
@@ -89,7 +62,11 @@ export default ({ onSave, pasteNodes }) => {
     const setMarkerType = (value) => onTextChange({ markerType: value })
 
     useOnSelectionChange({
-        onChange: ({ nodes, edges }) => selectedNodes = nodes,
+        onChange: ({ nodes, edges }) => {
+            selectedNodes = nodes
+            if (edges?.length > 0)
+                selectedEdges = edges
+        },
     });
 
     const onFontSizeChange = (e) => {
@@ -124,9 +101,8 @@ export default ({ onSave, pasteNodes }) => {
         settextType(JSON.parse(e.target.value));
     }
 
-    const onChangeMarker = (e) => {
-        e.preventDefault();
-        setMarkerType(JSON.parse(e.target.value));
+    const onChangeMarker = (value) => {
+        setMarkerType(value);
     }
 
     const onCopy = () => {
@@ -140,6 +116,117 @@ export default ({ onSave, pasteNodes }) => {
     const showColorPicker = (picker) => setColorPickerVisible(picker)
 
     const onChangeTextBold = () => setBold(!textBold)
+
+    const onDownloadJpg = () => {
+        clearSelectedNodes();
+
+        // we calculate a transform for the nodes so that all nodes are visible
+        // we then overwrite the transform of the `.react-flow__viewport` element
+        // with the style option of the html-to-image library
+        const nodesBounds = getRectOfNodes(getNodes());
+        const transform = getTransformForBounds(nodesBounds, imageWidth, imageHeight, 0.5, 2);
+
+        toPng(document.querySelector('.react-flow__viewport'), {
+            backgroundColor: 'white',
+            width: imageWidth,
+            height: imageHeight,
+            style: {
+                width: imageWidth,
+                height: imageHeight,
+                transform: `translate(${transform[0]}px, ${transform[1]}px) scale(${transform[2]})`,
+            },
+        }).then(downloadImage);
+    }
+
+    const onDownloadJson = () => {
+        downloadJson(getAllData())
+    };
+
+    const onChangeEdgeStart = (value) => {
+        setEdges((edges) =>
+            edges.map((e) => {
+                const isSelected = selectedEdges?.some(selectedEdge => selectedEdge?.id === e?.id);
+
+                if (isSelected) {
+                    const newEdge = { ...e }
+
+                    switch (value?.markerId) {
+                        case 'arrow':
+                            newEdge.markerStart = {
+                                type: MarkerType.Arrow,
+                                color: arrowColor,
+                            };
+                            break;
+                        case 'arrowclosed':
+                            newEdge.markerStart = {
+                                type: MarkerType.ArrowClosed,
+                                color: arrowColor,
+                            };
+                            break;
+                        default:
+                            newEdge.markerStart = value?.markerId;
+                            break;
+                    }
+                    return newEdge;
+                } else return e
+            })
+        );
+    }
+
+    const onChangeEdgeEnd = (value) => {
+        setEdges((edges) =>
+            edges.map((e) => {
+                const isSelected = selectedEdges?.some(selectedEdge => selectedEdge?.id === e?.id);
+
+                if (isSelected) {
+                    const newEdge = { ...e }
+
+                    switch (value?.markerId) {
+                        case 'arrow':
+                            newEdge.markerEnd = {
+                                type: MarkerType.Arrow,
+                                color: arrowColor,
+                            };
+                            break;
+                        case 'arrowclosed':
+                            newEdge.markerEnd = {
+                                type: MarkerType.ArrowClosed,
+                                color: arrowColor,
+                            };
+                            break;
+                        default:
+                            newEdge.markerEnd = value?.markerId;
+                            break;
+                    }
+                    return newEdge;
+                } else return e
+            })
+        );
+    }
+
+    const getSelectedEdgeStart = useMemo(() => {
+        //using the first item in the selected edges
+        let selectedEdge = selectedEdges[0]
+        selectedEdge = edges?.find(edge => edge?.id === selectedEdge?.id)
+
+        if (typeof selectedEdge?.markerStart == 'object') {
+            return arrowStartTypes?.find(type => type?.markerId === selectedEdge?.markerStart?.type)
+        } else {
+            return arrowStartTypes?.find(type => type?.markerId === selectedEdge?.markerStart)
+        }
+    }, [edges, selectedEdges])
+
+    const getSelectedEdgeEnd = useMemo(() => {
+        //using the first item in the selected edges
+        let selectedEdge = selectedEdges[0]
+        selectedEdge = edges?.find(edge => edge?.id === selectedEdge?.id)
+
+        if (typeof selectedEdge?.markerEnd == 'object') {
+            return arrowEndTypes?.find(type => type?.markerId === selectedEdge?.markerEnd?.type)
+        } else {
+            return arrowEndTypes?.find(type => type?.markerId === selectedEdge?.markerEnd)
+        }
+    }, [edges, selectedEdges])
 
     return (
         <div className={style.toolBarContainer}>
@@ -179,6 +266,7 @@ export default ({ onSave, pasteNodes }) => {
                 }
             </div>
 
+            <div className={style.toolBarSeparator} />
 
             <div className={style.colorPickerContainer} onClick={() => showColorPicker(colorPickerTypes.BACKGROUND)}>
                 <i className={style.toolBarIcon + ' icon-paint-bucket'} />
@@ -208,20 +296,57 @@ export default ({ onSave, pasteNodes }) => {
                 }
             </div>
 
+            <div className={style.toolBarSeparator} />
+
             <div className={style.activityContainer}>
-                Activity
                 <div className='m-t-10 m-l-5'>
-                    <Dropdown
-                        values={markerTypes}
-                        onChange={onChangeMarker}
+                    <CustomDropdown
+                        values={arrowStartTypes}
+                        onChange={onChangeEdgeStart}
                         dataName='label'
-                        selected={JSON.stringify(markerType)}
+                        iconName='icon'
+                        selected={getSelectedEdgeStart}
+                        hideHintText
+                    />
+                </div>
+                <div className='m-t-10 m-l-5'>
+                    <CustomDropdown
+                        values={arrowEndTypes}
+                        onChange={onChangeEdgeEnd}
+                        dataName='label'
+                        iconName='icon'
+                        selected={getSelectedEdgeEnd}
+                        hideHintText
                     />
                 </div>
             </div>
+
+            <div className={style.toolBarSeparator} />
+
+            <div className={style.activityContainer}>
+                <div className='m-t-10 m-l-5'>
+                    <CustomDropdown
+                        values={markerTypes}
+                        onChange={onChangeMarker}
+                        dataName='label'
+                        iconName='icon'
+                        selected={markerType}
+                        placeholder='Activity'
+                        hideHintText
+                    />
+                </div>
+            </div>
+
+            <div className={style.toolBarSeparator} />
+
             <div className={style.copyPasteContainer} onClick={onCopy} >Copy</div>
             <div className={style.copyPasteContainer} onClick={pasteNodes}>Paste</div>
+
+            <div className={style.toolBarSeparator} />
+
             <i className={style.toolBarIcon + ' icon-save1'} onClick={onSave} />
+            <DownloadOutlined className={style.toolBarIcon} onClick={onDownloadJpg} />
+            <FileTextOutlined className={style.toolBarIcon} onClick={onDownloadJson} />
         </div>
     );
 };
