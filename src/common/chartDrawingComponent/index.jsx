@@ -130,7 +130,7 @@ const DnDFlow = ({ props }) => {
     }, [deleteNodeId])
 
     const getAllData = useCallback(() => {
-        return { nodes: nodes, edges: edges, nodesData: textdata }
+        return { nodes: nodes, edges: edges, nodesData: textdata, nodeSizes: size, chartData: chartData }
     }, [nodes, edges, textdata]);
 
     const onNodeDragStart = (evt, node) => {
@@ -277,6 +277,7 @@ const DnDFlow = ({ props }) => {
                         getAllData={getAllData}
                         edges={edges}
                         setEdges={setEdges}
+                        setNodes={setNodes}
                     />
                 </Panel>
 

@@ -1,6 +1,6 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useRef } from 'react';
 import { useReactFlow, getRectOfNodes, getTransformForBounds, useOnSelectionChange, MarkerType } from 'reactflow';
-import { FileTextOutlined, DownloadOutlined } from '@ant-design/icons';
+import { FileTextOutlined, DownloadOutlined, SaveOutlined, UploadOutlined } from '@ant-design/icons';
 import { toPng } from 'html-to-image';
 
 import Dropdown from '../dropdown';
@@ -29,7 +29,7 @@ let selectedEdges = []
 const imageWidth = 1024;
 const imageHeight = 768;
 
-export default ({ onSave, pasteNodes, clearSelectedNodes, getAllData, edges, setEdges }) => {
+export default ({ onSave, pasteNodes, clearSelectedNodes, getAllData, edges, setEdges, setNodes }) => {
     const [colorPickerVisible, setColorPickerVisible] = useState('')
 
     const { getNodes } = useReactFlow();
@@ -38,6 +38,7 @@ export default ({ onSave, pasteNodes, clearSelectedNodes, getAllData, edges, set
     const setCopiedNodes = useNodeDataStore((state) => state.setCopiedNodes);
     const textdata = useNodeDataStore((state) => state.textdata).find(item => item.id === selectedNodeId);
     const changeTextData = useNodeDataStore((state) => state.onTextChange);
+    const setUploadedData = useNodeDataStore((state) => state.setUploadedData);
     const onTextChange = (value) => changeTextData(selectedNodeId, value)
 
     const fonstSize = textdata?.fonstSize || 8
@@ -60,6 +61,8 @@ export default ({ onSave, pasteNodes, clearSelectedNodes, getAllData, edges, set
 
     const markerType = textdata?.markerType
     const setMarkerType = (value) => onTextChange({ markerType: value })
+
+    const UPLOAD_BTN_REF = useRef(null);
 
     useOnSelectionChange({
         onChange: ({ nodes, edges }) => {
@@ -228,6 +231,35 @@ export default ({ onSave, pasteNodes, clearSelectedNodes, getAllData, edges, set
         }
     }, [edges, selectedEdges])
 
+    const readFile = (file) => {
+        return new Promise((resolve) => {
+            const reader = new FileReader()
+            reader.addEventListener('load', () => resolve(reader.result), false)
+            reader.readAsText(file)
+        })
+    }
+
+    const onFileChange = async (e) => {
+        if (e.target.files && e.target.files.length > 0) {
+
+            const file = e.target.files[0]
+            let fileDataUrl = await readFile(file)
+
+            try {
+                const uploadedJson = JSON.parse(fileDataUrl)
+
+                setNodes(uploadedJson?.nodes || []);
+                setEdges(uploadedJson?.edges || []);
+                setUploadedData(uploadedJson?.nodeSizes, uploadedJson?.nodesData, uploadedJson?.chartData)
+
+            } catch (e) {
+                console.log("unsuported format")
+            }
+        }
+    }
+
+    const handleFileUpload = () => UPLOAD_BTN_REF.current.click();
+
     return (
         <div className={style.toolBarContainer}>
             <div className='m-t-10'>
@@ -344,9 +376,16 @@ export default ({ onSave, pasteNodes, clearSelectedNodes, getAllData, edges, set
 
             <div className={style.toolBarSeparator} />
 
-            <i className={style.toolBarIcon + ' icon-save1'} onClick={onSave} />
+            <SaveOutlined className={style.toolBarIcon} onClick={onSave} />
             <DownloadOutlined className={style.toolBarIcon} onClick={onDownloadJpg} />
             <FileTextOutlined className={style.toolBarIcon} onClick={onDownloadJson} />
+            <UploadOutlined className={style.toolBarIcon} onClick={handleFileUpload} />
+            <input
+                type="file"
+                style={{ display: 'none' }}
+                ref={UPLOAD_BTN_REF}
+                onChange={onFileChange}
+            />
         </div>
     );
 };

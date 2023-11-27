@@ -47,5 +47,10 @@ export const useNodeDataStore = create((set, get) => ({
             set({ chartData: newChartData })
         }
     },
-    setCopiedNodes: (data) => set({ copiedNodes: data })
+    setCopiedNodes: (data) => set({ copiedNodes: data }),
+    setUploadedData: (size, textdata, chartData) => set({
+        size: size || [],
+        textdata: textdata || [],
+        chartData: chartData || [],
+    })
 }))
