@@ -359,6 +359,7 @@ div.customHandle2:after {
     border: solid 1.5px;
     border-radius: 3px;
     padding: 20px;
+    border-color: #d3d3d3;
 }
 
 .matrixChartHeader {
@@ -471,4 +472,9 @@ div.customHandle2:after {
     &:hover {
         cursor: pointer;
     }
+}
+
+.matrixColumnActionRow {
+    display: flex;
+    flex-direction: row;
 }

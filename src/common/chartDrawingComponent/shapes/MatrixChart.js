@@ -58,11 +58,22 @@ function MatrixChart({ id, selected, type, data }) {
     const backgroundColor = getRgbaColor(textdata?.backgroundColor) || '#E7E7BF'
     const borderColor = getRgbaColor(textdata?.borderColor) || '#d3d3d3'
 
+    const fonstSize = Number(textdata?.fonstSize) || 8
+    const textType = textdata?.textType || { label: 'Poppins', type: 'Poppins' }
+    const textColor = getRgbaColor(textdata?.textColor) || 'black'
+    const textBold = textdata?.textBold || false
+
     const mainContainerStyle = {
         height: size?.height,
         width: size?.width,
         backgroundColor: backgroundColor,
-        borderColor: borderColor,
+    }
+
+    const textAreaStyle = {
+        fontFamily: textType.type,
+        fontSize: fonstSize,
+        color: textColor,
+        fontWeight: textBold ? 'bolder' : 'normal',
     }
 
     useEffect(() => {
@@ -178,6 +189,17 @@ function MatrixChart({ id, selected, type, data }) {
         setNodeData(newNodeData)
     }
 
+    const deleteColumn = (column) => {
+        const newNodeData = JSON.parse(JSON.stringify(nodeData));
+
+        newNodeData?.map(section => {
+            return section?.splice(column, 1)
+        })
+
+        setNodeData(newNodeData);
+        onColumnsCountDecrease();
+    };
+
     const onFocusInput = (e) => {
         setFocusedInput(e?.target?.id)
     }
@@ -228,7 +250,7 @@ function MatrixChart({ id, selected, type, data }) {
                 </div>
             </NodeToolbar>
 
-            <div className={style.matrixChartHeader}>
+            <div className={style.matrixChartHeader} style={{ backgroundColor: borderColor }}>
                 <textarea
                     id="textarea"
                     type="textarea"
@@ -238,6 +260,7 @@ function MatrixChart({ id, selected, type, data }) {
                     value={chartData?.header}
                     onChange={onChangeHeader}
                     multiple
+                    style={textAreaStyle}
                 />
             </div>
             {sectionList.map((_, sectionIndex) => {
@@ -298,15 +321,20 @@ function MatrixChart({ id, selected, type, data }) {
                 <div className={style.matrixColorPickerRow}>
                     {columnList?.map((_, columnId) => {
                         return (
-                            <div onClick={() => setOpenColorPicker(columnId)}>
-                                <i className={style.matrixPaintBucket + ' icon-paint-bucket'} />
-                                {columnId === openColorPicker &&
-                                    <ColorPicker
-                                        color={backgroundColor}
-                                        onChange={(color) => onChangeColumnColor(color?.rgb, columnId)}
-                                        onMouseLeave={onMouseLeave}
-                                    />
-                                }
+                            <div className={style.matrixColumnActionRow}>
+                                <div onClick={() => setOpenColorPicker(columnId)}>
+                                    <i className={style.matrixPaintBucket + ' icon-paint-bucket'} />
+                                    {columnId === openColorPicker &&
+                                        <ColorPicker
+                                            color={backgroundColor}
+                                            onChange={(color) => onChangeColumnColor(color?.rgb, columnId)}
+                                            onMouseLeave={onMouseLeave}
+                                        />
+                                    }
+                                </div>
+
+                                <i className={style.matrixPaintBucket + ' icon-delete'}
+                                    onClick={() => deleteColumn(columnId)} />
                             </div>
                         )
                     })
