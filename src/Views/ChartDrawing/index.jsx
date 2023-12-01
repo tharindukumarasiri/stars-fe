@@ -6,6 +6,7 @@ import DrawingTool from '../../common/chartDrawingComponent';
 import { FetchCurrentCompany } from "../../hooks/index";
 import { useTranslation } from "react-i18next";
 import DrawingToolHome from './DrawingToolHome';
+import CollectionDetails from './CollectionDetails';
 
 const ChartDrawing = ({ openTab = NAVIGATION_PAGES.DRAWING_TOOL_HOME }) => {
     const [activeTab, setActiveTab] = useState(openTab);
@@ -49,8 +50,11 @@ const ChartDrawing = ({ openTab = NAVIGATION_PAGES.DRAWING_TOOL_HOME }) => {
                 setHaveUnsavedDataRef,
             }}>
             <Tabs>
-                <div label="Biz Designer List" id={NAVIGATION_PAGES.DRAWING_TOOL_HOME} >
+                <div label="Drawing Tool" id={NAVIGATION_PAGES.DRAWING_TOOL_HOME} >
                     <DrawingToolHome />
+                </div>
+                <div id={NAVIGATION_PAGES.COLLECTION_DETAILS} >
+                    <CollectionDetails />
                 </div>
                 <div id={NAVIGATION_PAGES.CHART_DRAWING} >
                     <DrawingTool />

@@ -1,10 +1,12 @@
 import React, { useState, useMemo, useContext, useEffect } from "react";
 import { Table, Modal } from 'antd';
 import moment from "moment";
+import { ExclamationCircleOutlined } from '@ant-design/icons';
 
 import { useDiagramStore } from './chartDrawingStore'
+import style from './chartDrawingStyle.module.scss'
 
-import { SavedDiagramsTableHeaders } from '../../utils/tableHeaders'
+import { CollectionsTableHeaders } from '../../utils/tableHeaders'
 import StarDropdown from "../../common/dropdown";
 import DatePickerInput from "../../common/datePickerInput";
 import Input from "../../common/input";
@@ -21,16 +23,16 @@ const diagramTypes = [
     'Data Object Structure',
     'Data Visualization',
 ]
+const { confirm } = Modal;
 
 const DrawingToolHome = () => {
     const diagramData = useDiagramStore((state) => state.diagramData);
     const loading = useDiagramStore((state) => state.loading);
 
-    const [dropDownData, setDropDownData] = useState({ type: [], status: [] })
     const [showModel, setShowModel] = useState(false)
     const [newDiagramData, setNewDiagramData] = useState({ Name: '', TypeCode: '', Description: '', Permission: 'Private', FromDate: '', ToDate: '', Responsible: '', Status: '' });
     const [filterdContacts, setFilteredContacts] = useState([]);
-    const [filterTypes, setFilterTypes] = useState({ startDate: null, endDate: null, type: null, status: null })
+    const [filterTypes, setFilterTypes] = useState({ name: '', startDate: null, endDate: null })
 
     const { t } = useTranslation();
 
@@ -41,22 +43,41 @@ const DrawingToolHome = () => {
     }, [])
 
     const tableHeaders = useMemo(() => {
-        const headers = SavedDiagramsTableHeaders(t);
+        const headers = CollectionsTableHeaders(t);
         headers.push({
             title: '',
             render: (_, { }) => (
-                <>
-                    <i className="icon-edit table-icon" onClick={(e) => { }}></i>
-                    <i className="icon-delete table-icon red" onClick={(e) => { }}></i>
-                </>
+                <div className={style.collectionTableIconRow} >
+                    <i className="icon-edit table-icon" ></i>
+                    <i className="icon-delete table-icon" onClick={onClickDeletCollection}></i>
+                </div>
             ),
-            width: 80,
+            width: 160,
         },
         )
-
         return headers
-
     }, [diagramData])
+
+    const onClickDeletCollection = (e) => {
+        e.stopPropagation();
+        showDeleteConfirm();
+    }
+
+    const showDeleteConfirm = (record, user) => {
+        confirm({
+            title: <strong className="red">{t("ARE_YOU_SURE")}?</strong>,
+            icon: <ExclamationCircleOutlined />,
+
+            okText: t('YES'),
+            okType: 'danger',
+            cancelText: t('NO'),
+
+            onOk() {
+
+            },
+
+        });
+    };
 
     const getContactsList = async () => {
         const response = await getContacts();
@@ -71,14 +92,14 @@ const DrawingToolHome = () => {
         setFilteredContacts(options);
     };
 
-    const onChangeFilterType = (e, elementName) => {
-        e.preventDefault();
-        setFilterTypes({ ...filterTypes, [elementName]: JSON.parse(e.target.value) });
-    }
-
     const onFilterTypeDateChange = (date, elementName) => {
         setFilterTypes({ ...filterTypes, [elementName]: date });
     };
+
+    const onfilterNameChange = (e) => {
+        e.preventDefault();
+        onFilterTypeDateChange(e.target.value, 'name')
+    }
 
     const onFilter = (e) => {
         e.preventDefault();
@@ -92,12 +113,14 @@ const DrawingToolHome = () => {
     const onSave = () => {
         if (newDiagramData.Name !== '') {
             toggleModal()
-            changeActiveTab(NAVIGATION_PAGES.CHART_DRAWING, { name: newDiagramData.Name }, true, newDiagramData.Name)
+            // changeActiveTab(NAVIGATION_PAGES.CHART_DRAWING, { name: newDiagramData.Name }, true, newDiagramData.Name)
+            changeActiveTab(NAVIGATION_PAGES.COLLECTION_DETAILS, { name: newDiagramData.Name }, true, newDiagramData.Name)
         }
     }
 
     const onClickRow = (params) => {
-        changeActiveTab(NAVIGATION_PAGES.CHART_DRAWING, { ...params }, true, params.name)
+        // changeActiveTab(NAVIGATION_PAGES.CHART_DRAWING, { ...params }, true, params.name)
+        changeActiveTab(NAVIGATION_PAGES.COLLECTION_DETAILS, { ...params }, true, params.name)
     }
 
     const onNewElementChange = (e, elementName) => {
@@ -120,13 +143,18 @@ const DrawingToolHome = () => {
             }
             <div className="com-top-container user-input-box">
                 <div className="create-new-btn">
-                    <button className="add-btn" onClick={toggleModal} >{t('CREATE_NEW')}</button>
+                    <button className="add-btn" onClick={toggleModal} >Create Collection</button>
                 </div>
 
-                <div className="filter-by-text">{t('FILTER_BY')}:</div>
+                <div className="com-drop-down-width">
+                    <Input
+                        value={filterTypes?.name || ''}
+                        placeholder='Name/ ID'
+                        onChange={onfilterNameChange} />
+                </div>
                 <div className="com-drop-down-width">
                     <DatePickerInput
-                        placeholder={t('START_DATE')}
+                        placeholder={t('FROM_DATE')}
                         value={filterTypes.startDate}
                         onChange={(date) => onFilterTypeDateChange(date, "startDate")}
                         isClearable
@@ -134,28 +162,10 @@ const DrawingToolHome = () => {
                 </div>
                 <div className="com-drop-down-width">
                     <DatePickerInput
-                        placeholder={t('END_DATE')}
+                        placeholder={t('TO_DATE')}
                         value={filterTypes.endDate}
                         onChange={(date) => onFilterTypeDateChange(date, "endDate")}
                         isClearable
-                    />
-                </div>
-                <div className="com-drop-down-width">
-                    <StarDropdown
-                        values={dropDownData.type}
-                        onChange={e => onChangeFilterType(e, 'type')}
-                        selected={JSON.stringify(filterTypes.type || undefined)}
-                        dataName="Name"
-                        placeholder='TYPE'
-                    />
-                </div>
-                <div className="com-drop-down-width">
-                    <StarDropdown
-                        values={dropDownData.status}
-                        onChange={e => onChangeFilterType(e, 'status')}
-                        selected={JSON.stringify(filterTypes.status || undefined)}
-                        dataName="Name"
-                        placeholder='STATUS'
                     />
                 </div>
                 <button className="add-btn" onClick={onFilter} >{t('FILTERS')}</button>
@@ -185,7 +195,7 @@ const DrawingToolHome = () => {
                 </div> */}
             </div>
             <Modal
-                title="New Strategy"
+                title="Create Collection"
                 visible={showModel}
                 centered={true}
                 closeIcon={< i className='icon-close close-icon' />}

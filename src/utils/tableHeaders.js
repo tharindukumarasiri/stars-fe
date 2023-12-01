@@ -1337,7 +1337,7 @@ export const SavedDiagramsTableHeaders = (t) => [
         width: 130
     },
     {
-        title: t('NAME'),
+        title: 'Drawing/s',
         dataIndex: 'name',
     },
     {
@@ -1348,7 +1348,47 @@ export const SavedDiagramsTableHeaders = (t) => [
         ),
     },
     {
-        title: 'Type',
+        title: 'Crated  By',
         dataIndex: 'type',
+    }
+]
+
+export const CollectionsTableHeaders = (t) => [
+    {
+        title: 'ID',
+        dataIndex: 'id',
+        width: 130
+    },
+    {
+        title: 'Collection/s',
+        dataIndex: 'name',
+    },
+    {
+        title: 'Created Date',
+        dataIndex: 'date',
+        sorter: (a, b) => {
+            if (getDateDiff(a.date, b.date) > 0)
+                return 1
+            else
+                return -1
+        },
+        render: (_, { date }) => (
+            formatDate(date)
+        ),
+    },
+    {
+        title: 'Responsible',
+        dataIndex: 'type',
+        sorter: (a, b) => {
+            if (a.Responsible < b.Responsible) { return -1; }
+            if (a.Responsible > b.Responsible) { return 1; }
+            return 0;
+        },
+    },
+    {
+        title: 'Members',
+        dataIndex: 'members',
+        sorter: (a, b) => a.members - b.members,
+        width: 130,
     }
 ]
