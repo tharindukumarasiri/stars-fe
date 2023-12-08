@@ -1,7 +1,8 @@
 import React, { useMemo, useState, useRef } from 'react';
+import { Modal, Tooltip } from 'antd';
 import { useReactFlow, getRectOfNodes, getTransformForBounds, useOnSelectionChange, MarkerType } from 'reactflow';
-import { FileTextOutlined, DownloadOutlined, SaveOutlined, UploadOutlined } from '@ant-design/icons';
-import { toPng } from 'html-to-image';
+import { DownloadOutlined, SaveOutlined, UploadOutlined } from '@ant-design/icons';
+import { toPng, toJpeg } from 'html-to-image';
 
 import Dropdown from '../dropdown';
 import CustomDropdown from '../customDropdown';
@@ -16,7 +17,8 @@ import {
     arrowStartTypes,
     arrowEndTypes,
     colorPickerTypes,
-    arrowColor
+    arrowColor,
+    downloadTypes
 } from './utils';
 
 import { useNodeDataStore } from './store'
@@ -31,6 +33,8 @@ const imageHeight = 768;
 
 export default ({ onSave, pasteNodes, clearSelectedNodes, getAllData, edges, setEdges, setNodes }) => {
     const [colorPickerVisible, setColorPickerVisible] = useState('')
+    const [modalVisible, setModalVisible] = useState(false)
+    const [selectedDownloadType, setSelectedDownloadType] = useState(downloadTypes[0])
 
     const { getNodes } = useReactFlow();
 
@@ -99,6 +103,13 @@ export default ({ onSave, pasteNodes, clearSelectedNodes, getAllData, edges, set
 
     const onChangeBorderColor = (color) => setBorderColor(color?.rgb)
 
+    const toggleModal = () => setModalVisible(pre => !pre);
+
+    const onChangeDownloadType = (e) => {
+        e.preventDefault();
+        setSelectedDownloadType(JSON.parse(e.target.value));
+    }
+
     const onChangeTextType = (e) => {
         e.preventDefault();
         settextType(JSON.parse(e.target.value));
@@ -120,7 +131,7 @@ export default ({ onSave, pasteNodes, clearSelectedNodes, getAllData, edges, set
 
     const onChangeTextBold = () => setBold(!textBold)
 
-    const onDownloadJpg = () => {
+    const onExport = () => {
         clearSelectedNodes();
 
         // we calculate a transform for the nodes so that all nodes are visible
@@ -129,21 +140,40 @@ export default ({ onSave, pasteNodes, clearSelectedNodes, getAllData, edges, set
         const nodesBounds = getRectOfNodes(getNodes());
         const transform = getTransformForBounds(nodesBounds, imageWidth, imageHeight, 0.5, 2);
 
-        toPng(document.querySelector('.react-flow__viewport'), {
-            backgroundColor: 'white',
-            width: imageWidth,
-            height: imageHeight,
-            style: {
-                width: imageWidth,
-                height: imageHeight,
-                transform: `translate(${transform[0]}px, ${transform[1]}px) scale(${transform[2]})`,
-            },
-        }).then(downloadImage);
-    }
+        switch (selectedDownloadType.type) {
+            case 'PNG':
+                toPng(document.querySelector('.react-flow__viewport'), {
+                    backgroundColor: 'white',
+                    width: imageWidth,
+                    height: imageHeight,
+                    style: {
+                        width: imageWidth,
+                        height: imageHeight,
+                        transform: `translate(${transform[0]}px, ${transform[1]}px) scale(${transform[2]})`,
+                    },
+                }).then((datUrl) => downloadImage(datUrl, 'png'));
+                break;
+            case 'JPG':
+                toJpeg(document.querySelector('.react-flow__viewport'), {
+                    backgroundColor: 'white',
+                    width: imageWidth,
+                    height: imageHeight,
+                    style: {
+                        width: imageWidth,
+                        height: imageHeight,
+                        transform: `translate(${transform[0]}px, ${transform[1]}px) scale(${transform[2]})`,
+                    },
+                }).then((datUrl) => downloadImage(datUrl, 'jpeg'));
+                break;
+            case 'JSON':
+                downloadJson(getAllData());
+                break;
+            default:
+                break;
+        }
 
-    const onDownloadJson = () => {
-        downloadJson(getAllData())
-    };
+        toggleModal()
+    }
 
     const onChangeEdgeStart = (value) => {
         setEdges((edges) =>
@@ -376,16 +406,42 @@ export default ({ onSave, pasteNodes, clearSelectedNodes, getAllData, edges, set
 
             <div className={style.toolBarSeparator} />
 
-            <SaveOutlined className={style.toolBarIcon} onClick={onSave} />
-            <DownloadOutlined className={style.toolBarIcon} onClick={onDownloadJpg} />
-            <FileTextOutlined className={style.toolBarIcon} onClick={onDownloadJson} />
-            <UploadOutlined className={style.toolBarIcon} onClick={handleFileUpload} />
+            <Tooltip title='Save changes' className='m-l-10'>
+                <SaveOutlined className={style.toolBarIcon} onClick={onSave} />
+            </Tooltip>
+            <Tooltip title='Download' className='m-l-10'>
+                <DownloadOutlined className={style.toolBarIcon} onClick={toggleModal} />
+            </Tooltip>
+            <Tooltip title='Upload' className='m-l-10'>
+                <UploadOutlined className={style.toolBarIcon} onClick={handleFileUpload} />
+            </Tooltip>
             <input
                 type="file"
                 style={{ display: 'none' }}
                 ref={UPLOAD_BTN_REF}
                 onChange={onFileChange}
             />
+
+            <Modal
+                title='Export'
+                visible={modalVisible}
+                onOk={onExport}
+                onCancel={toggleModal}
+                okText='Export'
+                width='30vw'
+                centered={true}
+                closeIcon={< i className='icon-close close-icon' />}>
+                <div className="g-row">
+                    <div>Export to SVG/ PNG/ JPG/ JSON</div>
+                    <Dropdown
+                        values={downloadTypes}
+                        onChange={onChangeDownloadType}
+                        dataName='label'
+                        selected={JSON.stringify(selectedDownloadType)}
+                    />
+                </div>
+                <div className="n-float" />
+            </Modal>
         </div>
     );
 };

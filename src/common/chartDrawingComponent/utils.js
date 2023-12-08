@@ -90,6 +90,21 @@ export const arrowEndTypes = [
     },
 ]
 
+export const downloadTypes = [
+    {
+        label: 'JPG',
+        type: 'JPG'
+    },
+    {
+        label: 'Png',
+        type: 'PNG'
+    },
+    {
+        label: 'JSON',
+        type: 'JSON'
+    },
+]
+
 export const colorPickerTypes = {
     TEXT: 'TEXT',
     BACKGROUND: 'BACKGROUND',
@@ -211,10 +226,10 @@ export const getGradientRgbaColor = (color) => {
     return `linear-gradient(90deg, rgb(${color?.r}, ${color?.g}, ${color?.b}, ${color?.a}), rgb(255,255,255,1))`
 }
 
-export const downloadImage = (dataUrl) => {
+export const downloadImage = (dataUrl, type = 'png') => {
     const a = document.createElement('a');
 
-    a.setAttribute('download', 'reactflow.png');
+    a.setAttribute('download', `reactflow.${type}`);
     a.setAttribute('href', dataUrl);
     a.click();
 }
