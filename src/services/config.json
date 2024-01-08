@@ -123,6 +123,15 @@
 
     "GET_MEMBERS": "actionapi/ProjectMembers/GetByProject?projectId=",    
     "ADD_MEMBER": "actionapi/ProjectMembers/AddMember?userId=",
-    "DELETE_MEMBER": "actionapi/ProjectMembers/DeleteMember?userId="
+    "DELETE_MEMBER": "actionapi/ProjectMembers/DeleteMember?userId=",
+
+    "GET_DRAWING_COLLECTIONS": "actionapi/DrawingCollections/Get",
+    "ADD_DRAWING_COLLECTIONS": "actionapi/DrawingCollections/Post?userId=",
+    "UPDATE_DRAWING_COLLECTION": "actionapi/DrawingCollections/Put?userId=",
+    "DELETE_DRAWING_COLLECTION": "actionapi/DrawingCollections/Delete?Id=",
+    "GET_DRAWING_ITEMS": "actionapi/DrawingItems/Get",
+    "ADD_DRAWING_ITEM": "actionapi/DrawingItems/Post?userId=",
+    "UPDATE_DRAWING_ITEM": "actionapi/DrawingItems/Put?userId=",
+    "DELETE_DRAWING_ITEM": "actionapi/DrawingItems/Delete?Id="
 
 }

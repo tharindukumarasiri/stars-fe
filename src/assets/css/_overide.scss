@@ -112,8 +112,25 @@ p {
        cursor:pointer
     }
 }
-div[id^=tile-menu] {
+/* div[id^=tile-menu] {
     button {
         background-color: $theme-dark
     }
+} */
+
+div[id^=tile-menu-] button {
+    span {
+        font-size: 2.6em
+    }
+}
+
+;
+div[id^=tile-menu-] button:nth-child(odd) {
+    color: $white !important;
+    background-color: $theme-dark
+}
+
+div[id^=tile-menu-] button:nth-child(even) {
+    color: $white !important;
+    background-color: $theme-dark1
 }

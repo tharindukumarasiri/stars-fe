@@ -1,11 +1,11 @@
 import React, { useState, useMemo, useContext, useEffect } from "react";
-import { Table, Modal } from 'antd';
-import moment from "moment";
+import { Table, Modal, message } from 'antd';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 
 import { useDiagramStore } from './chartDrawingStore'
 import style from './chartDrawingStyle.module.scss'
 
+import { getKeyByValue } from "../../utils";
 import { CollectionsTableHeaders } from '../../utils/tableHeaders'
 import StarDropdown from "../../common/dropdown";
 import DatePickerInput from "../../common/datePickerInput";
@@ -13,25 +13,46 @@ import Input from "../../common/input";
 import { NAVIGATION_PAGES } from "../../utils/enums";
 import { TabContext } from "../../utils/contextStore";
 import { useTranslation } from "react-i18next";
-import { getContacts } from "../../services/userService";
 
-const diagramTypes = [
-    'Flows',
-    'Structures and Hiarchies',
-    'Data Collection',
-    'Data Mapping',
-    'Data Object Structure',
-    'Data Visualization',
-]
 const { confirm } = Modal;
 
+export const diagramTypes = { //RefTableId
+    'Research': 0,
+    'Procurement': 1
+}
+
+export const permissionTypes = {
+    'PRIVATE': 0,
+    'PUBLIC': 1
+}
+
+export const statuses = { //RefRecId
+    'OPEN': 0,
+    'CLOSE': 1
+}
+
+const newCollectionPayload = {
+    Name: '',
+    Description: '',
+    PermissionType: 'PRIVATE',
+    FromDate: '',
+    ToDate: '',
+    Responsible: '',
+    RefTableId: '',
+    RefRecId: ''
+}
+
 const DrawingToolHome = () => {
-    const diagramData = useDiagramStore((state) => state.diagramData);
     const loading = useDiagramStore((state) => state.loading);
+    const getCollectionData = useDiagramStore((state) => state.getCollectionData);
+    const collectionData = useDiagramStore((state) => state.collectionData);
+    const addCollection = useDiagramStore((state) => state.addCollection);
+    const deleteCollection = useDiagramStore((state) => state.deleteCollection);
+    const filterdContacts = useDiagramStore((state) => state.filterdContacts);
+    const getContactsList = useDiagramStore((state) => state.getContactsList);
 
     const [showModel, setShowModel] = useState(false)
-    const [newDiagramData, setNewDiagramData] = useState({ Name: '', TypeCode: '', Description: '', Permission: 'Private', FromDate: '', ToDate: '', Responsible: '', Status: '' });
-    const [filterdContacts, setFilteredContacts] = useState([]);
+    const [newCollectionData, setNewCollectionData] = useState(newCollectionPayload);
     const [filterTypes, setFilterTypes] = useState({ name: '', startDate: null, endDate: null })
 
     const { t } = useTranslation();
@@ -40,30 +61,56 @@ const DrawingToolHome = () => {
 
     useEffect(() => {
         getContactsList();
+        getCollectionData();
     }, [])
+
+    const getResponsiblePerson = (ResponsiblePersonId) => {
+        const respPerson = filterdContacts.find((contact) => contact.key === ResponsiblePersonId);
+        return respPerson?.value
+    }
 
     const tableHeaders = useMemo(() => {
         const headers = CollectionsTableHeaders(t);
-        headers.push({
-            title: '',
-            render: (_, { }) => (
-                <div className={style.collectionTableIconRow} >
-                    <i className="icon-edit table-icon" ></i>
-                    <i className="icon-delete table-icon" onClick={onClickDeletCollection}></i>
-                </div>
-            ),
-            width: 160,
-        },
+        headers.push(
+            {
+                title: 'Responsible',
+                dataIndex: 'Responsible',
+                render: (_, { Responsible }) => (
+                    getResponsiblePerson(Responsible)
+                ),
+                sorter: (a, b) => {
+                    if (a.Responsible < b.Responsible) { return -1; }
+                    if (a.Responsible > b.Responsible) { return 1; }
+                    return 0;
+                },
+            },
+            {
+                title: 'Type',
+                dataIndex: 'RefTableId',
+                render: (_, { RefTableId }) => (
+                    getKeyByValue(diagramTypes, RefTableId)
+                ),
+                sorter: (a, b) => a.RefTableId - b.RefTableId,
+                width: 130,
+            },
+            {
+                title: '',
+                render: (_, record ) => (
+                    <div className={style.collectionTableIconRow} >
+                        <i className="icon-edit table-icon" ></i>
+                        <i className="icon-delete table-icon" onClick={(e) => {
+                            e.stopPropagation();
+                            showDeleteConfirm(record)
+                        }}></i>
+                    </div>
+                ),
+                width: 160,
+            },
         )
         return headers
-    }, [diagramData])
+    }, [collectionData, filterdContacts])
 
-    const onClickDeletCollection = (e) => {
-        e.stopPropagation();
-        showDeleteConfirm();
-    }
-
-    const showDeleteConfirm = (record, user) => {
+    const showDeleteConfirm = (record) => {
         confirm({
             title: <strong className="red">{t("ARE_YOU_SURE")}?</strong>,
             icon: <ExclamationCircleOutlined />,
@@ -73,23 +120,14 @@ const DrawingToolHome = () => {
             cancelText: t('NO'),
 
             onOk() {
-
+                deleteCollection(record).then(() => {
+                    message.success('Delete collection success');
+                }).catch(() => {
+                    message.error('Delete collection failed');
+                })
             },
 
         });
-    };
-
-    const getContactsList = async () => {
-        const response = await getContacts();
-        const options = response ? response.map((user) => {
-            return {
-                key: user.PartyTId,
-                label: user.Name,
-                value: user.Name
-            };
-        }) : [];
-
-        setFilteredContacts(options);
     };
 
     const onFilterTypeDateChange = (date, elementName) => {
@@ -107,29 +145,43 @@ const DrawingToolHome = () => {
 
     const toggleModal = () => {
         setShowModel(pre => !pre);
-        setNewDiagramData({ Name: '', TypeCode: '', Description: '', Permission: 'Private', FromDate: '', ToDate: '', Responsible: '', Status: '' })
+        setNewCollectionData(newCollectionPayload)
     }
 
     const onSave = () => {
-        if (newDiagramData.Name !== '') {
-            toggleModal()
-            // changeActiveTab(NAVIGATION_PAGES.CHART_DRAWING, { name: newDiagramData.Name }, true, newDiagramData.Name)
-            changeActiveTab(NAVIGATION_PAGES.COLLECTION_DETAILS, { name: newDiagramData.Name }, true, newDiagramData.Name)
+        if (newCollectionData.Name !== '') {
+            const payload = { ...newCollectionData }
+
+            payload.PermissionType = permissionTypes[newCollectionData.PermissionType]
+            payload.RefTableId = diagramTypes[newCollectionData.RefTableId]
+            payload.RefRecId = statuses[newCollectionData.RefRecId]
+            payload.Responsible = newCollectionData.Responsible.key
+
+            addCollection(payload).then((response) => {
+                toggleModal();
+                changeActiveTab(NAVIGATION_PAGES.COLLECTION_DETAILS, response, true, newCollectionData.Name)
+            }).catch(() => {
+                message.error("Create collection failed");
+            })
         }
     }
 
     const onClickRow = (params) => {
-        // changeActiveTab(NAVIGATION_PAGES.CHART_DRAWING, { ...params }, true, params.name)
-        changeActiveTab(NAVIGATION_PAGES.COLLECTION_DETAILS, { ...params }, true, params.name)
+        changeActiveTab(NAVIGATION_PAGES.COLLECTION_DETAILS, { ...params }, true, params.Name)
     }
 
     const onNewElementChange = (e, elementName) => {
         e.preventDefault();
-        setNewDiagramData({ ...newDiagramData, [elementName]: e.target.value })
+        setNewCollectionData({ ...newCollectionData, [elementName]: e.target.value })
+    }
+
+    const onUserChange = (e, elementName) => {
+        e.preventDefault();
+        setNewCollectionData({ ...newCollectionData, [elementName]: JSON.parse(e.target.value) })
     }
 
     const onNewElementDateChange = (date, elementName) => {
-        setNewDiagramData({ ...newDiagramData, [elementName]: moment(date).local().format('YYYY-MM-DD') })
+        setNewCollectionData({ ...newCollectionData, [elementName]: date })
     }
 
     return (
@@ -175,7 +227,7 @@ const DrawingToolHome = () => {
                 <div className="tablele-width">
                     <Table
                         rowKey={(record, index) => index}
-                        dataSource={diagramData}
+                        dataSource={collectionData}
                         scroll={{
                             y: '60vh',
                         }}
@@ -207,28 +259,29 @@ const DrawingToolHome = () => {
                 <div className="g-row">
                     <div className="g-col-6">
                         <Input
-                            value={newDiagramData?.Name || ''}
+                            value={newCollectionData?.Name || ''}
                             placeholder='Name'
                             onChange={(e) => onNewElementChange(e, 'Name')} />
                         <StarDropdown
                             placeholder="TYPE"
-                            values={diagramTypes}
-                            onChange={(e) => onNewElementChange(e, 'TypeCode')}
-                            selected={newDiagramData.TypeCode || ''}
+                            values={Object.keys(diagramTypes)}
+                            onChange={(e) => onNewElementChange(e, 'RefTableId')}
+                            selected={newCollectionData.RefTableId || ''}
                         />
-                        <Input lines={3} placeholder="DESCRIPTION" value={newDiagramData.Description || ''} onChange={(e) => onNewElementChange(e, 'Description')} />
-                        <StarDropdown values={['PUBLIC', 'PRIVATE']} onChange={(e) => onNewElementChange(e, 'Permission')} selected={newDiagramData.Permission || 'PRIVATE'} placeholder="PERMISSION_TYPE" />
+                        <Input lines={3} placeholder="DESCRIPTION" value={newCollectionData.Description || ''} onChange={(e) => onNewElementChange(e, 'Description')} />
+                        <StarDropdown values={Object.keys(permissionTypes)} onChange={(e) => onNewElementChange(e, 'PermissionType')} selected={newCollectionData.PermissionType || 'PRIVATE'} placeholder="PERMISSION_TYPE" />
                     </div>
                     <div className="g-col-6">
-                        <DatePickerInput placeholder={t('FROM_DATE')} value={newDiagramData.FromDate ? new Date(newDiagramData.FromDate) : ''} minDate={new Date()} onChange={(date) => onNewElementDateChange(date, 'FromDate')} />
-                        <DatePickerInput placeholder={t('DUE_DATE')} value={newDiagramData.ToDate ? new Date(newDiagramData.ToDate) : ''} minDate={new Date()} onChange={(date) => onNewElementDateChange(date, 'ToDate')} />
+                        <DatePickerInput placeholder={t('FROM_DATE')} value={newCollectionData.FromDate ? new Date(newCollectionData.FromDate) : ''} minDate={new Date()} onChange={(date) => onNewElementDateChange(date, 'FromDate')} />
+                        <DatePickerInput placeholder={t('DUE_DATE')} value={newCollectionData.ToDate ? new Date(newCollectionData.ToDate) : ''} minDate={new Date()} onChange={(date) => onNewElementDateChange(date, 'ToDate')} />
                         <StarDropdown
-                            values={filterdContacts.map(a => a.label)}
-                            onChange={(e) => onNewElementChange(e, 'Responsible')}
-                            selected={newDiagramData.Responsible || ''}
+                            values={filterdContacts}
+                            dataName="value"
+                            onChange={(e) => onUserChange(e, 'Responsible')}
+                            selected={JSON.stringify(newCollectionData.Responsible || undefined)}
                             placeholder={"RESPONSIBLE_USER"}
                         />
-                        <StarDropdown values={['OPEN', 'CLOSE']} onChange={(e) => onNewElementChange(e, 'Status')} selected={newDiagramData.Status || ''} placeholder="STATUS" />
+                        <StarDropdown values={Object.keys(statuses)} onChange={(e) => onNewElementChange(e, 'RefRecId')} selected={newCollectionData.RefRecId || ''} placeholder="STATUS" />
                     </div>
                 </div>
                 <div className="n-float" />

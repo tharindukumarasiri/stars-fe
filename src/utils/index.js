@@ -47,3 +47,6 @@ export const validatePhoneNumberInput = (phone) => {
     return phone.replace(/[^-+()0-9]/gi, '');
 }
 
+export const getKeyByValue = (object, value) => {
+    return Object.keys(object).find(key => object[key] === value);
+  }

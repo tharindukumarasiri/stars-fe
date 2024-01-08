@@ -34,6 +34,7 @@ function MatrixChart({ id, selected, type, data }) {
     const [openColorPicker, setOpenColorPicker] = useState('');
     const [focusedInput, setFocusedInput] = useState('')
     const [hideTools, setHideTools] = useState(false)
+    const [disableInput, setDisableInput] = useState(false)
 
     const sizes = useNodeDataStore((state) => state.size);
     const onSizeCahnge = useNodeDataStore((state) => state.setSize);
@@ -141,18 +142,38 @@ function MatrixChart({ id, selected, type, data }) {
         setNodeData(newNodeData)
     }
 
-    const onChangeItemText = (value, section, column, row) => {
-        const newNodeData = JSON.parse(JSON.stringify(nodeData));
+    const onChangeItemText = (e, section, column, row) => {
+        const getRowsCount = (rowData) => {
+            if (!rowData?.scrollHeight)
+                return 1
 
-        const newSection = newNodeData[section] || [];
-        const newColumn = newSection[column] || [];
+            if (rowData?.scrollHeight < e.target.scrollHeight)
+                return rowData?.rows + 1
+            else
+                return rowData?.rows
+        }
 
-        newColumn[row] = { text: value, color: newColumn[row] || '' }
+        if (!disableInput) {
+            const newNodeData = JSON.parse(JSON.stringify(nodeData));
 
-        newSection[column] = newColumn
-        newNodeData[section] = newSection;
+            const newSection = newNodeData[section] || [];
+            const newColumn = newSection[column] || [];
 
-        setNodeData(newNodeData)
+            newColumn[row] = { text: e.target.value, color: newColumn[row] || '', rows: getRowsCount(newColumn[row]), scrollHeight: e.target.scrollHeight }
+
+            newSection[column] = newColumn
+            newNodeData[section] = newSection;
+
+            setNodeData(newNodeData)
+        }
+    }
+
+    const onKeyDown = (e) => {
+        if (e.key === " " && e.repeat) {
+            setDisableInput(true);
+        } else if (disableInput) {
+            setDisableInput(false);
+        }
     }
 
     const onDeleteItem = (section, column, row) => {
@@ -292,8 +313,10 @@ function MatrixChart({ id, selected, type, data }) {
                                                     placeholder='Name'
                                                     className={style.matrixItemText}
                                                     value={item?.text}
-                                                    onChange={(e) => onChangeItemText(e.target.value, sectionIndex, columnIndex, rowIndex)}
+                                                    onChange={(e) => onChangeItemText(e, sectionIndex, columnIndex, rowIndex)}
                                                     multiple
+                                                    onKeyDown={onKeyDown}
+                                                    rows={item?.rows || 1}
                                                 />
                                             </div>
                                         )

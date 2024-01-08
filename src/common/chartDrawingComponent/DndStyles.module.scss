@@ -38,7 +38,7 @@
 .dndflow .reactflowrapper {
     flex-grow: 1;
     width: 90vw;
-    height: 85vh;
+    height: 80vh;
 }
 
 .dndflow .selectall {
@@ -398,7 +398,6 @@ div.customHandle2:after {
     display: flex;
     align-items: center;
     width: 100px;
-    height: 30px;
     border: solid 1px;
     border-color: #434343;
     background-image: linear-gradient(90deg, lightcoral, white);
@@ -407,8 +406,7 @@ div.customHandle2:after {
 }
 
 .matrixChartItemLarge {
-    padding-top: 20px;
-    height: 70px;
+    min-height: 70px;
 }
 
 .matrixAddNewItem {

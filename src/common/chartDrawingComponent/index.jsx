@@ -50,18 +50,21 @@ const defaultEdgeOptions = {
 };
 
 const DnDFlow = ({ props }) => {
+    const data = JSON.parse(props?.DrawingContent)
     const reactFlowWrapper = useRef(null);
     const dragRef = useRef(null);
     const saveDiagram = useDiagramStore((state) => state.saveDiagram);
 
-    const [nodes, setNodes, onNodesChange] = useNodesState(props?.data?.nodes || []);
-    const [edges, setEdges, onEdgesChange] = useEdgesState(props?.data?.edges || []);
+    const [nodes, setNodes, onNodesChange] = useNodesState(data?.nodes || []);
+    const [edges, setEdges, onEdgesChange] = useEdgesState(data?.edges || []);
 
     const [target, setTarget] = useState(null);
     const [menu, setMenu] = useState(null);
     const [reactFlowInstance, setReactFlowInstance] = useState(null);
     const [deleteNodeId, setDeleteNodeId] = useState('')
+    const [spacebarActive, setSpacebarActive] = useState(false)
 
+    const setAllData = useNodeDataStore((state) => state.setAllData);
     const textdata = useNodeDataStore((state) => state.textdata);
     const onTextChange = useNodeDataStore((state) => state.onTextChange);
     const size = useNodeDataStore((state) => state.size);
@@ -76,6 +79,10 @@ const DnDFlow = ({ props }) => {
         event.preventDefault();
         event.dataTransfer.dropEffect = 'move';
     }, []);
+
+    useEffect(() => {
+        setAllData(data?.nodeSizes || [], data?.nodesData || [], data?.chartData || [])
+    }, [props])
 
     const nodeTypes = useMemo(() => {
         const types = { ...Shapes }
@@ -122,6 +129,16 @@ const DnDFlow = ({ props }) => {
     );
 
     useEffect(() => {
+        document.addEventListener("keydown", spacebarPress, false);
+        document.addEventListener("keyup", spacebarRelease, false);
+
+        return () => {
+            document.removeEventListener("keydown", spacebarPress, false);
+            document.removeEventListener("keyup", spacebarRelease, false);
+        };
+    }, [spacebarPress, spacebarRelease]);
+
+    useEffect(() => {
         if (deleteNodeId !== '') {
             const nodeToDelete = nodes.find(node => node.id === deleteNodeId)
             reactFlowInstance.deleteElements({ nodes: [nodeToDelete] })
@@ -131,7 +148,20 @@ const DnDFlow = ({ props }) => {
 
     const getAllData = useCallback(() => {
         return { nodes: nodes, edges: edges, nodesData: textdata, nodeSizes: size, chartData: chartData }
-    }, [nodes, edges, textdata]);
+    }, [nodes, edges, textdata, size, chartData]);
+
+    const spacebarPress = useCallback((event) => {
+        if (event.key === " " && !spacebarActive) {
+            setSpacebarActive(true)
+        }
+    }, []);
+
+    const spacebarRelease = useCallback((event) => {
+        if (event.key === " ") {
+            setSpacebarActive(false);
+        }
+    }, []);
+
 
     const onNodeDragStart = (evt, node) => {
         dragRef.current = node;
@@ -216,7 +246,13 @@ const DnDFlow = ({ props }) => {
     }
 
     const onSave = () => {
-        saveDiagram({ nodes: nodes, edges: edges }, props?.name);
+        const payload = {
+            'Id': props?.Id,
+            'CollectionId': props?.CollectionId,
+            'Name': props?.Name,
+            'DrawingContent': JSON.stringify(getAllData()),
+        }
+        saveDiagram(payload);
         message.success('Diagram Saved')
     }
 
@@ -304,9 +340,11 @@ const DnDFlow = ({ props }) => {
                         connectionLineComponent={CustomConnectionLine}
                         connectionLineStyle={connectionLineStyle}
                         zoomOnDoubleClick={false}
+                        nodesDraggable={!spacebarActive}
+                        nodesFocusable={!spacebarActive}
                     >
                         <Controls />
-                        <Background variant="dots" gap={8} size={0.5} id={props?.name} />
+                        <Background variant="dots" gap={8} size={0.5} id={props?.CollectionId} />
                         <Panel />
                     </ReactFlow>
                 </div>

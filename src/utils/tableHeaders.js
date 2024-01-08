@@ -1333,62 +1333,43 @@ export const ReceversPersonsTableExpandedHeaders = (t) => [
 export const SavedDiagramsTableHeaders = (t) => [
     {
         title: 'ID',
-        dataIndex: 'id',
+        dataIndex: 'Id',
         width: 130
     },
     {
         title: 'Drawing/s',
-        dataIndex: 'name',
+        dataIndex: 'Name',
     },
     {
         title: 'Created Date',
-        dataIndex: 'date',
-        render: (_, { date }) => (
-            formatDate(date)
+        dataIndex: 'CreatedDateTime',
+        render: (_, { CreatedDateTime }) => (
+            formatDate(CreatedDateTime)
         ),
     },
-    {
-        title: 'Crated  By',
-        dataIndex: 'type',
-    }
 ]
 
 export const CollectionsTableHeaders = (t) => [
     {
         title: 'ID',
-        dataIndex: 'id',
+        dataIndex: 'Id',
         width: 130
     },
     {
         title: 'Collection/s',
-        dataIndex: 'name',
+        dataIndex: 'Name',
     },
     {
         title: 'Created Date',
-        dataIndex: 'date',
+        dataIndex: 'CreatedDateTime',
         sorter: (a, b) => {
-            if (getDateDiff(a.date, b.date) > 0)
+            if (getDateDiff(a.CreatedDateTime, b.CreatedDateTime) > 0)
                 return 1
             else
                 return -1
         },
-        render: (_, { date }) => (
-            formatDate(date)
+        render: (_, { CreatedDateTime }) => (
+            formatDate(CreatedDateTime)
         ),
     },
-    {
-        title: 'Responsible',
-        dataIndex: 'type',
-        sorter: (a, b) => {
-            if (a.Responsible < b.Responsible) { return -1; }
-            if (a.Responsible > b.Responsible) { return 1; }
-            return 0;
-        },
-    },
-    {
-        title: 'Members',
-        dataIndex: 'members',
-        sorter: (a, b) => a.members - b.members,
-        width: 130,
-    }
 ]

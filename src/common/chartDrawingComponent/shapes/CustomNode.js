@@ -1,4 +1,4 @@
-import React, { memo, useCallback, useEffect, useRef } from 'react';
+import React, { memo, useCallback, useEffect, useRef, useState } from 'react';
 import { Handle, Position, useUpdateNodeInternals, NodeResizer, useStore } from 'reactflow';
 import { drag } from 'd3-drag';
 import { select } from 'd3-selection';
@@ -18,6 +18,8 @@ const resizerHandleStyle = { width: 6, height: 6 }
 function CustomNode({ id, selected, type, data }) {
     const rotateControlRef = useRef(null);
     const updateNodeInternals = useUpdateNodeInternals();
+
+    const [disableInput, setDisableInput] = useState(false)
 
     const shapeData = Shapes[type]
     const initialHeight = shapeData.size?.height ?? 50;
@@ -113,8 +115,19 @@ function CustomNode({ id, selected, type, data }) {
     }
 
     const onChange = useCallback((evt) => {
-        onTextChange(id, { value: evt.target.value })
-    }, []);
+        if (!disableInput) {
+            onTextChange(id, { value: evt.target.value });
+        }
+    }, [disableInput]);
+
+    const onKeyDown = (e) => {
+        if (e.key === " " && e.repeat) {
+            setDisableInput(true);
+        } else if (disableInput) {
+            setDisableInput(false);
+        }
+    }
+
 
     const onResize = (_, size) => setSize(size);
 
@@ -188,6 +201,7 @@ function CustomNode({ id, selected, type, data }) {
                     onChange={onChange}
                     multiple
                     style={textAreaStyle}
+                    onKeyDown={onKeyDown}
                 /> : null
             }
         </div>

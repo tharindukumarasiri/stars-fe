@@ -568,4 +568,89 @@ export default {
         hideTextInput: true,
         category: [Categories.BPMN]
     },
+    HouseRoof: {
+        image:<>
+        <polygon class="st0" points="1635,302.8 44.7,302.8 44.7,264.2 347.7,225.1 473.2,54.4 716.4,258.4 777.4,258.4 954.7,57.4 
+            1133.8,264.2 1306.3,85 1456.8,264.2 1477.8,264.2 1561,172.9 1635,264.2 "/>
+        <polygon class="st1" points="443.1,113 414.8,106.5 452.2,36.4 473.2,54.4 "/>
+        <polygon class="st2" points="1635.4,264.7 1561,172.9 1572.2,161.6 1655.4,264.2 "/>
+        <polygon class="st3" points="1387.6,165.2 1566.9,155.1 1468.9,264.2 "/>
+        <polygon class="st2" points="1302.3,86.8 1444.4,264.2 1471.9,264.2 1318.3,69.8 "/>
+        <polygon class="st2" points="945.1,59.4 1012.1,136.4 1028.1,117.4 960.1,39.4 "/>
+        <polygon class="st3" points="1036.2,102.1 913.6,255.2 1151.6,252.2 1313.8,58.5 "/>
+        <polygon class="st4" points="1067.5,125.2 1034.3,189.9 1120.7,190.3 "/>
+        <polygon class="st0" points="43.3,254.5 40.9,264.2 351.1,264.2 349.6,246.2 175.6,73.2 "/>
+        <polygon class="st1" points="21.9,263.6 41.9,263.6 171.9,79.6 159.9,67.6 "/>
+        <polygon class="st5" points="159.2,67.7 350.6,264.2 357.6,254.2 167.6,57.2 "/>
+        <polygon class="st6" points="624.6,255.2 620.6,264.2 350.6,264.2 357.6,254.2 "/>
+        <g>
+            <g>
+                <rect x="160.7" y="181.2" class="st5" width="21" height="21"/>
+                <rect x="190.7" y="181.2" class="st5" width="21" height="21"/>
+                <rect x="160.7" y="210.2" class="st5" width="21" height="21"/>
+                <rect x="190.7" y="210.2" class="st5" width="21" height="21"/>
+            </g>
+        </g>
+        <g>
+            <g>
+                <rect x="1272.6" y="179.2" class="st5" width="21" height="21"/>
+                <rect x="1302.6" y="179.2" class="st5" width="21" height="21"/>
+                <rect x="1272.6" y="208.2" class="st5" width="21" height="21"/>
+                <rect x="1302.6" y="208.2" class="st5" width="21" height="21"/>
+            </g>
+        </g>
+        <g>
+            <g>
+                <rect x="1543" y="215.4" class="st5" width="10.7" height="10.7"/>
+                <rect x="1558.3" y="215.4" class="st5" width="10.7" height="10.7"/>
+                <rect x="1543" y="230.2" class="st5" width="10.7" height="10.7"/>
+                <rect x="1558.3" y="230.2" class="st5" width="10.7" height="10.7"/>
+            </g>
+        </g>
+        <g>
+            <g>
+                <rect x="1063.9" y="159.7" class="st5" width="7.3" height="7.3"/>
+                <rect x="1074.3" y="159.7" class="st5" width="7.3" height="7.3"/>
+                <rect x="1063.9" y="169.8" class="st5" width="7.3" height="7.3"/>
+                <rect x="1074.3" y="169.8" class="st5" width="7.3" height="7.3"/>
+            </g>
+        </g>
+        <polygon class="st7" points="167.6,57.2 482.6,110.2 624.6,255.2 357.6,254.2 "/>
+        <polygon class="st5" points="718.6,253.2 457.6,25.2 451,37.7 710.6,264.2 "/>
+        <polygon class="st1" points="785.6,253.2 718.6,253.2 710.6,264.2 792.6,264.2 "/>
+        <polygon class="st6" points="966.7,46.6 792.6,264.2 785.6,253.2 960.6,37.2 "/>
+        <polygon class="st7" points="713.6,62.2 718.6,253.2 457.6,25.2 "/>
+        <polygon class="st3" points="960.6,37.2 713.6,62.2 718.6,253.2 785.6,253.2 "/>
+        <polygon class="st7" points="1062.6,120.2 1120.6,190.2 1146.6,114.2 "/>
+        <polygon class="st1" points="1026.6,190.2 1037.6,190.2 1069.6,128.2 1062.6,120.2 "/>
+        <polygon class="st1" points="913.6,255.2 916.6,264.2 1156.6,264.2 1151.6,252.2 "/>
+        <polygon class="st6" points="1313.8,58.5 1319.6,70.2 1156.6,264.2 1151.6,252.2 "/>
+        <polygon class="st6" points="1468.9,264.2 1482.2,264.2 1573.9,162.7 1566.9,155.1 "/>
+        <g>
+            <g>
+                <line class="st8" x1="47.1" y1="307.1" x2="53.1" y2="307.1"/>
+                <line class="st9" x1="63.2" y1="307.1" x2="1625" y2="307.1"/>
+                <line class="st8" x1="1630" y1="307.1" x2="1636" y2="307.1"/>
+            </g>
+        </g>
+        <g>
+            <g>
+                <line class="st10" x1="47.1" y1="332.1" x2="53.1" y2="332.1"/>
+                <line class="st11" x1="63.2" y1="332.1" x2="1625" y2="332.1"/>
+                <line class="st10" x1="1630" y1="332.1" x2="1636" y2="332.1"/>
+            </g>
+        </g>
+        <g>
+            <g>
+                <line class="st12" x1="56.3" y1="318.3" x2="63.3" y2="318.3"/>
+                <line class="st13" x1="73.3" y1="318.3" x2="1624.2" y2="318.3"/>
+                <line class="st12" x1="1629.2" y1="318.3" x2="1636.2" y2="318.3"/>
+            </g>
+        </g>
+        </>,
+        viewBox: "0 0 1680.8 378.8",
+        hideTextInput: true,
+        keepAspectRatio: false,
+        category: [Categories.STRUCTURES]
+    },
 }

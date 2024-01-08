@@ -1,21 +1,34 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import Tabs, { changeTab, tabClose } from "../../common/tabComponent";
 import { TabContext } from '../../utils/contextStore';
 import { NAVIGATION_PAGES } from '../../utils/enums';
 import DrawingTool from '../../common/chartDrawingComponent';
-import { FetchCurrentCompany } from "../../hooks/index";
+// import { FetchCurrentCompany } from "../../hooks/index";
+import { useDiagramStore } from './chartDrawingStore'
 import { useTranslation } from "react-i18next";
 import DrawingToolHome from './DrawingToolHome';
 import CollectionDetails from './CollectionDetails';
+import { FetchCurrentUser } from "../../hooks/index";
 
 const ChartDrawing = ({ openTab = NAVIGATION_PAGES.DRAWING_TOOL_HOME }) => {
     const [activeTab, setActiveTab] = useState(openTab);
     const [openTabs, setOpenTabs] = useState([openTab]);
     const [params, setParams] = useState({})
+
+    const setCurrentUser = useDiagramStore((state) => state.setCurrentUser);
+
     const haveUnsavedDataRef = useRef(false);
     const shouldBeClosed = useRef({ state: false, tab: '' });
-    const [selectedCompany] = FetchCurrentCompany();
+
+    // const [selectedCompany] = FetchCurrentCompany();
+    const [currentUser] = FetchCurrentUser();
+
     const { t } = useTranslation();
+
+    useEffect(() => {
+        if (currentUser?.Id)
+            setCurrentUser(currentUser);
+    }, [currentUser])
 
     const changeActiveTab = (tab, params = null, multiple = false, label) => {
         changeTab({
