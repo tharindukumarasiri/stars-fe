@@ -1,3 +1,31 @@
+.flex2 {
+    flex: 2;
+}
+
+.flex3 {
+    flex: 3;
+}
+
+.flex4 {
+    flex: 4;
+}
+
+.flex5 {
+    flex: 5;
+}
+
+.flex6 {
+    flex: 6;
+}
+
+.flex7 {
+    flex: 7;
+}
+
+.flex8 {
+    flex: 8;
+}
+
 .dndflow {
     flex-direction: column;
     display: flex;
@@ -15,14 +43,20 @@
     display: flex;
     flex-direction: row;
     justify-content: center;
+    align-items: center;
     height: 20px;
 }
 
 .sidebarColapsBtn {
+    color: #0592D9;
     position: absolute;
     font-size: 20px;
     cursor: pointer;
     right: -10px;
+}
+
+.propertyPanelCollapseBtn {
+    left: 0;
 }
 
 .customNodeContainer {
@@ -31,14 +65,20 @@
     border: 0;
 }
 
+.settingsIcon {
+    color: #0592D9;
+    margin-right: 5px;
+    font-size: 18px;
+}
+
 .tableContainer {
     border: 2px solid;
 }
 
 .dndflow .reactflowrapper {
     flex-grow: 1;
-    width: 90vw;
-    height: 80vh;
+    width: calc(100vw - 500px);
+    height: 90vh;
 }
 
 .dndflow .selectall {
@@ -62,6 +102,7 @@
 
     .dndflow aside {
         border-right: 1px solid #eee;
+        border-left: 1px solid #eee;
         padding: 5px 10px;
         font-size: 12px;
         background: #fcfcfc;
@@ -94,8 +135,22 @@ div.customHandle2:after {
     top: -15px;
 }
 
+.groupLayersBtn {
+    padding-left: 5px;
+    padding-right: 5px;
+    padding-top: 2px;
+    padding-bottom: 2px;
+    margin-bottom: 5px;
+    border: 1px solid #808080;
+    border-radius: 10px;
+
+    &:hover {
+        cursor: pointer;
+    }
+}
+
 .toolBarContainer {
-    width: 60vw;
+    width: 45vw;
     margin-left: 50px;
     height: 40px;
     background-color: white;
@@ -103,7 +158,7 @@ div.customHandle2:after {
     border-radius: 5px;
     display: flex;
     flex-direction: row;
-    justify-content: space-around;
+    justify-content: space-evenly;
     align-items: center;
 }
 
@@ -111,6 +166,27 @@ div.customHandle2:after {
     height: 80%;
     width: 1px;
     background-color: rgba(180, 165, 165, 0.477);
+}
+
+.layerContainer {
+    max-height: 265px;
+    overflow-y: scroll;
+}
+
+.layerItemContainer {
+    display: flex;
+    overflow: hidden;
+    padding: 5px;
+    border-bottom: 1px solid #555555;
+}
+
+.layerItemSelected {
+    background-color: #CCCCCC;
+}
+
+.referenceContainer {
+    display: flex;
+    flex-direction: column;
 }
 
 .fontSizeContainer {
@@ -142,6 +218,7 @@ div.customHandle2:after {
     overflow-y: scroll;
     overflow-x: hidden;
     padding-right: 10px;
+    margin-top: 10px;
 }
 
 .sidebarCategoryContainer {
@@ -151,6 +228,17 @@ div.customHandle2:after {
     flex-direction: row;
     justify-content: space-around;
     flex-flow: wrap;
+    margin-bottom: 10px;
+    border-bottom-right-radius: 8px;
+    border-bottom-left-radius: 8px;
+}
+
+.propertyPanelContainer {
+    background-color: #EAEAEA;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-bottom-right-radius: 8px;
+    border-bottom-left-radius: 8px;
 }
 
 .sidebarCategoryheader {
@@ -159,21 +247,35 @@ div.customHandle2:after {
     flex-direction: row;
     justify-content: space-between;
     padding: 10px;
-    margin-top: 10px;
+    border-top-right-radius: 8px;
+    border-top-left-radius: 8px;
 
     &:hover {
         cursor: pointer;
     }
 }
 
-.colorIconFooter {
-    position: absolute;
+.colorIcon {
     border: 1px solid rgba(223, 212, 212, 0.573);
-    bottom: 0;
-    left: 2.5px;
-    height: 5px;
-    width: 20px;
-    bottom: -2px;
+    height: 27px;
+    width: 27px;
+}
+
+.appearanceRow {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.hexCodeInput {
+    max-width: 55px;
+}
+
+.propertyPanelSeparator {
+    border-bottom: 1px #000;
+    margin-bottom: 5px;
 }
 
 .sidebarItemContainer {
@@ -261,9 +363,7 @@ div.customHandle2:after {
 }
 
 .activityContainer {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
+    max-width: 60px;
 }
 
 .toolBarIcon {
@@ -344,13 +444,22 @@ div.customHandle2:after {
 
 .copyPasteContainer {
     border: solid 1px;
-    border-radius: 3px;
+    border-radius: 8px;
     padding: 5px;
     border-color: #434343;
 
     &:hover {
         cursor: pointer;
     }
+}
+
+.helpIconContainer {
+    margin-right: 100px;
+    color: #0592D9;
+}
+
+.zoomValueContainer {
+    width: 50px;
 }
 
 .matrixChartContainer {

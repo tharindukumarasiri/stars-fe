@@ -4,7 +4,7 @@ import ReactFlow, {
     addEdge,
     useNodesState,
     useEdgesState,
-    Controls,
+    SelectionMode,
     Background,
     Panel,
     MarkerType,
@@ -20,8 +20,9 @@ import Text from './shapes/Text.js';
 import Shapes, { parentNodes } from './ShapesData.js';
 import FloatingEdge from './customElements/FloatingEdge';
 import CustomConnectionLine from './customElements/CustomConnectionLine';
-import Sidebar from './Sidebar';
-import ToolBar from './ToolBar';
+import Sidebar from './panels/Sidebar.jsx';
+import PropertyPanel from './panels/PropertyPanel.jsx';
+import ToolBar from './panels/ToolBar.jsx';
 import ContextMenu from './customElements/ContextMenu.js';
 import { useNodeDataStore } from './store'
 
@@ -95,6 +96,14 @@ const DnDFlow = ({ props }) => {
         return types;
     }, []);
 
+    const selectedNodes = useMemo(() => {
+        return nodes.filter(node => node.selected)
+    }, [nodes])
+
+    const selectedEdges = useMemo(() => {
+        return edges.filter(edge => edge.selected)
+    }, [edges])
+
     const onDrop = useCallback(
         (event) => {
             event.preventDefault();
@@ -128,6 +137,18 @@ const DnDFlow = ({ props }) => {
         }, [reactFlowInstance]
     );
 
+    const spacebarPress = useCallback((event) => {
+        if (event.key === " " && !spacebarActive) {
+            setSpacebarActive(true)
+        }
+    }, []);
+
+    const spacebarRelease = useCallback((event) => {
+        if (event.key === " ") {
+            setSpacebarActive(false);
+        }
+    }, []);
+
     useEffect(() => {
         document.addEventListener("keydown", spacebarPress, false);
         document.addEventListener("keyup", spacebarRelease, false);
@@ -149,19 +170,6 @@ const DnDFlow = ({ props }) => {
     const getAllData = useCallback(() => {
         return { nodes: nodes, edges: edges, nodesData: textdata, nodeSizes: size, chartData: chartData }
     }, [nodes, edges, textdata, size, chartData]);
-
-    const spacebarPress = useCallback((event) => {
-        if (event.key === " " && !spacebarActive) {
-            setSpacebarActive(true)
-        }
-    }, []);
-
-    const spacebarRelease = useCallback((event) => {
-        if (event.key === " ") {
-            setSpacebarActive(false);
-        }
-    }, []);
-
 
     const onNodeDragStart = (evt, node) => {
         dragRef.current = node;
@@ -303,8 +311,9 @@ const DnDFlow = ({ props }) => {
 
     return (
         <div className={style.dndflow}>
+            <Sidebar />
+
             <ReactFlowProvider>
-                <Sidebar />
                 <Panel position="top-center">
                     <ToolBar
                         onSave={onSave}
@@ -314,6 +323,8 @@ const DnDFlow = ({ props }) => {
                         edges={edges}
                         setEdges={setEdges}
                         setNodes={setNodes}
+                        spacebarActive={spacebarActive}
+                        setSpacebarActive={setSpacebarActive}
                     />
                 </Panel>
 
@@ -342,14 +353,22 @@ const DnDFlow = ({ props }) => {
                         zoomOnDoubleClick={false}
                         nodesDraggable={!spacebarActive}
                         nodesFocusable={!spacebarActive}
+                        selectionMode={SelectionMode.Partial}
                     >
-                        <Controls />
                         <Background variant="dots" gap={8} size={0.5} id={props?.CollectionId} />
                         <Panel />
                     </ReactFlow>
                 </div>
                 {menu && <ContextMenu onClick={onPaneClick} {...menu} />}
             </ReactFlowProvider>
+
+            <PropertyPanel
+                nodes={nodes}
+                selectedNodes={selectedNodes}
+                selectedEdges={selectedEdges}
+                setNodes={setNodes}
+                setEdges={setEdges}
+            />
         </div>
     );
 };

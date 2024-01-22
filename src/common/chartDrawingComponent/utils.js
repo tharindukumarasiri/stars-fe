@@ -226,6 +226,17 @@ export const getGradientRgbaColor = (color) => {
     return `linear-gradient(90deg, rgb(${color?.r}, ${color?.g}, ${color?.b}, ${color?.a}), rgb(255,255,255,1))`
 }
 
+const componentToHex = (c) => {
+    var hex = c?.toString(16);
+    return hex.length == 1 ? "0" + hex : hex;
+}
+
+export const rgbToHex = (color) => {
+    if (!color?.r || !color?.g || !color?.b)
+        return color
+    return "#" + componentToHex(color?.r) + componentToHex(color?.g) + componentToHex(color?.b);
+}
+
 export const downloadImage = (dataUrl, type = 'png') => {
     const a = document.createElement('a');
 

@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { useOutsideClick } from "../../hooks"
 import style from './dropDown.module.scss'
 
-const Dropdown = ({ values, selected = '', onChange, hideHintText = false, placeholder, disabled = false, dataName = '', iconName = '', error = '' }) => {
+const CustomDropdown = ({ values, selected = '', onChange, hideHintText = false, placeholder, disabled = false, dataName = '', iconName = '', error = '' }) => {
     const { t } = useTranslation();
     const ref = useRef(null)
 
@@ -20,7 +20,7 @@ const Dropdown = ({ values, selected = '', onChange, hideHintText = false, place
     }, [outsideClicked])
 
     const hintTextStyle = selected && !hideHintText ? 'input-hint-text-visible' : 'input-hint-text-hidden';
-    const containerStyle = disabled ? 'input-container m-b-10 disable-div' : 'input-container m-b-10'
+    const containerStyle = disabled ? 'disable-div' : ''
 
     const dropdownToggle = () => {
         setIsOpen(pre => !pre)
@@ -107,4 +107,4 @@ const Dropdown = ({ values, selected = '', onChange, hideHintText = false, place
     )
 }
 
-export default Dropdown;
+export default CustomDropdown;
