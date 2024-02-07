@@ -5,7 +5,8 @@ import {
     EyeOutlined,
     EyeInvisibleOutlined,
     LockOutlined,
-    UnlockOutlined
+    UnlockOutlined,
+    DownOutlined
 } from '@ant-design/icons';
 import {
     MarkerType,
@@ -20,7 +21,8 @@ import {
     rgbToHex,
     fontTypes,
     markerTypes,
-    arrowColor
+    arrowColor,
+    getId
 } from '../utils';
 import { useNodeDataStore } from '../store'
 import Dropdown from '../../dropdown';
@@ -227,7 +229,106 @@ const PropertyPanel = ({ nodes, selectedNodes = [], selectedEdges = [], setNodes
     }
 
     const onGroupNodes = () => {
+        const unGroupedNodes = removeSelectedGroups()
+        setNodes((nodes) => {
+            const selectedNodesWithoutGroups = unGroupedNodes.filter(node => node.type !== 'group' && node.selected)
+            const positionMin = { ...selectedNodesWithoutGroups[0].position }
+            const positionMax = { x: positionMin.x + selectedNodesWithoutGroups[0].width, y: positionMin.y + selectedNodesWithoutGroups[0].height }
+            const groupId = getId('Group')
 
+            selectedNodesWithoutGroups.forEach(node => {
+                if (node.position.x <= positionMin.x) {
+                    positionMin.x = node.position.x
+                }
+                if (node.position.x + node.width >= positionMax.x) {
+                    positionMax.x = node.position.x + node.width
+                }
+
+                if (node.position.y <= positionMin.y) {
+                    positionMin.y = node.position.y
+                }
+                if (node.position.y + node.height >= positionMax.y) {
+                    positionMax.y = node.position.y + node.height
+                }
+            })
+
+            const newNodes = unGroupedNodes.map((node) => {
+                const isSelected = selectedNodesWithoutGroups.some(selectedNode => selectedNode.id === node.id)
+                if (isSelected) {
+                    const newNode = { ...node }
+
+                    newNode.selected = false
+                    newNode.parentNode = groupId
+                    newNode.expandParent = true
+                    newNode.position = { x: node?.position.x - positionMin?.x, y: node?.position.y - positionMin?.y }
+
+                    return newNode
+                } else return node
+            })
+
+            const newGroup = {
+                id: groupId,
+                type: 'group',
+                position: positionMin,
+                data: {},
+                style: {
+                    width: positionMax.x - positionMin.x,
+                    height: positionMax.y - positionMin.y,
+                    backgroundColor: 'transparent',
+                    borderColor: 'transparent'
+                }
+            };
+
+            newNodes.push(newGroup);
+            return newNodes;
+        })
+    }
+
+    const unGroupNodes = () => {
+        setNodes(() => removeSelectedGroups())
+    }
+
+    const removeSelectedGroups = () => {
+        const selectedGroupNodes = selectedNodes.filter(node => node.type === 'group')
+
+        const newNodesWithoutGroups = nodes.filter(node => {
+            const isSelected = selectedNodes.some(selectedNode => selectedNode.id === node.id)
+            if (isSelected && node.type === 'group') {
+                return false
+            } else {
+                return true
+            }
+        })
+
+        const newNodes = newNodesWithoutGroups.map((node) => {
+            const selectedGroupNode = selectedGroupNodes.find(groupNode => groupNode.id === node.parentNode);
+            if (selectedGroupNode) {
+                const newNode = { ...node }
+
+                delete newNode.parentNode;
+                delete newNode.expandParent;
+                newNode.position = { x: node?.position.x + selectedGroupNode?.position?.x, y: node?.position.y + selectedGroupNode?.position?.y }
+
+                return newNode
+            } else return node
+        })
+
+        return newNodes;
+    }
+
+    const sortedLayers = () => {
+        const groupNodes = nodes.filter(node => node.type === 'group')
+        const singleNodes = nodes.filter(node => node.type !== 'group' && !node?.parentNode)
+
+        nodes.map(node => {
+            if (node?.parentNode) {
+                const parentIndex = groupNodes?.findIndex(groupNode => groupNode.id === node?.parentNode)
+                groupNodes.splice(parentIndex + 1, 0, node)
+            }
+
+        })
+
+        return [...singleNodes, ...groupNodes]
     }
 
     const appearanceContent = () => {
@@ -363,35 +464,50 @@ const PropertyPanel = ({ nodes, selectedNodes = [], selectedEdges = [], setNodes
 
     const layersContent = () => {
         return (
-            <div className={style.layerContainer}>
+            <div>
                 <div className='flex-align-center'>
-                    {selectedNodes?.length > 1 ?
+                    {selectedNodes?.length > 1 &&
                         <div className={style.groupLayersBtn} onClick={onGroupNodes}>
                             Group
-                        </div> : null
+                        </div>
+                    }
+                    {selectedNodes?.some(node => node.type === 'group') &&
+                        <div className={style.groupLayersBtn} onClick={unGroupNodes}>
+                            Ungroup
+                        </div>
                     }
                 </div>
 
+                <div className={style.layerContainer}>
+                    {
+                        sortedLayers().map(node => {
+                            return (
+                                <div key={node?.id} className={`${style.layerItemContainer} ${node?.selected ? style.layerItemSelected : ''}`}>
+                                    {node?.parentNode &&
+                                        <div className='m-r-20 hover-hand' />
+                                    }
+                                    <div className='m-r-5 hover-hand' onClick={() => hideShowLayer(node?.id)} >
+                                        {node?.hidden ?
+                                            <EyeInvisibleOutlined /> : <EyeOutlined />
+                                        }
+                                    </div>
+                                    <div className='m-r-5 hover-hand' onClick={() => lockNode(node?.id)} >
+                                        {node?.draggable === false ?
+                                            <LockOutlined /> : <UnlockOutlined />
+                                        }
+                                    </div>
+                                    {node?.type === 'group' &&
+                                        <div className='m-r-5 hover-hand'>
+                                            <DownOutlined />
+                                        </div>
+                                    }
 
-                {
-                    nodes.map(node => {
-                        return (
-                            <div key={node?.id} className={`${style.layerItemContainer} ${node?.selected ? style.layerItemSelected : ''}`}>
-                                <div className='m-r-5 hover-hand' onClick={() => hideShowLayer(node?.id)} >
-                                    {node?.hidden ?
-                                        <EyeInvisibleOutlined /> : <EyeOutlined />
-                                    }
+                                    {node?.id}
                                 </div>
-                                <div className='m-r-5 hover-hand' onClick={() => lockNode(node?.id)} >
-                                    {node?.draggable === false ?
-                                        <LockOutlined /> : <UnlockOutlined />
-                                    }
-                                </div>
-                                {node?.id}
-                            </div>
-                        )
-                    })
-                }
+                            )
+                        })
+                    }
+                </div>
             </div>
         )
     }
@@ -413,58 +529,61 @@ const PropertyPanel = ({ nodes, selectedNodes = [], selectedEdges = [], setNodes
 
     return (
         <aside className={sidebarVisible ? style.aside : ''}>
-            <div className={style.sidebarColapsBtnContainer}>
-                {sidebarVisible &&
-                    <>
-                        <SettingOutlined className={style.settingsIcon} />
-                        <h3>Property</h3>
-                    </>
-                }
-                <i className={style.sidebarColapsBtn + (sidebarVisible ? ' icon-circle-arrow-right ' : ' icon-circle-arrow-left ') + style.propertyPanelCollapseBtn}
-                    onClick={onArrowClicked} />
-            </div>
-            <div className={style.sidebarMainContainer}>
-                {sidebarVisible &&
-                    <>
-                        <div className='m-b-10' >
-                            <div className={style.sidebarCategoryheader} onClick={() => { onCategoryClick(propertyCategories.APPEARANCE) }} >
-                                <div>{propertyCategories.APPEARANCE}</div>
-                                <i className={(!closedCategories.includes(propertyCategories.APPEARANCE) ? ' icon-arrow-down' : ' icon-arrow-up')} />
-                            </div>
-
-                            {!closedCategories.includes(propertyCategories.APPEARANCE) &&
-                                appearanceContent()
-                            }
-                        </div>
-
-                        <div className='m-b-10' >
-                            <div className={style.sidebarCategoryheader} onClick={() => { onCategoryClick(propertyCategories.LAYERS) }} >
-                                <div>{propertyCategories.LAYERS}</div>
-                                <i className={(!closedCategories.includes(propertyCategories.LAYERS) ? ' icon-arrow-down' : ' icon-arrow-up')} />
-                            </div>
-
-                            {!closedCategories.includes(propertyCategories.LAYERS) &&
-                                <div className={style.propertyPanelContainer}>
-                                    {layersContent()}
+            <div className={style.preventSelect}>
+                <div className={style.sidebarColapsBtnContainer}>
+                    {sidebarVisible &&
+                        <>
+                            <SettingOutlined className={style.settingsIcon} />
+                            <h3>Property</h3>
+                        </>
+                    }
+                    <i className={style.sidebarColapsBtn + (sidebarVisible ? ' icon-circle-arrow-right ' : ' icon-circle-arrow-left ') + style.propertyPanelCollapseBtn}
+                        onClick={onArrowClicked} />
+                </div>
+                <div className={style.sidebarMainContainer}>
+                    {sidebarVisible &&
+                        <>
+                            <div className='m-b-10' >
+                                <div className={style.sidebarCategoryheader} onClick={() => { onCategoryClick(propertyCategories.APPEARANCE) }} >
+                                    <div>{propertyCategories.APPEARANCE}</div>
+                                    <i className={(!closedCategories.includes(propertyCategories.APPEARANCE) ? ' icon-arrow-down' : ' icon-arrow-up')} />
                                 </div>
-                            }
-                        </div>
 
-                        <div className='m-b-10' >
-                            <div className={style.sidebarCategoryheader} onClick={() => { onCategoryClick(propertyCategories.REFERENCE) }} >
-                                <div>{propertyCategories.REFERENCE}</div>
-                                <i className={(!closedCategories.includes(propertyCategories.REFERENCE) ? ' icon-arrow-down' : ' icon-arrow-up')} />
+                                {!closedCategories.includes(propertyCategories.APPEARANCE) &&
+                                    appearanceContent()
+                                }
                             </div>
 
-                            {!closedCategories.includes(propertyCategories.REFERENCE) &&
-                                <div className={style.propertyPanelContainer}>
-                                    {referenceContent()}
+                            <div className='m-b-10' >
+                                <div className={style.sidebarCategoryheader} onClick={() => { onCategoryClick(propertyCategories.LAYERS) }} >
+                                    <div>{propertyCategories.LAYERS}</div>
+                                    <i className={(!closedCategories.includes(propertyCategories.LAYERS) ? ' icon-arrow-down' : ' icon-arrow-up')} />
                                 </div>
-                            }
-                        </div>
-                    </>
-                }
+
+                                {!closedCategories.includes(propertyCategories.LAYERS) &&
+                                    <div className={style.propertyPanelContainer}>
+                                        {layersContent()}
+                                    </div>
+                                }
+                            </div>
+
+                            <div className='m-b-10' >
+                                <div className={style.sidebarCategoryheader} onClick={() => { onCategoryClick(propertyCategories.REFERENCE) }} >
+                                    <div>{propertyCategories.REFERENCE}</div>
+                                    <i className={(!closedCategories.includes(propertyCategories.REFERENCE) ? ' icon-arrow-down' : ' icon-arrow-up')} />
+                                </div>
+
+                                {!closedCategories.includes(propertyCategories.REFERENCE) &&
+                                    <div className={style.propertyPanelContainer}>
+                                        {referenceContent()}
+                                    </div>
+                                }
+                            </div>
+                        </>
+                    }
+                </div>
             </div>
+
         </aside>
     );
 };

@@ -150,79 +150,81 @@ export default ({ onSave, pasteNodes, clearSelectedNodes, getAllData, setEdges, 
     const toggleInteractivity = () => setSpacebarActive(pre => !pre)
 
     return (
-        <div className={style.toolBarContainer}>
-            <Tooltip title='Help' className={style.helpIconContainer}>
-                <QuestionCircleOutlined className={style.toolBarIcon} />
-            </Tooltip>
+        <div className={style.preventSelect}>
+            <div className={style.toolBarContainer}>
+                <Tooltip title='Help' className={style.helpIconContainer}>
+                    <QuestionCircleOutlined className={style.toolBarIcon} />
+                </Tooltip>
 
-            <Tooltip title='Move canvas'>
-                {spacebarActive ?
-                    <LockOutlined className={style.toolBarIcon} onClick={toggleInteractivity} />
-                    : <UnlockOutlined className={style.toolBarIcon} onClick={toggleInteractivity} />
-                }
-            </Tooltip>
-            <Tooltip title='Zoom to fit'>
-                <FullscreenOutlined className={style.toolBarIcon} onClick={handleTransform} />
-            </Tooltip>
+                <Tooltip title='Move canvas'>
+                    {spacebarActive ?
+                        <LockOutlined className={style.toolBarIcon} onClick={toggleInteractivity} />
+                        : <UnlockOutlined className={style.toolBarIcon} onClick={toggleInteractivity} />
+                    }
+                </Tooltip>
+                <Tooltip title='Zoom to fit'>
+                    <FullscreenOutlined className={style.toolBarIcon} onClick={handleTransform} />
+                </Tooltip>
 
-            <div className={style.toolBarSeparator} />
+                <div className={style.toolBarSeparator} />
 
-            <div className='flex-center-middle'>
-                <PlusOutlined className={style.toolBarIcon} onClick={zoomInCanvas} />
-                <div className={style.zoomValueContainer}>{zoomValue}%</div>
-                <MinusOutlined className={style.toolBarIcon} onClick={zoomOutCanvas} />
-            </div>
-
-            <div className={style.toolBarSeparator} />
-
-            <Tooltip title='Undo'>
-                <UndoOutlined className={style.toolBarIcon} />
-            </Tooltip>
-            <Tooltip title='Redo'>
-                <RedoOutlined className={style.toolBarIcon} />
-            </Tooltip>
-
-            <div className={style.copyPasteContainer} onClick={onCopy} >Copy</div>
-            <div className={style.copyPasteContainer} onClick={pasteNodes}>Paste</div>
-
-            <div className={style.toolBarSeparator} />
-
-            <Tooltip title='Save changes'>
-                <SaveOutlined className={style.toolBarIcon} onClick={onSave} />
-            </Tooltip>
-            <Tooltip title='Download'>
-                <DownloadOutlined className={style.toolBarIcon} onClick={toggleModal} />
-            </Tooltip>
-            <Tooltip title='Upload'>
-                <UploadOutlined className={style.toolBarIcon} onClick={handleFileUpload} />
-            </Tooltip>
-            <input
-                type="file"
-                style={{ display: 'none' }}
-                ref={UPLOAD_BTN_REF}
-                onChange={onFileChange}
-            />
-
-            <Modal
-                title='Export'
-                visible={modalVisible}
-                onOk={onExport}
-                onCancel={toggleModal}
-                okText='Export'
-                width='30vw'
-                centered={true}
-                closeIcon={< i className='icon-close close-icon' />}>
-                <div className="g-row">
-                    <div>Export to SVG/ PNG/ JPG/ JSON</div>
-                    <Dropdown
-                        values={downloadTypes}
-                        onChange={onChangeDownloadType}
-                        dataName='label'
-                        selected={JSON.stringify(selectedDownloadType)}
-                    />
+                <div className='flex-center-middle'>
+                    <PlusOutlined className={style.toolBarIcon} onClick={zoomInCanvas} />
+                    <div className={style.zoomValueContainer}>{zoomValue}%</div>
+                    <MinusOutlined className={style.toolBarIcon} onClick={zoomOutCanvas} />
                 </div>
-                <div className="n-float" />
-            </Modal>
+
+                <div className={style.toolBarSeparator} />
+
+                <Tooltip title='Undo'>
+                    <UndoOutlined className={style.toolBarIcon} />
+                </Tooltip>
+                <Tooltip title='Redo'>
+                    <RedoOutlined className={style.toolBarIcon} />
+                </Tooltip>
+
+                <div className={style.copyPasteContainer} onClick={onCopy} >Copy</div>
+                <div className={style.copyPasteContainer} onClick={pasteNodes}>Paste</div>
+
+                <div className={style.toolBarSeparator} />
+
+                <Tooltip title='Save changes'>
+                    <SaveOutlined className={style.toolBarIcon} onClick={onSave} />
+                </Tooltip>
+                <Tooltip title='Download'>
+                    <DownloadOutlined className={style.toolBarIcon} onClick={toggleModal} />
+                </Tooltip>
+                <Tooltip title='Upload'>
+                    <UploadOutlined className={style.toolBarIcon} onClick={handleFileUpload} />
+                </Tooltip>
+                <input
+                    type="file"
+                    style={{ display: 'none' }}
+                    ref={UPLOAD_BTN_REF}
+                    onChange={onFileChange}
+                />
+
+                <Modal
+                    title='Export'
+                    visible={modalVisible}
+                    onOk={onExport}
+                    onCancel={toggleModal}
+                    okText='Export'
+                    width='30vw'
+                    centered={true}
+                    closeIcon={< i className='icon-close close-icon' />}>
+                    <div className="g-row">
+                        <div>Export to SVG/ PNG/ JPG/ JSON</div>
+                        <Dropdown
+                            values={downloadTypes}
+                            onChange={onChangeDownloadType}
+                            dataName='label'
+                            selected={JSON.stringify(selectedDownloadType)}
+                        />
+                    </div>
+                    <div className="n-float" />
+                </Modal>
+            </div>
         </div>
     );
 };

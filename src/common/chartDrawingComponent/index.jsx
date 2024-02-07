@@ -360,15 +360,15 @@ const DnDFlow = ({ props }) => {
                     </ReactFlow>
                 </div>
                 {menu && <ContextMenu onClick={onPaneClick} {...menu} />}
-            </ReactFlowProvider>
 
-            <PropertyPanel
-                nodes={nodes}
-                selectedNodes={selectedNodes}
-                selectedEdges={selectedEdges}
-                setNodes={setNodes}
-                setEdges={setEdges}
-            />
+                <PropertyPanel
+                    nodes={nodes}
+                    selectedNodes={selectedNodes}
+                    selectedEdges={selectedEdges}
+                    setNodes={setNodes}
+                    setEdges={setEdges}
+                />
+            </ReactFlowProvider>
         </div>
     );
 };

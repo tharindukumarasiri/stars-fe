@@ -26,6 +26,15 @@
     flex: 8;
 }
 
+.preventSelect {
+    -webkit-user-select: none;
+    /* Safari */
+    -ms-user-select: none;
+    /* IE 10 and IE 11 */
+    user-select: none;
+    /* Standard syntax */
+}
+
 .dndflow {
     flex-direction: column;
     display: flex;
@@ -141,6 +150,7 @@ div.customHandle2:after {
     padding-top: 2px;
     padding-bottom: 2px;
     margin-bottom: 5px;
+    margin-right: 5px;
     border: 1px solid #808080;
     border-radius: 10px;
 
@@ -171,6 +181,13 @@ div.customHandle2:after {
 .layerContainer {
     max-height: 265px;
     overflow-y: scroll;
+}
+
+.layerContainer {
+    -ms-overflow-style: none;
+    /* IE and Edge */
+    scrollbar-width: none;
+    /* Firefox */
 }
 
 .layerItemContainer {
@@ -219,6 +236,13 @@ div.customHandle2:after {
     overflow-x: hidden;
     padding-right: 10px;
     margin-top: 10px;
+}
+
+.sidebarMainContainer {
+    -ms-overflow-style: none;
+    /* IE and Edge */
+    scrollbar-width: none;
+    /* Firefox */
 }
 
 .sidebarCategoryContainer {
