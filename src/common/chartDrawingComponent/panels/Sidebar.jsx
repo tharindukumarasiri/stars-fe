@@ -1,20 +1,48 @@
 import React, { useState, memo } from 'react';
+import { InboxOutlined } from '@ant-design/icons';
+import { Upload } from 'antd';
 
 import style from '../DndStyles.module.scss'
-import Shapes, { Categories } from '../ShapesData.js';
+import Shapes, { Categories, uploadNodeId } from '../ShapesData.js';
 import Input from '../../../common/input'
+import { readFile, getImageDimensions } from '../utils';
+
+const { Dragger } = Upload;
+
+const savedShapesKey = 'SAVED_SHAPES';
 
 const SideBar = () => {
     const [sidebarVisible, setSidebarVisible] = useState(true);
     const [closedCategories, setClosedCategories] = useState([]);
     const [searchText, setSearchText] = useState('');
+    const [uploadedImages, setUploadedImages] = useState([]);
 
-    const onDragStart = (event, nodeType) => {
+    const props = {
+        name: 'file',
+        multiple: false,
+        accept: "image/png, mage/jpg, image/jpeg",
+        showUploadList: false,
+        async onDrop(e) {
+            const file = e.dataTransfer.files[0]
+            const imageDataUrl = await readFile(file);
+            const imageDimensions = await getImageDimensions(imageDataUrl);
+
+            const newUploadedImages = [...uploadedImages];
+            newUploadedImages.push(imageDataUrl);
+
+            setUploadedImages(newUploadedImages);
+        },
+    };
+
+    const onDragStart = (event, nodeType, image = null) => {
         event.dataTransfer.setData('application/reactflow', nodeType);
+        if (image)
+            event.dataTransfer.setData('application/reactflow/uploaded', image);
+
         event.dataTransfer.effectAllowed = 'move';
     };
 
-    const onArrowClicked = () => setSidebarVisible(pre => !pre)
+    const onArrowClicked = () => setSidebarVisible(pre => !pre);
 
     const CustomShape = ({ shape }) => {
         return (
@@ -23,6 +51,10 @@ const SideBar = () => {
             </svg>
         )
     }
+
+    const UploadedShape = ({ image }) => (
+        <img src={image} className="" alt="img" />
+    )
 
     const onCategoryClick = (category) => {
         const index = closedCategories?.findIndex(cat => cat === category)
@@ -98,6 +130,32 @@ const SideBar = () => {
                                         </div>
                                     )
                                 })}
+                                <div className='m-b-10'>
+                                    <div className={style.sidebarCategoryheader} onClick={() => { onCategoryClick(savedShapesKey) }} >
+                                        <div>My saved shapes</div>
+                                        <i className={(!closedCategories.includes(savedShapesKey) ? ' icon-arrow-down' : ' icon-arrow-up')} />
+                                    </div>
+
+                                    {!closedCategories.includes(savedShapesKey) &&
+                                        <div className={style.sidebarCategoryImageUploadContainer}>
+                                            <Dragger {...props}>
+                                                <p className="ant-upload-drag-icon">
+                                                    <InboxOutlined />
+                                                </p>
+                                                <p className="ant-upload-text">Click or drag shapes to this area to upload</p>
+                                            </Dragger>
+                                            <div className={style.sidebarCategoryImageUploadedContainer}>
+                                                {uploadedImages.map((imageData, index) => (
+                                                    <div className={style.sidebarItemContainer}
+                                                        onDragStart={(event) => onDragStart(event, uploadNodeId, imageData)}
+                                                        draggable key={index}>
+                                                        <UploadedShape image={imageData} />
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
                             </>
 
                         }

@@ -26,7 +26,8 @@ import Dropdown from '../../dropdown';
 import {
     downloadImage,
     downloadJson,
-    downloadTypes
+    downloadTypes,
+    readFile
 } from '../utils';
 
 import { useNodeDataStore } from '../store'
@@ -118,19 +119,11 @@ export default ({ onSave, pasteNodes, clearSelectedNodes, getAllData, setEdges, 
         toggleModal()
     }
 
-    const readFile = (file) => {
-        return new Promise((resolve) => {
-            const reader = new FileReader()
-            reader.addEventListener('load', () => resolve(reader.result), false)
-            reader.readAsText(file)
-        })
-    }
-
     const onFileChange = async (e) => {
         if (e.target.files && e.target.files.length > 0) {
 
             const file = e.target.files[0]
-            let fileDataUrl = await readFile(file)
+            let fileDataUrl = await readFile(file, true)
 
             try {
                 const uploadedJson = JSON.parse(fileDataUrl)

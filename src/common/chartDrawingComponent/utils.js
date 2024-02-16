@@ -255,3 +255,25 @@ export const downloadJson = (data) => {
 
     link.click();
 };
+
+export const readFile = (file, asText = false) => {
+    return new Promise((resolve) => {
+        const reader = new FileReader()
+        reader.addEventListener('load', () => resolve(reader.result), false)
+        if (asText) {
+            reader.readAsText(file)
+        } else {
+            reader.readAsDataURL(file)
+        }
+    })
+}
+
+export const getImageDimensions = (file) => {
+    return new Promise(function (resolved, rejected) {
+        var i = new Image()
+        i.onload = function () {
+            resolved({ w: i.width, h: i.height })
+        };
+        i.src = file
+    })
+}

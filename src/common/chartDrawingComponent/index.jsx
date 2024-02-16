@@ -17,7 +17,8 @@ import LineChart from './shapes/LineChart.js';
 import MatrixChart from './shapes/MatrixChart.js';
 import Line from './shapes/Line.js';
 import Text from './shapes/Text.js';
-import Shapes, { parentNodes } from './ShapesData.js';
+import UploadNode from './shapes/UploadNode.js';
+import Shapes, { parentNodes, uploadNodeId } from './ShapesData.js';
 import FloatingEdge from './customElements/FloatingEdge';
 import CustomConnectionLine from './customElements/CustomConnectionLine';
 import Sidebar from './panels/Sidebar.jsx';
@@ -93,6 +94,7 @@ const DnDFlow = ({ props }) => {
         types['HorizontalLine'] = Line
         types['VerticalLine'] = Line
         types['Text'] = Text
+        types[uploadNodeId] = UploadNode
         return types;
     }, []);
 
@@ -131,6 +133,12 @@ const DnDFlow = ({ props }) => {
 
             if (type === 'Table') {
                 newNode.data = { ...newNode.data, addTableLine }
+            }
+
+            if (type === uploadNodeId) {
+                const image = event.dataTransfer.getData('application/reactflow/uploaded');
+
+                newNode.data = { ...newNode.data, image };
             }
 
             setNodes((nds) => nds.concat(newNode));
