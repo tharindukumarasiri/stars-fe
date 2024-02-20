@@ -1,7 +1,6 @@
 import React, { memo, useEffect, useCallback, useMemo, useState } from 'react';
-import { NodeResizer, NodeToolbar, Position } from 'reactflow';
+import { NodeResizer } from 'reactflow';
 
-import TextInput from "../../../common/input";
 import { useNodeDataStore } from '../store'
 import Shapes from '../ShapesData.js';
 import { getRgbaColor, getGradientRgbaColor } from '../utils';
@@ -33,7 +32,6 @@ function MatrixChart({ id, selected, type, data }) {
 
     const [openColorPicker, setOpenColorPicker] = useState('');
     const [focusedInput, setFocusedInput] = useState('')
-    const [hideTools, setHideTools] = useState(false)
     const [disableInput, setDisableInput] = useState(false)
 
     const sizes = useNodeDataStore((state) => state.size);
@@ -50,7 +48,8 @@ function MatrixChart({ id, selected, type, data }) {
     const setNodeData = (value) => onChangeChartData({ nodeData: value })
 
     const sectionsCount = chartData?.sectionsCount || 1
-    const setSectionsCount = (value) => onChangeChartData({ sectionsCount: value })
+    const hideTools = chartData?.hideTools || false
+    const sectionBackgroundColor = getRgbaColor(chartData?.sectionBackgroundColor) || '#EAEAEA'
 
     const columnsCount = chartData?.columnsCount || 1
     const setColumnsCount = (value) => onChangeChartData({ columnsCount: value })
@@ -106,27 +105,7 @@ function MatrixChart({ id, selected, type, data }) {
 
     const onResize = (_, size) => setSize(size);
 
-    const onSectionsCountIncrese = () => setSectionsCount(sectionsCount + 1);
-    const onSectionsCountDecrease = () => setSectionsCount(sectionsCount - 1 > 0 ? sectionsCount - 1 : 0);
-    const onSectionsCountChange = (e) => {
-        e.preventDefault();
-        const number = e.target.value
-
-        if (!isNaN(number) && Number(number) > 0) {
-            setSectionsCount(Number(number))
-        }
-    };
-
-    const onColumnsCountIncrese = () => setColumnsCount(columnsCount + 1);
     const onColumnsCountDecrease = () => setColumnsCount(columnsCount - 1 > 0 ? columnsCount - 1 : 0);
-    const onColumnsCountChange = (e) => {
-        e.preventDefault();
-        const number = e.target.value
-
-        if (!isNaN(number) && Number(number) > 0) {
-            setColumnsCount(Number(number))
-        }
-    };
 
     const addNewItem = (section, column) => {
         const newNodeData = JSON.parse(JSON.stringify(nodeData));
@@ -210,6 +189,20 @@ function MatrixChart({ id, selected, type, data }) {
         setNodeData(newNodeData)
     }
 
+    const onChangeItemColor = (color, section, column, row) => {
+        const newNodeData = JSON.parse(JSON.stringify(nodeData));
+
+        const newSection = newNodeData[section] || [];
+        const newColumn = newSection[column] || [];
+
+        newColumn[row].color = getGradientRgbaColor(color);
+
+        newSection[column] = newColumn;
+        newNodeData[section] = newSection;
+
+        setNodeData(newNodeData);
+    }
+
     const deleteColumn = (column) => {
         const newNodeData = JSON.parse(JSON.stringify(nodeData));
 
@@ -225,11 +218,6 @@ function MatrixChart({ id, selected, type, data }) {
         setFocusedInput(e?.target?.id)
     }
 
-    const handleCheckboxCLick = (e) => {
-        e?.stopPropagation()
-        setHideTools(e.target?.checked)
-    };
-
     return (
         <div className={style.matrixChartContainer} style={mainContainerStyle}>
             <NodeResizer
@@ -238,38 +226,6 @@ function MatrixChart({ id, selected, type, data }) {
                 keepAspectRatio={shapeData?.keepAspectRatio ?? true}
                 handleClassName={style.resizerHandleStyle}
             />
-            <NodeToolbar position={Position.Right}>
-                <div>Number of Sections</div>
-                <div className={style.lineChartLineToolbarItem + ' m-t-10'}>
-                    <div
-                        className='hover-hand m-r-10 m-t-10 bold'
-                        onClick={onSectionsCountDecrease}> - </div>
-                    <TextInput value={sectionsCount} onChange={onSectionsCountChange} />
-                    <div
-                        className='hover-hand m-l-10 m-t-10 bold'
-                        onClick={onSectionsCountIncrese}
-                    > + </div>
-                </div>
-
-                <div className='m-t-20'>Number of Columns</div>
-                <div className={style.lineChartLineToolbarItem + ' m-t-10'}>
-                    <div
-                        className='hover-hand m-r-10 m-t-10 bold'
-                        onClick={onColumnsCountDecrease}> - </div>
-                    <TextInput value={columnsCount} onChange={onColumnsCountChange} />
-                    <div
-                        className='hover-hand m-l-10 m-t-10 bold'
-                        onClick={onColumnsCountIncrese}
-                    > + </div>
-                </div>
-                <div className={'flex-align-center m-t-10'}>
-                    <input type="checkbox" className="check-box"
-                        checked={hideTools}
-                        onChange={handleCheckboxCLick}
-                    />
-                    Hide Options
-                </div>
-            </NodeToolbar>
 
             <div className={style.matrixChartHeader} style={{ backgroundColor: borderColor }}>
                 <textarea
@@ -286,7 +242,7 @@ function MatrixChart({ id, selected, type, data }) {
             </div>
             {sectionList.map((_, sectionIndex) => {
                 return (
-                    <div className={style.matrixChartSection} id={sectionIndex}>
+                    <div className={style.matrixChartSection} id={sectionIndex} style={{ backgroundColor: sectionBackgroundColor }}>
                         {columnList.map((_, columnIndex) => {
                             const sectiondata = nodeData[sectionIndex] || [];
                             const rowsdata = sectiondata[columnIndex] || [];
@@ -303,9 +259,23 @@ function MatrixChart({ id, selected, type, data }) {
                                                 style={{ backgroundImage: item?.color }}
                                                 id={rowId}>
                                                 {rowId === focusedInput && !hideTools &&
-                                                    <i className={style.matrixItemClose + " icon-close-small-x"}
-                                                        onClick={() => onDeleteItem(sectionIndex, columnIndex, rowIndex)}
-                                                    />
+                                                    <>
+                                                        <i className={style.matrixItemClose + " icon-close-small-x"}
+                                                            onClick={() => onDeleteItem(sectionIndex, columnIndex, rowIndex)}
+                                                        />
+                                                        <i className={style.matrixItemClose + ' icon-paint-bucket m-t-15'} onClick={() => setOpenColorPicker(rowId)} />
+
+                                                        {rowId === openColorPicker &&
+                                                            <ColorPicker
+                                                                color={item?.color || 'lightcoral'}
+                                                                onChange={(color) => onChangeItemColor(color?.rgb, sectionIndex, columnIndex, rowIndex)}
+                                                                onMouseLeave={onMouseLeave}
+                                                                reduced
+                                                                styles={{ top: 30, left: 80 }}
+                                                            />
+                                                        }
+                                                    </>
+
                                                 }
                                                 <textarea
                                                     id={rowId}
@@ -349,9 +319,10 @@ function MatrixChart({ id, selected, type, data }) {
                                     <i className={style.matrixPaintBucket + ' icon-paint-bucket'} />
                                     {columnId === openColorPicker &&
                                         <ColorPicker
-                                            color={backgroundColor}
+                                            color={nodeData?.[0][columnId]?.[0]?.color || 'lightcoral'}
                                             onChange={(color) => onChangeColumnColor(color?.rgb, columnId)}
                                             onMouseLeave={onMouseLeave}
+                                            reduced
                                         />
                                     }
                                 </div>

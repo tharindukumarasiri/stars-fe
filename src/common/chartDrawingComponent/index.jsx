@@ -40,6 +40,7 @@ const connectionLineStyle = {
 const edgeTypes = {
     floating: FloatingEdge,
 };
+const panOnDrag = [1, 2];
 
 const defaultEdgeOptions = {
     style: { strokeWidth: 1, stroke: arrowColor },
@@ -353,6 +354,9 @@ const DnDFlow = ({ props }) => {
                         onPaneClick={onPaneClick}
                         onNodeClick={onPaneClick}
                         fitView
+                        panOnScroll={true}
+                        selectionOnDrag={true}
+                        panOnDrag={panOnDrag}
                         nodeTypes={nodeTypes}
                         edgeTypes={edgeTypes}
                         defaultEdgeOptions={defaultEdgeOptions}

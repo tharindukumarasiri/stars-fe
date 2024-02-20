@@ -109,6 +109,7 @@ export const colorPickerTypes = {
     TEXT: 'TEXT',
     BACKGROUND: 'BACKGROUND',
     LINE: 'LINE',
+    SECTION_BG: 'SECTION_BG',
 }
 
 export const getId = (type) => `${type}_${+new Date()}`;
@@ -221,7 +222,7 @@ export const getRgbaColor = (color) => {
 }
 
 export const getGradientRgbaColor = (color) => {
-    if (!color?.r || !color?.g || !color?.b)
+    if (!'r' in color || !'g' in color || !'b' in color)
         return color
     return `linear-gradient(90deg, rgb(${color?.r}, ${color?.g}, ${color?.b}, ${color?.a}), rgb(255,255,255,1))`
 }

@@ -224,6 +224,7 @@ div.customHandle2:after {
     display: flex;
     flex-direction: row;
     width: 40px;
+    overflow: visible;
 
     &:hover {
         cursor: pointer;
@@ -252,6 +253,22 @@ div.customHandle2:after {
     flex-direction: row;
     justify-content: space-around;
     flex-flow: wrap;
+    margin-bottom: 10px;
+    border-bottom-right-radius: 8px;
+    border-bottom-left-radius: 8px;
+}
+
+.sidebarCategoryImageUploadedContainer {
+    margin-top: 10px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    flex-flow: wrap;
+}
+
+.sidebarCategoryImageUploadContainer {
+    background-color: #EAEAEA;
+    padding: 10px;
     margin-bottom: 10px;
     border-bottom-right-radius: 8px;
     border-bottom-left-radius: 8px;
@@ -521,7 +538,6 @@ div.customHandle2:after {
     flex-direction: row;
     border: solid 1px;
     border-color: #434343;
-    background-color: #EAEAEA;
     margin-bottom: 10px;
     padding-bottom: 10px;
 }

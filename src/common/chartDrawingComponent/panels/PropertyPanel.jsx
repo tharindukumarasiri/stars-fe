@@ -49,6 +49,10 @@ const PropertyPanel = ({ nodes, selectedNodes = [], selectedEdges = [], setNodes
 
     const onTextChange = (value) => changeTextData(selectedNodeId, value)
 
+    const chartData = useNodeDataStore((state) => state.chartData).find(item => item.id === selectedNodeId);
+    const changeChartData = useNodeDataStore((state) => state.setChartData);
+    const onChangeChartData = (value) => changeChartData(selectedNodeId, value)
+
     const backgroundColor = textdata?.backgroundColor || '#ffffff'
     const setBackgroundColor = (value) => onTextChange({ backgroundColor: value })
 
@@ -69,6 +73,18 @@ const PropertyPanel = ({ nodes, selectedNodes = [], selectedEdges = [], setNodes
 
     const markerType = textdata?.markerType
     const setMarkerType = (value) => onTextChange({ markerType: value })
+
+    const sectionsCount = chartData?.sectionsCount || 1
+    const setSectionsCount = (value) => onChangeChartData({ sectionsCount: value })
+
+    const columnsCount = chartData?.columnsCount || 1
+    const setColumnsCount = (value) => onChangeChartData({ columnsCount: value })
+
+    const sectionBackgroundColor = chartData?.sectionBackgroundColor || '#EAEAEA'
+    const setSectionBackgroundColor = (value) => onChangeChartData({ sectionBackgroundColor: value })
+
+    const hideTools = chartData?.hideTools || false
+    const setHideTools = (value) => onChangeChartData({ hideTools: value })
 
     const getSelectedEdgeStart = useMemo(() => {
         //using the first item in the selected edges
@@ -97,9 +113,37 @@ const PropertyPanel = ({ nodes, selectedNodes = [], selectedEdges = [], setNodes
     const onChangeBackgroundColor = (color) => setBackgroundColor(color?.rgb)
     const onMouseLeave = () => setColorPickerVisible('')
     const onChangeBorderColor = (color) => setBorderColor(color?.rgb)
+    const onChangeSectionColor = (color) => setSectionBackgroundColor(color?.rgb)
     const onChangeTextBold = () => setBold(!textBold)
     const onChangeTextColor = (color) => setTextColor(color?.rgb)
     const onChangeMarker = (value) => setMarkerType(value)
+    const onSectionsCountIncrese = () => setSectionsCount(sectionsCount + 1);
+    const onSectionsCountDecrease = () => setSectionsCount(sectionsCount - 1 > 0 ? sectionsCount - 1 : 0);
+
+    const onSectionsCountChange = (e) => {
+        e.preventDefault();
+        const number = e.target.value
+
+        if (!isNaN(number) && Number(number) > 0) {
+            setSectionsCount(Number(number))
+        }
+    };
+
+    const onColumnsCountIncrease = () => setColumnsCount(columnsCount + 1);
+    const onColumnsCountDecrease = () => setColumnsCount(columnsCount - 1 > 0 ? columnsCount - 1 : 0);
+    const onColumnsCountChange = (e) => {
+        e.preventDefault();
+        const number = e.target.value
+
+        if (!isNaN(number) && Number(number) > 0) {
+            setColumnsCount(Number(number))
+        }
+    };
+
+    const handleCheckboxCLick = (e) => {
+        e?.stopPropagation()
+        setHideTools(e.target?.checked)
+    };
 
     const onCategoryClick = (category) => {
         const index = closedCategories?.findIndex(cat => cat === category)
@@ -362,102 +406,221 @@ const PropertyPanel = ({ nodes, selectedNodes = [], selectedEdges = [], setNodes
                                     color={textColor}
                                     onChange={onChangeTextColor}
                                     onMouseLeave={onMouseLeave}
-                                    styles={colorPickerStyles}
+                                    styles={{ right: -60, top: -20 }}
                                 />
                             </div> : null
                         }
                     </div>
                 </div>
 
-                <div className={style.appearanceRow}>
-                    <div className={style.flex4}>
-                        Fill
-                    </div>
-                    <div className={style.flex2} onClick={() => showColorPicker(colorPickerTypes.BACKGROUND)}>
-                        <div className={style.colorIcon} style={{ backgroundColor: getRgbaColor(backgroundColor) }} />
-                        {colorPickerVisible === colorPickerTypes.BACKGROUND ?
-                            <div className={style.sketchPickerContainer}>
-                                <ColorPicker
-                                    color={backgroundColor}
-                                    onChange={onChangeBackgroundColor}
-                                    onMouseLeave={onMouseLeave}
-                                    styles={colorPickerStyles}
+
+                {(selectedNodes?.length === 1 && selectedNodes?.[0].type === 'MatrixChart') ?
+                    <>
+                        <div className={style.appearanceRow}>
+                            <div className={style.flex5}>
+                                Background
+                            </div>
+                            <div className={style.flex2} onClick={() => showColorPicker(colorPickerTypes.BACKGROUND)}>
+                                <div className={style.colorIcon} style={{ backgroundColor: getRgbaColor(backgroundColor) }} />
+                                {colorPickerVisible === colorPickerTypes.BACKGROUND ?
+                                    <div className={style.sketchPickerContainer}>
+                                        <ColorPicker
+                                            color={backgroundColor}
+                                            onChange={onChangeBackgroundColor}
+                                            onMouseLeave={onMouseLeave}
+                                            styles={colorPickerStyles}
+                                        />
+                                    </div> : null
+                                }
+                            </div>
+                            <div className={style.flex6}>
+                                <input className={style.hexCodeInput} type="text" value={rgbToHex(backgroundColor)} />
+                            </div>
+                        </div>
+                        <div className={style.appearanceRow}>
+                            <div className={style.flex5}>
+                                Title Background
+                            </div>
+                            <div className={style.flex2} onClick={() => showColorPicker(colorPickerTypes.LINE)}>
+                                <div className={style.colorIcon} style={{ backgroundColor: getRgbaColor(borderColor) }} />
+                                {colorPickerVisible === colorPickerTypes.LINE ?
+                                    <div className={style.sketchPickerContainer}>
+                                        <ColorPicker
+                                            color={borderColor}
+                                            onChange={onChangeBorderColor}
+                                            onMouseLeave={onMouseLeave}
+                                            styles={colorPickerStyles}
+                                        />
+                                    </div> : null
+                                }
+                            </div>
+                            <div className={style.flex6}>
+                                <input className={style.hexCodeInput} type="text" value={rgbToHex(borderColor)} />
+                            </div>
+                        </div>
+                        <div className={style.appearanceRow}>
+                            <div className={style.flex5}>
+                                Section Background
+                            </div>
+                            <div className={style.flex2} onClick={() => showColorPicker(colorPickerTypes.SECTION_BG)}>
+                                <div className={style.colorIcon} style={{ backgroundColor: getRgbaColor(sectionBackgroundColor) }} />
+                                {colorPickerVisible === colorPickerTypes.SECTION_BG ?
+                                    <div className={style.sketchPickerContainer}>
+                                        <ColorPicker
+                                            color={borderColor}
+                                            onChange={onChangeSectionColor}
+                                            onMouseLeave={onMouseLeave}
+                                            styles={colorPickerStyles}
+                                        />
+                                    </div> : null
+                                }
+                            </div>
+                            <div className={style.flex6}>
+                                <input className={style.hexCodeInput} type="text" value={rgbToHex(sectionBackgroundColor)} />
+                            </div>
+                        </div>
+                        <div className={style.appearanceRow}>
+                            <div className={style.flex5}>
+                                Number of sections
+                            </div>
+
+                            <div className={style.flex8}>
+                                <div className={style.fontSizeContainer}>
+                                    <div
+                                        className='hover-hand m-r-10 m-t-10 bold'
+                                        onClick={onSectionsCountDecrease}>-</div>
+                                    <input value={sectionsCount} onChange={onSectionsCountChange} type="text" />
+                                    <div
+                                        className='hover-hand m-l-10 m-t-10 bold'
+                                        onClick={onSectionsCountIncrese}
+                                    >+</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div className={style.appearanceRow}>
+                            <div className={style.flex5}>
+                                Number of columns
+                            </div>
+
+                            <div className={style.flex8}>
+                                <div className={style.fontSizeContainer}>
+                                    <div
+                                        className='hover-hand m-r-10 m-t-10 bold'
+                                        onClick={onColumnsCountDecrease}>-</div>
+                                    <input value={columnsCount} onChange={onColumnsCountChange} type="text" />
+                                    <div
+                                        className='hover-hand m-l-10 m-t-10 bold'
+                                        onClick={onColumnsCountIncrease}
+                                    >+</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div className={style.appearanceRow}>
+                            <div className={style.flex5}>
+                                Hide Options
+                            </div>
+
+                            <div className={style.flex8}>
+                                <input type="checkbox" className="check-box m-l-10"
+                                    checked={hideTools}
+                                    onChange={handleCheckboxCLick}
                                 />
-                            </div> : null
-                        }
-                    </div>
-                    <div className={style.flex6}>
-                        <input className={style.hexCodeInput} type="text" value={rgbToHex(backgroundColor)} />
-                    </div>
-                </div>
-                <div className={style.appearanceRow}>
-                    <div className={style.flex4}>
-                        Stroke
-                    </div>
-                    <div className={style.flex2} onClick={() => showColorPicker(colorPickerTypes.LINE)}>
-                        <div className={style.colorIcon} style={{ backgroundColor: getRgbaColor(borderColor) }} />
-                        {colorPickerVisible === colorPickerTypes.LINE ?
-                            <div className={style.sketchPickerContainer}>
-                                <ColorPicker
-                                    color={borderColor}
-                                    onChange={onChangeBorderColor}
-                                    onMouseLeave={onMouseLeave}
-                                    styles={colorPickerStyles}
-                                />
-                            </div> : null
-                        }
-                    </div>
-                    <div className={style.flex4}>
-                        <input className={style.hexCodeInput} type="text" value={rgbToHex(borderColor)} />
-                    </div>
-                    <div className={style.flex2}>
-                        <AlignCenterOutlined className={style.toolBarIcon} />
-                    </div>
-                </div>
-                <div className={style.appearanceRow}>
-                    <div className={style.flex4}>
-                        Endpoint
-                    </div>
-                    <div className={style.matrixColumnActionRow + ' ' + style.flex8}>
-                        <div className={style.activityContainer}>
-                            <CustomDropdown
-                                values={arrowStartTypes}
-                                onChange={onChangeEdgeStart}
-                                dataName='label'
-                                iconName='icon'
-                                selected={getSelectedEdgeStart}
-                                hideHintText
-                            />
+                            </div>
                         </div>
-                        <div className={style.activityContainer}>
-                            <CustomDropdown
-                                values={arrowEndTypes}
-                                onChange={onChangeEdgeEnd}
-                                dataName='label'
-                                iconName='icon'
-                                selected={getSelectedEdgeEnd}
-                                hideHintText
-                            />
+
+                    </> :
+                    <>
+                        <div className={style.appearanceRow}>
+                            <div className={style.flex4}>
+                                Fill
+                            </div>
+                            <div className={style.flex2} onClick={() => showColorPicker(colorPickerTypes.BACKGROUND)}>
+                                <div className={style.colorIcon} style={{ backgroundColor: getRgbaColor(backgroundColor) }} />
+                                {colorPickerVisible === colorPickerTypes.BACKGROUND ?
+                                    <div className={style.sketchPickerContainer}>
+                                        <ColorPicker
+                                            color={backgroundColor}
+                                            onChange={onChangeBackgroundColor}
+                                            onMouseLeave={onMouseLeave}
+                                            styles={colorPickerStyles}
+                                        />
+                                    </div> : null
+                                }
+                            </div>
+                            <div className={style.flex6}>
+                                <input className={style.hexCodeInput} type="text" value={rgbToHex(backgroundColor)} />
+                            </div>
                         </div>
-                    </div>
-                </div>
-                <div className={style.appearanceRow}>
-                    <div className={style.flex4}>
-                        Activity
-                    </div>
-                    <div className={style.flex8}>
-                        <div className={style.activityContainer}>
-                            <CustomDropdown
-                                values={markerTypes}
-                                onChange={onChangeMarker}
-                                dataName='label'
-                                iconName='icon'
-                                selected={markerType}
-                                hideHintText
-                            />
+                        <div className={style.appearanceRow}>
+                            <div className={style.flex4}>
+                                Stroke
+                            </div>
+                            <div className={style.flex2} onClick={() => showColorPicker(colorPickerTypes.LINE)}>
+                                <div className={style.colorIcon} style={{ backgroundColor: getRgbaColor(borderColor) }} />
+                                {colorPickerVisible === colorPickerTypes.LINE ?
+                                    <div className={style.sketchPickerContainer}>
+                                        <ColorPicker
+                                            color={borderColor}
+                                            onChange={onChangeBorderColor}
+                                            onMouseLeave={onMouseLeave}
+                                            styles={colorPickerStyles}
+                                        />
+                                    </div> : null
+                                }
+                            </div>
+                            <div className={style.flex4}>
+                                <input className={style.hexCodeInput} type="text" value={rgbToHex(borderColor)} />
+                            </div>
+                            <div className={style.flex2}>
+                                <AlignCenterOutlined className={style.toolBarIcon} />
+                            </div>
                         </div>
-                    </div>
-                </div>
+                        <div className={style.appearanceRow}>
+                            <div className={style.flex4}>
+                                Endpoint
+                            </div>
+                            <div className={style.matrixColumnActionRow + ' ' + style.flex8}>
+                                <div className={style.activityContainer}>
+                                    <CustomDropdown
+                                        values={arrowStartTypes}
+                                        onChange={onChangeEdgeStart}
+                                        dataName='label'
+                                        iconName='icon'
+                                        selected={getSelectedEdgeStart}
+                                        hideHintText
+                                    />
+                                </div>
+                                <div className={style.activityContainer}>
+                                    <CustomDropdown
+                                        values={arrowEndTypes}
+                                        onChange={onChangeEdgeEnd}
+                                        dataName='label'
+                                        iconName='icon'
+                                        selected={getSelectedEdgeEnd}
+                                        hideHintText
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                        <div className={style.appearanceRow}>
+                            <div className={style.flex4}>
+                                Activity
+                            </div>
+                            <div className={style.flex8}>
+                                <div className={style.activityContainer}>
+                                    <CustomDropdown
+                                        values={markerTypes}
+                                        onChange={onChangeMarker}
+                                        dataName='label'
+                                        iconName='icon'
+                                        selected={markerType}
+                                        hideHintText
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                    </>
+                }
             </div>
         )
     }

@@ -5,7 +5,7 @@ import { Upload } from 'antd';
 import style from '../DndStyles.module.scss'
 import Shapes, { Categories, uploadNodeId } from '../ShapesData.js';
 import Input from '../../../common/input'
-import { readFile, getImageDimensions } from '../utils';
+import { readFile } from '../utils';
 
 const { Dragger } = Upload;
 
@@ -25,7 +25,6 @@ const SideBar = () => {
         async onDrop(e) {
             const file = e.dataTransfer.files[0]
             const imageDataUrl = await readFile(file);
-            const imageDimensions = await getImageDimensions(imageDataUrl);
 
             const newUploadedImages = [...uploadedImages];
             newUploadedImages.push(imageDataUrl);
