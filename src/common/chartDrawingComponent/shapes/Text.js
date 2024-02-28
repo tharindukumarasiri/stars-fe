@@ -1,5 +1,5 @@
 import React, { memo, useCallback, useEffect, useRef } from 'react';
-import { Handle, Position, useUpdateNodeInternals, NodeResizer, useStore } from 'reactflow';
+import { useUpdateNodeInternals, NodeResizer, useStore } from 'reactflow';
 import { drag } from 'd3-drag';
 import { select } from 'd3-selection';
 
@@ -8,11 +8,10 @@ import Shapes from '../ShapesData.js';
 import { getRgbaColor } from '../utils';
 
 import style from '../DndStyles.module.scss'
+import ConnectionDot from '../customElements/ConnectionDot';
 
 const connectionNodeIdSelector = (state) => state.connectionNodeId;
 
-const sourceStyle = { zIndex: 2 };
-const targetStyle = { zIndex: 1 };
 const resizerHandleStyle = { width: 6, height: 6 }
 
 function Text({ id, selected, type, data }) {
@@ -135,15 +134,7 @@ function Text({ id, selected, type, data }) {
             }
 
             <div className={handleContainerStyle}>
-                {!isConnecting && (
-                    <Handle
-                        className={isTarget ? style.customHandle : style.customHandle2}
-                        position={Position.Right}
-                        type="source"
-                        style={sourceStyle}
-                    />
-                )}
-                <Handle className={isTarget ? style.customHandle : style.customHandle2} position={Position.Left} type="target" style={targetStyle} />
+                <ConnectionDot isConnecting={isConnecting} isTarget={isTarget} />
             </div>
 
             <textarea

@@ -131,18 +131,56 @@ div.customHandle {
 }
 
 div.customHandle2 {
-    left: 101%;
-    width: 0;
-    height: 0;
+    left: 110%;
 }
 
-div.customHandle2:after {
-    content: '\2192';
-    position: absolute;
-    font-size: 25px;
-    right: -20px;
-    top: -15px;
+div.customHandle2Right {
+    left: 110%;
+    width: 7px;
+    height: 7px;
+
+    &:hover {
+        width: 15px;
+        height: 15px;
+    }
 }
+
+div.customHandle2Top {
+    top: -25%;
+    width: 7px;
+    height: 7px;
+
+    &:hover {
+        top: -35%;
+        width: 15px;
+        height: 15px;
+    }
+}
+
+div.customHandle2Left {
+    left: -25%;
+    width: 7px;
+    height: 7px;
+
+    &:hover {
+        left: -35%;
+        width: 15px;
+        height: 15px;
+    }
+}
+
+div.customHandle2Bottom {
+    bottom: -25%;
+    width: 7px;
+    height: 7px;
+
+    &:hover {
+        bottom: -35%;
+        width: 15px;
+        height: 15px;
+    }
+}
+
 
 .groupLayersBtn {
     padding-left: 5px;
