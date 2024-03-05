@@ -2,6 +2,7 @@ import React, { useState, memo } from 'react';
 import { InboxOutlined } from '@ant-design/icons';
 import { Upload } from 'antd';
 
+import { useDiagramStore } from '../../../Views/ChartDrawing/chartDrawingStore'
 import style from '../DndStyles.module.scss'
 import Shapes, { Categories, uploadNodeId } from '../ShapesData.js';
 import Input from '../../../common/input'
@@ -15,21 +16,26 @@ const SideBar = () => {
     const [sidebarVisible, setSidebarVisible] = useState(true);
     const [closedCategories, setClosedCategories] = useState([]);
     const [searchText, setSearchText] = useState('');
-    const [uploadedImages, setUploadedImages] = useState([]);
+
+    const loading = useDiagramStore((state) => state.loading);
+    const uploadedImages = useDiagramStore((state) => state.uploadedImages);
+    const uploadImage = useDiagramStore((state) => state.uploadImage);
+
 
     const props = {
         name: 'file',
         multiple: false,
         accept: "image/png, mage/jpg, image/jpeg",
+        disabled: loading,
         showUploadList: false,
-        async onDrop(e) {
-            const file = e.dataTransfer.files[0]
+        async customRequest(info) {
+            const file = info.file;
             const imageDataUrl = await readFile(file);
 
-            const newUploadedImages = [...uploadedImages];
-            newUploadedImages.push(imageDataUrl);
-
-            setUploadedImages(newUploadedImages);
+            const payload = {
+                'ImageString': imageDataUrl,
+            }
+            uploadImage(payload);
         },
     };
 
@@ -141,14 +147,17 @@ const SideBar = () => {
                                                 <p className="ant-upload-drag-icon">
                                                     <InboxOutlined />
                                                 </p>
-                                                <p className="ant-upload-text">Click or drag shapes to this area to upload</p>
+                                                {loading ?
+                                                    <p className="ant-upload-text">Uploading...</p>
+                                                    : <p className="ant-upload-text">Click or drag shapes to this area to upload</p>
+                                                }
                                             </Dragger>
                                             <div className={style.sidebarCategoryImageUploadedContainer}>
                                                 {uploadedImages.map((imageData, index) => (
                                                     <div className={style.sidebarItemContainer}
-                                                        onDragStart={(event) => onDragStart(event, uploadNodeId, imageData)}
+                                                        onDragStart={(event) => onDragStart(event, uploadNodeId, imageData.ImageString)}
                                                         draggable key={index}>
-                                                        <UploadedShape image={imageData} />
+                                                        <UploadedShape image={imageData.ImageString} />
                                                     </div>
                                                 ))}
                                             </div>

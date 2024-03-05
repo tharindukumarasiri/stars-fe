@@ -7,7 +7,9 @@ import {
     getAllDrawings,
     addNewDrawing,
     deleteDrawing,
-    updateDrawing
+    updateDrawing,
+    getDrawingImages,
+    addNewDrawingImage
 } from "../../services/drawingService";
 import { getContacts } from "../../services/userService";
 
@@ -24,6 +26,7 @@ export const useDiagramStore = create((set, get) => ({
     collectionData: [],
     diagramData: [],
     filterdContacts: [],
+    uploadedImages: [],
 
     setCurrentUser: (user) => set({ currentUser: user }),
     getContactsList: async () => {
@@ -42,7 +45,7 @@ export const useDiagramStore = create((set, get) => ({
         set({ loading: true })
         getAllCollections().then(result => {
             set({ collectionData: result })
-        }).then(() => set({ loading: false }));
+        }).finally(() => set({ loading: false }));
     },
     addCollection: async (data) => {
         try {
@@ -81,7 +84,7 @@ export const useDiagramStore = create((set, get) => ({
         set({ loading: true })
         getAllDrawings().then(result => {
             set({ diagramData: result })
-        }).then(() => set({ loading: false }));
+        }).finally(() => set({ loading: false }));
     },
     addDiagram: async (data) => {
         try {
@@ -114,6 +117,23 @@ export const useDiagramStore = create((set, get) => ({
         } catch {
             set({ loading: false });
             throw new Error('error');
+        }
+    },
+    getUploadedImages: () => {
+        set({ loading: true })
+        getDrawingImages().then(result => {
+            set({ uploadedImages: result })
+        }).finally(() => set({ loading: false }));
+    },
+    uploadImage: async (data) => {
+        try {
+            set({ loading: true })
+            const response = await addNewDrawingImage(get().currentUser?.Id, data);
+            get().getUploadedImages()
+            return response
+        } catch (error) {
+            set({ loading: false })
+            throw new Error(error);
         }
     },
 }))

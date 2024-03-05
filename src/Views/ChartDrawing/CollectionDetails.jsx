@@ -237,6 +237,7 @@ const DrawingsList = ({ collectionId }) => {
     // const [companyUsers] = FetchCompanyUsers();
 
     const getDiagramData = useDiagramStore((state) => state.getDiagramData);
+    const getUploadedImages = useDiagramStore((state) => state.getUploadedImages);
     const diagramData = useDiagramStore((state) => state.diagramData);
     const addDiagram = useDiagramStore((state) => state.addDiagram);
     const deleteDiagram = useDiagramStore((state) => state.deleteDiagram);
@@ -244,7 +245,8 @@ const DrawingsList = ({ collectionId }) => {
     const { t } = useTranslation();
 
     useEffect(() => {
-        getDiagramData()
+        getDiagramData();
+        getUploadedImages();
     }, []);
 
     const tableHeaders = useMemo(() => {

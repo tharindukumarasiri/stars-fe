@@ -132,6 +132,8 @@
     "GET_DRAWING_ITEMS": "actionapi/DrawingItems/Get",
     "ADD_DRAWING_ITEM": "actionapi/DrawingItems/Post?userId=",
     "UPDATE_DRAWING_ITEM": "actionapi/DrawingItems/Put?userId=",
-    "DELETE_DRAWING_ITEM": "actionapi/DrawingItems/Delete?Id="
+    "DELETE_DRAWING_ITEM": "actionapi/DrawingItems/Delete?Id=",
+    "GET_DRAWING_IMAGES": "actionapi/DrawingImages/Get",
+    "ADD_DRAWING_IMAGE": "actionapi/DrawingImages/Post?userId="
 
 }

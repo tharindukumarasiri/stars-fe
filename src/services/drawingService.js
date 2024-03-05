@@ -40,3 +40,13 @@ export async function deleteDrawing(userId, payload) {
     const { data } = await http.delete(`${config.DELETE_DRAWING_ITEM}${payload?.Id}&userId=${userId}`, { data: payload });
     return data;
 }
+
+export async function getDrawingImages() {
+    const { data } = await http.get(config.GET_DRAWING_IMAGES);
+    return data;
+}
+
+export async function addNewDrawingImage(userId, payload) {
+    const { data } = await http.post(`${config.ADD_DRAWING_IMAGE}${userId}`, payload);
+    return data;
+}
