@@ -1,6 +1,8 @@
 import { create } from 'zustand'
 
 export const useNodeDataStore = create((set, get) => ({
+    currentPage: 0,
+    pagesData: [],
     size: [],
     textdata: [],
     selectedNodeId: '',
@@ -8,6 +10,8 @@ export const useNodeDataStore = create((set, get) => ({
     chartData: [],
     copiedNodes: [],
 
+    setCurrentPage: (currentPage) => set({ currentPage }),
+    setPagesData: (pagesData) => set({ pagesData }),
     setAllData: (size, textdata, chartData) => set({ size, textdata, chartData }),
     setSize: (id, size) => {
         const index = get().size.findIndex(item => item.id === id)

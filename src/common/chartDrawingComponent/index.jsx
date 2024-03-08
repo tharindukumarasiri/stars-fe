@@ -31,6 +31,7 @@ import { useDiagramStore } from '../../Views/ChartDrawing/chartDrawingStore'
 import { getId, arrowColor } from './utils'
 
 import style from './DndStyles.module.scss'
+import PagesPanel from './panels/PagesPanel.jsx';
 
 const connectionLineStyle = {
     strokeWidth: 1,
@@ -53,7 +54,7 @@ const defaultEdgeOptions = {
 };
 
 const DnDFlow = ({ props }) => {
-    const data = JSON.parse(props?.DrawingContent)
+    const data = JSON.parse(props?.DrawingContent)?.[0]
     const reactFlowWrapper = useRef(null);
     const dragRef = useRef(null);
     const saveDiagram = useDiagramStore((state) => state.saveDiagram);
@@ -67,6 +68,10 @@ const DnDFlow = ({ props }) => {
     const [deleteNodeId, setDeleteNodeId] = useState('')
     const [spacebarActive, setSpacebarActive] = useState(false)
 
+    const currentPage = useNodeDataStore((state) => state.currentPage);
+    const setCurrentPage = useNodeDataStore((state) => state.setCurrentPage);
+    const pagesData = useNodeDataStore((state) => state.pagesData);
+    const setPagesData = useNodeDataStore((state) => state.setPagesData);
     const setAllData = useNodeDataStore((state) => state.setAllData);
     const textdata = useNodeDataStore((state) => state.textdata);
     const onTextChange = useNodeDataStore((state) => state.onTextChange);
@@ -84,6 +89,7 @@ const DnDFlow = ({ props }) => {
     }, []);
 
     useEffect(() => {
+        setPagesData(JSON.parse(props?.DrawingContent) || [{ nodes: [], edges: [], nodesData: [], nodeSizes: [], chartData: [], pageName: 'Page 1' }])
         setAllData(data?.nodeSizes || [], data?.nodesData || [], data?.chartData || [])
     }, [props])
 
@@ -146,6 +152,22 @@ const DnDFlow = ({ props }) => {
         }, [reactFlowInstance]
     );
 
+    const onChangePage = (index, isNewPage = false) => {
+        const newPagesData = JSON.parse(JSON.stringify(pagesData))
+        newPagesData[currentPage] = { ...newPagesData[currentPage], nodes: nodes, edges: edges, nodesData: textdata, nodeSizes: size, chartData: chartData }
+        if (isNewPage)
+            newPagesData.push({ nodes: [], edges: [], nodesData: [], nodeSizes: [], chartData: [], pageName: `Page ${index + 1}` });
+
+        setPagesData(newPagesData)
+
+        const currentPageData = pagesData?.[index]
+        setAllData(currentPageData?.nodeSizes || [], currentPageData?.nodesData || [], currentPageData?.chartData || [])
+        setNodes(currentPageData?.nodes || [])
+        setEdges(currentPageData?.edges || [])
+
+        setCurrentPage(index)
+    }
+
     const spacebarPress = useCallback((event) => {
         if (event.key === " " && !spacebarActive) {
             setSpacebarActive(true)
@@ -177,7 +199,10 @@ const DnDFlow = ({ props }) => {
     }, [deleteNodeId])
 
     const getAllData = useCallback(() => {
-        return { nodes: nodes, edges: edges, nodesData: textdata, nodeSizes: size, chartData: chartData }
+        const newPagesData = JSON.parse(JSON.stringify(pagesData))
+        newPagesData[currentPage] = { ...newPagesData[currentPage], nodes: nodes, edges: edges, nodesData: textdata, nodeSizes: size, chartData: chartData }
+        setPagesData(newPagesData)
+        return newPagesData
     }, [nodes, edges, textdata, size, chartData]);
 
     const onNodeDragStart = (evt, node) => {
@@ -335,6 +360,9 @@ const DnDFlow = ({ props }) => {
                         spacebarActive={spacebarActive}
                         setSpacebarActive={setSpacebarActive}
                     />
+                </Panel>
+                <Panel position="bottom-center">
+                    <PagesPanel onChangePage={onChangePage} />
                 </Panel>
 
                 <div className={style.reactflowrapper} ref={reactFlowWrapper}>

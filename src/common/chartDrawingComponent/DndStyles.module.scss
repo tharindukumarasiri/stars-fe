@@ -151,7 +151,6 @@ div.customHandle2Top {
     height: 7px;
 
     &:hover {
-        top: -35%;
         width: 15px;
         height: 15px;
     }
@@ -163,7 +162,6 @@ div.customHandle2Left {
     height: 7px;
 
     &:hover {
-        left: -35%;
         width: 15px;
         height: 15px;
     }
@@ -175,7 +173,6 @@ div.customHandle2Bottom {
     height: 7px;
 
     &:hover {
-        bottom: -35%;
         width: 15px;
         height: 15px;
     }
@@ -208,6 +205,63 @@ div.customHandle2Bottom {
     flex-direction: row;
     justify-content: space-evenly;
     align-items: center;
+}
+
+.pagesBarContainer {
+    width: 60vw;
+    height: 40px;
+    background-color: white;
+    border: 1px solid rgba(223, 212, 212, 0.573);
+    border-radius: 5px;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.pageTabContainer {
+    border: solid 1px;
+    border-radius: 8px;
+    padding: 5px;
+    border-color: #434343;
+    margin-left: 10px;
+
+    &:hover {
+        cursor: pointer;
+    }
+}
+
+.pageTabSelected {
+    background-color: #d8d8d8;
+    border: solid 1px;
+    border-radius: 8px;
+    padding: 6px;
+    border-color: #d8d8d8;
+    margin-left: 10px;
+
+    &:hover {
+        cursor: pointer;
+    }
+}
+
+.newPageIcon {
+    font-size: 15px;
+    margin-left: 10px;
+
+    &:hover {
+        cursor: pointer;
+    }
+}
+
+.pagesTabInputContainer {
+    margin-left: 10px;
+}
+
+.pagesTabInput {
+    background-color: #d8d8d8 !important;
+    padding: -6px !important;
+    border-radius: 8px !important;
+    max-width: 70px;
 }
 
 .toolBarSeparator {
