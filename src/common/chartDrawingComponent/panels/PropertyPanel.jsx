@@ -1,4 +1,4 @@
-import React, { useState, memo, useMemo } from 'react';
+import React, { useState, memo, useMemo, useContext } from 'react';
 import {
     SettingOutlined,
     AlignCenterOutlined,
@@ -22,13 +22,15 @@ import {
     fontTypes,
     markerTypes,
     arrowColor,
-    getId
+    getId,
+    readFile
 } from '../utils';
 import { useNodeDataStore } from '../store'
 import Dropdown from '../../dropdown';
 import CustomDropdown from '../../customDropdown';
-import { readFile } from '../utils';
 import { useDiagramStore } from '../../../Views/ChartDrawing/chartDrawingStore'
+import { TabContext } from '../../../utils/contextStore';
+import { NAVIGATION_PAGES } from "../../../utils/enums";
 
 import style from '../DndStyles.module.scss'
 
@@ -48,12 +50,15 @@ const LinkTypes = {
 const colorPickerStyles = { right: 0, top: 80 };
 
 const PropertyPanel = ({ nodes, selectedNodes = [], selectedEdges = [], setNodes, setEdges }) => {
+    const { changeActiveTab } = useContext(TabContext);
+
     const [sidebarVisible, setSidebarVisible] = useState(true);
     const [colorPickerVisible, setColorPickerVisible] = useState('')
     const [closedCategories, setClosedCategories] = useState([]);
     const [urlInput, setUrlInput] = useState('');
     const [uploadedFile, setUploadedFile] = useState('');
     const [selectedLinkType, setSelectedLinkType] = useState(LinkTypes.URL);
+    const [selectedDrawing, setSelectedDrawing] = useState({});
 
     const diagramData = useDiagramStore((state) => state.diagramData);
 
@@ -173,6 +178,14 @@ const PropertyPanel = ({ nodes, selectedNodes = [], selectedEdges = [], setNodes
                                 value: urlInput
                             })
                             break;
+                        case LinkTypes.DRAWING:
+                            newLinks.push({
+                                type: selectedLinkType,
+                                name: selectedDrawing?.Name,
+                                collectionId: selectedDrawing?.CollectionId,
+                                drawingId: selectedDrawing?.Id
+                            })
+                            break;
                         case LinkTypes.DOCUMENT:
                             newLinks.push({
                                 type: selectedLinkType,
@@ -193,6 +206,17 @@ const PropertyPanel = ({ nodes, selectedNodes = [], selectedEdges = [], setNodes
             })
         )
         setUrlInput('')
+    }
+
+    const onSelectDrawing = (e) => {
+        e.preventDefault();
+        setSelectedDrawing(JSON.parse(e.target.value));
+    }
+
+    const onClickDrawingRecord = (linkData) => {
+        const record = diagramData?.find(drawing => drawing.CollectionId === linkData?.collectionId && drawing.Id === linkData?.drawingId )
+
+        changeActiveTab(NAVIGATION_PAGES.CHART_DRAWING, record, true, record?.Name)
     }
 
     const onChangeTab = (tab) => {
@@ -821,15 +845,15 @@ const PropertyPanel = ({ nodes, selectedNodes = [], selectedEdges = [], setNodes
                         <div className={style.linkInputContainer}>
                             <Dropdown
                                 values={diagramData}
-                            // onChange={onChangeTextType}
-                            // dataName='label'
-                            // selected={JSON.stringify(textType)}
+                                onChange={onSelectDrawing}
+                                dataName='Name'
+                                selected={JSON.stringify(selectedDrawing)}
                             />
                         </div>
                         <button
                             className={style.linkAddBtn}
                             onClick={addNewLink}
-                            disabled={selectedNodes?.length !== 1 || !urlInput}
+                            disabled={selectedNodes?.length !== 1 || !selectedDrawing?.Name}
                         >Add
                         </button>
                         {selectedNodes?.[0]?.data?.links?.map((link, index) => {
@@ -837,7 +861,12 @@ const PropertyPanel = ({ nodes, selectedNodes = [], selectedEdges = [], setNodes
                                 return
                             return (
                                 <div key={index} className={style.linkItemContainer}>
-                                    <a href={link?.value} target="_blank" rel="noopener noreferrer" className={style.linkItem}>{link?.value}</a>
+                                    <div
+                                        className={style.linkItem}
+                                        onClick={() => onClickDrawingRecord(link)}
+                                    >
+                                        {link?.name}
+                                    </div>
                                     <i className="close-btn icon-close-small-x fr red" onClick={() => onRemoveLink(index)} />
                                 </div>
                             )
