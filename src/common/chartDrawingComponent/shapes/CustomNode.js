@@ -2,6 +2,7 @@ import React, { memo, useCallback, useEffect, useRef, useState } from 'react';
 import { useUpdateNodeInternals, NodeResizer, useStore } from 'reactflow';
 import { drag } from 'd3-drag';
 import { select } from 'd3-selection';
+import { PaperClipOutlined } from '@ant-design/icons';
 
 import { useNodeDataStore } from '../store'
 import Shapes from '../ShapesData.js';
@@ -164,6 +165,12 @@ function CustomNode({ id, selected, type, data }) {
             {markerType?.icon &&
                 <i className={markerType.icon + ' ' + style.activityIcon} style={{ top: size?.height / 50, left: size?.height / 50 }} />
             }
+            {data?.links?.length > 0 &&
+                <div className={style.activityIcon} style={{ top: size?.height / 50, right: size?.height / 50 }}>
+                    <PaperClipOutlined />
+                </div>
+            }
+
             {selected &&
                 <i className={style.nodeCloseBtn + " icon-close-small-x"} onClick={onDeleteNode} />
             }

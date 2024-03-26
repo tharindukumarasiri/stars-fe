@@ -293,9 +293,80 @@ div.customHandle2Bottom {
     background-color: #CCCCCC;
 }
 
-.referenceContainer {
+.linkContainer {
     display: flex;
     flex-direction: column;
+}
+
+.linkTabsContainer {
+    display: flex;
+    flex-direction: row;
+}
+
+.linkTabSelected {
+    border-top: solid 1px #999999;
+    border-left: solid 1px #999999;
+    border-right: solid 1px #999999;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 5px;
+}
+
+.linkTabNotSelected {
+    border-bottom: solid 1px #999999;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 5px;
+
+    &:hover {
+        cursor: pointer;
+    }
+}
+
+.linkContentContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border-bottom: solid 1px #999999;
+    border-left: solid 1px #999999;
+    border-right: solid 1px #999999;
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+    padding: 8px;
+}
+
+.linkInputContainer {
+    width: 100%;
+    margin-bottom: 8px;
+}
+
+.linkAddBtn {
+    max-width: 80px;
+    margin-bottom: 10px;
+}
+
+.linkItem {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: auto;
+    color: #0592D9;
+    text-decoration: underline;
+}
+
+.linkItemContainer {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+    padding: 8px;
 }
 
 .fontSizeContainer {

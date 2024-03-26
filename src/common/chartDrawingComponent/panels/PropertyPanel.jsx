@@ -27,13 +27,22 @@ import {
 import { useNodeDataStore } from '../store'
 import Dropdown from '../../dropdown';
 import CustomDropdown from '../../customDropdown';
+import { readFile } from '../utils';
+import { useDiagramStore } from '../../../Views/ChartDrawing/chartDrawingStore'
 
 import style from '../DndStyles.module.scss'
 
 const propertyCategories = {
     APPEARANCE: 'Appearance',
     LAYERS: 'Layers',
+    LINK: 'Link',
     REFERENCE: 'Reference'
+}
+
+const LinkTypes = {
+    URL: 'Url',
+    DRAWING: 'Drawing',
+    DOCUMENT: 'Document',
 }
 
 const colorPickerStyles = { right: 0, top: 80 };
@@ -42,6 +51,11 @@ const PropertyPanel = ({ nodes, selectedNodes = [], selectedEdges = [], setNodes
     const [sidebarVisible, setSidebarVisible] = useState(true);
     const [colorPickerVisible, setColorPickerVisible] = useState('')
     const [closedCategories, setClosedCategories] = useState([]);
+    const [urlInput, setUrlInput] = useState('');
+    const [uploadedFile, setUploadedFile] = useState('');
+    const [selectedLinkType, setSelectedLinkType] = useState(LinkTypes.URL);
+
+    const diagramData = useDiagramStore((state) => state.diagramData);
 
     const changeTextData = useNodeDataStore((state) => state.onTextChange);
     const selectedNodeId = useNodeDataStore((state) => state.selectedNodeId);
@@ -139,6 +153,70 @@ const PropertyPanel = ({ nodes, selectedNodes = [], selectedEdges = [], setNodes
             setColumnsCount(Number(number))
         }
     };
+
+    const handleLinkInput = (e) => {
+        e.preventDefault();
+        setUrlInput(e.target.value)
+    }
+
+    const addNewLink = () => {
+        setNodes((nodes) =>
+            nodes.map((node) => {
+                if (node.id === selectedNodes[0].id) {
+                    const newNode = { ...node }
+                    const newLinks = JSON.parse(JSON.stringify(node?.data?.links || []))
+
+                    switch (selectedLinkType) {
+                        case LinkTypes.URL:
+                            newLinks.push({
+                                type: selectedLinkType,
+                                value: urlInput
+                            })
+                            break;
+                        case LinkTypes.DOCUMENT:
+                            newLinks.push({
+                                type: selectedLinkType,
+                                file: uploadedFile,
+                                fileName: urlInput
+                            })
+                            break;
+                        default:
+                            break;
+                    }
+
+                    newNode.data = {
+                        ...node.data,
+                        links: newLinks
+                    }
+                    return newNode
+                } else return node
+            })
+        )
+        setUrlInput('')
+    }
+
+    const onChangeTab = (tab) => {
+        setSelectedLinkType(tab)
+    }
+
+    const onRemoveLink = (index) => {
+        setNodes((nodes) =>
+            nodes.map((node) => {
+                if (node.id === selectedNodes[0].id) {
+                    const newNode = { ...node }
+                    const newLinks = JSON.parse(JSON.stringify(node?.data?.links || []))
+
+                    newLinks?.splice(index, 1)
+
+                    newNode.data = {
+                        ...node.data,
+                        links: newLinks
+                    }
+                    return newNode
+                } else return node
+            })
+        )
+    }
 
     const handleCheckboxCLick = (e) => {
         e?.stopPropagation()
@@ -675,19 +753,128 @@ const PropertyPanel = ({ nodes, selectedNodes = [], selectedEdges = [], setNodes
         )
     }
 
-    const referenceContent = () => {
+    const linkContent = () => {
         return (
-            <div className={style.referenceContainer}>
-                <input type="radio" id="Link" name="Link" checked={true} onChange={() => { }} />{" "}
-                <label className="p-r-20 p-l-20 m-r-20 m-b-10" htmlFor="Link">
-                    Link
-                </label>
-                <input type="radio" id="Internal" name="Internal" checked={false} onChange={() => { }} />{" "}
-                <label className="p-r-20 p-l-20 m-r-20" htmlFor="Internal">
-                    Internal
-                </label>
+            <div className={style.linkContainer}>
+                <div className={style.linkTabsContainer}>
+                    {Object.values(LinkTypes).map(type => (
+                        <div
+                            className={selectedLinkType === type ? style.linkTabSelected : style.linkTabNotSelected}
+                            key={type}
+                            onClick={() => onChangeTab(type)}
+                        >
+                            {type}
+                        </div>
+                    ))}
+                </div>
+                <div className={style.linkContentContainer}>
+                    {linkTypeContent()}
+                </div>
             </div>
         )
+    }
+
+    const onFileChange = async (e) => {
+        if (e.target.files && e.target.files.length > 0) {
+            const file = e.target.files[0]
+            let fileDataUrl = await readFile(file)
+
+            setUrlInput(file?.name)
+            setUploadedFile(fileDataUrl)
+        }
+    }
+
+    const linkTypeContent = () => {
+        switch (selectedLinkType) {
+            case LinkTypes.URL:
+                return (
+                    <>
+                        <div className={style.linkInputContainer}>
+                            <input
+                                type="text"
+                                placeholder='Url (Eg: www.google.com)'
+                                value={urlInput}
+                                onChange={handleLinkInput}
+                            />
+                        </div>
+                        <button
+                            className={style.linkAddBtn}
+                            onClick={addNewLink}
+                            disabled={selectedNodes?.length !== 1 || !urlInput}
+                        >Add
+                        </button>
+                        {selectedNodes?.[0]?.data?.links?.map((link, index) => {
+                            if (link.type !== selectedLinkType)
+                                return
+                            return (
+                                <div key={index} className={style.linkItemContainer}>
+                                    <a href={link?.value} target="_blank" rel="noopener noreferrer" className={style.linkItem}>{link?.value}</a>
+                                    <i className="close-btn icon-close-small-x fr red" onClick={() => onRemoveLink(index)} />
+                                </div>
+                            )
+                        })}
+                    </>
+                );
+            case LinkTypes.DRAWING:
+                return (
+                    <>
+                        <div className={style.linkInputContainer}>
+                            <Dropdown
+                                values={diagramData}
+                            // onChange={onChangeTextType}
+                            // dataName='label'
+                            // selected={JSON.stringify(textType)}
+                            />
+                        </div>
+                        <button
+                            className={style.linkAddBtn}
+                            onClick={addNewLink}
+                            disabled={selectedNodes?.length !== 1 || !urlInput}
+                        >Add
+                        </button>
+                        {selectedNodes?.[0]?.data?.links?.map((link, index) => {
+                            if (link.type !== selectedLinkType)
+                                return
+                            return (
+                                <div key={index} className={style.linkItemContainer}>
+                                    <a href={link?.value} target="_blank" rel="noopener noreferrer" className={style.linkItem}>{link?.value}</a>
+                                    <i className="close-btn icon-close-small-x fr red" onClick={() => onRemoveLink(index)} />
+                                </div>
+                            )
+                        })}
+                    </>
+                );
+            case LinkTypes.DOCUMENT:
+                return (
+                    <>
+                        <input
+                            className={style.linkInputContainer}
+                            type="file" id="myFile" name="filename"
+                            onChange={onFileChange}
+                        />
+                        <button
+                            className={style.linkAddBtn}
+                            onClick={addNewLink}
+                            disabled={selectedNodes?.length !== 1 || !uploadedFile}
+                        >Add
+                        </button>
+                        {selectedNodes?.[0]?.data?.links?.map((link, index) => {
+                            if (link.type !== selectedLinkType)
+                                return
+
+                            return (
+                                <div key={index} className={style.linkItemContainer}>
+                                    <a href={link?.file} download={link?.fileName} className={style.linkItem}>{link?.fileName}</a>
+                                    <i className="close-btn icon-close-small-x fr red" onClick={() => onRemoveLink(index)} />
+                                </div>
+                            )
+                        })}
+                    </>
+                );
+            default:
+                return null
+
+        }
     }
 
     return (
@@ -731,14 +918,14 @@ const PropertyPanel = ({ nodes, selectedNodes = [], selectedEdges = [], setNodes
                             </div>
 
                             <div className='m-b-10' >
-                                <div className={style.sidebarCategoryheader} onClick={() => { onCategoryClick(propertyCategories.REFERENCE) }} >
-                                    <div>{propertyCategories.REFERENCE}</div>
-                                    <i className={(!closedCategories.includes(propertyCategories.REFERENCE) ? ' icon-arrow-down' : ' icon-arrow-up')} />
+                                <div className={style.sidebarCategoryheader} onClick={() => { onCategoryClick(propertyCategories.LINK) }} >
+                                    <div>{propertyCategories.LINK}</div>
+                                    <i className={(!closedCategories.includes(propertyCategories.LINK) ? ' icon-arrow-down' : ' icon-arrow-up')} />
                                 </div>
 
-                                {!closedCategories.includes(propertyCategories.REFERENCE) &&
+                                {!closedCategories.includes(propertyCategories.LINK) &&
                                     <div className={style.propertyPanelContainer}>
-                                        {referenceContent()}
+                                        {linkContent()}
                                     </div>
                                 }
                             </div>
