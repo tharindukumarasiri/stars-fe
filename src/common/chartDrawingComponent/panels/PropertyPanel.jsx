@@ -78,6 +78,12 @@ const PropertyPanel = ({ nodes, selectedNodes = [], selectedEdges = [], setNodes
     const borderColor = textdata?.borderColor || 'black'
     const setBorderColor = (value) => onTextChange({ borderColor: value })
 
+    const headerBackgroundColor = textdata?.headerBackgroundColor || '#a2a2a2'
+    const setHeaderBackgroundColor = (value) => onTextChange({ headerBackgroundColor: value })
+
+    const removeHeader = chartData?.removeHeader || false
+    const setRemoveHeader = (value) => onChangeChartData({ removeHeader: value })
+
     const textType = textdata?.textType || { label: 'Poppins', type: 'Poppins' }
     const setTextType = (value) => onTextChange({ textType: value })
 
@@ -101,6 +107,9 @@ const PropertyPanel = ({ nodes, selectedNodes = [], selectedEdges = [], setNodes
 
     const sectionBackgroundColor = chartData?.sectionBackgroundColor || '#EAEAEA'
     const setSectionBackgroundColor = (value) => onChangeChartData({ sectionBackgroundColor: value })
+
+    const sectionBorderColor = chartData?.sectionBorderColor || '#434343'
+    const setSectionBorderColor = (value) => onChangeChartData({ sectionBorderColor: value })
 
     const hideTools = chartData?.hideTools || false
     const setHideTools = (value) => onChangeChartData({ hideTools: value })
@@ -131,8 +140,10 @@ const PropertyPanel = ({ nodes, selectedNodes = [], selectedEdges = [], setNodes
     const showColorPicker = (picker) => setColorPickerVisible(picker)
     const onChangeBackgroundColor = (color) => setBackgroundColor(color?.rgb)
     const onMouseLeave = () => setColorPickerVisible('')
+    const onChangeHeaderBackgroundColor = (color) => setHeaderBackgroundColor(color?.rgb)
     const onChangeBorderColor = (color) => setBorderColor(color?.rgb)
     const onChangeSectionColor = (color) => setSectionBackgroundColor(color?.rgb)
+    const onChangeSectionBorderColor = (color) => setSectionBorderColor(color?.rgb)
     const onChangeTextBold = () => setBold(!textBold)
     const onChangeTextColor = (color) => setTextColor(color?.rgb)
     const onChangeMarker = (value) => setMarkerType(value)
@@ -214,7 +225,7 @@ const PropertyPanel = ({ nodes, selectedNodes = [], selectedEdges = [], setNodes
     }
 
     const onClickDrawingRecord = (linkData) => {
-        const record = diagramData?.find(drawing => drawing.CollectionId === linkData?.collectionId && drawing.Id === linkData?.drawingId )
+        const record = diagramData?.find(drawing => drawing.CollectionId === linkData?.collectionId && drawing.Id === linkData?.drawingId)
 
         changeActiveTab(NAVIGATION_PAGES.CHART_DRAWING, record, true, record?.Name)
     }
@@ -245,6 +256,11 @@ const PropertyPanel = ({ nodes, selectedNodes = [], selectedEdges = [], setNodes
     const handleCheckboxCLick = (e) => {
         e?.stopPropagation()
         setHideTools(e.target?.checked)
+    };
+
+    const handleRemoveHeaderCLick = (e) => {
+        e?.stopPropagation()
+        setRemoveHeader(e.target?.checked)
     };
 
     const onCategoryClick = (category) => {
@@ -520,7 +536,68 @@ const PropertyPanel = ({ nodes, selectedNodes = [], selectedEdges = [], setNodes
                     <>
                         <div className={style.appearanceRow}>
                             <div className={style.flex5}>
-                                Background
+                                Header Background
+                            </div>
+                            <div className={style.flex2} onClick={() => showColorPicker(colorPickerTypes.LINE)}>
+                                <div className={style.colorIcon} style={{ backgroundColor: getRgbaColor(headerBackgroundColor) }} />
+                                {colorPickerVisible === colorPickerTypes.LINE ?
+                                    <div className={style.sketchPickerContainer}>
+                                        <ColorPicker
+                                            color={headerBackgroundColor}
+                                            onChange={onChangeHeaderBackgroundColor}
+                                            onMouseLeave={onMouseLeave}
+                                            styles={colorPickerStyles}
+                                        />
+                                    </div> : null
+                                }
+                            </div>
+                            <div className={style.flex6}>
+                                <div className={style.hexCodeInput}>
+                                    {rgbToHex(headerBackgroundColor)}
+                                </div>
+                            </div>
+                        </div>
+                        <div className={style.appearanceRow}>
+                            <div className={style.flex5}>
+                                Header Border
+                            </div>
+                            <div className={style.flex2} onClick={() => showColorPicker(colorPickerTypes.HEADER_BORDER)}>
+                                <div className={style.colorIcon} style={{ backgroundColor: getRgbaColor(borderColor) }} />
+                                {colorPickerVisible === colorPickerTypes.HEADER_BORDER ?
+                                    <div className={style.sketchPickerContainer}>
+                                        <ColorPicker
+                                            color={borderColor}
+                                            onChange={onChangeBorderColor}
+                                            onMouseLeave={onMouseLeave}
+                                            styles={colorPickerStyles}
+                                        />
+                                    </div> : null
+                                }
+                            </div>
+                            <div className={style.flex6}>
+                                <div className={style.hexCodeInput}>
+                                    {rgbToHex(borderColor)}
+                                </div>
+                            </div>
+                        </div>
+                        <div className={style.appearanceRow}>
+                            <div className={style.flex5}>
+                                Remove Header
+                            </div>
+
+                            <div className={style.flex8}>
+                                <input type="checkbox" className="check-box m-l-10"
+                                    checked={removeHeader}
+                                    onChange={handleRemoveHeaderCLick}
+                                />
+                            </div>
+                        </div>
+
+                        <div className={style.separator} />
+
+                        <div className={style.appearanceRow}>
+                            <div className={style.flex5}>
+                                Matrix Background color
                             </div>
                             <div className={style.flex2} onClick={() => showColorPicker(colorPickerTypes.BACKGROUND)}>
                                 <div className={style.colorIcon} style={{ backgroundColor: getRgbaColor(backgroundColor) }} />
@@ -536,30 +613,12 @@ const PropertyPanel = ({ nodes, selectedNodes = [], selectedEdges = [], setNodes
                                 }
                             </div>
                             <div className={style.flex6}>
-                                <input className={style.hexCodeInput} type="text" value={rgbToHex(backgroundColor)} />
+                                <div className={style.hexCodeInput}>{rgbToHex(backgroundColor)}</div>
                             </div>
                         </div>
-                        <div className={style.appearanceRow}>
-                            <div className={style.flex5}>
-                                Title Background
-                            </div>
-                            <div className={style.flex2} onClick={() => showColorPicker(colorPickerTypes.LINE)}>
-                                <div className={style.colorIcon} style={{ backgroundColor: getRgbaColor(borderColor) }} />
-                                {colorPickerVisible === colorPickerTypes.LINE ?
-                                    <div className={style.sketchPickerContainer}>
-                                        <ColorPicker
-                                            color={borderColor}
-                                            onChange={onChangeBorderColor}
-                                            onMouseLeave={onMouseLeave}
-                                            styles={colorPickerStyles}
-                                        />
-                                    </div> : null
-                                }
-                            </div>
-                            <div className={style.flex6}>
-                                <input className={style.hexCodeInput} type="text" value={rgbToHex(borderColor)} />
-                            </div>
-                        </div>
+
+                        <div className={style.separator} />
+
                         <div className={style.appearanceRow}>
                             <div className={style.flex5}>
                                 Section Background
@@ -569,7 +628,7 @@ const PropertyPanel = ({ nodes, selectedNodes = [], selectedEdges = [], setNodes
                                 {colorPickerVisible === colorPickerTypes.SECTION_BG ?
                                     <div className={style.sketchPickerContainer}>
                                         <ColorPicker
-                                            color={borderColor}
+                                            color={sectionBackgroundColor}
                                             onChange={onChangeSectionColor}
                                             onMouseLeave={onMouseLeave}
                                             styles={colorPickerStyles}
@@ -578,9 +637,35 @@ const PropertyPanel = ({ nodes, selectedNodes = [], selectedEdges = [], setNodes
                                 }
                             </div>
                             <div className={style.flex6}>
-                                <input className={style.hexCodeInput} type="text" value={rgbToHex(sectionBackgroundColor)} />
+                                <div className={style.hexCodeInput} >
+                                    {rgbToHex(sectionBackgroundColor)}
+                                </div>
                             </div>
                         </div>
+                        <div className={style.appearanceRow}>
+                            <div className={style.flex5}>
+                                Section Border
+                            </div>
+                            <div className={style.flex2} onClick={() => showColorPicker(colorPickerTypes.SECTION_BORDER)}>
+                                <div className={style.colorIcon} style={{ backgroundColor: getRgbaColor(sectionBorderColor) }} />
+                                {colorPickerVisible === colorPickerTypes.SECTION_BORDER ?
+                                    <div className={style.sketchPickerContainer}>
+                                        <ColorPicker
+                                            color={sectionBorderColor}
+                                            onChange={onChangeSectionBorderColor}
+                                            onMouseLeave={onMouseLeave}
+                                            styles={colorPickerStyles}
+                                        />
+                                    </div> : null
+                                }
+                            </div>
+                            <div className={style.flex6}>
+                                <div className={style.hexCodeInput} >
+                                    {rgbToHex(sectionBorderColor)}
+                                </div>
+                            </div>
+                        </div>
+
                         <div className={style.appearanceRow}>
                             <div className={style.flex5}>
                                 Number of sections
@@ -599,6 +684,9 @@ const PropertyPanel = ({ nodes, selectedNodes = [], selectedEdges = [], setNodes
                                 </div>
                             </div>
                         </div>
+
+                        <div className={style.separator} />
+
                         <div className={style.appearanceRow}>
                             <div className={style.flex5}>
                                 Number of columns
@@ -650,7 +738,9 @@ const PropertyPanel = ({ nodes, selectedNodes = [], selectedEdges = [], setNodes
                                 }
                             </div>
                             <div className={style.flex6}>
-                                <input className={style.hexCodeInput} type="text" value={rgbToHex(backgroundColor)} />
+                                <div className={style.hexCodeInput} >
+                                    {rgbToHex(backgroundColor)}
+                                </div>
                             </div>
                         </div>
                         <div className={style.appearanceRow}>
@@ -671,7 +761,9 @@ const PropertyPanel = ({ nodes, selectedNodes = [], selectedEdges = [], setNodes
                                 }
                             </div>
                             <div className={style.flex4}>
-                                <input className={style.hexCodeInput} type="text" value={rgbToHex(borderColor)} />
+                                <div className={style.hexCodeInput}>
+                                    {rgbToHex(borderColor)}
+                                </div>
                             </div>
                             <div className={style.flex2}>
                                 <AlignCenterOutlined className={style.toolBarIcon} />

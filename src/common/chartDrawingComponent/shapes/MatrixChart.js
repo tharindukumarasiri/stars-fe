@@ -50,13 +50,16 @@ function MatrixChart({ id, selected, type, data }) {
     const sectionsCount = chartData?.sectionsCount || 1
     const hideTools = chartData?.hideTools || false
     const sectionBackgroundColor = getRgbaColor(chartData?.sectionBackgroundColor) || '#EAEAEA'
+    const sectionBorderColor = getRgbaColor(chartData?.sectionBorderColor) || '#434343'
 
     const columnsCount = chartData?.columnsCount || 1
     const setColumnsCount = (value) => onChangeChartData({ columnsCount: value })
 
     const textdata = useNodeDataStore((state) => state.textdata)?.find(item => item.id === id);
     const backgroundColor = getRgbaColor(textdata?.backgroundColor) || '#E7E7BF'
-    const borderColor = getRgbaColor(textdata?.borderColor) || '#d3d3d3'
+    const borderColor = getRgbaColor(textdata?.borderColor) || '#434343'
+    const headerBackgroundColor = getRgbaColor(textdata?.headerBackgroundColor) || '#d3d3d3'
+    const removeHeader = chartData?.removeHeader || false
 
     const fonstSize = Number(textdata?.fonstSize) || 8
     const textType = textdata?.textType || { label: 'Poppins', type: 'Poppins' }
@@ -227,22 +230,25 @@ function MatrixChart({ id, selected, type, data }) {
                 handleClassName={style.resizerHandleStyle}
             />
 
-            <div className={style.matrixChartHeader} style={{ backgroundColor: borderColor }}>
-                <textarea
-                    id="textarea"
-                    type="textarea"
-                    name="textarea"
-                    placeholder='Title'
-                    className={style.matrixChartHeaderText}
-                    value={chartData?.header}
-                    onChange={onChangeHeader}
-                    multiple
-                    style={textAreaStyle}
-                />
-            </div>
+            {!removeHeader &&
+                <div className={style.matrixChartHeader} style={{ backgroundColor: headerBackgroundColor, borderColor: borderColor }}>
+                    <textarea
+                        id="textarea"
+                        type="textarea"
+                        name="textarea"
+                        placeholder='Title'
+                        className={style.matrixChartHeaderText}
+                        value={chartData?.header}
+                        onChange={onChangeHeader}
+                        multiple
+                        style={textAreaStyle}
+                    />
+                </div>
+            }
+
             {sectionList.map((_, sectionIndex) => {
                 return (
-                    <div className={style.matrixChartSection} id={sectionIndex} style={{ backgroundColor: sectionBackgroundColor }}>
+                    <div className={style.matrixChartSection} id={sectionIndex} style={{ backgroundColor: sectionBackgroundColor, borderColor: sectionBorderColor }}>
                         {columnList.map((_, columnIndex) => {
                             const sectiondata = nodeData[sectionIndex] || [];
                             const rowsdata = sectiondata[columnIndex] || [];

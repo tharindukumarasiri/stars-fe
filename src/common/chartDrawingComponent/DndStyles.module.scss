@@ -678,8 +678,6 @@ div.customHandle2Bottom {
 .matrixChartHeader {
     border: solid 1px;
     margin-bottom: 10px;
-    background-color: #a2a2a2;
-    border-color: #434343;
 }
 
 .matrixChartHeaderText {
@@ -700,7 +698,6 @@ div.customHandle2Bottom {
     justify-content: space-around;
     flex-direction: row;
     border: solid 1px;
-    border-color: #434343;
     margin-bottom: 10px;
     padding-bottom: 10px;
 }
@@ -787,4 +784,10 @@ div.customHandle2Bottom {
 .matrixColumnActionRow {
     display: flex;
     flex-direction: row;
+}
+
+.separator {
+    height: 1px;
+    background-color: #434343;
+    margin-bottom: 10px;
 }
