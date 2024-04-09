@@ -85,7 +85,7 @@ const Projects = (props) => {
             cancelText: t('NO'),
 
             onOk() {
-                deleteProject(data, loggedUser.PartyId).then(() => {
+                deleteProject(data, loggedUser.Id).then(() => {
                     getAllProjects().then(result => {
                         setProjectsData(result);
                         message.success(t('MSG_DELETE_PROJECT_SUCCESS'));
@@ -115,7 +115,7 @@ const Projects = (props) => {
         } else {
             if (editData) {
 
-                updateProject(newProjectData, loggedUser.PartyId).then(() => {
+                updateProject(newProjectData, loggedUser.Id).then(() => {
                     getAllProjects().then(result => {
                         setProjectsData(result);
                         message.success(t('MSG_EDIT_PROJECT_SUCCESS'));
@@ -126,7 +126,7 @@ const Projects = (props) => {
                 })
             } else {
 
-                addNewProject(newProjectData, loggedUser.PartyId).then(() => {
+                addNewProject(newProjectData, loggedUser.Id).then(() => {
                     getAllProjects().then(result => {
                         setProjectsData(result);
                         message.success(t('MSG_CREATE_PROJECT_SUCCESS'));

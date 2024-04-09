@@ -103,7 +103,7 @@ const CommunicationBaskets = () => {
     const onDelete = (e, id) => {
         e.stopPropagation();
         setLoading(true);
-        const payload = [currentUser?.PartyId, id];
+        const payload = [currentUser?.Id, id];
 
         deleteCommunicationBasket(payload).then(() => {
             message.success(t('DELETE_SUCCESSFUL'));

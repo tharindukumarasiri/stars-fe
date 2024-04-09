@@ -52,7 +52,7 @@ const UserDetails = ({ props }) => {
         "CountryName": props?.CountryName,
         "IsActive": props?.IsActive,
         "PictureFileId": userImage,
-        "LoggedInUserPartyId": currentUser?.PartyId,
+        "LoggedInUserPartyId": currentUser?.Id,
         "UserPartyId": props?.UserPartyId
     }
 
@@ -101,7 +101,7 @@ const UserDetails = ({ props }) => {
                 cancelText: t("NO"),
                 onOk() {
                     setLoading(true);
-                    const userLisyPayload = [selectedCompany?.companyPartyId, currentUser?.PartyId, props?.UserId]
+                    const userLisyPayload = [selectedCompany?.companyPartyId, currentUser?.Id, props?.UserId]
 
                     deleteUser(userLisyPayload).then(() => {
                         message.success(t('DELETE_SUCCESSFUL'))
@@ -127,7 +127,7 @@ const UserDetails = ({ props }) => {
                 "RoleId": roleData?.RoleId,
                 "RoleName": roleData?.RoleName,
                 "CreatedUserPartyId": roleData?.CreatedUserPartyId,
-                "UserPartyId": currentUser?.PartyId,
+                "UserPartyId": currentUser?.Id,
                 "IsActive": false
             }
 
@@ -171,7 +171,7 @@ const UserDetails = ({ props }) => {
                 "RoleId": roleData?.RoleId,
                 "RoleName": roleData?.RoleName,
                 "CreatedUserPartyId": roleData?.CreatedUserPartyId,
-                "UserPartyId": currentUser?.PartyId,
+                "UserPartyId": currentUser?.Id,
                 "IsActive": false
             }
 
@@ -191,15 +191,15 @@ const UserDetails = ({ props }) => {
                 "EntityName": roleData?.EntityName,
                 "RoleId": roleData?.RoleId,
                 "RoleName": roleData?.RoleName,
-                "DeletedUserPartyId": currentUser?.PartyId,
-                "UserPartyId": currentUser?.PartyId,
+                "DeletedUserPartyId": currentUser?.Id,
+                "UserPartyId": currentUser?.Id,
                 "IsActive": false
             }
 
             newUpdateUserRoles.push(params);
             // }
 
-            newValue.DeletedUserPartyId = currentUser?.PartyId;
+            newValue.DeletedUserPartyId = currentUser?.Id;
             newValue.IsActive = false;
             newChecked.splice(index, 1, newValue);
             setChecked(newChecked);
@@ -272,7 +272,7 @@ const UserDetails = ({ props }) => {
                 const index = checked.findIndex(roleLoc => { return roleLoc?.EntityName === role?.EntityName && roleLoc?.RoleName === role?.RoleName })
                 const newValue = checked[index];
                 newValue.IsActive = false;
-                newValue.DeletedUserPartyId = currentUser?.PartyId;
+                newValue.DeletedUserPartyId = currentUser?.Id;
                 newChecked.splice(index, 1, newValue);
 
                 const params = {
@@ -281,8 +281,8 @@ const UserDetails = ({ props }) => {
                     "EntityName": role?.EntityName,
                     "RoleId": role?.RoleId,
                     "RoleName": role?.RoleName,
-                    "DeletedUserPartyId": currentUser?.PartyId,
-                    "UserPartyId": currentUser?.PartyId,
+                    "DeletedUserPartyId": currentUser?.Id,
+                    "UserPartyId": currentUser?.Id,
                     "IsActive": false
                 }
 

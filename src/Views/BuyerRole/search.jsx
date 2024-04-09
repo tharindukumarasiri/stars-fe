@@ -110,7 +110,7 @@ export default function Search(props) {
         FromDate: "",
         ToDate: "",
         Status: "",
-        ProjectTId: 0
+        ProjectId: 0
     });
     const [newSectionDataError, setNewSectionDataError] = useState({
         Project: "",
@@ -1230,7 +1230,7 @@ export default function Search(props) {
             FromDate: "",
             ToDate: "",
             Status: "",
-            ProjectTId: 0
+            ProjectId: 0
         })
     }
 
@@ -1279,7 +1279,7 @@ export default function Search(props) {
             setLoading(true)
             const newSectionDataUpdate = { ...newSectionData, ClosedDate: newSectionData.Status?.toUpperCase() === "CLOSE" ? moment().format('YYYY-MM-DD') : null };
 
-            addNewSection({ ...newSectionDataUpdate, ProjectTId: selectedProject?.Id }, props?.currentUser?.PartyId)
+            addNewSection({ ...newSectionDataUpdate, ProjectId: selectedProject?.Id }, props?.currentUser?.Id)
                 .then((result) => {
                     const saveResObj = getSaveResultData()
                     saveResObj.projectId = selectedProject?.Id
@@ -1350,7 +1350,7 @@ export default function Search(props) {
     const onCreateProject = () => {
         if (validateNewProject()) {
             setLoading(true)
-            addNewProject(newProjectData, props?.currentUser?.PartyId).then(() => {
+            addNewProject(newProjectData, props?.currentUser?.Id).then(() => {
                 getAllProjects().then(result => {
                     setProjectsData(result);
                     message.success(t('MSG_CREATE_PROJECT_SUCCESS'));

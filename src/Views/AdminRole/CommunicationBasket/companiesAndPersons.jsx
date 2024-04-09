@@ -318,7 +318,7 @@ const CompaniesPage = ({ basketId, countryList, currentUser, selectedCompany, up
                 "Company": selectedCompanyToUpdate?.companyData,
                 "CommunicationBasketId": basketId,
                 "SelectedCompanyPartyId": selectedCompany?.companyPartyId,
-                "UserPartyId": currentUser?.PartyId,
+                "UserPartyId": currentUser?.Id,
                 "IsReceiver": selectedCompanyToUpdate?.isReceiver
             }
 
@@ -338,7 +338,7 @@ const CompaniesPage = ({ basketId, countryList, currentUser, selectedCompany, up
                 "SelectedCompany": selectedCompanyToUpdate.companyData?.Company,
                 "CommunicationBasketId": basketId,
                 "CompanyPartyId": selectedCompany?.companyPartyId,
-                "UserPartyId": currentUser?.PartyId,
+                "UserPartyId": currentUser?.Id,
                 "IsReceiver": selectedCompanyToUpdate?.isReceiver
             }
 
@@ -370,7 +370,7 @@ const CompaniesPage = ({ basketId, countryList, currentUser, selectedCompany, up
                 "Company": selectedCompanyToUpdate?.companyData,
                 "CommunicationBasketId": basketId,
                 "SelectedCompanyPartyId": selectedCompany?.companyPartyId,
-                "UserPartyId": currentUser?.PartyId,
+                "UserPartyId": currentUser?.Id,
                 "IsReceiver": selectedCompanyToUpdate?.isReceiver
             }
 
@@ -390,7 +390,7 @@ const CompaniesPage = ({ basketId, countryList, currentUser, selectedCompany, up
                 "SelectedCompany": selectedCompanyToUpdate.companyData?.Company,
                 "CommunicationBasketId": basketId,
                 "CompanyPartyId": selectedCompany?.companyPartyId,
-                "UserPartyId": currentUser?.PartyId,
+                "UserPartyId": currentUser?.Id,
                 "IsReceiver": selectedCompanyToUpdate?.isReceiver
             }
 
@@ -708,7 +708,7 @@ const CompaniesPage = ({ basketId, countryList, currentUser, selectedCompany, up
                 "CountryTName": newCompaniesData.country?.Name,
                 "Email": newCompaniesData.email,
                 "Phone": newCompaniesData.phone,
-                "CreatedUserPartyId": currentUser?.PartyId
+                "CreatedUserPartyId": currentUser?.Id
             },
             "CommunicationBasketId": basketId,
             "SelectedCompanyPartyId": selectedCompany?.companyPartyId
@@ -730,7 +730,7 @@ const CompaniesPage = ({ basketId, countryList, currentUser, selectedCompany, up
             "EntityPartyId": selectedCompany?.companyPartyId,
             "EntityName": selectedCompany?.name,
             "CommunicationBasketId": basketId,
-            "UserPartyId": currentUser?.PartyId,
+            "UserPartyId": currentUser?.Id,
             "BasketReceivers": checkedCompaniesUsers
         }
 
@@ -1036,7 +1036,7 @@ const PersonsPage = ({ basketId, countryList, currentUser, selectedCompany, upda
             const params = {
                 "Person": selectedFieldToUpdate?.personData,
                 "CommunicationBasketId": basketId,
-                "UserPartyId": currentUser?.PartyId,
+                "UserPartyId": currentUser?.Id,
                 "IsReceiver": selectedFieldToUpdate?.isReceiver,
                 "CompanyPartyId": selectedCompany?.companyPartyId,
                 "SelectedCompany": null,
@@ -1063,7 +1063,7 @@ const PersonsPage = ({ basketId, countryList, currentUser, selectedCompany, upda
             //     "SelectedCompany": selectedCompanyToUpdate.companyData?.Company,
             //     "CommunicationBasketId": basketId,
             //     "CompanyPartyId": selectedCompany?.companyPartyId,
-            //     "UserPartyId": currentUser?.PartyId,
+            //     "UserPartyId": currentUser?.Id,
             //     "IsReceiver": selectedCompanyToUpdate?.isReceiver
             // }
 
@@ -1141,7 +1141,7 @@ const PersonsPage = ({ basketId, countryList, currentUser, selectedCompany, upda
             "EntityPartyId": selectedCompany?.companyPartyId,
             "EntityName": selectedCompany?.name,
             "CommunicationBasketId": basketId,
-            "UserPartyId": currentUser?.PartyId,
+            "UserPartyId": currentUser?.Id,
             "BasketReceivers": checkedPersonsCompanies
         }
 

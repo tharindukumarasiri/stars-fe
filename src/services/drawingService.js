@@ -21,8 +21,8 @@ export async function deleteCollection(userId, payload) {
     return data;
 }
 
-export async function getAllDrawings() {
-    const { data } = await http.get(config.GET_DRAWING_ITEMS);
+export async function getAllDrawings(collectionId) {
+    const { data } = await http.get(`${config.GET_DRAWING_ITEMS}${collectionId}`);
     return data;
 }
 
@@ -41,8 +41,8 @@ export async function deleteDrawing(userId, payload) {
     return data;
 }
 
-export async function getDrawingImages() {
-    const { data } = await http.get(config.GET_DRAWING_IMAGES);
+export async function getDrawingImages(userId) {
+    const { data } = await http.get(`${config.GET_DRAWING_IMAGES}${userId}`);
     return data;
 }
 

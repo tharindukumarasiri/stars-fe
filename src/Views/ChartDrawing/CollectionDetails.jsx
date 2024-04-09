@@ -32,6 +32,7 @@ const CollectionDetails = ({ props }) => {
     const collectionData = useDiagramStore((state) => state.collectionData);
     const filterdContacts = useDiagramStore((state) => state.filterdContacts);
     const editCollection = useDiagramStore((state) => state.editCollection);
+    const setCurrentCollectionId = useDiagramStore((state) => state.setCurrentCollectionId);
 
     const { t } = useTranslation();
 
@@ -46,6 +47,10 @@ const CollectionDetails = ({ props }) => {
         newCollection.Responsible = filterdContacts.find((contact) => contact.key === cuurentCollection?.Responsible);
         setNewCollectionData(newCollection)
     }, [cuurentCollection])
+
+    useEffect(() => {
+        setCurrentCollectionId(props.Id)
+    }, [props])
 
     const changeStateOfProject = (e) => {
         e.preventDefault();
@@ -245,7 +250,7 @@ const DrawingsList = ({ collectionId }) => {
     const { t } = useTranslation();
 
     useEffect(() => {
-        getDiagramData();
+        getDiagramData(collectionId);
         getUploadedImages();
     }, []);
 
@@ -399,7 +404,7 @@ const MembersView = (props) => {
         const options = response
             ? response.map((user) => {
                 return {
-                    key: user.PartyId,
+                    key: user.Id,
                     label: user.Name,
                     value: user.Name,
                     email: user.Email,
@@ -446,7 +451,7 @@ const MembersView = (props) => {
             Company: "",
             Status: "active",
             PartyId: "",
-            ProjectTId: projectId
+            ProjectId: projectId
         });
         setModalVisible(!modalVisible);
     };
@@ -461,7 +466,7 @@ const MembersView = (props) => {
 
     const deleteProjectMember = (member) => {
 
-        deleteMember(member, loggedUser.PartyId)
+        deleteMember(member, loggedUser.Id)
             .then(() => {
                 getMembers(props.id)
                     .then((result) => {
@@ -498,7 +503,7 @@ const MembersView = (props) => {
             ProjectTId: projectId
         };
 
-        addNewMember(member, loggedUser.PartyId)
+        addNewMember(member, loggedUser.Id)
             .then(() => {
                 getMembers(props.id)
                     .then((result) => {
@@ -532,7 +537,7 @@ const MembersView = (props) => {
         companyUsers.forEach((user) => {
             if (!searchText) {
                 filtered.push({
-                    key: user.PartyId,
+                    key: user.Id,
                     label: user.Name,
                     value: user.Name,
                     email: user.Email,
@@ -540,7 +545,7 @@ const MembersView = (props) => {
             }
             if (searchText && user.Name.toLowerCase().search(searchText.toLowerCase()) >= 0) {
                 filtered.push({
-                    key: user.PartyId,
+                    key: user.Id,
                     label: user.Name,
                     value: user.Name,
                     email: user.Email,

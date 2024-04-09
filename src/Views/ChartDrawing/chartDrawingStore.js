@@ -24,11 +24,13 @@ export const useDiagramStore = create((set, get) => ({
     currentUser: null,
     loading: false,
     collectionData: [],
+    currentCollectionId: '',
     diagramData: [],
     filterdContacts: [],
     uploadedImages: [],
 
     setCurrentUser: (user) => set({ currentUser: user }),
+    setCurrentCollectionId: (currentCollectionId) => set({currentCollectionId}),
     getContactsList: async () => {
         const response = await getContacts();
         const options = response ? response.map((user) => {
@@ -82,7 +84,7 @@ export const useDiagramStore = create((set, get) => ({
     },
     getDiagramData: () => {
         set({ loading: true })
-        getAllDrawings().then(result => {
+        getAllDrawings(get().currentCollectionId).then(result => {
             set({ diagramData: result })
         }).finally(() => set({ loading: false }));
     },
@@ -121,7 +123,7 @@ export const useDiagramStore = create((set, get) => ({
     },
     getUploadedImages: () => {
         set({ loading: true })
-        getDrawingImages().then(result => {
+        getDrawingImages(get().currentUser?.Id).then(result => {
             set({ uploadedImages: result })
         }).finally(() => set({ loading: false }));
     },

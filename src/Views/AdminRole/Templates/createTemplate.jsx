@@ -87,7 +87,7 @@ const CreateTemplate = ({ closeModal, getSavedTemplates, editTemplate }) => {
                     LanguageMessageTemplates: [],
                     Id: 0,
                     CreatedDateTime: new Date(),
-                    CreatedUserPartyId: currentUser?.PartyId,
+                    CreatedUserPartyId: currentUser?.Id,
                     DeletedDateTime: null,
                     DeletedUserPartyId: null,
                     IsDefault: isDefault,
@@ -125,7 +125,7 @@ const CreateTemplate = ({ closeModal, getSavedTemplates, editTemplate }) => {
                     console.log(err);
                 });
         } else {
-            insertMessageTemplates(currentUser?.PartyId, params)
+            insertMessageTemplates(currentUser?.Id, params)
                 .then((result) => {
                     getSavedTemplates();
                     message.success(t('MSG_TEMPLATE_SAVE'));

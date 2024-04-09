@@ -111,7 +111,7 @@ const Templates = () => {
             cancelText: t('NO'),
 
             onOk() {                
-                deleteMessageTemplate(record.Id, user.PartyId).then(() => {
+                deleteMessageTemplate(record.Id, user.Id).then(() => {
                     getSavedTemplates();
                     message.success(t('MSG_DELETE_TEMPLATE_SUCCESS'));
                 }).catch(() => {

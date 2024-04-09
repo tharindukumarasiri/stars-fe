@@ -85,7 +85,7 @@ const CommunicationBasketDetails = ({ props }) => {
         let dto = {
             EntityPartyId: selectedCompany.companyPartyId,
             EntityName: selectedCompany.name,
-            UserPartyId: currentUser?.PartyId,
+            UserPartyId: currentUser?.Id,
             BasketReceivers: [],
             MessageTemplateId: basketDetails.template ? basketDetails.template.Id : null,
         };

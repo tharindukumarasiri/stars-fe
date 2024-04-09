@@ -103,7 +103,7 @@ const AllUsers = (props) => {
             cancelText: t("NO"),
             onOk() {
                 setLoading(true);
-                const userLisyPayload = [selectedCompany?.companyPartyId, currentUser?.PartyId].concat(selectedUsers)
+                const userLisyPayload = [selectedCompany?.companyPartyId, currentUser?.Id].concat(selectedUsers)
 
                 deleteUser(userLisyPayload).then(() => {
                     message.success(t('DELETE_SUCCESSFUL'))
@@ -221,7 +221,7 @@ const AllUsers = (props) => {
     //         roles.forEach((role) => {
     //             const params = {
     //                 "EntityPartyId": client?.CompanyPartyId,
-    //                 "UserPartyId": currentUser?.PartyId,
+    //                 "UserPartyId": currentUser?.Id,
     //                 "UserId": currentUser?.Id,
     //                 "RoleId": role?.value,
     //                 "RoleName": role?.label,
@@ -247,7 +247,7 @@ const AllUsers = (props) => {
     //     if (firstIndex < 0) {
     //         const role = {
     //             "EntityPartyId": value?.CompanyPartyId,
-    //             "UserPartyId": currentUser?.PartyId,
+    //             "UserPartyId": currentUser?.Id,
     //             "UserId": currentUser?.Id,
     //             "RoleId": 1,
     //             "IsActive": !newUserData?.sendInvitation
@@ -272,7 +272,7 @@ const AllUsers = (props) => {
         if (e.target.checked) {
             const params = {
                 "EntityPartyId": selectedCompany?.companyPartyId,
-                "UserPartyId": currentUser?.PartyId,
+                "UserPartyId": currentUser?.Id,
                 "UserId": currentUser?.Id,
                 "RoleId": role?.Key,
                 "RoleName": role?.Value,
@@ -363,7 +363,7 @@ const AllUsers = (props) => {
                         "FirstName": newUserData.firstName,
                         "LastName": newUserData.lastName,
                         "PhoneNumber": newUserData.telephone,
-                        "CreatedUserPartyId": currentUser?.PartyId,
+                        "CreatedUserPartyId": currentUser?.Id,
                         "CountryId": currentUser?.CountryId,
                         "CountryCode": currentUser?.CountryCode,
                     }
@@ -388,7 +388,7 @@ const AllUsers = (props) => {
             const newSelectedRoles = JSON.parse(JSON.stringify(selecteduserRoles))
             const userRoleData = {
                 "EntityPartyId": selectedCompany?.companyPartyId,
-                "UserPartyId": currentUser?.PartyId,
+                "UserPartyId": currentUser?.Id,
                 "UserId": currentUser?.Id,
                 "RoleId": userRole?.Key,
                 "RoleName": userRole?.Value,
@@ -403,11 +403,11 @@ const AllUsers = (props) => {
                 "Email": newCreatedUserData?.Email,
                 "CountryId": newCreatedUserData?.CountryId,
                 "PictureFileId": '',
-                "LoggedInUserPartyId": currentUser?.PartyId,
+                "LoggedInUserPartyId": currentUser?.Id,
                 "UserRoles": newSelectedRoles,
                 // "IsSendEmail": true,
                 "IsActive": false,
-                "UserPartyId": newUserData?.PartyId,
+                "UserPartyId": newUserData?.Id,
                 "MessageTemplateId": newUserData?.template?.Id
             }
 

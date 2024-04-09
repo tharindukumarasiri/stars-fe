@@ -129,11 +129,11 @@
     "ADD_DRAWING_COLLECTIONS": "actionapi/DrawingCollections/Post?userId=",
     "UPDATE_DRAWING_COLLECTION": "actionapi/DrawingCollections/Put?userId=",
     "DELETE_DRAWING_COLLECTION": "actionapi/DrawingCollections/Delete?Id=",
-    "GET_DRAWING_ITEMS": "actionapi/DrawingItems/Get",
+    "GET_DRAWING_ITEMS": "actionapi/DrawingItems/GetDrawingsByCollectionId?collectionId=",
     "ADD_DRAWING_ITEM": "actionapi/DrawingItems/Post?userId=",
     "UPDATE_DRAWING_ITEM": "actionapi/DrawingItems/Put?userId=",
     "DELETE_DRAWING_ITEM": "actionapi/DrawingItems/Delete?Id=",
-    "GET_DRAWING_IMAGES": "actionapi/DrawingImages/Get",
+    "GET_DRAWING_IMAGES": "actionapi/DrawingImages/GetImagesByUserId?userId=",
     "ADD_DRAWING_IMAGE": "actionapi/DrawingImages/Post?userId="
 
 }

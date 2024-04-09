@@ -165,7 +165,7 @@ const TimeConfig = forwardRef((props, ref) => {
                             "FromDateTime": schedulingType !== schedulingTypes.IMMIDIATE ? oneTimeData.date : null,
                             "Time": schedulingType !== schedulingTypes.IMMIDIATE ? oneTimeData.time : null,
                             "BasketTypeId": schedulingType === schedulingTypes.IMMIDIATE ? 1 : 2,
-                            "UserPartyId": currentUser?.PartyId,
+                            "UserPartyId": currentUser?.Id,
                             "IsDeleteReceivers": oneTimeData.deleteReciver
                         }
                     }
@@ -182,7 +182,7 @@ const TimeConfig = forwardRef((props, ref) => {
                         "MessageTypeId": basketDetails?.template?.MessageTypeId,
                         "MessageMediumId": basketDetails?.template?.MessageMediumId,
                         "CompanyPartyId": selectedCompany?.companyPartyId,
-                        "UserPartyId": currentUser?.PartyId,
+                        "UserPartyId": currentUser?.Id,
                         "IsScheduled": true,
                     },
                     Time: formatDate(getShedulingParams().Time, 'HH.mm')

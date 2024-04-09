@@ -36,7 +36,7 @@ const ProjectDetails = ({ props, loggedUser }) => {
             setClosedDate(currentdate);
         }
         setStatus(e.target.value);
-        updateProject(newProjectData, loggedUser.PartyId )
+        updateProject(newProjectData, loggedUser.Id )
             .then(() => {
                 setStatus(e.target.value);
                 message.success(t('MSG_CHANGE_STATUS_SUCCESS'));
@@ -137,7 +137,7 @@ const SectionView = (props) => {
         Responsible: "",
         Status: "",
         ProjectId: 0,
-        ProjectTId: 0
+        ProjectId: 0
     });
     const [editData, setEditData] = useState(false);
     const {loggedUser} = props;
@@ -204,7 +204,7 @@ const SectionView = (props) => {
             return;
         } else {
             if (editData) {
-                updateSection(newSectionDataUpdate, loggedUser.PartyId)
+                updateSection(newSectionDataUpdate, loggedUser.Id)
                     .then(() => {
                         getSections(props.id)
                             .then((result) => {
@@ -220,7 +220,7 @@ const SectionView = (props) => {
                         message.error(t("MSG_SECTION_SAVE_FAIL"));
                     });
             } else {
-                addNewSection({ ...newSectionDataUpdate, ProjectTId: projectId }, loggedUser.PartyId)
+                addNewSection({ ...newSectionDataUpdate, ProjectId: projectId }, loggedUser.Id)
                     .then(() => {
                         getSections(props.id)
                             .then((result) => {
@@ -408,7 +408,7 @@ const MembersView = (props) => {
         const options = response
             ? response.map((user) => {
                 return {
-                    key: user.PartyId,
+                    key: user.Id,
                     label: user.Name,
                     value: user.Name,
                     email: user.Email,
@@ -462,7 +462,7 @@ const MembersView = (props) => {
             Company: "",
             Status: "active",
             PartyId: "",            
-            ProjectTId: projectId
+            ProjectId: projectId
         });
         setModalVisible(!modalVisible);
     };
@@ -477,7 +477,7 @@ const MembersView = (props) => {
 
     const deleteProjectMember = (member) => {       
 
-        deleteMember(member, loggedUser.PartyId)
+        deleteMember(member, loggedUser.Id)
             .then(() => {
                 getMembers(props.id)
                     .then((result) => {
@@ -511,10 +511,10 @@ const MembersView = (props) => {
             Email: selectedUser?.email,
             Company: selectedCompany.name,
             PartyId: selectedUser?.key,
-            ProjectTId: projectId
+            ProjectId: projectId
         };
                
-        addNewMember(member, loggedUser.PartyId)
+        addNewMember(member, loggedUser.Id)
                 .then(() => {
                     getMembers(props.id)
                         .then((result) => {
@@ -548,7 +548,7 @@ const MembersView = (props) => {
         companyUsers.forEach((user) => {
             if (!searchText) {
                 filtered.push({
-                    key: user.PartyId,
+                    key: user.Id,
                     label: user.Name,
                     value: user.Name,
                     email: user.Email,
@@ -556,7 +556,7 @@ const MembersView = (props) => {
             }
             if (searchText && user.Name.toLowerCase().search(searchText.toLowerCase()) >= 0) {
                 filtered.push({
-                    key: user.PartyId,
+                    key: user.Id,
                     label: user.Name,
                     value: user.Name,
                     email: user.Email,

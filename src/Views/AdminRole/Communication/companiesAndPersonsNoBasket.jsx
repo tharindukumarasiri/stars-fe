@@ -343,7 +343,7 @@ const CompaniesPage = ({ countryList, currentUser, selectedCompany, updateRecipi
             const params = {
                 Company: selectedCompanyToUpdate?.companyData,
                 SelectedCompanyPartyId: selectedCompany?.companyPartyId,
-                UserPartyId: currentUser?.PartyId,
+                UserPartyId: currentUser?.Id,
                 IsReceiver: selectedCompanyToUpdate?.isReceiver,
             };
 
@@ -364,7 +364,7 @@ const CompaniesPage = ({ countryList, currentUser, selectedCompany, updateRecipi
                 Person: selectedCompanyToUpdate.person,
                 SelectedCompany: selectedCompanyToUpdate.companyData?.Company,
                 CompanyPartyId: selectedCompany?.companyPartyId,
-                UserPartyId: currentUser?.PartyId,
+                UserPartyId: currentUser?.Id,
                 IsReceiver: selectedCompanyToUpdate?.isReceiver,
             };
 
@@ -397,7 +397,7 @@ const CompaniesPage = ({ countryList, currentUser, selectedCompany, updateRecipi
             const params = {
                 Company: selectedCompanyToUpdate?.companyData,
                 SelectedCompanyPartyId: selectedCompany?.companyPartyId,
-                UserPartyId: currentUser?.PartyId,
+                UserPartyId: currentUser?.Id,
                 IsReceiver: selectedCompanyToUpdate?.isReceiver,
             };
 
@@ -418,7 +418,7 @@ const CompaniesPage = ({ countryList, currentUser, selectedCompany, updateRecipi
                 Person: selectedCompanyToUpdate.person,
                 SelectedCompany: selectedCompanyToUpdate.companyData?.Company,
                 CompanyPartyId: selectedCompany?.companyPartyId,
-                UserPartyId: currentUser?.PartyId,
+                UserPartyId: currentUser?.Id,
                 IsReceiver: selectedCompanyToUpdate?.isReceiver,
             };
 
@@ -732,7 +732,7 @@ const CompaniesPage = ({ countryList, currentUser, selectedCompany, updateRecipi
                 CountryTName: newCompaniesData.country?.Name,
                 Email: newCompaniesData.email,
                 Phone: newCompaniesData.phone,
-                CreatedUserPartyId: currentUser?.PartyId,
+                CreatedUserPartyId: currentUser?.Id,
             },
             SelectedCompanyPartyId: selectedCompany?.companyPartyId,
         };
@@ -1024,7 +1024,7 @@ const PersonsPage = ({ countryList, currentUser, selectedCompany, updateRecipien
             const params = {
                 "Person": selectedFieldToUpdate?.personData,
                 "CommunicationBasketId": null,
-                "UserPartyId": currentUser?.PartyId,
+                "UserPartyId": currentUser?.Id,
                 "IsReceiver": selectedFieldToUpdate?.isReceiver,
                 "CompanyPartyId": selectedCompany?.companyPartyId,
                 "SelectedCompany": null,

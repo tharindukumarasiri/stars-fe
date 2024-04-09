@@ -165,7 +165,7 @@ const NewCommunication = (props) => {
         let dto = {
             EntityPartyId: selectedCompany.companyPartyId,
             EntityName: selectedCompany.name,
-            UserPartyId: currentUser?.PartyId,
+            UserPartyId: currentUser?.Id,
             BasketReceivers: [],
             MessageTemplateId: selectedTemplate ? selectedTemplate.Id : null,
             MessageSubject: templateSubject,
