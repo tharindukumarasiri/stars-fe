@@ -9,9 +9,11 @@ export const useNodeDataStore = create((set, get) => ({
     selectedArrowId: '',
     chartData: [],
     copiedNodes: [],
+    referenceModalId: '',
 
     setCurrentPage: (currentPage) => set({ currentPage }),
     setPagesData: (pagesData) => set({ pagesData }),
+    setReferenceModalId: (referenceModalId) => set({ referenceModalId }),
     setAllData: (size, textdata, chartData) => set({ size, textdata, chartData }),
     setSize: (id, size) => {
         const index = get().size.findIndex(item => item.id === id)

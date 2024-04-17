@@ -24,6 +24,7 @@ import CustomConnectionLine from './customElements/CustomConnectionLine';
 import Sidebar from './panels/Sidebar.jsx';
 import PropertyPanel from './panels/PropertyPanel.jsx';
 import ToolBar from './panels/ToolBar.jsx';
+import ReferenceModal from './panels/ReferenceModal.jsx';
 import ContextMenu from './customElements/ContextMenu.js';
 import { useNodeDataStore } from './store'
 
@@ -409,6 +410,7 @@ const DnDFlow = ({ props }) => {
                     setEdges={setEdges}
                 />
             </ReactFlowProvider>
+            <ReferenceModal />
         </div>
     );
 };

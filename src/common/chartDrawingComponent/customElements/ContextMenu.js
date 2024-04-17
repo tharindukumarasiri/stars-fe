@@ -14,6 +14,7 @@ export default function ContextMenu({ id, top, left, ...props }) {
     const setSize = useNodeDataStore((state) => state.setSize);
     const chartData = useNodeDataStore((state) => state.chartData).find(item => item.id === id);
     const changeChartData = useNodeDataStore((state) => state.setChartData);
+    const setReferenceModalId = useNodeDataStore((state) => state.setReferenceModalId);
 
     const duplicateNode = useCallback(() => {
         const node = getNode(id);
@@ -73,6 +74,10 @@ export default function ContextMenu({ id, top, left, ...props }) {
         setNodes(newNodes)
     }, [id, setNodes, getNode, getNodes]);
 
+    const openReferenceModal = () => {
+        setReferenceModalId(id)
+    }
+
 
     return (
         <div style={{ top, left }} className={style.canvasContextMenu} {...props}>
@@ -80,6 +85,7 @@ export default function ContextMenu({ id, top, left, ...props }) {
             <button onClick={deleteNode}>Delete</button>
             <button onClick={moveToBack}>Move to back</button>
             <button onClick={moveToFront}>Move to front</button>
+            <button onClick={openReferenceModal}>Reference</button>
         </div>
     );
 }

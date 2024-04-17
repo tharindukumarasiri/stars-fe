@@ -1,6 +1,6 @@
 import React from "react";
 import { formatDate, getDateDiff, getCountryFlag, projectCodeFormat } from "../utils"
-import { Badge, Tooltip } from "antd";
+import { Badge, Tooltip, Switch } from "antd";
 import logo_thumb from "../assets/images/logo_thumb.png";
 
 const t = (text) => text;
@@ -1371,5 +1371,50 @@ export const CollectionsTableHeaders = (t) => [
         render: (_, { CreatedDateTime }) => (
             formatDate(CreatedDateTime)
         ),
+    },
+]
+
+export const ContactPersonsTableHeaders = (t) => [
+    {
+        title: 'ID',
+        dataIndex: 'Id',
+        width: 130
+    },
+    {
+        title: 'Name',
+        dataIndex: 'Name',
+    },
+    {
+        title: 'Category',
+        dataIndex: 'CreatedDateTime',
+    },
+]
+
+export const SelectedContactPersonsTableHeaders = (t) => [
+    {
+        title: 'Table Id',
+        dataIndex: 'Id',
+        width: 130
+    },
+    {
+        title: 'Name',
+        dataIndex: 'Name',
+    },
+    {
+        title: 'Show',
+        dataIndex: 'CreatedDateTime',
+        render: (_, { CreatedDateTime }) => (
+            <div className="toggle-btn">
+                <Switch />
+            </div>
+        ),
+    },
+    {
+        title: 'API Source Code Name',
+        dataIndex: 'Name',
+    },
+    {
+        title: 'DB',
+        dataIndex: 'Name',
     },
 ]
