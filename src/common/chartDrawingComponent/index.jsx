@@ -155,23 +155,9 @@ const DnDFlow = ({ props }) => {
 
     const onChangePage = (index, isNewPage = false) => {
         const newPagesData = JSON.parse(JSON.stringify(pagesData))
-        newPagesData[currentPage] = {
-            ...newPagesData[currentPage],
-            nodes: nodes,
-            edges: edges,
-            nodesData: textdata,
-            nodeSizes: size,
-            chartData: chartData
-        }
+        newPagesData[currentPage] = { ...newPagesData[currentPage], nodes: nodes, edges: edges, nodesData: textdata, nodeSizes: size, chartData: chartData }
         if (isNewPage)
-            newPagesData.push({
-                nodes: [],
-                edges: [],
-                nodesData: [],
-                nodeSizes: [],
-                chartData: [],
-                pageName: `Page ${index + 1}`
-            });
+            newPagesData.push({ nodes: [], edges: [], nodesData: [], nodeSizes: [], chartData: [], pageName: `Page ${index + 1}` });
 
         setPagesData(newPagesData)
 
@@ -215,14 +201,7 @@ const DnDFlow = ({ props }) => {
 
     const getAllData = useCallback(() => {
         const newPagesData = JSON.parse(JSON.stringify(pagesData))
-        newPagesData[currentPage] = {
-            ...newPagesData[currentPage],
-            nodes: nodes,
-            edges: edges,
-            nodesData: textdata,
-            nodeSizes: size,
-            chartData: chartData
-        }
+        newPagesData[currentPage] = { ...newPagesData[currentPage], nodes: nodes, edges: edges, nodesData: textdata, nodeSizes: size, chartData: chartData }
         setPagesData(newPagesData)
         return newPagesData
     }, [nodes, edges, textdata, size, chartData]);

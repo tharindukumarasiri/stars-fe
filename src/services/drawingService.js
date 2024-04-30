@@ -1,8 +1,8 @@
 import config from './config.json'
 import http from './httpService'
 
-export async function getAllCollections() {
-    const { data } = await http.get(config.GET_DRAWING_COLLECTIONS);
+export async function getAllCollections(userId) {
+    const { data } = await http.get(`${config.GET_DRAWING_COLLECTIONS}${userId}`);
     return data;
 }
 

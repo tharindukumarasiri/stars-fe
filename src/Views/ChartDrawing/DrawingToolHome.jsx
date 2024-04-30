@@ -44,7 +44,6 @@ const newCollectionPayload = {
 
 const DrawingToolHome = () => {
     const loading = useDiagramStore((state) => state.loading);
-    const getCollectionData = useDiagramStore((state) => state.getCollectionData);
     const collectionData = useDiagramStore((state) => state.collectionData);
     const addCollection = useDiagramStore((state) => state.addCollection);
     const deleteCollection = useDiagramStore((state) => state.deleteCollection);
@@ -61,7 +60,6 @@ const DrawingToolHome = () => {
 
     useEffect(() => {
         getContactsList();
-        getCollectionData();
     }, [])
 
     const getResponsiblePerson = (ResponsiblePersonId) => {

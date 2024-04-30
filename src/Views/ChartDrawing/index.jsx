@@ -16,6 +16,7 @@ const ChartDrawing = ({ openTab = NAVIGATION_PAGES.DRAWING_TOOL_HOME }) => {
     const [params, setParams] = useState({})
 
     const setCurrentUser = useDiagramStore((state) => state.setCurrentUser);
+    const getCollectionData = useDiagramStore((state) => state.getCollectionData);
 
     const haveUnsavedDataRef = useRef(false);
     const shouldBeClosed = useRef({ state: false, tab: '' });
@@ -26,8 +27,11 @@ const ChartDrawing = ({ openTab = NAVIGATION_PAGES.DRAWING_TOOL_HOME }) => {
     const { t } = useTranslation();
 
     useEffect(() => {
-        if (currentUser?.Id)
-            setCurrentUser(currentUser);
+        if (currentUser?.Id){
+            setCurrentUser(currentUser).then(() => {
+                getCollectionData();
+            });
+        }
     }, [currentUser])
 
     const changeActiveTab = (tab, params = null, multiple = false, label) => {

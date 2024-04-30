@@ -29,7 +29,7 @@ export const useDiagramStore = create((set, get) => ({
     filterdContacts: [],
     uploadedImages: [],
 
-    setCurrentUser: (user) => set({ currentUser: user }),
+    setCurrentUser: async (user) => set({ currentUser: user }),
     setCurrentCollectionId: (currentCollectionId) => set({currentCollectionId}),
     getContactsList: async () => {
         const response = await getContacts();
@@ -45,7 +45,7 @@ export const useDiagramStore = create((set, get) => ({
     },
     getCollectionData: () => {
         set({ loading: true })
-        getAllCollections().then(result => {
+        getAllCollections(get().currentUser?.Id).then(result => {
             set({ collectionData: result })
         }).finally(() => set({ loading: false }));
     },

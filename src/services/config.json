@@ -125,7 +125,7 @@
     "ADD_MEMBER": "actionapi/ProjectMembers/AddMember?userId=",
     "DELETE_MEMBER": "actionapi/ProjectMembers/DeleteMember?userId=",
 
-    "GET_DRAWING_COLLECTIONS": "actionapi/DrawingCollections/Get",
+    "GET_DRAWING_COLLECTIONS": "actionapi/DrawingCollections/GetCollectionsByUserId?userId=",
     "ADD_DRAWING_COLLECTIONS": "actionapi/DrawingCollections/Post?userId=",
     "UPDATE_DRAWING_COLLECTION": "actionapi/DrawingCollections/Put?userId=",
     "DELETE_DRAWING_COLLECTION": "actionapi/DrawingCollections/Delete?Id=",
