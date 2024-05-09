@@ -1,25 +1,16 @@
-import { Fragment, useState } from "react";
-import uuid from "react-uuid";
+import { useState } from "react";
 import Nestable from "react-nestable";
-//Material UI Components
-import Grid from "@material-ui/core/Grid";
-import IconButton from "@material-ui/core/IconButton";
-import Tooltip from "@material-ui/core/Tooltip";
-//Icons
-import AddCircleOutlineOutlinedIcon from "@material-ui/icons/AddCircleOutlineOutlined";
-//Form Elements
-import {
-    TextFieldInput,
-    TextArea,
-    NumberInput,
-    RadioInput,
-    DateInput,
-    TimeInput,
-} from "./elements";
-import Layout from './elements/layout'
+import { HolderOutlined } from '@ant-design/icons';
+
 import { formEl } from "./constants.js";
-//Components
-import Header from "./Header";
+import Header from "./Header.jsx";
+import Input from '../../common/input'
+import Dropdown from '../dropdown.jsx';
+
+import style from './FormBuilder.module.scss'
+import 'react-nestable/dist/styles/index.css';
+
+const getId = (type) => `${type}_${+new Date()}`;
 
 const FormBuilder = () => {
     const initVal = formEl[0]?.value;
@@ -32,10 +23,20 @@ const FormBuilder = () => {
 
     const items = data;
 
+    const onChangeTitle = (e) => {
+        e.preventDefault()
+        setTitle(e.target.value)
+    }
+
+    const onChangeDescription = (e) => {
+        e.preventDefault()
+        setDescription(e.target.value)
+    }
+
     //Function to add new element
     const addElement = () => {
         const data = {
-            id: uuid(),
+            id: getId(formData),
             value: null,
             type: formData,
             required: false,
@@ -58,7 +59,7 @@ const FormBuilder = () => {
     const duplicateElement = (elId, elType) => {
         let elIdx = data.findIndex((el) => el.id === elId);
         let newEl = {
-            id: uuid(),
+            id: getId(formData),
             value: null,
             type: elType,
             required: false,
@@ -179,115 +180,60 @@ const FormBuilder = () => {
 
     //Render items
     const renderElements = ({ item }) => {
-        switch (item.type) {
-            case "text":
-                return (
-                    <TextFieldInput
-                        item={item}
-                        handleValue={handleValue}
-                        deleteEl={deleteEl}
-                        handleRequired={handleRequired}
-                        handleElType={handleElType}
-                        duplicateElement={duplicateElement}
-                    />
-                );
-            case "textarea":
-                return (
-                    <TextArea
-                        item={item}
-                        handleValue={handleValue}
-                        deleteEl={deleteEl}
-                        handleRequired={handleRequired}
-                        handleElType={handleElType}
-                        duplicateElement={duplicateElement}
-                    />
-                );
-            case "number":
-                return (
-                    <NumberInput
-                        item={item}
-                        handleValue={handleValue}
-                        deleteEl={deleteEl}
-                        handleRequired={handleRequired}
-                        handleElType={handleElType}
-                        duplicateElement={duplicateElement}
-                    />
-                );
-            case "radio":
-                return (
-                    <RadioInput
-                        item={item}
-                        handleValue={handleValue}
-                        deleteEl={deleteEl}
-                        handleRequired={handleRequired}
-                        handleElType={handleElType}
-                        addOption={addOption}
-                        handleOptionValues={handleOptionValues}
-                        deleteOption={deleteOption}
-                        duplicateElement={duplicateElement}
-                    />
-                );
-            case "date":
-                return (
-                    <DateInput
-                        item={item}
-                        handleValue={handleValue}
-                        deleteEl={deleteEl}
-                        handleRequired={handleRequired}
-                        handleElType={handleElType}
-                        handleDate={handleDate}
-                        duplicateElement={duplicateElement}
-                    />
-                );
-            case "time":
-                return (
-                    <TimeInput
-                        item={item}
-                        handleValue={handleValue}
-                        deleteEl={deleteEl}
-                        handleRequired={handleRequired}
-                        handleElType={handleElType}
-                        handleTime={handleTime}
-                        duplicateElement={duplicateElement}
-                    />
-                );
-            default:
-                return <Fragment></Fragment>;
-        }
+        return (
+            <div className={style.itemContainer}>
+                <div className={style.dragIndicatorContainer}>
+                    <HolderOutlined rotate={90} />
+                </div>
+                <div className={style.nameTypeRow}>
+                    <div className={style.nameContainer}>
+                        <Input
+                            placeholder="Question"
+                            value={''}
+                            onChange={setTitle}
+                        />
+                    </div>
+                    <Dropdown values={formEl} dataName="label" />
+                </div>
+                <div className={style.nameTypeRow}>
+                    <div className={style.nameContainer}>
+                        <Input
+                            value={''}
+                            placeholder="Text Input"
+                            disabled
+                            onChange={() => { }}
+                        />
+                    </div>
+                    <Dropdown placeholder="Logic" values={formEl} dataName="label" />
+                </div>
+
+            </div>
+        )
     };
 
     console.log(data);
 
     return (
-        <Fragment>
-            <Grid container spacing={1} direction="row" justifyContent="center">
-                <Grid item md={6}>
-                    <Header
-                        title={title}
-                        setTitle={setTitle}
-                        description={description}
-                        setDescription={setDescription}
-                    />
-                    <Nestable
-                        items={items}
-                        renderItem={renderElements}
-                        maxDepth={1}
-                        onChange={handleOnChangeSort}
-                    />
-                </Grid>
-                <Grid item md={1}>
-                    <Tooltip title="Add Element" aria-label="add-element">
-                        <IconButton
-                            aria-label="add-element"
-                            onClick={addElement}
-                            sx={{ position: "sticky", top: 30 }}
-                        >
-                            <AddCircleOutlineOutlinedIcon color="secondary" />
-                        </IconButton>
-                    </Tooltip>
-                </Grid>
-            </Grid>
-        </Fragment>
+        <div className={style.mainContainer}>
+            <div className={style.inputsContainer}>
+                <Header
+                    title={title}
+                    setTitle={onChangeTitle}
+                    description={description}
+                    setDescription={onChangeDescription}
+                />
+                <Nestable
+                    items={items}
+                    renderItem={renderElements}
+                    maxDepth={1}
+                    onChange={handleOnChangeSort}
+
+                />
+            </div>
+            <div className={style.BtnContainer}>
+                <button className="add-btn" onClick={addElement} >Add Element</button>
+            </div>
+        </div>
     );
 };
 export default FormBuilder;
