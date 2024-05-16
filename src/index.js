@@ -16,6 +16,7 @@ import SupplireRole from "./Views/SupplierRole";
 import SellerRole from "./Views/SellerRole";
 import AdminRole from "./Views/AdminRole";
 import ChartDrawing from "./Views/ChartDrawing";
+import Survey from "Views/Survey";
 
 import { NAVIGATION_PAGES } from './utils/enums';
 
@@ -53,6 +54,7 @@ const menuItems = [
     getItem('Users', '/users'),
     getItem('Templates', '/template'),
     getItem('Drawing Tool', '/drawing'),
+    getItem('Survey', '/Survey'),
 ];
 
 const AppRouter = () => {
@@ -68,6 +70,7 @@ const AppRouter = () => {
             <Route path='/users' element={<AdminRole openTab={NAVIGATION_PAGES.ALL_USERS} />} />
             <Route path='/template' element={<AdminRole openTab={NAVIGATION_PAGES.ADMIN_TEMPLATES} />} />
             <Route path='/drawing' element={<ChartDrawing openTab={NAVIGATION_PAGES.DRAWING_TOOL_HOME} />} />
+            <Route path='/Survey' element={<Survey openTab={NAVIGATION_PAGES.SURVEY_HOME} />} />
         </Routes>
     )
 }
@@ -81,7 +84,7 @@ const NavHeader = () => {
             theme="dark"
             mode="horizontal"
             defaultSelectedKeys={['/buyer']}
-            style={{ height: 50, flex: "auto", alignItems: 'center' }}
+            style={{ height: 50, flex: "auto", alignItems: 'center', backgroundColor: '#0592D9' }}
             selectedKeys={[location.pathname]}
             items={menuItems}
             onClick={({ key }) => {
@@ -111,7 +114,7 @@ const SideMenu = () => {
                 {collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
             </Button>
             <Menu
-                style={{ width: collapsed ? 48 : 250, flex: "auto" }}
+                style={{ width: collapsed ? 48 : 250, flex: "auto", backgroundColor: '#034F75' }}
                 onClick={({ key }) => {
                     navigate(key)
                 }}
@@ -130,7 +133,7 @@ const App = () => {
     return (
         <>
             <NavHeader />
-            <div style={{ display: 'flex', flexDirection: 'row' }} >
+            <div style={{ display: 'flex', flexDirection: 'row', height: 'calc(100vh - 50px)', backgroundColor: 'white' }} >
                 <SideMenu />
                 <AppRouter />
             </div>

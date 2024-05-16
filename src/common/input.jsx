@@ -9,7 +9,7 @@ const Input = ({ value, placeholder = '', onChange, lines = 1, endImage = '', di
         <div className="input-container flex-center-middle" >
             <div className={hintTextStyle}>{t(placeholder)}</div>
             {lines > 1 ?
-                <textarea rows={lines} placeholder={t(placeholder)} value={value} onChange={onChange} maxLength={maxLength} />
+                <textarea rows={lines} placeholder={t(placeholder)} value={value} onChange={onChange} maxLength={maxLength} disabled={disabled} className={disabled ? 'disable-div' : ''} />
                 : <input type="text" placeholder={t(placeholder)} value={value} onChange={onChange} disabled={disabled} maxLength={maxLength}
                     className={disabled ? 'disable-div' : ''} style={error ? { borderColor: 'red' } : {}} />
             }

@@ -54,6 +54,7 @@
     "react-easy-crop": "^4.7.4",
     "react-email-editor": "^1.6.1",
     "react-i18next": "^11.18.6",
+    "react-nestable": "^3.0.2",
     "react-refresh": "^0.11.0",
     "react-router-dom": "^6.3.0",
     "react-share": "^4.4.1",

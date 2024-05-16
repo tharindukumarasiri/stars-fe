@@ -1,18 +1,19 @@
 import { useState } from "react";
 import Nestable from "react-nestable";
-import { HolderOutlined } from '@ant-design/icons';
+import { HolderOutlined, DeleteOutlined, CopyOutlined } from '@ant-design/icons';
+import { Switch } from 'antd';
 
-import { formEl } from "./constants.js";
+import { getId } from "./utils.js";
+import { formEl, formCategories, formSubCategories } from "./constants.js";
 import Header from "./Header.jsx";
+import Element from "./element.jsx";
 import Input from '../../common/input'
 import Dropdown from '../dropdown.jsx';
 
 import style from './FormBuilder.module.scss'
 import 'react-nestable/dist/styles/index.css';
 
-const getId = (type) => `${type}_${+new Date()}`;
-
-const FormBuilder = () => {
+const FormBuilder = ({ screenContainerStyle }) => {
     const initVal = formEl[0]?.value;
 
     //State
@@ -36,7 +37,7 @@ const FormBuilder = () => {
     //Function to add new element
     const addElement = () => {
         const data = {
-            id: getId(formData),
+            id: getId(),
             value: null,
             type: formData,
             required: false,
@@ -56,13 +57,14 @@ const FormBuilder = () => {
     };
 
     //Function to duplicate element
-    const duplicateElement = (elId, elType) => {
-        let elIdx = data.findIndex((el) => el.id === elId);
+    const duplicateElement = (item) => {
+        let elIdx = data.findIndex((el) => el.id === item.id);
         let newEl = {
             id: getId(formData),
-            value: null,
-            type: elType,
-            required: false,
+            value: item?.value,
+            type: item.type,
+            required: item?.required,
+            options: item?.options
         }
         let newArr = addAfter(data, elIdx, newEl)
         setData(newArr)
@@ -122,23 +124,11 @@ const FormBuilder = () => {
         setData(newArr);
     };
 
-    //Function to Handle Date
-    const handleDate = (id, dateVal) => {
+    //Function to Handle Drop Down
+    const handleListData = (id, e) => {
         let newArr = data.map((el) => {
             if (el.id == id) {
-                return { ...el, date: dateVal };
-            } else {
-                return el;
-            }
-        });
-        setData(newArr);
-    };
-
-    //Function to Handle Time
-    const handleTime = (id, dateVal) => {
-        let newArr = data.map((el) => {
-            if (el.id == id) {
-                return { ...el, time: dateVal };
+                return { ...el, listData: e.target.value };
             } else {
                 return el;
             }
@@ -164,7 +154,7 @@ const FormBuilder = () => {
         setData(newArr);
     };
 
-    //Function to Delete Optin
+    //Function to Delete Option
     const deleteOption = (elId, optionId) => {
         let newArr = data.map((el) => {
             if (el.id == elId) {
@@ -189,51 +179,100 @@ const FormBuilder = () => {
                     <div className={style.nameContainer}>
                         <Input
                             placeholder="Question"
-                            value={''}
-                            onChange={setTitle}
+                            value={item.value || ''}
+                            onChange={(e) => handleValue(item.id, e)}
                         />
                     </div>
-                    <Dropdown values={formEl} dataName="label" />
+                    <Dropdown
+                        values={formEl}
+                        selected={item.type}
+                        onChange={(e) => handleElType(item.id, e.target.value)}
+                        dataName="label"
+                        valueName="value"
+                    />
                 </div>
                 <div className={style.nameTypeRow}>
-                    <div className={style.nameContainer}>
-                        <Input
-                            value={''}
-                            placeholder="Text Input"
-                            disabled
+                    <Element
+                        item={item}
+                        addOption={addOption}
+                        handleOptionValues={handleOptionValues}
+                        deleteOption={deleteOption}
+                        handleListData={handleListData}
+                    />
+                    <div className={style.hiddenElm}>
+                        <Dropdown
+                            values={formEl}
+                            selected={'text'}
                             onChange={() => { }}
+                            dataName="label"
                         />
                     </div>
-                    <Dropdown placeholder="Logic" values={formEl} dataName="label" />
+                </div>
+                <div className={`${style.nameTypeRow} m-t-20`}>
+                    <div className={style.optionsIcons}>
+                        <DeleteOutlined onClick={() => deleteEl(item.id)} />
+                    </div>
+                    <div className={style.optionsIcons}>
+                        <CopyOutlined onClick={() => duplicateElement(item)} />
+                    </div>
+                    <div className="toggle-btn">
+                        <Switch checked={item.required} onChange={() => handleRequired(item.id)} />
+                    </div>
+                    <div className="p-l-15">Required</div>
                 </div>
 
             </div>
         )
     };
 
-    console.log(data);
-
     return (
-        <div className={style.mainContainer}>
-            <div className={style.inputsContainer}>
-                <Header
-                    title={title}
-                    setTitle={onChangeTitle}
-                    description={description}
-                    setDescription={onChangeDescription}
+        <div className={screenContainerStyle ?? style.screenContainer} >
+            <div className={style.headerBarContainer}>
+                <div className={style.headerNameContainer}>
+                    <Input
+                        placeholder="Name"
+                    />
+                </div>
+                <Dropdown
+                    values={formCategories}
+                    placeholder='Category'
+                    dataName="label"
+                    valueName="value"
                 />
-                <Nestable
-                    items={items}
-                    renderItem={renderElements}
-                    maxDepth={1}
-                    onChange={handleOnChangeSort}
+                <Dropdown
+                    values={formSubCategories}
+                    placeholder="Sub Category"
+                    dataName="label"
+                    valueName="value"
+                />
+                <div>
+                    <button className={`add-btn m-r-20`} >Save</button>
 
-                />
+                    <button className={`secondary-btn`}  >Cancel</button>
+                </div>
+
             </div>
-            <div className={style.BtnContainer}>
-                <button className="add-btn" onClick={addElement} >Add Element</button>
+            <div className={style.mainContainer}>
+                <div className={style.inputsContainer}>
+                    <Header
+                        title={title}
+                        setTitle={onChangeTitle}
+                        description={description}
+                        setDescription={onChangeDescription}
+                    />
+                    <Nestable
+                        items={items}
+                        renderItem={renderElements}
+                        maxDepth={1}
+                        onChange={handleOnChangeSort}
+                    />
+                </div>
+                <div>
+                    <button className={`add-btn ${style.BtnContainer}`} onClick={addElement} >Add Element</button>
+                </div>
             </div>
         </div>
+
     );
 };
 export default FormBuilder;

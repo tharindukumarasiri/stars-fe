@@ -1418,3 +1418,27 @@ export const SelectedContactPersonsTableHeaders = (t) => [
         dataIndex: 'Name',
     },
 ]
+
+export const SurveyTableHeaders = [
+    {
+        title: 'Survey Id',
+        dataIndex: 'Id',
+        width: 130
+    },
+    {
+        title: 'Name',
+        dataIndex: 'Name',
+    },
+    {
+        title: 'Description',
+        dataIndex: 'CreatedDateTime',
+    },
+    {
+        title: 'Start Date',
+        dataIndex: 'Name',
+    },
+    {
+        title: 'End Date',
+        dataIndex: 'Name',
+    },
+]

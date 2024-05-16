@@ -1,7 +1,11 @@
 .mainContainer {
     display: flex;
     flex-direction: row;
-    margin-left: auto;
+    justify-content: center;
+}
+
+.screenContainer {
+    width: 95vw;
 }
 
 .inputsContainer {
@@ -12,7 +16,8 @@
 }
 
 .BtnContainer {
-    flex-shrink: 0;
+    position: sticky;
+    top: 40px;
 }
 
 .itemContainer {
@@ -20,6 +25,27 @@
     padding: 15px;
     margin-bottom: 20px;
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+.headerBarContainer {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    padding-top: 40px;
+    padding-bottom: 40px;
+    margin-bottom: 20px;
+    background-color: #E4EAEE;
+}
+
+.headerContainer {
+    margin-bottom: 20px;
+    padding-bottom: 10Px;
+    border-bottom: solid 1px black;
+}
+
+.headerNameContainer {
+    flex-grow: 1;
+    max-width: 400px;
 }
 
 .dragIndicatorContainer {
@@ -36,9 +62,48 @@
 .nameTypeRow {
     display: flex;
     flex-direction: row;
+    align-items: center;
 }
 
 .nameContainer {
     flex-grow: 1;
     padding-right: 20px;
+}
+
+.optionsIcons {
+    font-size: 20px;
+    color: #1178ac;
+    margin-right: 25px;
+
+    &:hover {
+        cursor: pointer;
+    }
+}
+
+.addOptionBtn {
+    font-size: 17px;
+    color: #2196F3;
+    font-weight: bold;
+
+    &:hover {
+        cursor: pointer;
+    }
+}
+
+.radioOptionContainer {
+    display: flex;
+    flex-direction: row;
+}
+
+.radioOption {
+    flex-grow: 1;
+    margin-right: 20px;
+}
+
+.dateTimePickerContainer {
+    width: 200px;
+}
+
+.hiddenElm {
+    visibility: hidden;
 }
