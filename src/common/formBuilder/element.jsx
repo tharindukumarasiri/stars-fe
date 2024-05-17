@@ -1,3 +1,4 @@
+import React from "react";
 import { DeleteOutlined } from '@ant-design/icons';
 
 import { getId } from "./utils.js";

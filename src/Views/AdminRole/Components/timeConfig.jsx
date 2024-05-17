@@ -165,7 +165,7 @@ const TimeConfig = forwardRef((props, ref) => {
                             "FromDateTime": schedulingType !== schedulingTypes.IMMIDIATE ? oneTimeData.date : null,
                             "Time": schedulingType !== schedulingTypes.IMMIDIATE ? oneTimeData.time : null,
                             "BasketTypeId": schedulingType === schedulingTypes.IMMIDIATE ? 1 : 2,
-                            "UserPartyId": currentUser?.Id,
+                            "UserId": currentUser?.Id,
                             "IsDeleteReceivers": oneTimeData.deleteReciver
                         }
                     }
@@ -181,8 +181,8 @@ const TimeConfig = forwardRef((props, ref) => {
                         "MessageTemplateId": basketDetails?.template?.Id,
                         "MessageTypeId": basketDetails?.template?.MessageTypeId,
                         "MessageMediumId": basketDetails?.template?.MessageMediumId,
-                        "CompanyPartyId": selectedCompany?.companyPartyId,
-                        "UserPartyId": currentUser?.Id,
+                        "CompanyPartyId": selectedCompany?.companyId,
+                        "UserId": currentUser?.Id,
                         "IsScheduled": true,
                     },
                     Time: formatDate(getShedulingParams().Time, 'HH.mm')
@@ -196,7 +196,7 @@ const TimeConfig = forwardRef((props, ref) => {
                     const basketParams = {
                         "PageSize": 10,
                         "PageCount": 1,
-                        "CompanyPartyId": selectedCompany?.companyPartyId
+                        "CompanyPartyId": selectedCompany?.companyId
                     }
                     getCommunicationBasketData(basketParams)
                 }).catch(() => {

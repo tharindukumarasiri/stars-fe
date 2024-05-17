@@ -39,11 +39,11 @@ const AllUsers = (props) => {
     }, [usersLoading]);
 
     useEffect(() => {
-        if (selectedCompany?.companyPartyId && users.length === 0) {
-            getMessageTemplatesNewUserInvitation(selectedCompany?.companyPartyId).then(result => {
+        if (selectedCompany?.companyId && users.length === 0) {
+            getMessageTemplatesNewUserInvitation(selectedCompany?.companyId).then(result => {
                 setSavedTemplates(result);
             })
-            getCommunicationEntitiesWithRoles(selectedCompany?.companyPartyId).then(result => {
+            getCommunicationEntitiesWithRoles(selectedCompany?.companyId).then(result => {
                 setExistingClients(result)
             })
             getUsersData();
@@ -61,7 +61,7 @@ const AllUsers = (props) => {
 
     const onActivate = () => {
         setLoading(true);
-        const userListPayload = [selectedCompany?.companyPartyId].concat(selectedUsers)
+        const userListPayload = [selectedCompany?.companyId].concat(selectedUsers)
 
         activateUsers(userListPayload).then(() => {
             message.success(t('MSG_USERS_ACTIVATED'));
@@ -74,7 +74,7 @@ const AllUsers = (props) => {
 
     const onDeActivate = () => {
         setLoading(true);
-        const userLisyPayload = [selectedCompany?.companyPartyId].concat(selectedUsers)
+        const userLisyPayload = [selectedCompany?.companyId].concat(selectedUsers)
 
         deActivateUsers(userLisyPayload).then(() => {
             message.success(t('MSG_USERS_DEACTIVATE_SUCESS'))
@@ -103,7 +103,7 @@ const AllUsers = (props) => {
             cancelText: t("NO"),
             onOk() {
                 setLoading(true);
-                const userLisyPayload = [selectedCompany?.companyPartyId, currentUser?.Id].concat(selectedUsers)
+                const userLisyPayload = [selectedCompany?.companyId, currentUser?.Id].concat(selectedUsers)
 
                 deleteUser(userLisyPayload).then(() => {
                     message.success(t('DELETE_SUCCESSFUL'))
@@ -221,7 +221,7 @@ const AllUsers = (props) => {
     //         roles.forEach((role) => {
     //             const params = {
     //                 "EntityPartyId": client?.CompanyPartyId,
-    //                 "UserPartyId": currentUser?.Id,
+    //                 "UserId": currentUser?.Id,
     //                 "UserId": currentUser?.Id,
     //                 "RoleId": role?.value,
     //                 "RoleName": role?.label,
@@ -247,7 +247,7 @@ const AllUsers = (props) => {
     //     if (firstIndex < 0) {
     //         const role = {
     //             "EntityPartyId": value?.CompanyPartyId,
-    //             "UserPartyId": currentUser?.Id,
+    //             "UserId": currentUser?.Id,
     //             "UserId": currentUser?.Id,
     //             "RoleId": 1,
     //             "IsActive": !newUserData?.sendInvitation
@@ -271,8 +271,8 @@ const AllUsers = (props) => {
         const newSelectedRoles = JSON.parse(JSON.stringify(selecteduserRoles))
         if (e.target.checked) {
             const params = {
-                "EntityPartyId": selectedCompany?.companyPartyId,
-                "UserPartyId": currentUser?.Id,
+                "EntityPartyId": selectedCompany?.companyId,
+                "UserId": currentUser?.Id,
                 "UserId": currentUser?.Id,
                 "RoleId": role?.Key,
                 "RoleName": role?.Value,
@@ -292,7 +292,7 @@ const AllUsers = (props) => {
     }
 
     const getCurrentCompanyRoles = () => {
-        const roles = existingClients?.find(client => client?.CompanyPartyId === selectedCompany?.companyPartyId)
+        const roles = existingClients?.find(client => client?.CompanyPartyId === selectedCompany?.companyId)
 
         return roles?.Roles.map(role => {
             return (
@@ -356,14 +356,14 @@ const AllUsers = (props) => {
             if (validateFields()) {
                 setLoading(true);
                 const params = {
-                    Key: selectedCompany?.companyPartyId,
+                    Key: selectedCompany?.companyId,
                     Value: {
                         "Email": newUserData.email,
                         "UserName": newUserData.email,
                         "FirstName": newUserData.firstName,
                         "LastName": newUserData.lastName,
                         "PhoneNumber": newUserData.telephone,
-                        "CreatedUserPartyId": currentUser?.Id,
+                        "CreatedUserId": currentUser?.Id,
                         "CountryId": currentUser?.CountryId,
                         "CountryCode": currentUser?.CountryCode,
                     }
@@ -383,12 +383,12 @@ const AllUsers = (props) => {
             }
         } else {
             setLoading(true)
-            const userRoles = existingClients?.find(client => client?.CompanyPartyId === selectedCompany?.companyPartyId)
+            const userRoles = existingClients?.find(client => client?.CompanyPartyId === selectedCompany?.companyId)
             const userRole = userRoles?.Roles?.find(role => role?.Value?.toUpperCase() === 'USER')
             const newSelectedRoles = JSON.parse(JSON.stringify(selecteduserRoles))
             const userRoleData = {
-                "EntityPartyId": selectedCompany?.companyPartyId,
-                "UserPartyId": currentUser?.Id,
+                "EntityPartyId": selectedCompany?.companyId,
+                "UserId": currentUser?.Id,
                 "UserId": currentUser?.Id,
                 "RoleId": userRole?.Key,
                 "RoleName": userRole?.Value,
@@ -403,11 +403,11 @@ const AllUsers = (props) => {
                 "Email": newCreatedUserData?.Email,
                 "CountryId": newCreatedUserData?.CountryId,
                 "PictureFileId": '',
-                "LoggedInUserPartyId": currentUser?.Id,
+                "LoggedInUserId": currentUser?.Id,
                 "UserRoles": newSelectedRoles,
                 // "IsSendEmail": true,
                 "IsActive": false,
-                "UserPartyId": newUserData?.Id,
+                "UserId": newUserData?.Id,
                 "MessageTemplateId": newUserData?.template?.Id
             }
 

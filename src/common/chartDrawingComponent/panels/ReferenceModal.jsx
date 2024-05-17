@@ -5,13 +5,15 @@ import { useNodeDataStore } from '../store'
 import Dropdown from '../../dropdown';
 import { ContactPersonsTableHeaders, SelectedContactPersonsTableHeaders } from "../../../utils/tableHeaders";
 import FormBuilder from "../../formBuilder";
+import { useDiagramStore } from '../../../Views/ChartDrawing/chartDrawingStore'
+
 import style from '../DndStyles.module.scss'
 
 const { TabPane } = Tabs
 
 const ReferenceTypes = [
     { id: 1, type: 'Work Instructions' },
-    { id: 2, type: 'Employees' },
+    { id: 2, type: 'Systems' },
     { id: 3, type: 'Forms' },
 ]
 
@@ -23,6 +25,8 @@ const Categories = [
 const ReferenceModal = () => {
     const referenceModalId = useNodeDataStore((state) => state.referenceModalId);
     const setReferenceModalId = useNodeDataStore((state) => state.setReferenceModalId);
+
+    const referenceData = useDiagramStore((state) => state.referenceData);
 
     const [dropdownSelected, setDropdownSelected] = useState({ RefType: undefined, category: undefined })
     const [newFormMode, setNewFormMode] = useState(false)
@@ -40,6 +44,19 @@ const ReferenceModal = () => {
         setDropdownSelected(pre => ({ ...pre, category: JSON.parse(e.target.value) }))
     }
 
+    const dataSource = () => {
+        switch (dropdownSelected?.RefType?.id) {
+            case 1:
+                return referenceData?.workInstructions
+            case 2:
+                return referenceData?.softwareSystems
+            default:
+                return []
+        }
+    }
+
+    if(!referenceModalId) return null
+
     return (
         <Modal
             title={newFormMode ? 'Set ”Form” as a Reference' : 'Reference'}
@@ -47,6 +64,7 @@ const ReferenceModal = () => {
             footer={[]}
             onCancel={closeModal}
             width={'95vw'}
+            height={'80vh'}
             centered={true}
             closeIcon={< i className='icon-close close-icon' />}>
             {newFormMode ?
@@ -86,13 +104,13 @@ const ReferenceModal = () => {
                         <div className="g-col-6">
                             <Table
                                 columns={ContactPersonsTableHeaders()}
-                                dataSource={[]}
+                                dataSource={dataSource()}
                                 pagination={false}
                             />
                         </div>
                         <div className="g-col-6">
                             <Tabs type="card">
-                                <TabPane tab="Contact Persons" key="1">
+                                <TabPane tab="Work Instructions" key="1">
                                     <div className="tablele-width">
                                         <Table
                                             columns={SelectedContactPersonsTableHeaders()}
@@ -101,7 +119,12 @@ const ReferenceModal = () => {
                                         />
                                     </div>
                                 </TabPane>
-                                <TabPane tab='Employees' key="2">
+                                <TabPane tab='Systems' key="2">
+                                    <div>
+
+                                    </div>
+                                </TabPane>
+                                <TabPane tab='Forms' key="3">
                                     <div>
 
                                     </div>

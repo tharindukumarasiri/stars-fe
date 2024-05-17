@@ -1,3 +1,5 @@
+import React from "react";
+
 import Input from '../../common/input'
 import style from './FormBuilder.module.scss'
 

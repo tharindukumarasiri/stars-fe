@@ -34,13 +34,13 @@ const NewCommunication = (props) => {
         setLoading(true);
 
         if (!props.showOnlyDefaultRecievers) {
-            GetCommunicationTemplatesByTenant(selectedCompany.companyPartyId, 1)
+            GetCommunicationTemplatesByTenant(selectedCompany.companyId, 1)
                 .then((result) => {
                     setTemplateList(result);
                 })
                 .finally(() => setLoading(false));
         } else {
-            GetCommunicationTemplatesByTenant(selectedCompany.companyPartyId, 2)
+            GetCommunicationTemplatesByTenant(selectedCompany.companyId, 2)
                 .then((result) => {
                     setTemplateList(result);
                 })
@@ -49,7 +49,7 @@ const NewCommunication = (props) => {
     };
 
     useEffect(() => {
-        if (selectedCompany && selectedCompany.companyPartyId) {
+        if (selectedCompany && selectedCompany.companyId) {
             getSavedTemplates();
         }
     }, [selectedCompany, props.showOnlyDefaultRecievers]);
@@ -163,9 +163,9 @@ const NewCommunication = (props) => {
 
     const sendNotifications = () => {
         let dto = {
-            EntityPartyId: selectedCompany.companyPartyId,
+            EntityPartyId: selectedCompany.companyId,
             EntityName: selectedCompany.name,
-            UserPartyId: currentUser?.Id,
+            UserId: currentUser?.Id,
             BasketReceivers: [],
             MessageTemplateId: selectedTemplate ? selectedTemplate.Id : null,
             MessageSubject: templateSubject,
@@ -176,7 +176,7 @@ const NewCommunication = (props) => {
             return {
                 CompanyPartyTId: r.CompanyPartyTId ? r.CompanyPartyTId : null,
                 PersonPartyTId: r.PersonPartyTId ? r.PersonPartyTId : null,
-                UserPartyId: null,
+                UserId: null,
                 Name: r.Name,
                 Email: r.Email,
                 IsReceiver: true
@@ -187,7 +187,7 @@ const NewCommunication = (props) => {
             return {
                 CompanyPartyTId: null,
                 PersonPartyTId: null,
-                UserPartyId: u.UserPartyId,
+                UserId: u.UserId,
                 Name: `${u.FirstName} ${u.LastName}`,
                 Email: u.Email,
                 IsReceiver: true

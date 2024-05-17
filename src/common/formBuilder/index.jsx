@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import Nestable from "react-nestable";
 import { HolderOutlined, DeleteOutlined, CopyOutlined } from '@ant-design/icons';
 import { Switch } from 'antd';
@@ -268,7 +268,7 @@ const FormBuilder = ({ screenContainerStyle }) => {
                     />
                 </div>
                 <div>
-                    <button className={`add-btn ${style.BtnContainer}`} onClick={addElement} >Add Element</button>
+                    <button className={`add-btn ${style.BtnContainer}`} onClick={addElement} >Add Question</button>
                 </div>
             </div>
         </div>

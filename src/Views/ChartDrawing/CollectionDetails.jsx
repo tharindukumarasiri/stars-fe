@@ -243,6 +243,7 @@ const DrawingsList = ({ collectionId }) => {
 
     const getDiagramData = useDiagramStore((state) => state.getDiagramData);
     const getUploadedImages = useDiagramStore((state) => state.getUploadedImages);
+    const getReferanceData = useDiagramStore((state) => state.getReferanceData);
     const diagramData = useDiagramStore((state) => state.diagramData);
     const addDiagram = useDiagramStore((state) => state.addDiagram);
     const deleteDiagram = useDiagramStore((state) => state.deleteDiagram);
@@ -252,6 +253,7 @@ const DrawingsList = ({ collectionId }) => {
     useEffect(() => {
         getDiagramData(collectionId);
         getUploadedImages();
+        getReferanceData();
     }, []);
 
     const tableHeaders = useMemo(() => {
@@ -309,7 +311,7 @@ const DrawingsList = ({ collectionId }) => {
             const payload = {
                 'CollectionId': collectionId,
                 'Name': newDrawingName,
-                'DrawingContent': null
+                'DrawingContent': 'null',
             }
             addDiagram(payload).then((response) => {
                 changeActiveTab(NAVIGATION_PAGES.CHART_DRAWING, response, true, newDrawingName)

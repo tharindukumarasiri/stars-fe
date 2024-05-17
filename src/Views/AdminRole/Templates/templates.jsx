@@ -45,8 +45,8 @@ const Templates = () => {
                         setModalVisible(true);
 
                     }}></i>
-                    { (selectedCompany.companyPartyId === record.CompanyPartyId 
-                        //|| (selectedCompany.companyPartyId !== record.CompanyPartyId && currentUser.roles.some(id => id === 1))
+                    { (selectedCompany.companyId === record.CompanyPartyId 
+                        //|| (selectedCompany.companyId !== record.CompanyPartyId && currentUser.roles.some(id => id === 1))
                         )
                      && <i className="icon-delete table-icon" onClick={(e) => {
                         e.stopPropagation();
@@ -66,17 +66,17 @@ const Templates = () => {
 
         setLoading(true);
         
-        getTenantMessageTemplates(selectedCompany.companyPartyId, constants.templateType.Notification, ntCurrentPageNo, pageSize).then(result => {
+        getTenantMessageTemplates(selectedCompany.companyId, constants.templateType.Notification, ntCurrentPageNo, pageSize).then(result => {
             setNotificationTemplates(result.Value);
             setntTotal(result.Key);
         }).catch(() => setLoading(false))
 
-        getTenantMessageTemplates(selectedCompany.companyPartyId, constants.templateType.LandingPage, lpCurrentPageNo, pageSize).then(result => {
+        getTenantMessageTemplates(selectedCompany.companyId, constants.templateType.LandingPage, lpCurrentPageNo, pageSize).then(result => {
             setLandingPageTemplates(result.Value);
             setlpTotal(result.Key)
         }).catch(() => setLoading(false))
 
-        getTenantMessageTemplates(selectedCompany.companyPartyId, constants.templateType.Communication, bdCurrentPageNo, pageSize).then(result => {
+        getTenantMessageTemplates(selectedCompany.companyId, constants.templateType.Communication, bdCurrentPageNo, pageSize).then(result => {
             setCommunicationTemplates(result.Value);
             setbdTotal(result.Key);
         }).catch(() => setLoading(false))
@@ -85,7 +85,7 @@ const Templates = () => {
     }
 
     useEffect(() => {
-        if (selectedCompany && selectedCompany.companyPartyId) {
+        if (selectedCompany && selectedCompany.companyId) {
             getSavedTemplates();
         }
 

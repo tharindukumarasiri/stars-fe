@@ -32,8 +32,8 @@ export async function getCommunicationEntities() {
     return data;
 }
 
-export async function getCommunicationEntitiesWithRoles(companyPartyId) {
-    const { data } = await http.get(`${config.GET_COMMUNICATION_ENTITIES_WITH_ROLES}${companyPartyId}`);
+export async function getCommunicationEntitiesWithRoles(companyId) {
+    const { data } = await http.get(`${config.GET_COMMUNICATION_ENTITIES_WITH_ROLES}${companyId}`);
     return data;
 }
 
@@ -87,13 +87,13 @@ export async function deleteCommunicationBasket(params) {
     return data;
 }
 
-export async function getCompanies(basketId = '', companyPartyId, searchText = '', triggerPointId = '' ) {
-    const { data } = await http.get(`${config.GET_COMPANIES}${companyPartyId}&communicationBasketId=${basketId}&searchText=${searchText}&triggerPointId=${triggerPointId}`);
+export async function getCompanies(basketId = '', companyId, searchText = '', triggerPointId = '' ) {
+    const { data } = await http.get(`${config.GET_COMPANIES}${companyId}&communicationBasketId=${basketId}&searchText=${searchText}&triggerPointId=${triggerPointId}`);
     return data;
 }
 
-export async function getAllCompanies(companyPartyId, searchText = '', pageNumber = 0, pageSize = 10 ) {
-    const { data } = await http.get(`${config.GET_ALL_COMPANIES}${companyPartyId}`);
+export async function getAllCompanies(companyId, searchText = '', pageNumber = 0, pageSize = 10 ) {
+    const { data } = await http.get(`${config.GET_ALL_COMPANIES}${companyId}`);
     return data;
 }
 
@@ -107,8 +107,8 @@ export async function updateCompany(params) {
     return data;
 }
 
-export async function getPersons(companyPartyId, communicationBasketId = '', messageTemplateId = '', searchText = '', pageNumber = 0, pageSize = 10 ) {
-    const { data } = await http.get(`${config.GET_PERSONS}${companyPartyId}&communicationBasketId=${communicationBasketId}&messageTemplateId=${messageTemplateId}`);
+export async function getPersons(companyId, communicationBasketId = '', messageTemplateId = '', searchText = '', pageNumber = 0, pageSize = 10 ) {
+    const { data } = await http.get(`${config.GET_PERSONS}${companyId}&communicationBasketId=${communicationBasketId}&messageTemplateId=${messageTemplateId}`);
     return data;
 }
 

@@ -33,7 +33,7 @@ const UserDetails = ({ props }) => {
     useEffect(() => {
         const curentUserData = users.find(usr => usr?.UserId === props?.UserId)
         const newChecked = curentUserData?.UserRoles?.map(role => {
-            return { ...role, disabled: role?.DeletedUserPartyId === null && role?.IsActive === false }
+            return { ...role, disabled: role?.DeletedUserId === null && role?.IsActive === false }
         })
         curentUser = curentUserData
         setChecked(newChecked)
@@ -52,8 +52,8 @@ const UserDetails = ({ props }) => {
         "CountryName": props?.CountryName,
         "IsActive": props?.IsActive,
         "PictureFileId": userImage,
-        "LoggedInUserPartyId": currentUser?.Id,
-        "UserPartyId": props?.UserPartyId
+        "LoggedInUserId": currentUser?.Id,
+        "UserId": props?.UserId
     }
 
     useEffect(() => {
@@ -67,7 +67,7 @@ const UserDetails = ({ props }) => {
             setLoading(true)
             setStatus(e.target.value);
 
-            activateUsers([selectedCompany?.companyPartyId, props?.UserId]).then(() => {
+            activateUsers([selectedCompany?.companyId, props?.UserId]).then(() => {
                 message.success(t('MSG_USERS_ACTIVATED'));
                 getUsersData();
                 setLoading(false)
@@ -79,7 +79,7 @@ const UserDetails = ({ props }) => {
             setLoading(true)
             setStatus(e.target.value);
 
-            deActivateUsers([selectedCompany?.companyPartyId, props?.UserId]).then(() => {
+            deActivateUsers([selectedCompany?.companyId, props?.UserId]).then(() => {
                 message.success(t('MSG_USERS_DEACTIVATE_SUCESS'))
                 getUsersData();
                 setLoading(false)
@@ -101,7 +101,7 @@ const UserDetails = ({ props }) => {
                 cancelText: t("NO"),
                 onOk() {
                     setLoading(true);
-                    const userLisyPayload = [selectedCompany?.companyPartyId, currentUser?.Id, props?.UserId]
+                    const userLisyPayload = [selectedCompany?.companyId, currentUser?.Id, props?.UserId]
 
                     deleteUser(userLisyPayload).then(() => {
                         message.success(t('DELETE_SUCCESSFUL'))
@@ -126,8 +126,8 @@ const UserDetails = ({ props }) => {
                 "EntityName": roleData?.EntityName,
                 "RoleId": roleData?.RoleId,
                 "RoleName": roleData?.RoleName,
-                "CreatedUserPartyId": roleData?.CreatedUserPartyId,
-                "UserPartyId": currentUser?.Id,
+                "CreatedUserId": roleData?.CreatedUserId,
+                "UserId": currentUser?.Id,
                 "IsActive": false
             }
 
@@ -138,7 +138,7 @@ const UserDetails = ({ props }) => {
             const newChecked = JSON.parse(JSON.stringify(checked));
             const index = checked.findIndex(role => { return roleData?.EntityName === role?.EntityName && roleData?.RoleName === role?.RoleName })
             const newValue = checked[index];
-            newValue.DeletedUserPartyId = null;
+            newValue.DeletedUserId = null;
             newValue.disabled = false;
             newChecked.splice(index, 1, newValue);
             setChecked(newChecked);
@@ -170,8 +170,8 @@ const UserDetails = ({ props }) => {
                 "EntityName": roleData?.EntityName,
                 "RoleId": roleData?.RoleId,
                 "RoleName": roleData?.RoleName,
-                "CreatedUserPartyId": roleData?.CreatedUserPartyId,
-                "UserPartyId": currentUser?.Id,
+                "CreatedUserId": roleData?.CreatedUserId,
+                "UserId": currentUser?.Id,
                 "IsActive": false
             }
 
@@ -179,7 +179,7 @@ const UserDetails = ({ props }) => {
             // }
 
             //Update check boxes state
-            newValue.DeletedUserPartyId = null;
+            newValue.DeletedUserId = null;
             newValue.disabled = false;
             newValue.IsActive = true;
             newChecked.splice(index, 1, newValue);
@@ -191,15 +191,15 @@ const UserDetails = ({ props }) => {
                 "EntityName": roleData?.EntityName,
                 "RoleId": roleData?.RoleId,
                 "RoleName": roleData?.RoleName,
-                "DeletedUserPartyId": currentUser?.Id,
-                "UserPartyId": currentUser?.Id,
+                "DeletedUserId": currentUser?.Id,
+                "UserId": currentUser?.Id,
                 "IsActive": false
             }
 
             newUpdateUserRoles.push(params);
             // }
 
-            newValue.DeletedUserPartyId = currentUser?.Id;
+            newValue.DeletedUserId = currentUser?.Id;
             newValue.IsActive = false;
             newChecked.splice(index, 1, newValue);
             setChecked(newChecked);
@@ -218,8 +218,8 @@ const UserDetails = ({ props }) => {
                 <div className="user-details-pannerl-container">
                     {checked?.map((role) => {
                         // const isChecked = checked.find(check => { return check?.EntityName === role?.EntityName && check?.RoleName === role?.RoleName })?.IsActive
-                        const isChecked = role?.DeletedUserPartyId === null && role?.IsActive !== null
-                        const isDisabled = role?.DeletedUserPartyId === null && curentUser?.UserRoles?.find(usrRole => { return usrRole?.EntityPartyId === role?.EntityPartyId && usrRole?.RoleId === role?.RoleId })?.IsActive === false
+                        const isChecked = role?.DeletedUserId === null && role?.IsActive !== null
+                        const isDisabled = role?.DeletedUserId === null && curentUser?.UserRoles?.find(usrRole => { return usrRole?.EntityPartyId === role?.EntityPartyId && usrRole?.RoleId === role?.RoleId })?.IsActive === false
 
                         return (
                             <div className={`user-details-item ${role?.RoleName?.toUpperCase() === 'USER' && 'disable-div'}`}>
@@ -272,7 +272,7 @@ const UserDetails = ({ props }) => {
                 const index = checked.findIndex(roleLoc => { return roleLoc?.EntityName === role?.EntityName && roleLoc?.RoleName === role?.RoleName })
                 const newValue = checked[index];
                 newValue.IsActive = false;
-                newValue.DeletedUserPartyId = currentUser?.Id;
+                newValue.DeletedUserId = currentUser?.Id;
                 newChecked.splice(index, 1, newValue);
 
                 const params = {
@@ -281,8 +281,8 @@ const UserDetails = ({ props }) => {
                     "EntityName": role?.EntityName,
                     "RoleId": role?.RoleId,
                     "RoleName": role?.RoleName,
-                    "DeletedUserPartyId": currentUser?.Id,
-                    "UserPartyId": currentUser?.Id,
+                    "DeletedUserId": currentUser?.Id,
+                    "UserId": currentUser?.Id,
                     "IsActive": false
                 }
 

@@ -19,19 +19,19 @@ export async function getMessageTemplates() {
     return data;
 }
 
-export async function getMessageTemplatesNewUserInvitation(companyPartyId) {
-    const { data } = await http.get(`${config.GET_MESSAGE_TEMPLATE_NEW_USER_INVITATION}${companyPartyId}`);
+export async function getMessageTemplatesNewUserInvitation(companyId) {
+    const { data } = await http.get(`${config.GET_MESSAGE_TEMPLATE_NEW_USER_INVITATION}${companyId}`);
     return data;
 }
 
-export async function getTenantMessageTemplates(companyPartyId, type, pageNo = 0, pageSize = 100) {
-    const { data } = await http.get(config.GET_TENANT_MESSAGE_TEMPLATE + companyPartyId + 
+export async function getTenantMessageTemplates(companyId, type, pageNo = 0, pageSize = 100) {
+    const { data } = await http.get(config.GET_TENANT_MESSAGE_TEMPLATE + companyId + 
                                      "&pageNo=" + pageNo + "&pageSize=" + pageSize + "&messageTemplateTypeId=" + type);
     return data;
 }
 
 export async function deleteMessageTemplate(id, userId) {
-    const { data } = await http.delete(config.DELETE_TENANT_MESSAGE_TEMPLATE + id + "&userPartyId=" + userId);
+    const { data } = await http.delete(config.DELETE_TENANT_MESSAGE_TEMPLATE + id + "&userId=" + userId);
     return data;
 }
 
@@ -40,7 +40,7 @@ export async function getTriggerPoints(type) {
     return data;
 }
 
-export async function GetCommunicationTemplatesByTenant(companyPartyId, type){
-    const { data } = await http.get(config.GET_TENANT_COMMUNICATION_TEMPLATES + "?companyPartyId=" + companyPartyId + "&path=" + type );
+export async function GetCommunicationTemplatesByTenant(companyId, type){
+    const { data } = await http.get(config.GET_TENANT_COMMUNICATION_TEMPLATES + "?companyId=" + companyId + "&path=" + type );
     return data;
 }

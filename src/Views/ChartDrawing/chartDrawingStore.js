@@ -9,7 +9,9 @@ import {
     deleteDrawing,
     updateDrawing,
     getDrawingImages,
-    addNewDrawingImage
+    addNewDrawingImage,
+    getWorkInstructions,
+    getSoftwareSystems
 } from "../../services/drawingService";
 import { getContacts } from "../../services/userService";
 
@@ -28,9 +30,10 @@ export const useDiagramStore = create((set, get) => ({
     diagramData: [],
     filterdContacts: [],
     uploadedImages: [],
+    referenceData: {},
 
     setCurrentUser: async (user) => set({ currentUser: user }),
-    setCurrentCollectionId: (currentCollectionId) => set({currentCollectionId}),
+    setCurrentCollectionId: (currentCollectionId) => set({ currentCollectionId }),
     getContactsList: async () => {
         const response = await getContacts();
         const options = response ? response.map((user) => {
@@ -138,4 +141,12 @@ export const useDiagramStore = create((set, get) => ({
             throw new Error(error);
         }
     },
+    getReferanceData: () => {
+        getWorkInstructions().then(result => {
+            set({ referenceData: { ...get().referenceData, workInstructions: result } })
+        });
+        getSoftwareSystems().then(result => {
+            set({ referenceData: { ...get().referenceData, softwareSystems: result } })
+        });
+    }
 }))

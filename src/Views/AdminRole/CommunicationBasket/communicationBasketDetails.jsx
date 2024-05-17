@@ -39,8 +39,8 @@ const CommunicationBasketDetails = ({ props }) => {
     const TIME_CONFIG_REF = useRef();
 
     useEffect(() => {
-        if (selectedCompany?.companyPartyId) {
-            GetCommunicationTemplatesByTenant(selectedCompany?.companyPartyId, 1).then(result => {
+        if (selectedCompany?.companyId) {
+            GetCommunicationTemplatesByTenant(selectedCompany?.companyId, 1).then(result => {
                 setTemplatesData(result)
 
                 const selectedTemplate = result?.filter(template => template?.Id === props?.MessageTemplateId)[0]
@@ -83,9 +83,9 @@ const CommunicationBasketDetails = ({ props }) => {
         }
 
         let dto = {
-            EntityPartyId: selectedCompany.companyPartyId,
+            EntityPartyId: selectedCompany.companyId,
             EntityName: selectedCompany.name,
-            UserPartyId: currentUser?.Id,
+            UserId: currentUser?.Id,
             BasketReceivers: [],
             MessageTemplateId: basketDetails.template ? basketDetails.template.Id : null,
         };
@@ -94,7 +94,7 @@ const CommunicationBasketDetails = ({ props }) => {
             return {
                 CompanyPartyTId: r.CompanyPartyTId ? r.CompanyPartyTId : null,
                 PersonPartyTId: r.PersonPartyTId ? r.PersonPartyTId : null,
-                UserPartyId: null,
+                UserId: null,
                 Name: r.Name,
                 Email: r.Email,
                 IsReceiver: true
