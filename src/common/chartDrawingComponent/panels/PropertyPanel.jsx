@@ -31,6 +31,7 @@ import CustomDropdown from '../../customDropdown';
 import { useDiagramStore } from '../../../Views/ChartDrawing/chartDrawingStore'
 import { TabContext } from '../../../utils/contextStore';
 import { NAVIGATION_PAGES } from "../../../utils/enums";
+import FormModal from './FormModal';
 
 import style from '../DndStyles.module.scss'
 
@@ -38,7 +39,8 @@ const propertyCategories = {
     APPEARANCE: 'Appearance',
     LAYERS: 'Layers',
     LINK: 'Link',
-    REFERENCE: 'Reference'
+    REFERENCE: 'Reference',
+    FORMS: 'Forms'
 }
 
 const LinkTypes = {
@@ -59,6 +61,7 @@ const PropertyPanel = ({ nodes, selectedNodes = [], selectedEdges = [], setNodes
     const [uploadedFile, setUploadedFile] = useState('');
     const [selectedLinkType, setSelectedLinkType] = useState(LinkTypes.URL);
     const [selectedDrawing, setSelectedDrawing] = useState({});
+    const [formModalVisible, setFormModalVisible] = useState(false)
 
     const diagramData = useDiagramStore((state) => state.diagramData);
 
@@ -149,6 +152,7 @@ const PropertyPanel = ({ nodes, selectedNodes = [], selectedEdges = [], setNodes
     const onChangeMarker = (value) => setMarkerType(value)
     const onSectionsCountIncrese = () => setSectionsCount(sectionsCount + 1);
     const onSectionsCountDecrease = () => setSectionsCount(sectionsCount - 1 > 0 ? sectionsCount - 1 : 0);
+    const toggleFormModal = () => setFormModalVisible(pre => !pre);
 
     const onSectionsCountChange = (e) => {
         e.preventDefault();
@@ -998,6 +1002,27 @@ const PropertyPanel = ({ nodes, selectedNodes = [], selectedEdges = [], setNodes
         }
     }
 
+    const formsContent = () => {
+        return (
+            <div className={style.linkContainer}>
+                <div className={style.formsContentContainer}>
+                    <div className={style.linkInputContainer}>
+                        <input
+                            type="text"
+                            placeholder='Search for a form'
+                        />
+                    </div>
+                    <div className='m-b-5'>Or</div>
+                    <button
+                        onClick={toggleFormModal}
+                    >Create New Form
+                    </button>
+
+                </div>
+            </div>
+        )
+    }
+
     return (
         <aside className={sidebarVisible ? style.aside : ''}>
             <div className={style.preventSelect}>
@@ -1050,11 +1075,26 @@ const PropertyPanel = ({ nodes, selectedNodes = [], selectedEdges = [], setNodes
                                     </div>
                                 }
                             </div>
+                            <div className='m-b-10' >
+                                <div className={style.sidebarCategoryheader} onClick={() => { onCategoryClick(propertyCategories.FORMS) }} >
+                                    <div>{propertyCategories.FORMS}</div>
+                                    <i className={(!closedCategories.includes(propertyCategories.FORMS) ? ' icon-arrow-down' : ' icon-arrow-up')} />
+                                </div>
+
+                                {!closedCategories.includes(propertyCategories.FORMS) &&
+                                    <div className={style.propertyPanelContainer}>
+                                        {formsContent()}
+                                    </div>
+                                }
+                            </div>
                         </>
                     }
                 </div>
             </div>
-
+            <FormModal
+                modalVisible={formModalVisible}
+                setModalVisible={setFormModalVisible}
+            />
         </aside>
     );
 };
