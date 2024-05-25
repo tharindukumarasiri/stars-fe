@@ -112,3 +112,8 @@ export const DaysOfTheWeek = [
     { value: '6', label: 'Sa' },
     { value: '7', label: 'Su' },
 ]
+
+export const ReferenceTypes = {
+    workInstructions: 'workInstructions',
+    softwareSystems: 'softwareSystems'
+}

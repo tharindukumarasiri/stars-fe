@@ -1,5 +1,6 @@
 import React from "react";
 import { formatDate, getDateDiff, getCountryFlag, projectCodeFormat } from "../utils"
+import { ReferenceTypes } from "./constants";
 import { Badge, Tooltip, Switch } from "antd";
 import logo_thumb from "../assets/images/logo_thumb.png";
 
@@ -1374,7 +1375,7 @@ export const CollectionsTableHeaders = (t) => [
     },
 ]
 
-export const ContactPersonsTableHeaders = (t) => [
+export const WorkInstructionsTableHeaders = (onAdd) => [
     {
         title: 'ID',
         dataIndex: 'Id',
@@ -1386,13 +1387,30 @@ export const ContactPersonsTableHeaders = (t) => [
     },
     {
         title: 'Category',
-        dataIndex: 'CreatedDateTime',
+        dataIndex: 'WorkInstructionCategory',
+        render: (_, { WorkInstructionCategory }) => (
+            WorkInstructionCategory?.Name
+        ),
+    },
+    {
+        title: 'Group',
+        dataIndex: 'WorkInstructionGroup',
+        render: (_, { WorkInstructionGroup }) => (
+            WorkInstructionGroup?.Name
+        ),
+    },
+    {
+        title: '',
+        dataIndex: 'Id',
+        render: (_, { Id }) => (
+            <button className={`secondary-btn`} onClick={()=>onAdd(ReferenceTypes.workInstructions, Id)}>Add</button>
+        ),
     },
 ]
 
-export const SelectedContactPersonsTableHeaders = (t) => [
+export const SoftwareSystemsTableHeaders = (onAdd) => [
     {
-        title: 'Table Id',
+        title: 'ID',
         dataIndex: 'Id',
         width: 130
     },
@@ -1401,21 +1419,61 @@ export const SelectedContactPersonsTableHeaders = (t) => [
         dataIndex: 'Name',
     },
     {
+        title: 'Category',
+        dataIndex: 'SystemCategory',
+        render: (_, { SystemCategory }) => (
+            SystemCategory?.Name
+        ),
+    },
+    {
+        title: 'Group',
+        dataIndex: 'SystemGroup',
+        render: (_, { SystemGroup }) => (
+            SystemGroup?.Name
+        ),
+    },
+    {
+        title: '',
+        dataIndex: 'Id',
+        render: (_, { Id }) => (
+            <button className={`secondary-btn`} onClick={()=>onAdd(ReferenceTypes.softwareSystems, Id)}>Add</button>
+        ),
+    },
+]
+
+export const SelectedReferanceTableHeaders = (refType, onRemove) => [
+    {
+        title: 'Table Id',
+        dataIndex: 'TableId',
+        width: 130
+    },
+    {
+        title: 'Name',
+        dataIndex: 'Name',
+    },
+    {
         title: 'Show',
-        dataIndex: 'CreatedDateTime',
-        render: (_, { CreatedDateTime }) => (
+        dataIndex: 'Id',
+        render: () => (
             <div className="toggle-btn">
-                <Switch />
+                <Switch checked onChange={()=>{}} />
             </div>
         ),
     },
     {
         title: 'API Source Code Name',
-        dataIndex: 'Name',
+        dataIndex: 'Description',
     },
     {
         title: 'DB',
-        dataIndex: 'Name',
+        dataIndex: 'Db',
+    },
+    {
+        title: '',
+        dataIndex: 'Id',
+        render: (_, { Id }) => (
+            <i className={`icon-close`} onClick={()=>onRemove(refType, Id)}/>
+        ),
     },
 ]
 

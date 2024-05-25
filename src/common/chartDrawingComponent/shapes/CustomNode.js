@@ -1,5 +1,6 @@
 import React, { memo, useCallback, useEffect, useRef, useState } from 'react';
 import { useUpdateNodeInternals, NodeResizer, useStore } from 'reactflow';
+import { Tooltip } from "antd";
 import { drag } from 'd3-drag';
 import { select } from 'd3-selection';
 import { PaperClipOutlined } from '@ant-design/icons';
@@ -10,6 +11,7 @@ import { getRgbaColor } from '../utils';
 
 import style from '../DndStyles.module.scss'
 import ConnectionDot from '../customElements/ConnectionDot';
+import { ReferenceTypes } from "../../../utils/constants";
 
 const connectionNodeIdSelector = (state) => state.connectionNodeId;
 
@@ -128,6 +130,27 @@ function CustomNode({ id, selected, type, data }) {
         }
     }
 
+    const getReferanceIcon = () => {
+        const workInstruction = data?.reference.some(ref => ref.type === ReferenceTypes.workInstructions)
+        const softwareSystem = data?.reference.some(ref => ref.type === ReferenceTypes.softwareSystems)
+
+        const getIcon = (isVisible, icon, tooltip) => {
+            if (isVisible) {
+                return (
+                    <Tooltip title={tooltip}>
+                        <i className={icon} />
+                    </Tooltip>
+                )
+            } else return null
+        }
+
+        return (
+            <div className={style.activityIcon} style={{ bottom: size?.height / 50, right: size?.height / 50 }} >
+                {getIcon(workInstruction, 'icon-work-instructions', 'Work Instructions')}
+                {getIcon(softwareSystem, 'icon-systems', 'Software Systems')}
+            </div>
+        )
+    }
 
     const onResize = (_, size) => setSize(size);
 
@@ -169,6 +192,10 @@ function CustomNode({ id, selected, type, data }) {
                 <div className={style.activityIcon} style={{ top: size?.height / 50, right: size?.height / 50 }}>
                     <PaperClipOutlined />
                 </div>
+            }
+
+            {data?.reference?.length > 0 ?
+                getReferanceIcon() : null
             }
 
             {selected &&

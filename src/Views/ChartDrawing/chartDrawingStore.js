@@ -14,6 +14,7 @@ import {
     getSoftwareSystems
 } from "../../services/drawingService";
 import { getContacts } from "../../services/userService";
+import { ReferenceTypes } from '../../utils/constants';
 
 export const useUserStore = create((set) => ({
     selectedCompany: {},
@@ -143,10 +144,10 @@ export const useDiagramStore = create((set, get) => ({
     },
     getReferanceData: () => {
         getWorkInstructions().then(result => {
-            set({ referenceData: { ...get().referenceData, workInstructions: result } })
+            set({ referenceData: { ...get().referenceData, [ReferenceTypes.workInstructions]: result } })
         });
         getSoftwareSystems().then(result => {
-            set({ referenceData: { ...get().referenceData, softwareSystems: result } })
+            set({ referenceData: { ...get().referenceData, [ReferenceTypes.softwareSystems]: result } })
         });
     }
 }))

@@ -410,7 +410,10 @@ const DnDFlow = ({ props }) => {
                     setEdges={setEdges}
                 />
             </ReactFlowProvider>
-            <ReferenceModal />
+            <ReferenceModal
+                nodes={nodes}
+                setNodes={setNodes}
+            />
         </div>
     );
 };
