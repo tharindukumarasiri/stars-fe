@@ -52,6 +52,7 @@ const DrawingToolHome = () => {
 
     const [showModel, setShowModel] = useState(false)
     const [newCollectionData, setNewCollectionData] = useState(newCollectionPayload);
+    const [newCollectionDataErrors, setNewCollectionDataErrors] = useState(newCollectionPayload);
     const [filterTypes, setFilterTypes] = useState({ name: '', startDate: null, endDate: null })
 
     const { t } = useTranslation();
@@ -93,7 +94,7 @@ const DrawingToolHome = () => {
             },
             {
                 title: '',
-                render: (_, record ) => (
+                render: (_, record) => (
                     <div className={style.collectionTableIconRow} >
                         <i className="icon-edit table-icon" ></i>
                         <i className="icon-delete table-icon" onClick={(e) => {
@@ -144,10 +145,37 @@ const DrawingToolHome = () => {
     const toggleModal = () => {
         setShowModel(pre => !pre);
         setNewCollectionData(newCollectionPayload)
+        setNewCollectionDataErrors(newCollectionPayload)
+    }
+
+    const validateFields = () => {
+        let validation = true
+        if (!newCollectionDataErrors.Name) {
+            setNewCollectionDataErrors(pre => ({ ...pre, Name: "Please enter name" }))
+            validation = false
+        }
+        if (!newCollectionDataErrors.RefTableId) {
+            setNewCollectionDataErrors(pre => ({ ...pre, RefTableId: "Please select a type" }))
+            validation = false
+        }
+        if (!newCollectionDataErrors.FromDate) {
+            setNewCollectionDataErrors(pre => ({ ...pre, FromDate: "Please select date" }))
+            validation = false
+        }
+        if (!newCollectionDataErrors.Responsible) {
+            setNewCollectionDataErrors(pre => ({ ...pre, Responsible: "Please select a responsible person" }))
+            validation = false
+        }
+        if (!newCollectionDataErrors.RefRecId) {
+            setNewCollectionDataErrors(pre => ({ ...pre, RefRecId: "Please select a status" }))
+            validation = false
+        }
+
+        return validation;
     }
 
     const onSave = () => {
-        if (newCollectionData.Name !== '') {
+        if (validateFields()) {
             const payload = { ...newCollectionData }
 
             payload.PermissionType = permissionTypes[newCollectionData.PermissionType]
@@ -171,15 +199,18 @@ const DrawingToolHome = () => {
     const onNewElementChange = (e, elementName) => {
         e.preventDefault();
         setNewCollectionData({ ...newCollectionData, [elementName]: e.target.value })
+        setNewCollectionDataErrors({ ...newCollectionDataErrors, [elementName]: '' })
     }
 
     const onUserChange = (e, elementName) => {
         e.preventDefault();
         setNewCollectionData({ ...newCollectionData, [elementName]: JSON.parse(e.target.value) })
+        setNewCollectionDataErrors({ ...newCollectionDataErrors, [elementName]: '' })
     }
 
     const onNewElementDateChange = (date, elementName) => {
         setNewCollectionData({ ...newCollectionData, [elementName]: date })
+        setNewCollectionDataErrors({ ...newCollectionDataErrors, [elementName]: '' })
     }
 
     return (
@@ -259,27 +290,58 @@ const DrawingToolHome = () => {
                         <Input
                             value={newCollectionData?.Name || ''}
                             placeholder='Name'
-                            onChange={(e) => onNewElementChange(e, 'Name')} />
+                            onChange={(e) => onNewElementChange(e, 'Name')}
+                            error={newCollectionDataErrors?.Name}
+                        />
                         <StarDropdown
                             placeholder="TYPE"
                             values={Object.keys(diagramTypes)}
                             onChange={(e) => onNewElementChange(e, 'RefTableId')}
                             selected={newCollectionData.RefTableId || ''}
+                            error={newCollectionDataErrors?.RefTableId}
                         />
-                        <Input lines={3} placeholder="DESCRIPTION" value={newCollectionData.Description || ''} onChange={(e) => onNewElementChange(e, 'Description')} />
-                        <StarDropdown values={Object.keys(permissionTypes)} onChange={(e) => onNewElementChange(e, 'PermissionType')} selected={newCollectionData.PermissionType || 'PRIVATE'} placeholder="PERMISSION_TYPE" />
+                        <Input
+                            lines={3}
+                            placeholder="DESCRIPTION"
+                            value={newCollectionData.Description || ''}
+                            onChange={(e) => onNewElementChange(e, 'Description')}
+                        />
+                        <StarDropdown
+                            values={Object.keys(permissionTypes)}
+                            onChange={(e) => onNewElementChange(e, 'PermissionType')}
+                            selected={newCollectionData.PermissionType || 'PRIVATE'}
+                            placeholder="PERMISSION_TYPE"
+                        />
                     </div>
                     <div className="g-col-6">
-                        <DatePickerInput placeholder={t('FROM_DATE')} value={newCollectionData.FromDate ? new Date(newCollectionData.FromDate) : ''} minDate={new Date()} onChange={(date) => onNewElementDateChange(date, 'FromDate')} />
-                        <DatePickerInput placeholder={t('DUE_DATE')} value={newCollectionData.ToDate ? new Date(newCollectionData.ToDate) : ''} minDate={new Date()} onChange={(date) => onNewElementDateChange(date, 'ToDate')} />
+                        <DatePickerInput
+                            placeholder={t('FROM_DATE')}
+                            value={newCollectionData.FromDate ? new Date(newCollectionData.FromDate) : ''}
+                            minDate={new Date()}
+                            onChange={(date) => onNewElementDateChange(date, 'FromDate')}
+                            error={newCollectionDataErrors?.FromDate}
+                        />
+                        <DatePickerInput
+                            placeholder={t('DUE_DATE')}
+                            value={newCollectionData.ToDate ? new Date(newCollectionData.ToDate) : ''}
+                            minDate={new Date()}
+                            onChange={(date) => onNewElementDateChange(date, 'ToDate')}
+                        />
                         <StarDropdown
                             values={filterdContacts}
                             dataName="value"
                             onChange={(e) => onUserChange(e, 'Responsible')}
                             selected={JSON.stringify(newCollectionData.Responsible || undefined)}
                             placeholder={"RESPONSIBLE_USER"}
+                            error={newCollectionDataErrors?.Responsible}
                         />
-                        <StarDropdown values={Object.keys(statuses)} onChange={(e) => onNewElementChange(e, 'RefRecId')} selected={newCollectionData.RefRecId || ''} placeholder="STATUS" />
+                        <StarDropdown
+                            values={Object.keys(statuses)}
+                            onChange={(e) => onNewElementChange(e, 'RefRecId')}
+                            selected={newCollectionData.RefRecId || ''}
+                            placeholder="STATUS"
+                            error={newCollectionDataErrors?.RefRecId}
+                        />
                     </div>
                 </div>
                 <div className="n-float" />
