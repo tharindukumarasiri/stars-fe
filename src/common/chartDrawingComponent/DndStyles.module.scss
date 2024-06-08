@@ -208,7 +208,10 @@ div.customHandle2Bottom {
 }
 
 .pagesBarContainer {
-    width: 60vw;
+    position: absolute;
+    bottom: 15px;
+    left: 0;
+    width: 100vw;
     height: 40px;
     background-color: white;
     border: 1px solid rgba(223, 212, 212, 0.573);

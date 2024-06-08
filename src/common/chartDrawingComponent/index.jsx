@@ -362,10 +362,6 @@ const DnDFlow = ({ props }) => {
                         setSpacebarActive={setSpacebarActive}
                     />
                 </Panel>
-                <Panel position="bottom-center">
-                    <PagesPanel onChangePage={onChangePage} />
-                </Panel>
-
                 <div className={style.reactflowrapper} ref={reactFlowWrapper}>
                     <ReactFlow
                         nodes={nodes}
@@ -409,6 +405,9 @@ const DnDFlow = ({ props }) => {
                     setNodes={setNodes}
                     setEdges={setEdges}
                 />
+
+                <PagesPanel onChangePage={onChangePage} />
+
             </ReactFlowProvider>
             <ReferenceModal
                 nodes={nodes}

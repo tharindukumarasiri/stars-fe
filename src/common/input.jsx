@@ -6,7 +6,7 @@ const Input = ({ value, placeholder = '', onChange, lines = 1, endImage = '', di
 
     const hintTextStyle = value ? 'input-hint-text-visible' : 'input-hint-text-hidden';
     return (
-        <div className="input-container flex-center-middle" >
+        <div className="input-container" >
             <div className={hintTextStyle}>{t(placeholder)}</div>
             {lines > 1 ?
                 <textarea rows={lines} placeholder={t(placeholder)} value={value} onChange={onChange} maxLength={maxLength} disabled={disabled} className={disabled ? 'disable-div' : ''} />

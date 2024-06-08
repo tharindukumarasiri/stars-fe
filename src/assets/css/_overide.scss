@@ -2,33 +2,40 @@
 * {
     line-height: 1.4;
     font-family: 'Poppins', sans-serif;
-    
+
 }
 
 body {
     font-size: 0.85rem !important;
 }
 
-.form-wrapper, .form-footer {
+.form-wrapper,
+.form-footer {
     border: none !important
 }
-h1, h2, h3 {
- @extend .blue;
+
+h1,
+h2,
+h3 {
+    @extend .blue;
 }
 
-h1, .h1 {
+h1,
+.h1 {
     font-size: 2rem !important;
 }
+
 .identity-form-wrapper {
     left: 32vw !important;
     width: 34vw !important;
 }
 
-.star-top-navbar #notification-wrapper:hover, .star-top-navbar #notification-wrapper.opened {
+.star-top-navbar #notification-wrapper:hover,
+.star-top-navbar #notification-wrapper.opened {
     background: transparent !important;
 }
 
-.header{
+.header {
     i {
         color: $white;
 
@@ -38,7 +45,9 @@ h1, .h1 {
     }
 }
 
-.star-top-navbar .right-section {margin-right: 25px;}
+.star-top-navbar .right-section {
+    margin-right: 25px;
+}
 
 #help-button.open {
     right: 300px;
@@ -48,7 +57,7 @@ h1, .h1 {
 }
 
 .k-button {
-    background-image:none !important;
+    background-image: none !important;
 }
 
 .btn-info {
@@ -58,10 +67,12 @@ h1, .h1 {
 }
 
 .k-content {
-    height: calc(100vh - 130px) !important;
+    // height: calc(100vh - 130px) !important;
 }
 
-.action-bar .anticon svg { margin-top: -18px;}
+.action-bar .anticon svg {
+    margin-top: -18px;
+}
 
 
 p {
@@ -74,16 +85,24 @@ p {
     height: 30px !important;
     line-height: initial !important;
 }
+
 .ant-modal-close {
     padding: 6px !important;
     background: transparent !important;
 }
+
 .ant-modal-footer {
     padding: 20px 16px !important;
 }
-.input-container{margin-bottom:10px}
 
-.tile h3{text-align:left}
+.input-container {
+    margin-bottom: 10px
+}
+
+.tile h3 {
+    text-align: left
+}
+
 .datapicker-input {
     max-height: 34px !important;
     padding: 6px 14px !important;
@@ -93,12 +112,14 @@ p {
     }
 }
 
-.ant-select-selection-search input{
+.ant-select-selection-search input {
     border: none !important
 }
+
 .ant-select-single:not(.ant-select-customize-input) .ant-select-selector {
     padding: 0 6px !important;
 }
+
 .ant-select-single .ant-select-selector .ant-select-selection-search {
     left: 0px !important;
 }
@@ -109,9 +130,10 @@ p {
 
 .ant-table-row {
     &:hover {
-       cursor:pointer
+        cursor: pointer
     }
 }
+
 /* div[id^=tile-menu] {
     button {
         background-color: $theme-dark
@@ -125,6 +147,7 @@ div[id^=tile-menu-] button {
 }
 
 ;
+
 div[id^=tile-menu-] button:nth-child(odd) {
     color: $white !important;
     background-color: $theme-dark

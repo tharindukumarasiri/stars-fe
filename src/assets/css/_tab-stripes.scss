@@ -5,6 +5,7 @@
     position: relative;
     height: 100%;
 }
+
 .tab-list-item {
     display: inline-block;
     list-style: none;
@@ -29,8 +30,9 @@
 .detail-stripe-tab-top {
     padding: 15px;
     height: 90px;
-    overflow-y: scroll;
- 
+    overflow-y: hidden;
+    background-color: #e4eaee;
+
 }
 
 
@@ -44,7 +46,7 @@
     background-color: $tab-content;
 }
 
-.ant-tabs-top > .ant-tabs-nav {
+.ant-tabs-top>.ant-tabs-nav {
     margin: 0 0 10px 0 !important;
 }
 
