@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import Nestable from "react-nestable";
 import { HolderOutlined, DeleteOutlined, CopyOutlined } from '@ant-design/icons';
-import { Switch } from 'antd';
+import { Switch, message } from 'antd';
 
 import { getId } from "./utils.js";
 import { formEl, formCategories, formSubCategories } from "./constants.js";
@@ -12,12 +12,15 @@ import Dropdown from '../dropdown.jsx';
 
 import style from './FormBuilder.module.scss'
 import 'react-nestable/dist/styles/index.css';
+import { addNewForm } from "../../services/drawingService.js";
 
-const FormBuilder = ({ screenContainerStyle }) => {
+const FormBuilder = ({ screenContainerStyle, currentUser, closeModal }) => {
     const initVal = formEl[0]?.value;
 
     //State
     const [title, setTitle] = useState("Untitled Form");
+    const [name, setName] = useState("");
+    const [selectedCategories, setSelectedCategories] = useState({ category: '', subCategory: '' });
     const [description, setDescription] = useState("");
     const [data, setData] = useState([]);
     const [formData, setFormData] = useState("text");
@@ -32,6 +35,38 @@ const FormBuilder = ({ screenContainerStyle }) => {
     const onChangeDescription = (e) => {
         e.preventDefault()
         setDescription(e.target.value)
+    }
+
+    const onSaveForm = () => {
+        const payload = {
+            Name: name,
+            CategoryId: selectedCategories.category,
+            SubCategoryId: selectedCategories.subCategory,
+            Title: title,
+            Description: description,
+            FormData: JSON.stringify(data)
+        }
+
+        addNewForm(currentUser, payload).then((result) => {
+            message.success("Form saved")
+            closeModal && closeModal()
+        }).catch(e => {
+            message.error("Form save failed please try again")
+        })
+    }
+
+    const onChangeCategoryType = (e, elementName) => {
+        e.preventDefault();
+        setSelectedCategories({ ...selectedCategories, [elementName]: e.target.value });
+    }
+
+    const onChangeName = (e) => {
+        e.preventDefault();
+        setName(e.target.value)
+    }
+
+    const onCancel = () => {
+        closeModal && closeModal()
     }
 
     //Function to add new element
@@ -231,24 +266,36 @@ const FormBuilder = ({ screenContainerStyle }) => {
                 <div className={style.headerNameContainer}>
                     <Input
                         placeholder="Name"
+                        value={name}
+                        onChange={onChangeName}
                     />
                 </div>
                 <Dropdown
                     values={formCategories}
+                    onChange={e => onChangeCategoryType(e, 'category')}
+                    selected={selectedCategories.category}
                     placeholder='Category'
                     dataName="label"
                     valueName="value"
                 />
                 <Dropdown
                     values={formSubCategories}
+                    onChange={e => onChangeCategoryType(e, 'subCategory')}
+                    selected={selectedCategories.subCategory}
                     placeholder="Sub Category"
                     dataName="label"
                     valueName="value"
                 />
                 <div>
-                    <button className={`add-btn m-r-20`} >Save</button>
+                    <button className={`add-btn m-r-20`}
+                        onClick={onSaveForm}
+                    >Save</button>
 
-                    <button className={`secondary-btn`}  >Cancel</button>
+                    <button
+                        className={`secondary-btn`}
+                        onClick={onCancel}>
+                        Cancel
+                    </button>
                 </div>
 
             </div>

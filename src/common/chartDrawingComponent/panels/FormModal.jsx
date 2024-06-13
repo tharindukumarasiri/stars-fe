@@ -4,8 +4,11 @@ import { Modal } from "antd";
 import FormBuilder from "../../formBuilder";
 
 import style from '../DndStyles.module.scss'
+import { useDiagramStore } from "../../../Views/ChartDrawing/chartDrawingStore";
 
 const FormModal = ({ modalVisible, setModalVisible }) => {
+    const currentUser = useDiagramStore((state) => state.currentUser);
+
     const closeModal = () => setModalVisible(false);
 
     if (!modalVisible) return null
@@ -20,7 +23,7 @@ const FormModal = ({ modalVisible, setModalVisible }) => {
             height={'80vh'}
             centered={true}
             closeIcon={< i className='icon-close close-icon' />}>
-            <FormBuilder screenContainerStyle={style.formContainer} />
+            <FormBuilder screenContainerStyle={style.formContainer} currentUser={currentUser?.Id} closeModal={closeModal} />
             <div className="n-float" />
         </Modal>
     )

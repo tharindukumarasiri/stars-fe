@@ -64,6 +64,7 @@ const PropertyPanel = ({ nodes, selectedNodes = [], selectedEdges = [], setNodes
     const [formModalVisible, setFormModalVisible] = useState(false)
 
     const diagramData = useDiagramStore((state) => state.diagramData);
+    const formsData = useDiagramStore((state) => state.formsData);
 
     const changeTextData = useNodeDataStore((state) => state.onTextChange);
     const selectedNodeId = useNodeDataStore((state) => state.selectedNodeId);
@@ -250,6 +251,49 @@ const PropertyPanel = ({ nodes, selectedNodes = [], selectedEdges = [], setNodes
                     newNode.data = {
                         ...node.data,
                         links: newLinks
+                    }
+                    return newNode
+                } else return node
+            })
+        )
+    }
+
+    const onSelectForm = (e) => {
+        e.preventDefault();
+        const selectedForm = JSON.parse(e.target.value)
+
+        setNodes((nodes) =>
+            nodes.map((node) => {
+                if (node.id === selectedNodes[0].id) {
+                    const newNode = { ...node }
+                    const newForms = JSON.parse(JSON.stringify(node?.data?.forms || []))
+                    newForms.push({
+                        Id: selectedForm.Id,
+                        Name: selectedForm.Name
+                    })
+
+                    newNode.data = {
+                        ...node.data,
+                        forms: newForms
+                    }
+                    return newNode
+                } else return node
+            })
+        )
+    }
+
+    const onRemoveForm = (index) => {
+        setNodes((nodes) =>
+            nodes.map((node) => {
+                if (node.id === selectedNodes[0].id) {
+                    const newNode = { ...node }
+                    const newForms = JSON.parse(JSON.stringify(node?.data?.forms || []))
+
+                    newForms?.splice(index, 1)
+
+                    newNode.data = {
+                        ...node.data,
+                        forms: newForms
                     }
                     return newNode
                 } else return node
@@ -1007,11 +1051,22 @@ const PropertyPanel = ({ nodes, selectedNodes = [], selectedEdges = [], setNodes
             <div className={style.linkContainer}>
                 <div className={style.formsContentContainer}>
                     <div className={style.linkInputContainer}>
-                        <input
-                            type="text"
-                            placeholder='Search for a form'
+                        <Dropdown
+                            placeholder="Search for a form"
+                            values={formsData}
+                            onChange={onSelectForm}
+                            dataName='Name'
+                            selected=""
                         />
                     </div>
+                    {selectedNodes?.[0]?.data?.forms?.map((form, index) => {
+                        return (
+                            <div key={index} className={style.linkItemContainer}>
+                                <div>{form?.Name}</div>
+                                <i className="close-btn icon-close-small-x fr red" onClick={() => onRemoveForm(index)} />
+                            </div>
+                        )
+                    })}
                     <div className='m-b-5'>Or</div>
                     <button
                         onClick={toggleFormModal}

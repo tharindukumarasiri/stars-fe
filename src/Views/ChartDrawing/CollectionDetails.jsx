@@ -244,6 +244,7 @@ const DrawingsList = ({ collectionId }) => {
     const getDiagramData = useDiagramStore((state) => state.getDiagramData);
     const getUploadedImages = useDiagramStore((state) => state.getUploadedImages);
     const getReferanceData = useDiagramStore((state) => state.getReferanceData);
+    const getFormsData = useDiagramStore((state) => state.getFormsData);
     const diagramData = useDiagramStore((state) => state.diagramData);
     const addDiagram = useDiagramStore((state) => state.addDiagram);
     const deleteDiagram = useDiagramStore((state) => state.deleteDiagram);
@@ -254,6 +255,7 @@ const DrawingsList = ({ collectionId }) => {
         getDiagramData(collectionId);
         getUploadedImages();
         getReferanceData();
+        getFormsData();
     }, []);
 
     const tableHeaders = useMemo(() => {

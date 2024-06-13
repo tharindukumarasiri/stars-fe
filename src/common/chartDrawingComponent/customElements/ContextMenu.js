@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { useReactFlow } from 'reactflow';
 
 import style from '../DndStyles.module.scss'
@@ -16,9 +16,11 @@ export default function ContextMenu({ id, top, left, ...props }) {
     const changeChartData = useNodeDataStore((state) => state.setChartData);
     const setReferenceModalId = useNodeDataStore((state) => state.setReferenceModalId);
 
-    const duplicateNode = useCallback(() => {
-        const node = getNode(id);
+    const node = useMemo(() => {
+        return getNode(id);
+    }, [id])
 
+    const duplicateNode = useCallback(() => {
         const position = {
             x: node.position.x + 50,
             y: node.position.y + 20,
@@ -78,7 +80,6 @@ export default function ContextMenu({ id, top, left, ...props }) {
         setReferenceModalId(id)
     }
 
-
     return (
         <div style={{ top, left }} className={style.canvasContextMenu} {...props}>
             <button onClick={duplicateNode}>Duplicate</button>
@@ -86,6 +87,21 @@ export default function ContextMenu({ id, top, left, ...props }) {
             <button onClick={moveToBack}>Move to back</button>
             <button onClick={moveToFront}>Move to front</button>
             <button onClick={openReferenceModal}>Reference</button>
+            {node?.data?.forms?.length > 0 &&
+                <div>
+                    <button>Forms</button>
+                    <div className={style.formButtonContainer}>
+                        {node?.data?.forms?.map((form, index) => {
+                            return (
+                                <div key={index} >
+                                    <button>{form?.Name}</button>
+                                </div>
+                            )
+                        })}
+                    </div>
+                </div>
+            }
+
         </div>
     );
 }

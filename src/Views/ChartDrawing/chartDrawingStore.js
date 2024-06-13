@@ -11,7 +11,8 @@ import {
     getDrawingImages,
     addNewDrawingImage,
     getWorkInstructions,
-    getSoftwareSystems
+    getSoftwareSystems,
+    getForms
 } from "../../services/drawingService";
 import { getContacts } from "../../services/userService";
 import { ReferenceTypes } from '../../utils/constants';
@@ -32,6 +33,7 @@ export const useDiagramStore = create((set, get) => ({
     filterdContacts: [],
     uploadedImages: [],
     referenceData: {},
+    formsData: [],
 
     setCurrentUser: async (user) => set({ currentUser: user }),
     setCurrentCollectionId: (currentCollectionId) => set({ currentCollectionId }),
@@ -148,6 +150,11 @@ export const useDiagramStore = create((set, get) => ({
         });
         getSoftwareSystems().then(result => {
             set({ referenceData: { ...get().referenceData, [ReferenceTypes.softwareSystems]: result } })
+        });
+    },
+    getFormsData: () => {
+        getForms(get().currentUser?.Id).then(result => {
+            set({ formsData: result })
         });
     }
 }))

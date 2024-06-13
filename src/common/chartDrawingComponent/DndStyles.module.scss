@@ -209,9 +209,9 @@ div.customHandle2Bottom {
 
 .pagesBarContainer {
     position: absolute;
-    bottom: 15px;
-    left: 0;
-    width: 100vw;
+    bottom: 0;
+    left: 260px;
+    width: calc(90vw - 500px);
     height: 40px;
     background-color: white;
     border: 1px solid rgba(223, 212, 212, 0.573);
@@ -605,6 +605,16 @@ div.customHandle2Bottom {
     display: block;
     margin-bottom: 2px;
     width: 100%;
+}
+
+.formButtonContainer {
+    position: absolute;
+    left: 30px;
+    width: 150px;
+
+    button {
+        background-color: #90CBE8;
+    }
 }
 
 .rotateHandle {

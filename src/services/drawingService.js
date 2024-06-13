@@ -60,3 +60,13 @@ export async function getSoftwareSystems() {
     const { data } = await http.get(config.GET_SOFTWARE_SYSTEMS);
     return data;
 }
+
+export async function getForms(userId) {
+    const { data } = await http.get(`${config.GET_FORMS}`);
+    return data;
+}
+
+export async function addNewForm(userId, payload) {
+    const { data } = await http.post(`${config.ADD_FORM}${userId}`, payload);
+    return data;
+}
