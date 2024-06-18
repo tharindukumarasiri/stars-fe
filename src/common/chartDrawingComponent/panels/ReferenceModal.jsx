@@ -1,30 +1,28 @@
 import React, { useMemo, useState } from "react";
-import { Modal, Table, Tabs, message } from "antd";
+import { Modal, AutoComplete, message } from "antd";
 
 import { useNodeDataStore } from '../store'
 import Dropdown from '../../dropdown';
 import { WorkInstructionsTableHeaders, SoftwareSystemsTableHeaders, SelectedReferanceTableHeaders } from "../../../utils/tableHeaders";
 import { useDiagramStore } from '../../../Views/ChartDrawing/chartDrawingStore'
 import { ReferenceTypes } from "../../../utils/constants";
-const { TabPane } = Tabs
 
 const ReferenceTypesDropDown = [
+    { id: 'all', type: 'ALL' },
     { id: ReferenceTypes.workInstructions, type: 'Work Instructions' },
     { id: ReferenceTypes.softwareSystems, type: 'Systems' },
 ]
 
-const Categories = [
-    { id: 1, type: 'Instructions' },
-    { id: 2, type: 'Employees' },
-]
 
 const ReferenceModal = ({ nodes, setNodes }) => {
+    const [editMode, setEditMode] = useState(false);
+
     const referenceModalId = useNodeDataStore((state) => state.referenceModalId);
     const setReferenceModalId = useNodeDataStore((state) => state.setReferenceModalId);
 
     const referenceData = useDiagramStore((state) => state.referenceData);
 
-    const [dropdownSelected, setDropdownSelected] = useState({ RefType: undefined, category: undefined })
+    const [dropdownSelected, setDropdownSelected] = useState(ReferenceTypesDropDown[0])
     const [activeKey, setActiveKey] = useState(ReferenceTypesDropDown[0].id);
 
     const closeModal = () => setReferenceModalId('');
@@ -32,12 +30,7 @@ const ReferenceModal = ({ nodes, setNodes }) => {
 
     const onSelectReferenceType = (e) => {
         e.preventDefault();
-        setDropdownSelected(pre => ({ ...pre, RefType: JSON.parse(e.target.value) }))
-    }
-
-    const onSelectCategory = (e) => {
-        e.preventDefault();
-        setDropdownSelected(pre => ({ ...pre, category: JSON.parse(e.target.value) }))
+        setDropdownSelected(JSON.parse(e.target.value))
     }
 
     const selectedNodeReferanceData = useMemo(() => {
@@ -75,6 +68,11 @@ const ReferenceModal = ({ nodes, setNodes }) => {
         )
     }
 
+    const onAddReferenceBtnClick = () => {
+        setEditMode(true)
+    }
+
+
     const onRemoveReferance = (refType, refId) => {
         setNodes((nodes) =>
             nodes.map((node) => {
@@ -82,7 +80,7 @@ const ReferenceModal = ({ nodes, setNodes }) => {
                     const newNode = { ...node }
                     const newReference = JSON.parse(JSON.stringify(node?.data?.reference || []))
 
-                    const index = newReference.findIndex((item) => {return item.id === refId && item.type === refType })
+                    const index = newReference.findIndex((item) => { return item.id === refId && item.type === refType })
 
                     if (index > -1) {
                         newReference.splice(index, 1)
@@ -99,7 +97,7 @@ const ReferenceModal = ({ nodes, setNodes }) => {
     }
 
     const dataSource = useMemo(() => (
-        referenceData[dropdownSelected?.RefType?.id] || []
+        referenceData[dropdownSelected.id] || []
     ), [referenceData, dropdownSelected])
 
     const selectedDataSource = useMemo(() => {
@@ -132,39 +130,79 @@ const ReferenceModal = ({ nodes, setNodes }) => {
             open={referenceModalId}
             footer={[]}
             onCancel={closeModal}
-            width={'95vw'}
+            width={'85vw'}
             centered={true}
             closeIcon={< i className='icon-close close-icon' />}>
-            <div className="g-row">
-                <div className="g-col-3">
-                    <Dropdown
-                        values={ReferenceTypesDropDown}
-                        onChange={onSelectReferenceType}
-                        dataName='type'
-                        selected={JSON.stringify(dropdownSelected.RefType)}
-                        placeholder='Reference Type'
-                    />
-                </div>
-
-                <div className="g-col-3">
-                    <Dropdown
-                        values={Categories}
-                        onChange={onSelectCategory}
-                        dataName='type'
-                        selected={JSON.stringify(dropdownSelected.category)}
-                        placeholder='Select Category'
-                    />
-                </div>
+            <div className="g-col-3">
+                <Dropdown
+                    values={ReferenceTypesDropDown}
+                    onChange={onSelectReferenceType}
+                    dataName='type'
+                    selected={JSON.stringify(dropdownSelected)}
+                    placeholder='Reference Type/s'
+                />
             </div>
-            <div className="g-row">
-                <div className="g-col-6">
-                    <Table
-                        columns={tableHeaders}
-                        dataSource={dataSource}
-                        pagination={false}
-                    />
+            <button className="m-b-20" onClick={onAddReferenceBtnClick} disabled={editMode}>Add Referance</button>
+            {editMode &&
+                <div className="g-row">
+
                 </div>
-                <div className="g-col-6">
+            }
+            <table>
+                <tr>
+                    <th>Type of Info</th>
+                    <th>Number</th>
+                    <th>Name</th>
+                    <th>Source</th>
+                    <th width="10%"></th>
+                </tr>
+
+                {editMode &&
+                    <tr>
+                        <td>
+                            <AutoComplete
+                                style={{
+                                    width: '100%',
+                                }}
+                                options={dataSource}
+                                placeholder={dropdownSelected.type}
+                                filterOption={(inputValue, option) =>
+                                    option.value.toUpperCase().indexOf(inputValue.toUpperCase()) !== -1
+                                }
+                            /></td>
+                        <td><input type="text" /></td>
+                        <td><input type="text" /></td>
+                        <td><input type="text" /></td>
+                        <td>
+                            <i className="h1 icon-success green hover-hand" />
+                        </td>
+                    </tr>
+
+                }
+                {selectedNodeReferanceData?.map((data) => {
+                    return (
+                        <tr>
+                            <td>{`(${data.Id})`}</td>
+                            <td></td>
+                            <td>{data.Name}</td>
+                            <td></td>
+                        </tr>)
+                })
+                }
+
+            </table>
+            {selectedNodeReferanceData?.length === 0 &&
+                <div className="flex-center-middle">
+                    No reference yet. Start off adding...
+                </div>
+            }
+
+            {/* <Table
+                columns={SelectedReferanceTableHeaders('refType.id', onRemoveReferance)}
+                dataSource={dataSource}
+                pagination={false}
+            /> */}
+            {/* <div className="g-col-6">
                     <Tabs
                         type="card"
                         activeKey={activeKey}
@@ -185,8 +223,7 @@ const ReferenceModal = ({ nodes, setNodes }) => {
                             </TabPane>
                         ))}
                     </Tabs>
-                </div>
-            </div>
+                </div> */}
             <div className="n-float" />
         </Modal>
     )

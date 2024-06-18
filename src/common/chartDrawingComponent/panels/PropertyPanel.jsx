@@ -1,4 +1,5 @@
 import React, { useState, memo, useMemo, useContext } from 'react';
+import { AutoComplete } from "antd";
 import {
     SettingOutlined,
     AlignCenterOutlined,
@@ -258,18 +259,15 @@ const PropertyPanel = ({ nodes, selectedNodes = [], selectedEdges = [], setNodes
         )
     }
 
-    const onSelectForm = (e) => {
-        e.preventDefault();
-        const selectedForm = JSON.parse(e.target.value)
-
+    const onSelectForm = (value, option) => {
         setNodes((nodes) =>
             nodes.map((node) => {
-                if (node.id === selectedNodes[0].id) {
+                if (node?.id === selectedNodes[0]?.id) {
                     const newNode = { ...node }
                     const newForms = JSON.parse(JSON.stringify(node?.data?.forms || []))
                     newForms.push({
-                        Id: selectedForm.Id,
-                        Name: selectedForm.Name
+                        Id: option.Id,
+                        Name: option.Name
                     })
 
                     newNode.data = {
@@ -1051,12 +1049,18 @@ const PropertyPanel = ({ nodes, selectedNodes = [], selectedEdges = [], setNodes
             <div className={style.linkContainer}>
                 <div className={style.formsContentContainer}>
                     <div className={style.linkInputContainer}>
-                        <Dropdown
+                        <AutoComplete
+                            style={{
+                                width: '100%',
+                            }}
+                            allowClear
+                            options={formsData}
+                            fieldNames={{ value: "Name" }}
                             placeholder="Search for a form"
-                            values={formsData}
-                            onChange={onSelectForm}
-                            dataName='Name'
-                            selected=""
+                            filterOption={(inputValue, option) =>
+                                option.Name.toUpperCase().indexOf(inputValue.toUpperCase()) !== -1
+                            }
+                            onSelect={onSelectForm}
                         />
                     </div>
                     {selectedNodes?.[0]?.data?.forms?.map((form, index) => {

@@ -8,7 +8,9 @@ html {
     box-sizing: border-box;
 }
 
-*, *:before, *:after {
+*,
+*:before,
+*:after {
     /* Inherit box-sizing to make it easier to change the property for components that leverage other behavior; see http://css-tricks.com/inheriting-box-sizing-probably-slightly-better-best-practice/ */
     -webkit-box-sizing: inherit;
     -moz-box-sizing: inherit;
@@ -21,7 +23,8 @@ hr {
     margin: 0 0 1.75em;
 }
 
-ul, ol {
+ul,
+ol {
     margin: 0 0 1.75em 1.5em;
     padding: 0;
 }
@@ -34,7 +37,8 @@ ol {
     list-style: decimal;
 }
 
-li > ul, li > ol {
+li>ul,
+li>ol {
     margin-bottom: 0;
 }
 
@@ -78,7 +82,8 @@ caption {
     text-align: center;
 }
 
-th, td {
+th,
+td {
     border-width: 0 1px 1px 0;
     font-weight: normal;
     text-align: left;
@@ -88,11 +93,15 @@ th {
     font-weight: 700;
 }
 
-thead th {
-    border-width: 0 1px 1px 0;
+thead,
+th {
+    border-top: 1px solid #D6D7D8;
+    border-bottom: 1px solid #D6D7D8;
 }
 
-caption, th, td {
+caption,
+th,
+td {
     padding: 0.667em;
 }
 
