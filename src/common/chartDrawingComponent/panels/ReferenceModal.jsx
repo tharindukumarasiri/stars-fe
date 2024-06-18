@@ -1,11 +1,18 @@
 import React, { useMemo, useState } from "react";
-import { Modal, AutoComplete, message } from "antd";
+import { Modal, AutoComplete, message, Switch, Tooltip } from "antd";
 
 import { useNodeDataStore } from '../store'
 import Dropdown from '../../dropdown';
-import { WorkInstructionsTableHeaders, SoftwareSystemsTableHeaders, SelectedReferanceTableHeaders } from "../../../utils/tableHeaders";
 import { useDiagramStore } from '../../../Views/ChartDrawing/chartDrawingStore'
 import { ReferenceTypes } from "../../../utils/constants";
+
+import style from '../DndStyles.module.scss'
+
+const SortTypes = {
+    asc: 'asc',
+    des: 'des',
+    none: 'none'
+}
 
 const ReferenceTypesDropDown = [
     { id: 'all', type: 'ALL' },
@@ -13,74 +20,99 @@ const ReferenceTypesDropDown = [
     { id: ReferenceTypes.softwareSystems, type: 'Systems' },
 ]
 
+const initialInitialData = { typeOfInfo: '', number: '', name: '', source: false }
 
 const ReferenceModal = ({ nodes, setNodes }) => {
     const [editMode, setEditMode] = useState(false);
+    const [editRecord, setEditRecord] = useState('');
+    const [inputData, setinputData] = useState(initialInitialData);
+    const [dropdownSelected, setDropdownSelected] = useState(ReferenceTypesDropDown[0])
+    const [sortedType, setSortedType] = useState(SortTypes.none)
 
     const referenceModalId = useNodeDataStore((state) => state.referenceModalId);
     const setReferenceModalId = useNodeDataStore((state) => state.setReferenceModalId);
 
     const referenceData = useDiagramStore((state) => state.referenceData);
 
-    const [dropdownSelected, setDropdownSelected] = useState(ReferenceTypesDropDown[0])
-    const [activeKey, setActiveKey] = useState(ReferenceTypesDropDown[0].id);
-
-    const closeModal = () => setReferenceModalId('');
-    const onChangeTab = (key) => { setActiveKey(key); }
+    const closeModal = () => {
+        setReferenceModalId('');
+        setinputData(initialInitialData);
+        setEditMode(false);
+        setEditRecord('')
+    }
 
     const onSelectReferenceType = (e) => {
         e.preventDefault();
         setDropdownSelected(JSON.parse(e.target.value))
     }
 
+    const onAddReferenceBtnClick = () => {
+        setEditRecord('')
+        setinputData(initialInitialData)
+        setEditMode(true)
+    }
+
     const selectedNodeReferanceData = useMemo(() => {
-        const slectedNode = nodes.find(node => node.id === referenceModalId)
+        const slectedNode = nodes.find(node => node.id === referenceModalId) 
+        const referanceData = slectedNode?.data?.reference || []
 
-        return slectedNode?.data?.reference || []
-    }, [nodes, referenceModalId])
+        if(sortedType === SortTypes.asc){
+            referanceData?.sort((a,b) => {
+                return a?.typeOfInfo?.localeCompare(b?.typeOfInfo)
+            })
+        } 
+        if(sortedType === SortTypes.des){
+            referanceData?.sort((a,b) => {
+                return b?.typeOfInfo?.localeCompare(a?.typeOfInfo)
+            })
+        } 
 
-    const onAddReferance = (refType, refId) => {
-        setNodes((nodes) =>
-            nodes.map((node) => {
-                if (node.id === referenceModalId) {
-                    const newNode = { ...node }
-                    const newReference = JSON.parse(JSON.stringify(node?.data?.reference || []))
+        return referanceData 
+    }, [nodes, referenceModalId, sortedType])
 
-                    const isExist = newReference.some((item) => { return item.id === refId && item.type === refType })
+    const onAddReferance = () => {
+        if (inputData?.typeOfInfo)
+            setNodes((nodes) =>
+                nodes.map((node) => {
+                    if (node.id === referenceModalId) {
+                        const newNode = { ...node }
+                        const newReference = JSON.parse(JSON.stringify(node?.data?.reference || []))
 
-                    if (isExist) {
-                        message.success('Already Added');
-                    } else {
-                        newReference.push({
-                            type: refType,
-                            id: refId
-                        })
+                        const index = newReference.findIndex((item) => { return item.typeOfInfo === inputData.typeOfInfo })
+
+                        if (index < 0) {
+                            newReference.push(inputData)
+
+                            setEditMode(false)
+                            setinputData(initialInitialData)
+                        } else if (editRecord) {
+                            newReference[index] = inputData
+
+                            setEditMode(false)
+                            setinputData(initialInitialData)
+                            setEditRecord("")
+                        } else {
+                            message.success('Already Added');
+                        }
 
                         newNode.data = {
                             ...node.data,
                             reference: newReference
                         }
-                    }
-
-                    return newNode
-                } else return node
-            })
-        )
+                        return newNode
+                    } else return node
+                })
+            )
     }
 
-    const onAddReferenceBtnClick = () => {
-        setEditMode(true)
-    }
-
-
-    const onRemoveReferance = (refType, refId) => {
+    const onRemoveReferance = (data) => {
         setNodes((nodes) =>
             nodes.map((node) => {
                 if (node.id === referenceModalId) {
                     const newNode = { ...node }
                     const newReference = JSON.parse(JSON.stringify(node?.data?.reference || []))
 
-                    const index = newReference.findIndex((item) => { return item.id === refId && item.type === refType })
+                    const index = newReference.findIndex((item) => { return item.typeOfInfo === data?.typeOfInfo })
 
                     if (index > -1) {
                         newReference.splice(index, 1)
@@ -96,31 +128,130 @@ const ReferenceModal = ({ nodes, setNodes }) => {
         )
     }
 
-    const dataSource = useMemo(() => (
-        referenceData[dropdownSelected.id] || []
-    ), [referenceData, dropdownSelected])
-
-    const selectedDataSource = useMemo(() => {
-        const selectedTabRefData = referenceData[activeKey] || []
-
-        const selectedData = selectedTabRefData.filter((data) => {
-            return selectedNodeReferanceData.some(selected => selected.id === data.Id && selected.type === activeKey)
+    const onEditRecord = (data) => {
+        setinputData({
+            typeOfInfo: data?.typeOfInfo,
+            number: data?.number,
+            name: data?.name,
+            source: data?.source
         })
+        setEditRecord(data?.typeOfInfo)
+    }
 
-        return selectedData
-    }, [referenceData, activeKey, nodes])
+    const dataSource = useMemo(() => {
+        let result = [];
 
-    const tableHeaders = useMemo(() => {
-        switch (dropdownSelected?.RefType?.id) {
-            case ReferenceTypes.workInstructions:
-                return WorkInstructionsTableHeaders(onAddReferance);
-            case ReferenceTypes.softwareSystems:
-                return SoftwareSystemsTableHeaders(onAddReferance);
-            default:
-                return [];
+        if (dropdownSelected.id === ReferenceTypesDropDown[0].id) {
+            for (let key in referenceData) {
+                if (Array.isArray(referenceData[key])) {
+                    const newRefData = [...referenceData[key]]
+
+                    const itemType = ReferenceTypesDropDown.find(refType => refType.id === key)
+
+                    newRefData.forEach((item) => {
+                        item.value = `${itemType.type} (${item.Id})`
+                    })
+                    result = result.concat(newRefData);
+                }
+            }
+
+        } else {
+            result = referenceData[dropdownSelected.id]
+
+            result.forEach((item) => (
+                item.value = `${dropdownSelected.type} (${item.Id})`
+            ))
         }
 
-    }, [dropdownSelected]);
+        return result;
+    }, [referenceData, dropdownSelected])
+
+    const onSortTable = () => {
+        switch (sortedType) {
+            case SortTypes.none:
+                setSortedType(SortTypes.asc)
+                break
+            case SortTypes.asc:
+                setSortedType(SortTypes.des)
+                break
+            case SortTypes.des:
+                setSortedType(SortTypes.none)
+                break
+            default:
+                break
+        }
+    }
+
+    const toggleInputSource = () => {
+        setinputData((pre) => ({ ...pre, source: !pre.source }));
+    }
+
+    const onChangeInputValue = (e, type) => {
+        e.preventDefault();
+        setinputData((pre) => ({ ...pre, [type]: e.target.value }));
+    }
+
+    const onChangeTypeOfInfo = (value) => {
+        setinputData((pre) => ({ ...pre, typeOfInfo: value }));
+    }
+
+    const onSelectTypeOfInfo = (value, options) => {
+        setinputData((pre) => ({ ...pre, number: options?.Version, name: options?.Name }));
+    }
+
+    const editRow = () => {
+        return (
+            <tr>
+                <td>
+                    {editRecord ?
+
+                        <input type="text"
+                            value={inputData.typeOfInfo}
+                            onChange={() => { }}
+                            disabled
+                        /> :
+                        <AutoComplete
+                            value={inputData.typeOfInfo}
+                            options={dataSource}
+                            placeholder={dropdownSelected.type}
+                            filterOption={(inputValue, option) =>
+                                option.value.toUpperCase().indexOf(inputValue.toUpperCase()) !== -1
+                            }
+                            onSelect={onSelectTypeOfInfo}
+                            onChange={onChangeTypeOfInfo}
+                            allowClear
+                            style={{
+                                width: '100%',
+                            }}
+                        />
+                    }
+                </td>
+                <td>
+                    <input type="text"
+                        value={inputData.number}
+                        onChange={(e) => onChangeInputValue(e, 'number')}
+                    />
+                </td>
+                <td>
+                    <input type="text"
+                        value={inputData.name}
+                        onChange={(e) => onChangeInputValue(e, 'name')}
+                    />
+                </td>
+                <td>
+                    <div className="toggle-btn">
+                        <Switch checked={inputData.source} onChange={toggleInputSource} />
+                    </div>
+                </td>
+                <td>
+                    <i
+                        className={`h1 icon-success ${inputData?.typeOfInfo ? 'green hover-hand' : ''}`}
+                        onClick={onAddReferance}
+                    />
+                </td>
+            </tr>
+        )
+    }
 
     if (!referenceModalId) return null
 
@@ -143,87 +274,61 @@ const ReferenceModal = ({ nodes, setNodes }) => {
                 />
             </div>
             <button className="m-b-20" onClick={onAddReferenceBtnClick} disabled={editMode}>Add Referance</button>
-            {editMode &&
-                <div className="g-row">
 
-                </div>
-            }
             <table>
                 <tr>
-                    <th>Type of Info</th>
+                    <th className={style.tableHeaderRowContainer}>
+                        Type of Info
+                        <div className={style.sortIconContainer} onClick={onSortTable}>
+                            <i className={`icon-arrow-up ${sortedType === SortTypes.asc && 'blue'}`} />
+                            <i className={`icon-arrow-down ${sortedType === SortTypes.des && 'blue'}`} />
+                        </div>
+                    </th>
                     <th>Number</th>
                     <th>Name</th>
                     <th>Source</th>
                     <th width="10%"></th>
                 </tr>
 
-                {editMode &&
-                    <tr>
-                        <td>
-                            <AutoComplete
-                                style={{
-                                    width: '100%',
-                                }}
-                                options={dataSource}
-                                placeholder={dropdownSelected.type}
-                                filterOption={(inputValue, option) =>
-                                    option.value.toUpperCase().indexOf(inputValue.toUpperCase()) !== -1
-                                }
-                            /></td>
-                        <td><input type="text" /></td>
-                        <td><input type="text" /></td>
-                        <td><input type="text" /></td>
-                        <td>
-                            <i className="h1 icon-success green hover-hand" />
-                        </td>
-                    </tr>
-
+                {editMode && !editRecord &&
+                    editRow()
                 }
+
                 {selectedNodeReferanceData?.map((data) => {
-                    return (
-                        <tr>
-                            <td>{`(${data.Id})`}</td>
-                            <td></td>
-                            <td>{data.Name}</td>
-                            <td></td>
-                        </tr>)
-                })
-                }
-
+                    if (editRecord === data.typeOfInfo) {
+                        return editRow()
+                    } else {
+                        return (
+                            <tr>
+                                <td>{data?.typeOfInfo}</td>
+                                <td>{data?.number}</td>
+                                <td>{data?.name}</td>
+                                <td>
+                                    <div className="toggle-btn">
+                                        <Switch checked={data.source} />
+                                    </div>
+                                </td>
+                                <td>
+                                    <div className={style.matrixColumnActionRow}>
+                                        <Tooltip title='Edit'>
+                                            < i className='icon-edit close-icon' onClick={() => onEditRecord(data)} />
+                                        </Tooltip>
+                                        <Tooltip title='Remove'>
+                                            < i className='icon-close close-icon' onClick={() => onRemoveReferance(data)} />
+                                        </Tooltip>
+                                    </div>
+                                </td>
+                            </tr>
+                        )
+                    }
+                })}
             </table>
+
             {selectedNodeReferanceData?.length === 0 &&
                 <div className="flex-center-middle">
                     No reference yet. Start off adding...
                 </div>
             }
-
-            {/* <Table
-                columns={SelectedReferanceTableHeaders('refType.id', onRemoveReferance)}
-                dataSource={dataSource}
-                pagination={false}
-            /> */}
-            {/* <div className="g-col-6">
-                    <Tabs
-                        type="card"
-                        activeKey={activeKey}
-                        onChange={onChangeTab}
-                    >
-                        {ReferenceTypesDropDown.map((refType) => (
-                            <TabPane
-                                tab={refType.type}
-                                key={refType.id}
-                            >
-                                <div className="tablele-width">
-                                    <Table
-                                        columns={SelectedReferanceTableHeaders(refType.id, onRemoveReferance)}
-                                        dataSource={selectedDataSource}
-                                        pagination={false}
-                                    />
-                                </div>
-                            </TabPane>
-                        ))}
-                    </Tabs>
-                </div> */}
             <div className="n-float" />
         </Modal>
     )

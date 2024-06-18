@@ -815,3 +815,19 @@ div.customHandle2Bottom {
     background-color: #434343;
     margin-bottom: 10px;
 }
+
+.tableHeaderRowContainer {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.sortIconContainer {
+    display: flex;
+    flex-direction: column;
+    padding-left: 10px;
+    
+    &:hover {
+        cursor: pointer;
+    }
+}
