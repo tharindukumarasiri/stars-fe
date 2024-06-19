@@ -9,21 +9,31 @@ import Header from "./Header.jsx";
 import Element from "./element.jsx";
 import Input from '../../common/input'
 import Dropdown from '../dropdown.jsx';
+import { useDiagramStore } from '../../Views/ChartDrawing/chartDrawingStore.js'
+import { emailRegEx, phoneRegEx, } from "../../utils/constants";
 
 import style from './FormBuilder.module.scss'
 import 'react-nestable/dist/styles/index.css';
 import { addNewForm } from "../../services/drawingService.js";
 
+const newContactDefaultState = { name: '', email: '', phone: '' }
+
 const FormBuilder = ({ screenContainerStyle, currentUser, closeModal }) => {
+    const filterdContacts = useDiagramStore((state) => state.filterdContacts);
+
     const initVal = formEl[0]?.value;
 
     //State
+    const [step, setStep] = useState(1)
     const [title, setTitle] = useState("Untitled Form");
     const [name, setName] = useState("");
     const [selectedCategories, setSelectedCategories] = useState({ category: '', subCategory: '' });
     const [description, setDescription] = useState("");
     const [data, setData] = useState([]);
     const [formData, setFormData] = useState("text");
+    const [contactList, setContactList] = useState([]);
+    const [newContactInput, setNewContactInput] = useState(newContactDefaultState);
+    const [newContactInputErrors, setNewContactInputErrors] = useState(newContactDefaultState);
 
     const items = data;
 
@@ -35,6 +45,57 @@ const FormBuilder = ({ screenContainerStyle, currentUser, closeModal }) => {
     const onChangeDescription = (e) => {
         e.preventDefault()
         setDescription(e.target.value)
+    }
+
+    const moveToFormStep = () => setStep(1)
+    const moveToParticipantsStep = () => setStep(2)
+
+    const onSelectContact = (e) => {
+        e.preventDefault();
+
+        const newContacts = JSON.parse(JSON.stringify(contactList))
+
+        newContacts.push(e.target.value)
+        setContactList(newContacts)
+    }
+
+    const validateFields = () => {
+        let valid = true;
+
+        if (!newContactInput.name) {
+            setNewContactInputErrors(pre => ({ ...pre, name: 'Please enter name' }))
+            valid = false
+        }
+        if (!newContactInput.email || !emailRegEx.test(newContactInput.email)) {
+            setNewContactInputErrors(pre => ({ ...pre, email: 'Please enter valid email' }))
+            valid = false
+        }
+        if (!newContactInput.phone || !phoneRegEx.test(newContactInput.phone)) {
+            setNewContactInputErrors(pre => ({ ...pre, phone: 'Please enter valid phone number' }))
+            valid = false
+        }
+
+        return valid
+    }
+
+    const onAddNewParticipant = () => {
+        if (validateFields()) {
+            const newContacts = JSON.parse(JSON.stringify(contactList))
+
+            newContacts.push(newContactInput)
+            setContactList(newContacts)
+
+            setNewContactInput(newContactDefaultState)
+        }
+    }
+
+    const onRemoveParticipant = (participant) => {
+        const newContacts = JSON.parse(JSON.stringify(contactList))
+
+        const index = contactList.findIndex(contact => contact.name === participant.name)
+
+        newContacts.splice(index, 1)
+        setContactList(newContacts)
     }
 
     const onSaveForm = () => {
@@ -49,10 +110,14 @@ const FormBuilder = ({ screenContainerStyle, currentUser, closeModal }) => {
 
         addNewForm(currentUser, payload).then((result) => {
             message.success("Form saved")
-            closeModal && closeModal()
+            moveToParticipantsStep();
         }).catch(e => {
             message.error("Form save failed please try again")
         })
+    }
+
+    const onSaveParticipants = () => {
+        closeModal && closeModal()
     }
 
     const onChangeCategoryType = (e, elementName) => {
@@ -63,6 +128,12 @@ const FormBuilder = ({ screenContainerStyle, currentUser, closeModal }) => {
     const onChangeName = (e) => {
         e.preventDefault();
         setName(e.target.value)
+    }
+
+    const onNewParticipantField = (e, type) => {
+        e.preventDefault();
+        setNewContactInput(pre => ({ ...pre, [type]: e.target.value }))
+        setNewContactInputErrors(pre => ({ ...pre, [type]: '' }))
     }
 
     const onCancel = () => {
@@ -260,64 +331,157 @@ const FormBuilder = ({ screenContainerStyle, currentUser, closeModal }) => {
         )
     };
 
+    const formPage = () => {
+        return (
+            <div>
+                <div className={style.headerBarContainer}>
+                    <div className={style.headerNameContainer}>
+                        <Input
+                            placeholder="Name"
+                            value={name}
+                            onChange={onChangeName}
+                        />
+                    </div>
+                    <Dropdown
+                        values={formCategories}
+                        onChange={e => onChangeCategoryType(e, 'category')}
+                        selected={selectedCategories.category}
+                        placeholder='Category'
+                        dataName="label"
+                        valueName="value"
+                    />
+                    <Dropdown
+                        values={formSubCategories}
+                        onChange={e => onChangeCategoryType(e, 'subCategory')}
+                        selected={selectedCategories.subCategory}
+                        placeholder="Sub Category"
+                        dataName="label"
+                        valueName="value"
+                    />
+                    <div>
+                        <button
+                            className="secondary-btn m-r-20"
+                            onClick={onCancel}>
+                            Cancel
+                        </button>
+                        <button className="add-btn"
+                            onClick={onSaveForm}
+                        >Save and Continue</button>
+                    </div>
+
+                </div>
+                <div className={style.mainContainer}>
+                    <div className={style.inputsContainer}>
+                        <Header
+                            title={title}
+                            setTitle={onChangeTitle}
+                            description={description}
+                            setDescription={onChangeDescription}
+                        />
+                        <Nestable
+                            items={items}
+                            renderItem={renderElements}
+                            maxDepth={1}
+                            onChange={handleOnChangeSort}
+                        />
+                    </div>
+                    <div>
+                        <button className={`add-btn ${style.BtnContainer}`} onClick={addElement} >Add Question</button>
+                    </div>
+                </div>
+            </div>
+        )
+    }
+
+    const participantsPage = () => {
+        return (
+            <div>
+                <div className={style.headerBarContainer}>
+                    <div className={style.headerNameContainer}>
+                        Participant
+                        <Dropdown
+                            values={filterdContacts}
+                            dataName="value"
+                            onChange={onSelectContact}
+                            selected={undefined}
+                            placeholder="Search Users/Contact Per."
+                        />
+                    </div>
+                    <div>
+                        Add New Participant
+                        <div className={style.nameTypeRow}>
+                            <div className="m-r-10">
+                                <Input
+                                    type="text"
+                                    placeholder="Name"
+                                    value={newContactInput.name}
+                                    onChange={(e) => onNewParticipantField(e, 'name')}
+                                    error={newContactInputErrors.name}
+                                />
+                            </div>
+                            <div className="m-r-10">
+                                <Input
+                                    type="email"
+                                    placeholder="Email"
+                                    value={newContactInput.email}
+                                    onChange={(e) => onNewParticipantField(e, 'email')}
+                                    error={newContactInputErrors.email}
+                                />
+                            </div>
+                            <div className="m-r-10">
+                                <Input
+                                    type="text"
+                                    placeholder="Phone"
+                                    value={newContactInput.phone}
+                                    onChange={(e) => onNewParticipantField(e, 'phone')}
+                                    error={newContactInputErrors.phone}
+                                />
+                            </div>
+                            <i
+                                className="icon-plus-circled hover-hand close-icon"
+                                onClick={onAddNewParticipant}
+                            />
+                        </div>
+                    </div>
+
+
+                    <div className="m-t-20">
+                        <button
+                            className="secondary-btn m-r-20"
+                            onClick={onCancel}>
+                            Cancel
+                        </button>
+                        <button className="add-btn"
+                            onClick={onSaveParticipants}
+                        >Save</button>
+                    </div>
+                </div>
+                <div className="p-l-20">
+                    {contactList.map((contact, index) => {
+                        return (
+                            <div key={index} className={style.contactItem}>
+                                {contact?.name ?? contact?.value}
+                                < i className='icon-close-small-x grey hover-hand' onClick={onRemoveParticipant} />
+                            </div>
+                        )
+                    })}
+                </div>
+            </div>
+        )
+    }
+
     return (
         <div className={screenContainerStyle ?? style.screenContainer} >
-            <div className={style.headerBarContainer}>
-                <div className={style.headerNameContainer}>
-                    <Input
-                        placeholder="Name"
-                        value={name}
-                        onChange={onChangeName}
-                    />
-                </div>
-                <Dropdown
-                    values={formCategories}
-                    onChange={e => onChangeCategoryType(e, 'category')}
-                    selected={selectedCategories.category}
-                    placeholder='Category'
-                    dataName="label"
-                    valueName="value"
-                />
-                <Dropdown
-                    values={formSubCategories}
-                    onChange={e => onChangeCategoryType(e, 'subCategory')}
-                    selected={selectedCategories.subCategory}
-                    placeholder="Sub Category"
-                    dataName="label"
-                    valueName="value"
-                />
-                <div>
-                    <button className={`add-btn m-r-20`}
-                        onClick={onSaveForm}
-                    >Save</button>
-
-                    <button
-                        className={`secondary-btn`}
-                        onClick={onCancel}>
-                        Cancel
-                    </button>
-                </div>
-
+            <div className={style.screenStepContainer}>
+                <span className={`m-r-10 hover-hand ${step === 1 && 'blue'}`} onClick={moveToFormStep}>Form</span>
+                <i className="icon-arrow-right-circled close-icon" />
+                <span className={`m-l-10 hover-hand ${step === 2 && 'blue'}`} onClick={moveToParticipantsStep}>Participant/s</span>
             </div>
-            <div className={style.mainContainer}>
-                <div className={style.inputsContainer}>
-                    <Header
-                        title={title}
-                        setTitle={onChangeTitle}
-                        description={description}
-                        setDescription={onChangeDescription}
-                    />
-                    <Nestable
-                        items={items}
-                        renderItem={renderElements}
-                        maxDepth={1}
-                        onChange={handleOnChangeSort}
-                    />
-                </div>
-                <div>
-                    <button className={`add-btn ${style.BtnContainer}`} onClick={addElement} >Add Question</button>
-                </div>
-            </div>
+            {step === 1 ?
+                formPage() :
+                participantsPage()
+            }
+
         </div>
 
     );

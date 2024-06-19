@@ -27,12 +27,15 @@ const ReferenceModal = ({ nodes, setNodes }) => {
     const [editRecord, setEditRecord] = useState('');
     const [inputData, setinputData] = useState(initialInitialData);
     const [dropdownSelected, setDropdownSelected] = useState(ReferenceTypesDropDown[0])
-    const [sortedType, setSortedType] = useState(SortTypes.none)
+    // const [sortedType, setSortedType] = useState(SortTypes.none)
+    const [showFilter, setShowFilter] = useState(false)
 
     const referenceModalId = useNodeDataStore((state) => state.referenceModalId);
     const setReferenceModalId = useNodeDataStore((state) => state.setReferenceModalId);
 
     const referenceData = useDiagramStore((state) => state.referenceData);
+
+    const toggleFilter = () => setShowFilter(pre => !pre)
 
     const closeModal = () => {
         setReferenceModalId('');
@@ -41,9 +44,14 @@ const ReferenceModal = ({ nodes, setNodes }) => {
         setEditRecord('')
     }
 
-    const onSelectReferenceType = (e) => {
-        e.preventDefault();
-        setDropdownSelected(JSON.parse(e.target.value))
+    // const onSelectReferenceType = (e) => {
+    //     e.preventDefault();
+    //     setDropdownSelected(JSON.parse(e.target.value))
+    // }
+
+    const onSelectFilterType = (type) => {
+        setDropdownSelected(type)
+        toggleFilter()
     }
 
     const onAddReferenceBtnClick = () => {
@@ -53,22 +61,22 @@ const ReferenceModal = ({ nodes, setNodes }) => {
     }
 
     const selectedNodeReferanceData = useMemo(() => {
-        const slectedNode = nodes.find(node => node.id === referenceModalId) 
+        const slectedNode = nodes.find(node => node.id === referenceModalId)
         const referanceData = slectedNode?.data?.reference || []
 
-        if(sortedType === SortTypes.asc){
-            referanceData?.sort((a,b) => {
-                return a?.typeOfInfo?.localeCompare(b?.typeOfInfo)
-            })
-        } 
-        if(sortedType === SortTypes.des){
-            referanceData?.sort((a,b) => {
-                return b?.typeOfInfo?.localeCompare(a?.typeOfInfo)
-            })
-        } 
+        // if (sortedType === SortTypes.asc) {
+        //     referanceData?.sort((a, b) => {
+        //         return a?.typeOfInfo?.localeCompare(b?.typeOfInfo)
+        //     })
+        // }
+        // if (sortedType === SortTypes.des) {
+        //     referanceData?.sort((a, b) => {
+        //         return b?.typeOfInfo?.localeCompare(a?.typeOfInfo)
+        //     })
+        // }
 
-        return referanceData 
-    }, [nodes, referenceModalId, sortedType])
+        return referanceData
+    }, [nodes, referenceModalId])
 
     const onAddReferance = () => {
         if (inputData?.typeOfInfo)
@@ -141,46 +149,46 @@ const ReferenceModal = ({ nodes, setNodes }) => {
     const dataSource = useMemo(() => {
         let result = [];
 
-        if (dropdownSelected.id === ReferenceTypesDropDown[0].id) {
-            for (let key in referenceData) {
-                if (Array.isArray(referenceData[key])) {
-                    const newRefData = [...referenceData[key]]
+        // if (dropdownSelected.id === ReferenceTypesDropDown[0].id) {
+        for (let key in referenceData) {
+            if (Array.isArray(referenceData[key])) {
+                const newRefData = [...referenceData[key]]
 
-                    const itemType = ReferenceTypesDropDown.find(refType => refType.id === key)
+                const itemType = ReferenceTypesDropDown.find(refType => refType.id === key)
 
-                    newRefData.forEach((item) => {
-                        item.value = `${itemType.type} (${item.Id})`
-                    })
-                    result = result.concat(newRefData);
-                }
+                newRefData?.forEach((item) => {
+                    item.value = `${itemType.type} (${item.Id})`
+                })
+                result = result.concat(newRefData);
             }
-
-        } else {
-            result = referenceData[dropdownSelected.id]
-
-            result.forEach((item) => (
-                item.value = `${dropdownSelected.type} (${item.Id})`
-            ))
         }
+
+        // } else {
+        //     result = referenceData[dropdownSelected.id]
+
+        //     result.forEach((item) => (
+        //         item.value = `${dropdownSelected.type} (${item.Id})`
+        //     ))
+        // }
 
         return result;
     }, [referenceData, dropdownSelected])
 
-    const onSortTable = () => {
-        switch (sortedType) {
-            case SortTypes.none:
-                setSortedType(SortTypes.asc)
-                break
-            case SortTypes.asc:
-                setSortedType(SortTypes.des)
-                break
-            case SortTypes.des:
-                setSortedType(SortTypes.none)
-                break
-            default:
-                break
-        }
-    }
+    // const onSortTable = () => {
+    //     switch (sortedType) {
+    //         case SortTypes.none:
+    //             setSortedType(SortTypes.asc)
+    //             break
+    //         case SortTypes.asc:
+    //             setSortedType(SortTypes.des)
+    //             break
+    //         case SortTypes.des:
+    //             setSortedType(SortTypes.none)
+    //             break
+    //         default:
+    //             break
+    //     }
+    // }
 
     const toggleInputSource = () => {
         setinputData((pre) => ({ ...pre, source: !pre.source }));
@@ -264,7 +272,7 @@ const ReferenceModal = ({ nodes, setNodes }) => {
             width={'85vw'}
             centered={true}
             closeIcon={< i className='icon-close close-icon' />}>
-            <div className="g-col-3">
+            {/* <div className="g-col-3">
                 <Dropdown
                     values={ReferenceTypesDropDown}
                     onChange={onSelectReferenceType}
@@ -272,16 +280,40 @@ const ReferenceModal = ({ nodes, setNodes }) => {
                     selected={JSON.stringify(dropdownSelected)}
                     placeholder='Reference Type/s'
                 />
-            </div>
+            </div> */}
             <button className="m-b-20" onClick={onAddReferenceBtnClick} disabled={editMode}>Add Referance</button>
 
             <table>
                 <tr>
                     <th className={style.tableHeaderRowContainer}>
                         Type of Info
-                        <div className={style.sortIconContainer} onClick={onSortTable}>
+                        {/* <div className={style.sortIconContainer} onClick={onSortTable}>
                             <i className={`icon-arrow-up ${sortedType === SortTypes.asc && 'blue'}`} />
                             <i className={`icon-arrow-down ${sortedType === SortTypes.des && 'blue'}`} />
+                        </div> */}
+                        <div>
+                            <i
+                                className='icon-arrow-down-circled close-icon hover-hand'
+                                onClick={toggleFilter}
+                            />
+                            {showFilter &&
+                                <div className={style.referenceFilterContainer}
+                                    onMouseLeave={toggleFilter}
+                                >
+                                    {ReferenceTypesDropDown.map(type => {
+                                        return (
+                                            <div
+                                                className={`${style.filterItem} ${type.id === dropdownSelected.id && 'blue'}`}
+                                                key={type.id}
+                                                onClick={() => onSelectFilterType(type)}
+                                            >
+                                                {type.type}
+                                            </div>
+                                        )
+                                    })}
+                                </div>
+                            }
+
                         </div>
                     </th>
                     <th>Number</th>
