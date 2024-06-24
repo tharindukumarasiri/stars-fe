@@ -150,23 +150,23 @@ const DrawingToolHome = () => {
 
     const validateFields = () => {
         let validation = true
-        if (!newCollectionDataErrors.Name) {
+        if (!newCollectionData.Name) {
             setNewCollectionDataErrors(pre => ({ ...pre, Name: "Please enter name" }))
             validation = false
         }
-        if (!newCollectionDataErrors.RefTableId) {
+        if (!newCollectionData.RefTableId) {
             setNewCollectionDataErrors(pre => ({ ...pre, RefTableId: "Please select a type" }))
             validation = false
         }
-        if (!newCollectionDataErrors.FromDate) {
+        if (!newCollectionData.FromDate) {
             setNewCollectionDataErrors(pre => ({ ...pre, FromDate: "Please select date" }))
             validation = false
         }
-        if (!newCollectionDataErrors.Responsible) {
+        if (!newCollectionData.Responsible) {
             setNewCollectionDataErrors(pre => ({ ...pre, Responsible: "Please select a responsible person" }))
             validation = false
         }
-        if (!newCollectionDataErrors.RefRecId) {
+        if (!newCollectionData.RefRecId) {
             setNewCollectionDataErrors(pre => ({ ...pre, RefRecId: "Please select a status" }))
             validation = false
         }
