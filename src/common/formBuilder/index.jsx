@@ -27,6 +27,7 @@ const FormBuilder = ({ screenContainerStyle, currentUser, closeModal }) => {
     const [step, setStep] = useState(1)
     const [title, setTitle] = useState("Untitled Form");
     const [name, setName] = useState("");
+    const [errors, setErrors] = useState({ name: '', category: '', subCategory: '' });
     const [selectedCategories, setSelectedCategories] = useState({ category: '', subCategory: '' });
     const [description, setDescription] = useState("");
     const [data, setData] = useState([]);
@@ -98,22 +99,44 @@ const FormBuilder = ({ screenContainerStyle, currentUser, closeModal }) => {
         setContactList(newContacts)
     }
 
-    const onSaveForm = () => {
-        const payload = {
-            Name: name,
-            CategoryId: selectedCategories.category,
-            SubCategoryId: selectedCategories.subCategory,
-            Title: title,
-            Description: description,
-            FormData: JSON.stringify(data)
+    const validateFormSave = () => {
+        let valid = true;
+
+        if (!name) {
+            setErrors(pre => ({ ...pre, name: 'Please enter form name' }))
+            valid = false
+        }
+        if (!selectedCategories.category) {
+            setErrors(pre => ({ ...pre, category: 'Please select category' }))
+            valid = false
+        }
+        if (!selectedCategories.subCategory) {
+            setErrors(pre => ({ ...pre, subCategory: 'Please select sub category' }))
+            valid = false
         }
 
-        addNewForm(currentUser, payload).then((result) => {
-            message.success("Form saved")
-            moveToParticipantsStep();
-        }).catch(e => {
-            message.error("Form save failed please try again")
-        })
+        return valid
+    }
+
+    const onSaveForm = () => {
+        if (validateFormSave()) {
+            const payload = {
+                Name: name,
+                CategoryId: selectedCategories.category,
+                SubCategoryId: selectedCategories.subCategory,
+                Title: title,
+                Description: description,
+                FormData: JSON.stringify(data)
+            }
+
+            addNewForm(currentUser, payload).then((result) => {
+                message.success("Form saved")
+                // moveToParticipantsStep();
+                closeModal && closeModal()
+            }).catch(e => {
+                message.error("Form save failed please try again")
+            })
+        }
     }
 
     const onSaveParticipants = () => {
@@ -123,11 +146,13 @@ const FormBuilder = ({ screenContainerStyle, currentUser, closeModal }) => {
     const onChangeCategoryType = (e, elementName) => {
         e.preventDefault();
         setSelectedCategories({ ...selectedCategories, [elementName]: e.target.value });
+        setErrors(pre => ({ ...pre, [elementName]: '' }))
     }
 
     const onChangeName = (e) => {
         e.preventDefault();
         setName(e.target.value)
+        setErrors(pre => ({ ...pre, name: '' }))
     }
 
     const onNewParticipantField = (e, type) => {
@@ -340,6 +365,7 @@ const FormBuilder = ({ screenContainerStyle, currentUser, closeModal }) => {
                             placeholder="Name"
                             value={name}
                             onChange={onChangeName}
+                            error={errors.name}
                         />
                     </div>
                     <Dropdown
@@ -349,6 +375,7 @@ const FormBuilder = ({ screenContainerStyle, currentUser, closeModal }) => {
                         placeholder='Category'
                         dataName="label"
                         valueName="value"
+                        error={errors.category}
                     />
                     <Dropdown
                         values={formSubCategories}
@@ -357,6 +384,7 @@ const FormBuilder = ({ screenContainerStyle, currentUser, closeModal }) => {
                         placeholder="Sub Category"
                         dataName="label"
                         valueName="value"
+                        error={errors.subCategory}
                     />
                     <div>
                         <button
@@ -366,7 +394,7 @@ const FormBuilder = ({ screenContainerStyle, currentUser, closeModal }) => {
                         </button>
                         <button className="add-btn"
                             onClick={onSaveForm}
-                        >Save and Continue</button>
+                        >Save</button>
                     </div>
 
                 </div>
@@ -472,11 +500,11 @@ const FormBuilder = ({ screenContainerStyle, currentUser, closeModal }) => {
 
     return (
         <div className={screenContainerStyle ?? style.screenContainer} >
-            <div className={style.screenStepContainer}>
+            {/* <div className={style.screenStepContainer}>
                 <span className={`m-r-10 hover-hand ${step === 1 && 'blue'}`} onClick={moveToFormStep}>Form</span>
                 <i className="icon-arrow-right-circled close-icon" />
                 <span className={`m-l-10 hover-hand ${step === 2 && 'blue'}`} onClick={moveToParticipantsStep}>Participant/s</span>
-            </div>
+            </div> */}
             {step === 1 ?
                 formPage() :
                 participantsPage()

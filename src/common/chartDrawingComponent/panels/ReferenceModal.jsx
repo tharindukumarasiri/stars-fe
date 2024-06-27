@@ -2,7 +2,6 @@ import React, { useMemo, useState } from "react";
 import { Modal, AutoComplete, message, Switch, Tooltip } from "antd";
 
 import { useNodeDataStore } from '../store'
-import Dropdown from '../../dropdown';
 import { useDiagramStore } from '../../../Views/ChartDrawing/chartDrawingStore'
 import { ReferenceTypes } from "../../../utils/constants";
 
@@ -12,6 +11,11 @@ const SortTypes = {
     asc: 'asc',
     des: 'des',
     none: 'none'
+}
+
+const sortColumns = {
+    TypeOfInfo: 'typeOfInfo',
+    Number: 'number',
 }
 
 const ReferenceTypesDropDown = [
@@ -27,7 +31,8 @@ const ReferenceModal = ({ nodes, setNodes }) => {
     const [editRecord, setEditRecord] = useState('');
     const [inputData, setinputData] = useState(initialInitialData);
     const [dropdownSelected, setDropdownSelected] = useState(ReferenceTypesDropDown[0])
-    // const [sortedType, setSortedType] = useState(SortTypes.none)
+    const [sortedType, setSortedType] = useState(SortTypes.none)
+    const [sortedColumn, setSortedColumn] = useState("")
     const [showFilter, setShowFilter] = useState(false)
 
     const referenceModalId = useNodeDataStore((state) => state.referenceModalId);
@@ -62,24 +67,35 @@ const ReferenceModal = ({ nodes, setNodes }) => {
 
     const selectedNodeReferanceData = useMemo(() => {
         const slectedNode = nodes.find(node => node.id === referenceModalId)
-        const referanceData = slectedNode?.data?.reference || []
+        let referanceData = slectedNode?.data?.reference || []
 
-        // if (sortedType === SortTypes.asc) {
-        //     referanceData?.sort((a, b) => {
-        //         return a?.typeOfInfo?.localeCompare(b?.typeOfInfo)
-        //     })
-        // }
-        // if (sortedType === SortTypes.des) {
-        //     referanceData?.sort((a, b) => {
-        //         return b?.typeOfInfo?.localeCompare(a?.typeOfInfo)
-        //     })
-        // }
+
+        if (dropdownSelected.id !== ReferenceTypesDropDown[0].id) {
+            referanceData = referanceData.filter((referance) => (
+                referance?.typeOfInfo.toUpperCase().includes(dropdownSelected.type.toUpperCase())
+            ))
+        }
+
+        if (sortedType === SortTypes.asc) {
+            referanceData?.sort((a, b) => {
+                return a[sortedColumn]?.localeCompare(b[sortedColumn])
+            })
+        }
+        if (sortedType === SortTypes.des) {
+            referanceData?.sort((a, b) => {
+                return b[sortedColumn]?.localeCompare(a[sortedColumn])
+            })
+        }
 
         return referanceData
-    }, [nodes, referenceModalId])
+    }, [nodes, referenceModalId, sortedType, dropdownSelected])
 
     const onAddReferance = () => {
-        if (inputData?.typeOfInfo)
+        if (inputData?.typeOfInfo) {
+            if (!inputData.typeOfInfo.toUpperCase().includes(dropdownSelected.type.toUpperCase())) {
+                setDropdownSelected(ReferenceTypesDropDown[0])
+            }
+
             setNodes((nodes) =>
                 nodes.map((node) => {
                     if (node.id === referenceModalId) {
@@ -111,6 +127,7 @@ const ReferenceModal = ({ nodes, setNodes }) => {
                     } else return node
                 })
             )
+        }
     }
 
     const onRemoveReferance = (data) => {
@@ -174,21 +191,22 @@ const ReferenceModal = ({ nodes, setNodes }) => {
         return result;
     }, [referenceData, dropdownSelected])
 
-    // const onSortTable = () => {
-    //     switch (sortedType) {
-    //         case SortTypes.none:
-    //             setSortedType(SortTypes.asc)
-    //             break
-    //         case SortTypes.asc:
-    //             setSortedType(SortTypes.des)
-    //             break
-    //         case SortTypes.des:
-    //             setSortedType(SortTypes.none)
-    //             break
-    //         default:
-    //             break
-    //     }
-    // }
+    const onSortTable = (type) => {
+        setSortedColumn(type);
+        switch (sortedType) {
+            case SortTypes.none:
+                setSortedType(SortTypes.asc)
+                break
+            case SortTypes.asc:
+                setSortedType(SortTypes.des)
+                break
+            case SortTypes.des:
+                setSortedType(SortTypes.none)
+                break
+            default:
+                break
+        }
+    }
 
     const toggleInputSource = () => {
         setinputData((pre) => ({ ...pre, source: !pre.source }));
@@ -287,15 +305,20 @@ const ReferenceModal = ({ nodes, setNodes }) => {
                 <tr>
                     <th className={style.tableHeaderRowContainer}>
                         Type of Info
-                        {/* <div className={style.sortIconContainer} onClick={onSortTable}>
-                            <i className={`icon-arrow-up ${sortedType === SortTypes.asc && 'blue'}`} />
-                            <i className={`icon-arrow-down ${sortedType === SortTypes.des && 'blue'}`} />
-                        </div> */}
+                        <Tooltip title='Sort by Type'>
+                            <div className={style.sortIconContainer} onClick={() => onSortTable(sortColumns.TypeOfInfo)}>
+                                <i className={`icon-arrow-up ${sortedType === SortTypes.asc && sortedColumn === sortColumns.TypeOfInfo && 'blue'}`} />
+                                <i className={`icon-arrow-down ${sortedType === SortTypes.des && sortedColumn === sortColumns.TypeOfInfo && 'blue'}`} />
+                            </div>
+                        </Tooltip>
+
                         <div>
-                            <i
-                                className='icon-arrow-down-circled close-icon hover-hand'
-                                onClick={toggleFilter}
-                            />
+                            <Tooltip title='Filter by Type'>
+                                <i
+                                    className='icon-arrow-down-circled close-icon hover-hand'
+                                    onClick={toggleFilter}
+                                />
+                            </Tooltip>
                             {showFilter &&
                                 <div className={style.referenceFilterContainer}
                                     onMouseLeave={toggleFilter}
@@ -316,7 +339,17 @@ const ReferenceModal = ({ nodes, setNodes }) => {
 
                         </div>
                     </th>
-                    <th>Number</th>
+                    <th>
+                        <div className={style.tableHeaderRowContainer}>
+                            Number
+                            <Tooltip title='Sort by number'>
+                                <div className={style.sortIconContainer} onClick={() => onSortTable(sortColumns.Number)}>
+                                    <i className={`icon-arrow-up ${sortedType === SortTypes.asc && sortedColumn === sortColumns.Number && 'blue'}`} />
+                                    <i className={`icon-arrow-down ${sortedType === SortTypes.des && sortedColumn === sortColumns.Number && 'blue'}`} />
+                                </div>
+                            </Tooltip>
+                        </div>
+                    </th>
                     <th>Name</th>
                     <th>Source</th>
                     <th width="10%"></th>
@@ -331,7 +364,7 @@ const ReferenceModal = ({ nodes, setNodes }) => {
                         return editRow()
                     } else {
                         return (
-                            <tr>
+                            <tr key={data?.typeOfInfo}>
                                 <td>{data?.typeOfInfo}</td>
                                 <td>{data?.number}</td>
                                 <td>{data?.name}</td>

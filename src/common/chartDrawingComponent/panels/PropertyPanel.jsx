@@ -1122,30 +1122,35 @@ const PropertyPanel = ({ nodes, selectedNodes = [], selectedEdges = [], setNodes
                                 }
                             </div>
 
-                            <div className='m-b-10' >
-                                <div className={style.sidebarCategoryheader} onClick={() => { onCategoryClick(propertyCategories.LINK) }} >
-                                    <div>{propertyCategories.LINK}</div>
-                                    <i className={(!closedCategories.includes(propertyCategories.LINK) ? ' icon-arrow-down' : ' icon-arrow-up')} />
-                                </div>
+                            {selectedNodes?.length === 1 &&
+                                <div>
+                                    <div className='m-b-10' >
+                                        <div className={style.sidebarCategoryheader} onClick={() => { onCategoryClick(propertyCategories.LINK) }} >
+                                            <div>{propertyCategories.LINK}</div>
+                                            <i className={(!closedCategories.includes(propertyCategories.LINK) ? ' icon-arrow-down' : ' icon-arrow-up')} />
+                                        </div>
 
-                                {!closedCategories.includes(propertyCategories.LINK) &&
-                                    <div className={style.propertyPanelContainer}>
-                                        {linkContent()}
+                                        {!closedCategories.includes(propertyCategories.LINK) &&
+                                            <div className={style.propertyPanelContainer}>
+                                                {linkContent()}
+                                            </div>
+                                        }
                                     </div>
-                                }
-                            </div>
-                            <div className='m-b-10' >
-                                <div className={style.sidebarCategoryheader} onClick={() => { onCategoryClick(propertyCategories.FORMS) }} >
-                                    <div>{propertyCategories.FORMS}</div>
-                                    <i className={(!closedCategories.includes(propertyCategories.FORMS) ? ' icon-arrow-down' : ' icon-arrow-up')} />
-                                </div>
+                                    <div className='m-b-10' >
+                                        <div className={style.sidebarCategoryheader} onClick={() => { onCategoryClick(propertyCategories.FORMS) }} >
+                                            <div>{propertyCategories.FORMS}</div>
+                                            <i className={(!closedCategories.includes(propertyCategories.FORMS) ? ' icon-arrow-down' : ' icon-arrow-up')} />
+                                        </div>
 
-                                {!closedCategories.includes(propertyCategories.FORMS) &&
-                                    <div className={style.propertyPanelContainer}>
-                                        {formsContent()}
+                                        {!closedCategories.includes(propertyCategories.FORMS) &&
+                                            <div className={style.propertyPanelContainer}>
+                                                {formsContent()}
+                                            </div>
+                                        }
                                     </div>
-                                }
-                            </div>
+                                </div>
+                            }
+
                         </>
                     }
                 </div>
