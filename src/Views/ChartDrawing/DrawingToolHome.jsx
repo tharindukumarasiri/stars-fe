@@ -162,6 +162,10 @@ const DrawingToolHome = () => {
             setNewCollectionDataErrors(pre => ({ ...pre, FromDate: "Please select date" }))
             validation = false
         }
+        if (!newCollectionData.ToDate) {
+            setNewCollectionDataErrors(pre => ({ ...pre, ToDate: "Please select date" }))
+            validation = false
+        }
         if (!newCollectionData.Responsible) {
             setNewCollectionDataErrors(pre => ({ ...pre, Responsible: "Please select a responsible person" }))
             validation = false
@@ -326,6 +330,7 @@ const DrawingToolHome = () => {
                             value={newCollectionData.ToDate ? new Date(newCollectionData.ToDate) : ''}
                             minDate={new Date()}
                             onChange={(date) => onNewElementDateChange(date, 'ToDate')}
+                            error={newCollectionDataErrors?.ToDate}
                         />
                         <StarDropdown
                             values={filterdContacts}

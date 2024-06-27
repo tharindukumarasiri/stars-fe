@@ -20,8 +20,11 @@ const sortColumns = {
 
 const ReferenceTypesDropDown = [
     { id: 'all', type: 'ALL' },
-    { id: ReferenceTypes.workInstructions, type: 'Work Instructions' },
-    { id: ReferenceTypes.softwareSystems, type: 'Systems' },
+    { id: ReferenceTypes.workInstructions, type: 'Work Instruction' },
+    { id: ReferenceTypes.softwareSystems, type: 'System' },
+    { id: ReferenceTypes.agreements, type: 'Agreement' },
+    { id: ReferenceTypes.contactPersons, type: 'Contact Person' },
+    { id: ReferenceTypes.companies, type: 'Company' },
 ]
 
 const initialInitialData = { typeOfInfo: '', number: '', name: '', source: false }
@@ -222,7 +225,7 @@ const ReferenceModal = ({ nodes, setNodes }) => {
     }
 
     const onSelectTypeOfInfo = (value, options) => {
-        setinputData((pre) => ({ ...pre, number: options?.Version, name: options?.Name }));
+        setinputData((pre) => ({ ...pre, number: options?.Number, name: options?.Name }));
     }
 
     const editRow = () => {

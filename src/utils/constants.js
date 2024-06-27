@@ -115,5 +115,8 @@ export const DaysOfTheWeek = [
 
 export const ReferenceTypes = {
     workInstructions: 'workInstructions',
-    softwareSystems: 'softwareSystems'
+    softwareSystems: 'softwareSystems',
+    agreements: 'agreements',
+    contactPersons: 'contactPersons',
+    companies: 'companies'
 }

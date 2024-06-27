@@ -61,6 +61,16 @@ export async function getSoftwareSystems() {
     return data;
 }
 
+export async function getAgreements() {
+    const { data } = await http.get(config.GET_AGREEMENTS);
+    return data;
+}
+
+export async function getCompanies() {
+    const { data } = await http.get(config.GET_COMPANY_TS);
+    return data;
+}
+
 export async function getForms(userId) {
     const { data } = await http.get(`${config.GET_FORMS}`);
     return data;

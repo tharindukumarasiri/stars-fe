@@ -133,6 +133,9 @@ function CustomNode({ id, selected, type, data }) {
     const getReferanceIcon = () => {
         const workInstruction = data?.reference.some(ref => ref.type === ReferenceTypes.workInstructions)
         const softwareSystem = data?.reference.some(ref => ref.type === ReferenceTypes.softwareSystems)
+        const agreements = data?.reference.some(ref => ref.type === ReferenceTypes.agreements)
+        const contactPersons = data?.reference.some(ref => ref.type === ReferenceTypes.contactPersons)
+        const companies = data?.reference.some(ref => ref.type === ReferenceTypes.companies)
 
         const getIcon = (isVisible, icon, tooltip) => {
             if (isVisible) {
@@ -146,8 +149,11 @@ function CustomNode({ id, selected, type, data }) {
 
         return (
             <div className={style.activityIcon} style={{ bottom: size?.height / 50, right: size?.height / 50 }} >
-                {getIcon(workInstruction, 'icon-work-instructions', 'Work Instructions')}
-                {getIcon(softwareSystem, 'icon-systems', 'Software Systems')}
+                {getIcon(workInstruction, 'icon-work-instructions-1', 'Work Instructions')}
+                {getIcon(softwareSystem, 'icon-systems-1', 'Software Systems')}
+                {getIcon(agreements, 'icon-agreements-1', 'Agreements')}
+                {getIcon(contactPersons, 'icon-contact-persons-1', 'Contact Persons')}
+                {getIcon(companies, 'icon-companies-1', 'Companies')}
             </div>
         )
     }

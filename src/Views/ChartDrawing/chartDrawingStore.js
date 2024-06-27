@@ -12,6 +12,8 @@ import {
     addNewDrawingImage,
     getWorkInstructions,
     getSoftwareSystems,
+    getAgreements,
+    getCompanies,
     getForms
 } from "../../services/drawingService";
 import { getContacts } from "../../services/userService";
@@ -43,7 +45,8 @@ export const useDiagramStore = create((set, get) => ({
             return {
                 key: user.Id,
                 label: user.Name,
-                value: user.Name
+                value: user.Name,
+                PersonId: user.PersonId
             };
         }) : [];
 
@@ -145,11 +148,30 @@ export const useDiagramStore = create((set, get) => ({
         }
     },
     getReferanceData: () => {
+        const mapValues = (result, numberKey, nameKey = 'Name', idKey = 'Id') => {
+            const response = result.map((item) => {
+                return {
+                    Id: item[idKey],
+                    Number: item[numberKey],
+                    Name: item[nameKey]
+                };
+            })
+            return response
+        }
+
+        set({ referenceData: { ...get().referenceData, [ReferenceTypes.contactPersons]: mapValues(get().filterdContacts, 'PersonId', 'label', 'key' ) } })
+
         getWorkInstructions().then(result => {
-            set({ referenceData: { ...get().referenceData, [ReferenceTypes.workInstructions]: result } })
+            set({ referenceData: { ...get().referenceData, [ReferenceTypes.workInstructions]: mapValues(result, 'WorkInstructionId') } })
         });
         getSoftwareSystems().then(result => {
-            set({ referenceData: { ...get().referenceData, [ReferenceTypes.softwareSystems]: result } })
+            set({ referenceData: { ...get().referenceData, [ReferenceTypes.softwareSystems]: mapValues(result, 'Version') } })
+        });
+        getAgreements().then(result => {
+            set({ referenceData: { ...get().referenceData, [ReferenceTypes.agreements]: result } })
+        });
+        getCompanies().then(result => {
+            set({ referenceData: { ...get().referenceData, [ReferenceTypes.companies]: mapValues(result, 'CompanyId') } })
         });
     },
     getFormsData: () => {

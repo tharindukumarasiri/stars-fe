@@ -137,6 +137,8 @@
     "ADD_DRAWING_IMAGE": "actionapi/DrawingImages/Post?userId=",
     "GET_WORK_INSTRUCTIONS": "actionapi/WorkInstructions/GetWorkInstruction?workInstructionId=null",
     "GET_SOFTWARE_SYSTEMS": "actionapi/SoftwareSystems/GetSoftwareSystem?companyPartyId=null",
+    "GET_AGREEMENTS": "actionapi/Agreements/Get",
+    "GET_COMPANY_TS": "actionapi/CompanyTs/Get",
     
     "GET_FORMS": "actionapi/SurveyForms",
     "ADD_FORM": "actionapi/SurveyForms/Post?userId="
