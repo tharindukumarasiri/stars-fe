@@ -561,7 +561,7 @@ div.customHandle2Bottom {
 }
 
 .formContainer {
-    width: 90vw;
+    width: 75vw;
 }
 
 .tableBtnHorizontal {
@@ -842,8 +842,18 @@ div.customHandle2Bottom {
 }
 
 .filterItem {
+    font-weight: normal !important;
+
     &:hover {
         cursor: pointer;
         color: #0592D9;
     }
+}
+
+.referenceTableContainer {
+    min-height: 150px;
+}
+
+.referenceTableContainerPadding {
+    min-height: 50px;
 }

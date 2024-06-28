@@ -36,6 +36,8 @@ export const useDiagramStore = create((set, get) => ({
     uploadedImages: [],
     referenceData: {},
     formsData: [],
+    formFillData: "",
+    formsModalVisible: false,
 
     setCurrentUser: async (user) => set({ currentUser: user }),
     setCurrentCollectionId: (currentCollectionId) => set({ currentCollectionId }),
@@ -159,7 +161,7 @@ export const useDiagramStore = create((set, get) => ({
             return response
         }
 
-        set({ referenceData: { ...get().referenceData, [ReferenceTypes.contactPersons]: mapValues(get().filterdContacts, 'PersonId', 'label', 'key' ) } })
+        set({ referenceData: { ...get().referenceData, [ReferenceTypes.contactPersons]: mapValues(get().filterdContacts, 'PersonId', 'label', 'key') } })
 
         getWorkInstructions().then(result => {
             set({ referenceData: { ...get().referenceData, [ReferenceTypes.workInstructions]: mapValues(result, 'WorkInstructionId') } })
@@ -178,5 +180,7 @@ export const useDiagramStore = create((set, get) => ({
         getForms(get().currentUser?.Id).then(result => {
             set({ formsData: result })
         });
-    }
+    },
+    setFormsModalVisible: (value) => set({ formsModalVisible: value }),
+    setFormFillData: (value) => set({ formFillData: value })
 }))

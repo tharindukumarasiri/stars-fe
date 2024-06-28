@@ -290,7 +290,7 @@ const ReferenceModal = ({ nodes, setNodes }) => {
             open={referenceModalId}
             footer={[]}
             onCancel={closeModal}
-            width={'85vw'}
+            width={'65vw'}
             centered={true}
             closeIcon={< i className='icon-close close-icon' />}>
             {/* <div className="g-col-3">
@@ -390,10 +390,13 @@ const ReferenceModal = ({ nodes, setNodes }) => {
                         )
                     }
                 })}
+                {selectedNodeReferanceData?.length > 0 &&
+                    <div className={style.referenceTableContainerPadding} />
+                }
             </table>
 
             {selectedNodeReferanceData?.length === 0 &&
-                <div className="flex-center-middle">
+                <div className={`${style.referenceTableContainer} flex-center-middle`}>
                     No reference yet. Start off adding...
                 </div>
             }

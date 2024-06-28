@@ -3,6 +3,7 @@ import { useReactFlow } from 'reactflow';
 
 import style from '../DndStyles.module.scss'
 import { useNodeDataStore } from '../store'
+import { useDiagramStore } from '../../../Views/ChartDrawing/chartDrawingStore'
 import { getId } from '../utils'
 
 export default function ContextMenu({ id, top, left, ...props }) {
@@ -15,6 +16,8 @@ export default function ContextMenu({ id, top, left, ...props }) {
     const chartData = useNodeDataStore((state) => state.chartData).find(item => item.id === id);
     const changeChartData = useNodeDataStore((state) => state.setChartData);
     const setReferenceModalId = useNodeDataStore((state) => state.setReferenceModalId);
+    const setFormsModalVisible = useDiagramStore((state) => state.setFormsModalVisible);
+    const setFormFillData = useDiagramStore((state) => state.setFormFillData);
 
     const node = useMemo(() => {
         return getNode(id);
@@ -80,6 +83,11 @@ export default function ContextMenu({ id, top, left, ...props }) {
         setReferenceModalId(id)
     }
 
+    const openFormModal = (form) => {
+        setFormsModalVisible(true);
+        setFormFillData(form);
+    }
+
     return (
         <div style={{ top, left }} className={style.canvasContextMenu} {...props}>
             <button onClick={duplicateNode}>Duplicate</button>
@@ -94,14 +102,14 @@ export default function ContextMenu({ id, top, left, ...props }) {
                         {node?.data?.forms?.map((form, index) => {
                             return (
                                 <div key={index} >
-                                    <button>{form?.Name}</button>
+                                    <button onClick={() => openFormModal(form)}>{form?.Name}</button>
                                 </div>
                             )
                         })}
                     </div>
                 </div>
             }
-
+            {/* <button onClick={() => openFormModal('form')}>dscsd</button> */}
         </div>
     );
 }

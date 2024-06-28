@@ -62,10 +62,10 @@ const PropertyPanel = ({ nodes, selectedNodes = [], selectedEdges = [], setNodes
     const [uploadedFile, setUploadedFile] = useState('');
     const [selectedLinkType, setSelectedLinkType] = useState(LinkTypes.URL);
     const [selectedDrawing, setSelectedDrawing] = useState({});
-    const [formModalVisible, setFormModalVisible] = useState(false)
 
     const diagramData = useDiagramStore((state) => state.diagramData);
     const formsData = useDiagramStore((state) => state.formsData);
+    const setFormsModalVisible = useDiagramStore((state) => state.setFormsModalVisible);
 
     const changeTextData = useNodeDataStore((state) => state.onTextChange);
     const selectedNodeId = useNodeDataStore((state) => state.selectedNodeId);
@@ -154,7 +154,7 @@ const PropertyPanel = ({ nodes, selectedNodes = [], selectedEdges = [], setNodes
     const onChangeMarker = (value) => setMarkerType(value)
     const onSectionsCountIncrese = () => setSectionsCount(sectionsCount + 1);
     const onSectionsCountDecrease = () => setSectionsCount(sectionsCount - 1 > 0 ? sectionsCount - 1 : 0);
-    const toggleFormModal = () => setFormModalVisible(pre => !pre);
+    const toggleFormModal = () => setFormsModalVisible(true);
 
     const onSectionsCountChange = (e) => {
         e.preventDefault();
@@ -1155,10 +1155,7 @@ const PropertyPanel = ({ nodes, selectedNodes = [], selectedEdges = [], setNodes
                     }
                 </div>
             </div>
-            <FormModal
-                modalVisible={formModalVisible}
-                setModalVisible={setFormModalVisible}
-            />
+            <FormModal />
         </aside>
     );
 };

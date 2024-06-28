@@ -27,7 +27,7 @@ const FormBuilder = ({ screenContainerStyle, currentUser, closeModal }) => {
     const [step, setStep] = useState(1)
     const [title, setTitle] = useState("Untitled Form");
     const [name, setName] = useState("");
-    const [errors, setErrors] = useState({ name: '', category: '', subCategory: '' });
+    const [errors, setErrors] = useState({ name: '' });
     const [selectedCategories, setSelectedCategories] = useState({ category: '', subCategory: '' });
     const [description, setDescription] = useState("");
     const [data, setData] = useState([]);
@@ -104,14 +104,6 @@ const FormBuilder = ({ screenContainerStyle, currentUser, closeModal }) => {
 
         if (!name) {
             setErrors(pre => ({ ...pre, name: 'Please enter form name' }))
-            valid = false
-        }
-        if (!selectedCategories.category) {
-            setErrors(pre => ({ ...pre, category: 'Please select category' }))
-            valid = false
-        }
-        if (!selectedCategories.subCategory) {
-            setErrors(pre => ({ ...pre, subCategory: 'Please select sub category' }))
             valid = false
         }
 
@@ -246,7 +238,7 @@ const FormBuilder = ({ screenContainerStyle, currentUser, closeModal }) => {
     const addOption = (id, newOption) => {
         let newArr = data.map((el) => {
             if (el.id == id) {
-                const objVal = "options" in el ? el?.options : [];
+                const objVal = el?.options ?? [];
                 return { ...el, options: [...objVal, newOption] };
             } else {
                 return el;
@@ -375,7 +367,6 @@ const FormBuilder = ({ screenContainerStyle, currentUser, closeModal }) => {
                         placeholder='Category'
                         dataName="label"
                         valueName="value"
-                        error={errors.category}
                     />
                     <Dropdown
                         values={formSubCategories}
@@ -384,7 +375,6 @@ const FormBuilder = ({ screenContainerStyle, currentUser, closeModal }) => {
                         placeholder="Sub Category"
                         dataName="label"
                         valueName="value"
-                        error={errors.subCategory}
                     />
                     <div>
                         <button

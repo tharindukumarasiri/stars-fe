@@ -5,25 +5,38 @@ import FormBuilder from "../../formBuilder";
 
 import style from '../DndStyles.module.scss'
 import { useDiagramStore } from "../../../Views/ChartDrawing/chartDrawingStore";
+import FormFill from "../../formBuilder/FormFill";
 
-const FormModal = ({ modalVisible, setModalVisible }) => {
+const FormModal = () => {
     const currentUser = useDiagramStore((state) => state.currentUser);
+    const getFormsData = useDiagramStore((state) => state.getFormsData);
+    const formsModalVisible = useDiagramStore((state) => state.formsModalVisible);
+    const setFormsModalVisible = useDiagramStore((state) => state.setFormsModalVisible);
+    const formFillData = useDiagramStore((state) => state.formFillData);
+    const setFormFillData = useDiagramStore((state) => state.setFormFillData);
 
-    const closeModal = () => setModalVisible(false);
+    const closeModal = () => {
+        setFormsModalVisible(false);
+        getFormsData();
+        setFormFillData("")
+    };
 
-    if (!modalVisible) return null
+    if (!formsModalVisible) return null
 
     return (
         <Modal
             title='Create New Form'
-            open={modalVisible}
+            open={formsModalVisible}
             footer={[]}
             onCancel={closeModal}
-            width={'95vw'}
+            width={'80vw'}
             height={'80vh'}
             centered={true}
             closeIcon={< i className='icon-close close-icon' />}>
-            <FormBuilder screenContainerStyle={style.formContainer} currentUser={currentUser?.Id} closeModal={closeModal} />
+            {formFillData ?
+                <FormFill />
+                : <FormBuilder screenContainerStyle={style.formContainer} currentUser={currentUser?.Id} closeModal={closeModal} />
+            }
             <div className="n-float" />
         </Modal>
     )
