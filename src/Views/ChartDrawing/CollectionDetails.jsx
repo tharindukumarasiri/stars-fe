@@ -262,7 +262,7 @@ const DrawingsList = ({ collectionId }) => {
         const headers = SavedDiagramsTableHeaders(t);
         headers.push(
             {
-                title: 'Crated By',
+                title: 'Created By',
                 dataIndex: 'type',
             },
             {

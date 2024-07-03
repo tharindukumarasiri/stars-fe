@@ -33,7 +33,8 @@ const ReferenceModal = ({ nodes, setNodes }) => {
     const [editMode, setEditMode] = useState(false);
     const [editRecord, setEditRecord] = useState('');
     const [inputData, setinputData] = useState(initialInitialData);
-    const [dropdownSelected, setDropdownSelected] = useState(ReferenceTypesDropDown[0])
+    const [selectedType, setSelectedType] = useState("")
+    const [filterdType, setFilterdType] = useState(ReferenceTypesDropDown[0])
     const [sortedType, setSortedType] = useState(SortTypes.none)
     const [sortedColumn, setSortedColumn] = useState("")
     const [showFilter, setShowFilter] = useState(false)
@@ -52,13 +53,8 @@ const ReferenceModal = ({ nodes, setNodes }) => {
         setEditRecord('')
     }
 
-    // const onSelectReferenceType = (e) => {
-    //     e.preventDefault();
-    //     setDropdownSelected(JSON.parse(e.target.value))
-    // }
-
     const onSelectFilterType = (type) => {
-        setDropdownSelected(type)
+        setFilterdType(type)
         toggleFilter()
     }
 
@@ -73,30 +69,30 @@ const ReferenceModal = ({ nodes, setNodes }) => {
         let referanceData = slectedNode?.data?.reference || []
 
 
-        if (dropdownSelected.id !== ReferenceTypesDropDown[0].id) {
+        if (filterdType.id !== ReferenceTypesDropDown[0].id) {
             referanceData = referanceData.filter((referance) => (
-                referance?.typeOfInfo.toUpperCase().includes(dropdownSelected.type.toUpperCase())
+                referance?.typeOfInfo.toUpperCase().includes(filterdType.type.toUpperCase())
             ))
         }
 
         if (sortedType === SortTypes.asc) {
             referanceData?.sort((a, b) => {
-                return a[sortedColumn]?.localeCompare(b[sortedColumn])
+                return a[sortedColumn]?.toString()?.localeCompare(b[sortedColumn])?.toString()
             })
         }
         if (sortedType === SortTypes.des) {
             referanceData?.sort((a, b) => {
-                return b[sortedColumn]?.localeCompare(a[sortedColumn])
+                return b[sortedColumn]?.toString()?.localeCompare(a[sortedColumn])?.toString()
             })
         }
 
         return referanceData
-    }, [nodes, referenceModalId, sortedType, dropdownSelected])
+    }, [nodes, referenceModalId, sortedType, filterdType])
 
     const onAddReferance = () => {
-        if (inputData?.typeOfInfo) {
-            if (!inputData.typeOfInfo.toUpperCase().includes(dropdownSelected.type.toUpperCase())) {
-                setDropdownSelected(ReferenceTypesDropDown[0])
+        if (inputData?.typeOfInfo && inputData?.number) {
+            if (!inputData.typeOfInfo.toUpperCase().includes(filterdType.type.toUpperCase())) {
+                setFilterdType(ReferenceTypesDropDown[0])
             }
 
             setNodes((nodes) =>
@@ -105,7 +101,7 @@ const ReferenceModal = ({ nodes, setNodes }) => {
                         const newNode = { ...node }
                         const newReference = JSON.parse(JSON.stringify(node?.data?.reference || []))
 
-                        const index = newReference.findIndex((item) => { return item.typeOfInfo === inputData.typeOfInfo })
+                        const index = newReference.findIndex((item) => { return (item.typeOfInfo === inputData.typeOfInfo && item.number.toString() === inputData.number.toString()) })
 
                         if (index < 0) {
                             newReference.push(inputData)
@@ -159,40 +155,37 @@ const ReferenceModal = ({ nodes, setNodes }) => {
     const onEditRecord = (data) => {
         setinputData({
             typeOfInfo: data?.typeOfInfo,
-            number: data?.number,
+            number: data?.number.toString(),
             name: data?.name,
             source: data?.source
         })
-        setEditRecord(data?.typeOfInfo)
+        setEditRecord(data?.typeOfInfo + data?.number.toString())
     }
 
-    const dataSource = useMemo(() => {
+    const typeDataSource = useMemo(() => {
         let result = [];
 
-        // if (dropdownSelected.id === ReferenceTypesDropDown[0].id) {
         for (let key in referenceData) {
-            if (Array.isArray(referenceData[key])) {
-                const newRefData = [...referenceData[key]]
-
+            if (Array.isArray(referenceData[key]) && referenceData[key]?.length > 0) {
                 const itemType = ReferenceTypesDropDown.find(refType => refType.id === key)
 
-                newRefData?.forEach((item) => {
-                    item.value = `${itemType.type} (${item.Id})`
-                })
-                result = result.concat(newRefData);
+                const newRefData = {
+                    value: itemType.type,
+                    id: key
+                }
+                result.push(newRefData)
             }
         }
 
-        // } else {
-        //     result = referenceData[dropdownSelected.id]
-
-        //     result.forEach((item) => (
-        //         item.value = `${dropdownSelected.type} (${item.Id})`
-        //     ))
-        // }
-
         return result;
-    }, [referenceData, dropdownSelected])
+    }, [referenceData, filterdType])
+
+    const numberDataSource = useMemo(() => {
+        if (!selectedType) return []
+
+        return referenceData[selectedType]
+
+    }, [referenceData, selectedType])
 
     const onSortTable = (type) => {
         setSortedColumn(type);
@@ -211,21 +204,29 @@ const ReferenceModal = ({ nodes, setNodes }) => {
         }
     }
 
-    const toggleInputSource = () => {
-        setinputData((pre) => ({ ...pre, source: !pre.source }));
-    }
-
-    const onChangeInputValue = (e, type) => {
-        e.preventDefault();
-        setinputData((pre) => ({ ...pre, [type]: e.target.value }));
-    }
-
     const onChangeTypeOfInfo = (value) => {
         setinputData((pre) => ({ ...pre, typeOfInfo: value }));
     }
 
+    const onChangeNumber = (value) => {
+        setinputData((pre) => ({ ...pre, number: value }));
+    }
+
+    const onChangeName = (e) => {
+        e.preventDefault();
+        setinputData((pre) => ({ ...pre, name: e.target.value }));
+    }
+
+    const toggleInputSource = () => {
+        setinputData((pre) => ({ ...pre, source: !pre.source }));
+    }
+
     const onSelectTypeOfInfo = (value, options) => {
-        setinputData((pre) => ({ ...pre, number: options?.Number, name: options?.Name }));
+        setSelectedType(options?.id)
+    }
+
+    const onSelectNumber = (value, options) => {
+        setinputData((pre) => ({ ...pre, name: options?.Name }));
     }
 
     const editRow = () => {
@@ -233,16 +234,11 @@ const ReferenceModal = ({ nodes, setNodes }) => {
             <tr>
                 <td>
                     {editRecord ?
-
-                        <input type="text"
-                            value={inputData.typeOfInfo}
-                            onChange={() => { }}
-                            disabled
-                        /> :
+                        inputData.typeOfInfo :
                         <AutoComplete
                             value={inputData.typeOfInfo}
-                            options={dataSource}
-                            placeholder={dropdownSelected.type}
+                            options={typeDataSource}
+                            placeholder={filterdType.type}
                             filterOption={(inputValue, option) =>
                                 option.value.toUpperCase().indexOf(inputValue.toUpperCase()) !== -1
                             }
@@ -256,15 +252,32 @@ const ReferenceModal = ({ nodes, setNodes }) => {
                     }
                 </td>
                 <td>
-                    <input type="text"
-                        value={inputData.number}
-                        onChange={(e) => onChangeInputValue(e, 'number')}
-                    />
+                    {editRecord ?
+                        inputData.number :
+                        <AutoComplete
+                            value={inputData.number}
+                            options={numberDataSource}
+                            placeholder={filterdType.type}
+                            filterOption={(inputValue, option) =>
+                                option.Id.toString().toUpperCase().indexOf(inputValue.toUpperCase()) !== -1
+                            }
+                            fieldNames={{
+                                value: 'Id'
+                            }}
+                            onSelect={onSelectNumber}
+                            onChange={onChangeNumber}
+                            allowClear
+                            style={{
+                                width: '100%',
+                            }}
+                        />
+                    }
+
                 </td>
                 <td>
                     <input type="text"
                         value={inputData.name}
-                        onChange={(e) => onChangeInputValue(e, 'name')}
+                        onChange={onChangeName}
                     />
                 </td>
                 <td>
@@ -274,7 +287,7 @@ const ReferenceModal = ({ nodes, setNodes }) => {
                 </td>
                 <td>
                     <i
-                        className={`h1 icon-success ${inputData?.typeOfInfo ? 'green hover-hand' : ''}`}
+                        className={`h1 icon-success ${inputData?.typeOfInfo && inputData?.number ? 'green hover-hand' : ''}`}
                         onClick={onAddReferance}
                     />
                 </td>
@@ -293,16 +306,7 @@ const ReferenceModal = ({ nodes, setNodes }) => {
             width={'65vw'}
             centered={true}
             closeIcon={< i className='icon-close close-icon' />}>
-            {/* <div className="g-col-3">
-                <Dropdown
-                    values={ReferenceTypesDropDown}
-                    onChange={onSelectReferenceType}
-                    dataName='type'
-                    selected={JSON.stringify(dropdownSelected)}
-                    placeholder='Reference Type/s'
-                />
-            </div> */}
-            <button className="m-b-20" onClick={onAddReferenceBtnClick} disabled={editMode}>Add Referance</button>
+            <button className="m-b-20" onClick={onAddReferenceBtnClick} disabled={editMode}>Add Reference</button>
 
             <table>
                 <tr>
@@ -329,7 +333,7 @@ const ReferenceModal = ({ nodes, setNodes }) => {
                                     {ReferenceTypesDropDown.map(type => {
                                         return (
                                             <div
-                                                className={`${style.filterItem} ${type.id === dropdownSelected.id && 'blue'}`}
+                                                className={`${style.filterItem} ${type.id === filterdType.id && 'blue'}`}
                                                 key={type.id}
                                                 onClick={() => onSelectFilterType(type)}
                                             >
@@ -363,11 +367,11 @@ const ReferenceModal = ({ nodes, setNodes }) => {
                 }
 
                 {selectedNodeReferanceData?.map((data) => {
-                    if (editRecord === data.typeOfInfo) {
+                    if (editRecord === data.typeOfInfo + data?.number.toString()) {
                         return editRow()
                     } else {
                         return (
-                            <tr key={data?.typeOfInfo}>
+                            <tr key={data?.typeOfInfo + data?.number.toString()}>
                                 <td>{data?.typeOfInfo}</td>
                                 <td>{data?.number}</td>
                                 <td>{data?.name}</td>

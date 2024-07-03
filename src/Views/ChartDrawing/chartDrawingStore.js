@@ -164,16 +164,16 @@ export const useDiagramStore = create((set, get) => ({
         set({ referenceData: { ...get().referenceData, [ReferenceTypes.contactPersons]: mapValues(get().filterdContacts, 'PersonId', 'label', 'key') } })
 
         getWorkInstructions().then(result => {
-            set({ referenceData: { ...get().referenceData, [ReferenceTypes.workInstructions]: mapValues(result, 'WorkInstructionId') } })
+            set({ referenceData: { ...get().referenceData, [ReferenceTypes.workInstructions]: result } })
         });
         getSoftwareSystems().then(result => {
-            set({ referenceData: { ...get().referenceData, [ReferenceTypes.softwareSystems]: mapValues(result, 'Version') } })
+            set({ referenceData: { ...get().referenceData, [ReferenceTypes.softwareSystems]: result } })
         });
         getAgreements().then(result => {
             set({ referenceData: { ...get().referenceData, [ReferenceTypes.agreements]: result } })
         });
         getCompanies().then(result => {
-            set({ referenceData: { ...get().referenceData, [ReferenceTypes.companies]: mapValues(result, 'CompanyId') } })
+            set({ referenceData: { ...get().referenceData, [ReferenceTypes.companies]: result } })
         });
     },
     getFormsData: () => {
