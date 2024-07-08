@@ -5,7 +5,7 @@ import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { useDiagramStore } from './chartDrawingStore'
 import style from './chartDrawingStyle.module.scss'
 
-import { getKeyByValue } from "../../utils";
+import { getDateDiff, getKeyByValue } from "../../utils";
 import { CollectionsTableHeaders } from '../../utils/tableHeaders'
 import StarDropdown from "../../common/dropdown";
 import DatePickerInput from "../../common/datePickerInput";
@@ -54,7 +54,7 @@ const DrawingToolHome = () => {
     const [newCollectionData, setNewCollectionData] = useState(newCollectionPayload);
     const [newCollectionDataErrors, setNewCollectionDataErrors] = useState(newCollectionPayload);
     const [filterTypes, setFilterTypes] = useState({ name: '', startDate: null, endDate: null })
-
+    const [filteredCollectionData, setFilteredCollectionData] = useState([])
     const { t } = useTranslation();
 
     const { changeActiveTab } = useContext(TabContext);
@@ -62,6 +62,11 @@ const DrawingToolHome = () => {
     useEffect(() => {
         getContactsList();
     }, [])
+
+    useEffect(() => {
+        if (collectionData?.length > 0)
+            setFilteredCollectionData(collectionData);
+    }, [collectionData])
 
     const getResponsiblePerson = (ResponsiblePersonId) => {
         const respPerson = filterdContacts.find((contact) => contact.key === ResponsiblePersonId);
@@ -107,7 +112,7 @@ const DrawingToolHome = () => {
             },
         )
         return headers
-    }, [collectionData, filterdContacts])
+    }, [filteredCollectionData, filterdContacts])
 
     const showDeleteConfirm = (record) => {
         confirm({
@@ -140,6 +145,15 @@ const DrawingToolHome = () => {
 
     const onFilter = (e) => {
         e.preventDefault();
+
+        const newCollectionData = collectionData?.filter((collection => {
+            const isNameMatching = collection?.Name.toLowerCase().includes(filterTypes.name.toLowerCase())
+            const isHigherThanStartDate = filterTypes.startDate ? getDateDiff(collection?.CreatedDateTime, filterTypes.startDate) >= 0 : true
+
+            return isNameMatching && isHigherThanStartDate
+        }))
+
+        setFilteredCollectionData(newCollectionData)
     }
 
     const toggleModal = () => {
@@ -245,14 +259,14 @@ const DrawingToolHome = () => {
                         isClearable
                     />
                 </div>
-                <div className="com-drop-down-width">
+                {/* <div className="com-drop-down-width">
                     <DatePickerInput
                         placeholder={t('TO_DATE')}
                         value={filterTypes.endDate}
                         onChange={(date) => onFilterTypeDateChange(date, "endDate")}
                         isClearable
                     />
-                </div>
+                </div> */}
                 <button className="add-btn" onClick={onFilter} >{t('FILTERS')}</button>
 
             </div>
@@ -260,7 +274,7 @@ const DrawingToolHome = () => {
                 <div className="tablele-width">
                     <Table
                         rowKey={(record, index) => index}
-                        dataSource={collectionData}
+                        dataSource={filteredCollectionData}
                         scroll={{
                             y: '60vh',
                         }}

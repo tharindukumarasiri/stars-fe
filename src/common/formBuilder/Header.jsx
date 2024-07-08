@@ -9,6 +9,8 @@ const Header = ({ title, description, setTitle, setDescription }) => {
             <Input
                 value={title}
                 onChange={setTitle}
+                placeholder={'Untitled Form'}
+
             />
             <Input
                 value={description}

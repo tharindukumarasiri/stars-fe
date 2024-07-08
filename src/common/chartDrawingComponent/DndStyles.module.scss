@@ -819,7 +819,10 @@ div.customHandle2Bottom {
 .tableHeaderRowContainer {
     display: flex;
     flex-direction: row;
+    justify-content: center;
     align-items: center;
+    border-right: 1px solid #e4e6e8;
+    min-height: 40px;
 }
 
 .sortIconContainer {
@@ -856,4 +859,16 @@ div.customHandle2Bottom {
 
 .referenceTableContainerPadding {
     min-height: 50px;
+}
+
+.hamburgerContainer {
+    position: absolute;
+    right: 10px;
+    top: 0px !important;
+    color: #0592D9;
+    font-size: 20px;
+
+    &:hover {
+        cursor: pointer;
+    }
 }

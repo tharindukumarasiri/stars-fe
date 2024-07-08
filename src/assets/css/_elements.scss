@@ -90,13 +90,14 @@ td {
 }
 
 th {
-    font-weight: 700;
+    // font-weight: 700;
 }
 
 thead,
 th {
     border-top: 1px solid #D6D7D8;
-    border-bottom: 1px solid #D6D7D8;
+    border-bottom: 1px solid #ededee;
+    background-color: #fafafa;
 }
 
 caption,

@@ -17,6 +17,12 @@ import 'react-nestable/dist/styles/index.css';
 import { addNewForm } from "../../services/drawingService.js";
 
 const newContactDefaultState = { name: '', email: '', phone: '' }
+const defaultFormData = {
+    id: "field_1720027066292",
+    required: false,
+    type: "text",
+    value: null,
+}
 
 const FormBuilder = ({ screenContainerStyle, currentUser, closeModal }) => {
     const filterdContacts = useDiagramStore((state) => state.filterdContacts);
@@ -25,17 +31,17 @@ const FormBuilder = ({ screenContainerStyle, currentUser, closeModal }) => {
 
     //State
     const [step, setStep] = useState(1)
-    const [title, setTitle] = useState("Untitled Form");
+    const [title, setTitle] = useState("");
     const [name, setName] = useState("");
     const [errors, setErrors] = useState({ name: '' });
     const [selectedCategories, setSelectedCategories] = useState({ category: '', subCategory: '' });
     const [description, setDescription] = useState("");
-    const [data, setData] = useState([]);
+    const [data, setData] = useState([defaultFormData]);
     const [formData, setFormData] = useState("text");
     const [contactList, setContactList] = useState([]);
     const [newContactInput, setNewContactInput] = useState(newContactDefaultState);
     const [newContactInputErrors, setNewContactInputErrors] = useState(newContactDefaultState);
-
+    console.log(data)
     const items = data;
 
     const onChangeTitle = (e) => {

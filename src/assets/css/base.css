@@ -1239,7 +1239,7 @@ th, td {
 }
 
 th {
-  font-weight: 700;
+  /* font-weight: 700; */
 }
 
 thead th {

@@ -1,5 +1,6 @@
 import React, { useMemo, useState } from "react";
 import { Modal, AutoComplete, message, Switch, Tooltip } from "antd";
+import { MenuOutlined } from '@ant-design/icons';
 
 import { useNodeDataStore } from '../store'
 import { useDiagramStore } from '../../../Views/ChartDrawing/chartDrawingStore'
@@ -235,42 +236,51 @@ const ReferenceModal = ({ nodes, setNodes }) => {
                 <td>
                     {editRecord ?
                         inputData.typeOfInfo :
-                        <AutoComplete
-                            value={inputData.typeOfInfo}
-                            options={typeDataSource}
-                            placeholder={filterdType.type}
-                            filterOption={(inputValue, option) =>
-                                option.value.toUpperCase().indexOf(inputValue.toUpperCase()) !== -1
-                            }
-                            onSelect={onSelectTypeOfInfo}
-                            onChange={onChangeTypeOfInfo}
-                            allowClear
-                            style={{
-                                width: '100%',
-                            }}
-                        />
+                        <div className="pos-r">
+                            <AutoComplete
+                                value={inputData.typeOfInfo}
+                                options={typeDataSource}
+                                placeholder={filterdType.type}
+                                filterOption={(inputValue, option) =>
+                                    option.value.toUpperCase().indexOf(inputValue.toUpperCase()) !== -1
+                                }
+                                onSelect={onSelectTypeOfInfo}
+                                onChange={onChangeTypeOfInfo}
+                                allowClear
+                                style={{
+                                    width: '100%',
+                                }}
+                            />
+                            <div className={style.hamburgerContainer}>
+                                <MenuOutlined />
+                            </div>
+                        </div>
                     }
                 </td>
                 <td>
                     {editRecord ?
                         inputData.number :
-                        <AutoComplete
-                            value={inputData.number}
-                            options={numberDataSource}
-                            placeholder={filterdType.type}
-                            filterOption={(inputValue, option) =>
-                                option.Id.toString().toUpperCase().indexOf(inputValue.toUpperCase()) !== -1
-                            }
-                            fieldNames={{
-                                value: 'Id'
-                            }}
-                            onSelect={onSelectNumber}
-                            onChange={onChangeNumber}
-                            allowClear
-                            style={{
-                                width: '100%',
-                            }}
-                        />
+                        <div className="pos-r">
+                            <AutoComplete
+                                value={inputData.number}
+                                options={numberDataSource}
+                                filterOption={(inputValue, option) =>
+                                    option.Id.toString().toUpperCase().indexOf(inputValue.toUpperCase()) !== -1
+                                }
+                                fieldNames={{
+                                    value: 'Id'
+                                }}
+                                onSelect={onSelectNumber}
+                                onChange={onChangeNumber}
+                                allowClear
+                                style={{
+                                    width: '100%',
+                                }}
+                            />
+                            <div className={style.hamburgerContainer}>
+                                <MenuOutlined />
+                            </div>
+                        </div>
                     }
 
                 </td>
@@ -310,40 +320,42 @@ const ReferenceModal = ({ nodes, setNodes }) => {
 
             <table>
                 <tr>
-                    <th className={style.tableHeaderRowContainer}>
-                        Type of Info
-                        <Tooltip title='Sort by Type'>
-                            <div className={style.sortIconContainer} onClick={() => onSortTable(sortColumns.TypeOfInfo)}>
-                                <i className={`icon-arrow-up ${sortedType === SortTypes.asc && sortedColumn === sortColumns.TypeOfInfo && 'blue'}`} />
-                                <i className={`icon-arrow-down ${sortedType === SortTypes.des && sortedColumn === sortColumns.TypeOfInfo && 'blue'}`} />
-                            </div>
-                        </Tooltip>
-
-                        <div>
-                            <Tooltip title='Filter by Type'>
-                                <i
-                                    className='icon-arrow-down-circled close-icon hover-hand'
-                                    onClick={toggleFilter}
-                                />
-                            </Tooltip>
-                            {showFilter &&
-                                <div className={style.referenceFilterContainer}
-                                    onMouseLeave={toggleFilter}
-                                >
-                                    {ReferenceTypesDropDown.map(type => {
-                                        return (
-                                            <div
-                                                className={`${style.filterItem} ${type.id === filterdType.id && 'blue'}`}
-                                                key={type.id}
-                                                onClick={() => onSelectFilterType(type)}
-                                            >
-                                                {type.type}
-                                            </div>
-                                        )
-                                    })}
+                    <th>
+                        <div className={style.tableHeaderRowContainer}>
+                            Type of Info
+                            <Tooltip title='Sort by Type'>
+                                <div className={style.sortIconContainer} onClick={() => onSortTable(sortColumns.TypeOfInfo)}>
+                                    <i className={`icon-arrow-up ${sortedType === SortTypes.asc && sortedColumn === sortColumns.TypeOfInfo && 'blue'}`} />
+                                    <i className={`icon-arrow-down ${sortedType === SortTypes.des && sortedColumn === sortColumns.TypeOfInfo && 'blue'}`} />
                                 </div>
-                            }
+                            </Tooltip>
 
+                            <div>
+                                <Tooltip title='Filter by Type'>
+                                    <i
+                                        className='icon-arrow-down-circled close-icon hover-hand'
+                                        onClick={toggleFilter}
+                                    />
+                                </Tooltip>
+                                {showFilter &&
+                                    <div className={style.referenceFilterContainer}
+                                        onMouseLeave={toggleFilter}
+                                    >
+                                        {ReferenceTypesDropDown.map(type => {
+                                            return (
+                                                <div
+                                                    className={`${style.filterItem} ${type.id === filterdType.id && 'blue'}`}
+                                                    key={type.id}
+                                                    onClick={() => onSelectFilterType(type)}
+                                                >
+                                                    {type.type}
+                                                </div>
+                                            )
+                                        })}
+                                    </div>
+                                }
+
+                            </div>
                         </div>
                     </th>
                     <th>
@@ -357,8 +369,16 @@ const ReferenceModal = ({ nodes, setNodes }) => {
                             </Tooltip>
                         </div>
                     </th>
-                    <th>Name</th>
-                    <th>Source</th>
+                    <th>
+                        <div className={style.tableHeaderRowContainer}>
+                            Name
+                        </div>
+                    </th>
+                    <th>
+                        <div className={style.tableHeaderRowContainer}>
+                            Source
+                        </div>
+                    </th>
                     <th width="10%"></th>
                 </tr>
 
@@ -399,13 +419,14 @@ const ReferenceModal = ({ nodes, setNodes }) => {
                 }
             </table>
 
-            {selectedNodeReferanceData?.length === 0 &&
+            {
+                selectedNodeReferanceData?.length === 0 &&
                 <div className={`${style.referenceTableContainer} flex-center-middle`}>
                     No reference yet. Start off adding...
                 </div>
             }
             <div className="n-float" />
-        </Modal>
+        </Modal >
     )
 }
 
