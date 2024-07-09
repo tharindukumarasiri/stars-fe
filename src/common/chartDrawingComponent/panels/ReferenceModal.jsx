@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from "react";
-import { Modal, AutoComplete, message, Switch, Tooltip } from "antd";
+import { Modal, message, Switch, Tooltip, Pagination } from "antd";
 import { MenuOutlined } from '@ant-design/icons';
 
 import { useNodeDataStore } from '../store'
@@ -30,6 +30,11 @@ const ReferenceTypesDropDown = [
 
 const initialInitialData = { typeOfInfo: '', number: '', name: '', source: false }
 
+const lookupType = {
+    TYPE: 'TYPE',
+    ID: 'Id'
+}
+
 const ReferenceModal = ({ nodes, setNodes }) => {
     const [editMode, setEditMode] = useState(false);
     const [editRecord, setEditRecord] = useState('');
@@ -39,6 +44,9 @@ const ReferenceModal = ({ nodes, setNodes }) => {
     const [sortedType, setSortedType] = useState(SortTypes.none)
     const [sortedColumn, setSortedColumn] = useState("")
     const [showFilter, setShowFilter] = useState(false)
+    const [lookupVisible, setLookupVisible] = useState("")
+    const [lookupInputs, setLookupInputs] = useState('')
+    const [currentPage, setCurrentPage] = useState(1)
 
     const referenceModalId = useNodeDataStore((state) => state.referenceModalId);
     const setReferenceModalId = useNodeDataStore((state) => state.setReferenceModalId);
@@ -63,6 +71,16 @@ const ReferenceModal = ({ nodes, setNodes }) => {
         setEditRecord('')
         setinputData(initialInitialData)
         setEditMode(true)
+    }
+
+    const toggleTypeLookup = (type = "") => {
+        if (lookupVisible) {
+            setLookupVisible('');
+            setLookupInputs('')
+        } else {
+            setLookupVisible(type)
+            setLookupInputs('')
+        }
     }
 
     const selectedNodeReferanceData = useMemo(() => {
@@ -102,15 +120,22 @@ const ReferenceModal = ({ nodes, setNodes }) => {
                         const newNode = { ...node }
                         const newReference = JSON.parse(JSON.stringify(node?.data?.reference || []))
 
-                        const index = newReference.findIndex((item) => { return (item.typeOfInfo === inputData.typeOfInfo && item.number.toString() === inputData.number.toString()) })
+                        const index = newReference.findIndex((item) => {
+                            return (item.typeOfInfo === inputData.typeOfInfo && item.number.toString() === inputData.number.toString())
+                        })
+
+                        const data = {
+                            ...inputData,
+                            type: selectedType
+                        }
 
                         if (index < 0) {
-                            newReference.push(inputData)
+                            newReference.push(data)
 
                             setEditMode(false)
                             setinputData(initialInitialData)
                         } else if (editRecord) {
-                            newReference[index] = inputData
+                            newReference[index] = data
 
                             setEditMode(false)
                             setinputData(initialInitialData)
@@ -163,30 +188,47 @@ const ReferenceModal = ({ nodes, setNodes }) => {
         setEditRecord(data?.typeOfInfo + data?.number.toString())
     }
 
+    const onChangePage = (page) => {
+        setCurrentPage(page)
+    }
+
     const typeDataSource = useMemo(() => {
         let result = [];
 
-        for (let key in referenceData) {
-            if (Array.isArray(referenceData[key]) && referenceData[key]?.length > 0) {
-                const itemType = ReferenceTypesDropDown.find(refType => refType.id === key)
+        ReferenceTypesDropDown.map(item => {
+            if (item?.id === 'all')
+                return
 
-                const newRefData = {
-                    value: itemType.type,
-                    id: key
+            const newRefData = {
+                Id: item.id,
+                Name: item?.type
+            }
+
+            if (lookupInputs) {
+                if (item.type.toUpperCase().includes(lookupInputs.toUpperCase())) {
+                    result.push(newRefData)
                 }
+            } else {
                 result.push(newRefData)
             }
-        }
+        })
 
         return result;
-    }, [referenceData, filterdType])
+    }, [lookupInputs])
 
     const numberDataSource = useMemo(() => {
         if (!selectedType) return []
 
-        return referenceData[selectedType]
+        let dataList = referenceData[selectedType]
 
-    }, [referenceData, selectedType])
+        if (lookupInputs) {
+            dataList = dataList?.filter(item => {
+                return item?.Name.toUpperCase().includes(lookupInputs.toUpperCase())
+            })
+        }
+
+        return dataList
+    }, [referenceData, selectedType, lookupInputs])
 
     const onSortTable = (type) => {
         setSortedColumn(type);
@@ -205,12 +247,19 @@ const ReferenceModal = ({ nodes, setNodes }) => {
         }
     }
 
-    const onChangeTypeOfInfo = (value) => {
-        setinputData((pre) => ({ ...pre, typeOfInfo: value }));
+    const onChangeTypeOfInfo = (e) => {
+        e.preventDefault();
+        setinputData((pre) => ({ ...pre, typeOfInfo: e.target.value }));
     }
 
-    const onChangeNumber = (value) => {
-        setinputData((pre) => ({ ...pre, number: value }));
+    const onChangeInfoLookupSearch = (e) => {
+        e.preventDefault();
+        setLookupInputs(e.target.value);
+    }
+
+    const onChangeNumber = (e) => {
+        e.preventDefault();
+        setinputData((pre) => ({ ...pre, number: e.target.value }));
     }
 
     const onChangeName = (e) => {
@@ -222,12 +271,58 @@ const ReferenceModal = ({ nodes, setNodes }) => {
         setinputData((pre) => ({ ...pre, source: !pre.source }));
     }
 
-    const onSelectTypeOfInfo = (value, options) => {
-        setSelectedType(options?.id)
+    const onSelectTypeOfInfo = (options) => {
+        setinputData((pre) => ({ ...pre, typeOfInfo: options?.Name }));
+        setSelectedType(options?.Id)
+        toggleTypeLookup()
     }
 
-    const onSelectNumber = (value, options) => {
-        setinputData((pre) => ({ ...pre, name: options?.Name }));
+    const onSelectNumber = (options) => {
+        setinputData((pre) => ({ ...pre, number: options?.Id, name: options?.Name }));
+        toggleTypeLookup()
+    }
+
+    const lookupWindow = (dataSource, onSelectItem, showItemWithId = false) => {
+        const pageCount = (currentPage - 1) * 10
+        const paginated = dataSource?.slice(pageCount, pageCount + 10)
+
+        return (
+            <div className={style.referenceFilterContainer}
+                onMouseLeave={toggleTypeLookup}
+            >
+                <div className={"input-container " + style.lookupSearchInputWidth} >
+                    <input type="text"
+                        value={lookupInputs}
+                        onChange={onChangeInfoLookupSearch}
+                    />
+                    <i className='icon-search-1 datapicker-icon-x' />
+                </div>
+                {paginated?.map(type => {
+                    return (
+                        <div
+                            className={style.lookupItem}
+                            key={type?.Id}
+                            onClick={() => onSelectItem(type)}
+                        >
+                            {showItemWithId ?
+                                `${type?.Id} : ${type?.Name}` :
+                                type?.Name
+                            }
+                        </div>
+                    )
+                })}
+                <div className="flex-center-middle m-t-20">
+                    <Pagination
+                        defaultCurrent={currentPage}
+                        total={dataSource?.length}
+                        size="small"
+                        className=" m-b-20"
+                        onChange={onChangePage}
+                        showSizeChanger={false}
+                    />
+                </div>
+            </div>
+        )
     }
 
     const editRow = () => {
@@ -237,7 +332,7 @@ const ReferenceModal = ({ nodes, setNodes }) => {
                     {editRecord ?
                         inputData.typeOfInfo :
                         <div className="pos-r">
-                            <AutoComplete
+                            {/* <AutoComplete
                                 value={inputData.typeOfInfo}
                                 options={typeDataSource}
                                 placeholder={filterdType.type}
@@ -250,8 +345,16 @@ const ReferenceModal = ({ nodes, setNodes }) => {
                                 style={{
                                     width: '100%',
                                 }}
+                            /> */}
+                            <input type="text"
+                                value={inputData.typeOfInfo}
+                                onChange={onChangeTypeOfInfo}
+                                placeholder={filterdType.type}
                             />
-                            <div className={style.hamburgerContainer}>
+                            {lookupVisible === lookupType.TYPE &&
+                                lookupWindow(typeDataSource, (type) => onSelectTypeOfInfo(type))
+                            }
+                            <div className={style.hamburgerContainer} onClick={() => toggleTypeLookup(lookupType.TYPE)}>
                                 <MenuOutlined />
                             </div>
                         </div>
@@ -261,7 +364,7 @@ const ReferenceModal = ({ nodes, setNodes }) => {
                     {editRecord ?
                         inputData.number :
                         <div className="pos-r">
-                            <AutoComplete
+                            {/* <AutoComplete
                                 value={inputData.number}
                                 options={numberDataSource}
                                 filterOption={(inputValue, option) =>
@@ -276,8 +379,15 @@ const ReferenceModal = ({ nodes, setNodes }) => {
                                 style={{
                                     width: '100%',
                                 }}
+                            /> */}
+                            <input type="text"
+                                value={inputData.number}
+                                onChange={onChangeNumber}
                             />
-                            <div className={style.hamburgerContainer}>
+                            {lookupVisible === lookupType.ID &&
+                                lookupWindow(numberDataSource, (type) => onSelectNumber(type), true)
+                            }
+                            <div className={style.hamburgerContainer} onClick={() => toggleTypeLookup(lookupType.ID)}>
                                 <MenuOutlined />
                             </div>
                         </div>
@@ -360,7 +470,7 @@ const ReferenceModal = ({ nodes, setNodes }) => {
                     </th>
                     <th>
                         <div className={style.tableHeaderRowContainer}>
-                            Number
+                            Value ID
                             <Tooltip title='Sort by number'>
                                 <div className={style.sortIconContainer} onClick={() => onSortTable(sortColumns.Number)}>
                                     <i className={`icon-arrow-up ${sortedType === SortTypes.asc && sortedColumn === sortColumns.Number && 'blue'}`} />
