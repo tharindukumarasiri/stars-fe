@@ -412,6 +412,7 @@ const DnDFlow = ({ props }) => {
             <ReferenceModal
                 nodes={nodes}
                 setNodes={setNodes}
+                onSave={onSave}
             />
         </div>
     );

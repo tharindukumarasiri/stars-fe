@@ -887,3 +887,19 @@ div.customHandle2Bottom {
         cursor: pointer;
     }
 }
+
+.reloadIcon {
+    display: block;
+    margin-left: 10px;
+}
+
+.reloadIcon[spin='1'] {
+    animation: spin 2s 2;
+}
+
+@keyframes spin {
+    100% { 
+        -webkit-transform: rotate(360deg); 
+        transform:rotate(360deg);
+    } 
+}

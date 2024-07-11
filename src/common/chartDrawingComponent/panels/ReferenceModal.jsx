@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Modal, message, Switch, Tooltip, Pagination } from "antd";
 import { MenuOutlined } from '@ant-design/icons';
 
@@ -25,6 +25,7 @@ const ReferenceTypesDropDown = [
     { id: ReferenceTypes.softwareSystems, type: 'System' },
     { id: ReferenceTypes.agreements, type: 'Agreement' },
     { id: ReferenceTypes.contactPersons, type: 'Contact Person' },
+    { id: ReferenceTypes.contactPersonsByCompanies, type: 'Contact Person of the Company' },
     { id: ReferenceTypes.companies, type: 'Company' },
 ]
 
@@ -35,7 +36,7 @@ const lookupType = {
     ID: 'Id'
 }
 
-const ReferenceModal = ({ nodes, setNodes }) => {
+const ReferenceModal = ({ nodes, setNodes, onSave }) => {
     const [editMode, setEditMode] = useState(false);
     const [editRecord, setEditRecord] = useState('');
     const [inputData, setinputData] = useState(initialInitialData);
@@ -47,19 +48,34 @@ const ReferenceModal = ({ nodes, setNodes }) => {
     const [lookupVisible, setLookupVisible] = useState("")
     const [lookupInputs, setLookupInputs] = useState('')
     const [currentPage, setCurrentPage] = useState(1)
+    const [spin, setSpin] = useState(0)
 
     const referenceModalId = useNodeDataStore((state) => state.referenceModalId);
     const setReferenceModalId = useNodeDataStore((state) => state.setReferenceModalId);
 
     const referenceData = useDiagramStore((state) => state.referenceData);
+    const getReferanceData = useDiagramStore((state) => state.getReferanceData);
+    const referenceTypes = useDiagramStore((state) => state.referenceTypes);
 
     const toggleFilter = () => setShowFilter(pre => !pre)
+    const stopSpin = () => setSpin(0)
+
+    useEffect(() => {
+        if(referenceModalId){
+            getReferanceData()
+        }
+    },[referenceModalId])
+
+    const onRefreshReferences = () => {
+        setSpin(1);
+        getReferanceData();
+    }
 
     const closeModal = () => {
         setReferenceModalId('');
         setinputData(initialInitialData);
         setEditMode(false);
-        setEditRecord('')
+        setEditRecord('');
     }
 
     const onSelectFilterType = (type) => {
@@ -120,29 +136,26 @@ const ReferenceModal = ({ nodes, setNodes }) => {
                         const newNode = { ...node }
                         const newReference = JSON.parse(JSON.stringify(node?.data?.reference || []))
 
-                        const index = newReference.findIndex((item) => {
-                            return (item.typeOfInfo === inputData.typeOfInfo && item.number.toString() === inputData.number.toString())
-                        })
+                        if(editRecord) {
+                            const index = newReference.findIndex((item) => (item.id === editRecord))
 
-                        const data = {
-                            ...inputData,
-                            type: selectedType
-                        }
-
-                        if (index < 0) {
-                            newReference.push(data)
-
-                            setEditMode(false)
-                            setinputData(initialInitialData)
-                        } else if (editRecord) {
-                            newReference[index] = data
-
-                            setEditMode(false)
-                            setinputData(initialInitialData)
+                            newReference[index] = {
+                                ...newReference[index],
+                                ...inputData
+                            }
                             setEditRecord("")
                         } else {
-                            message.success('Already Added');
+                            const data = {
+                                ...inputData,
+                                type: selectedType,
+                                id: `${selectedType}_${+new Date()}`
+                            }
+
+                            newReference.push(data)
                         }
+
+                        setEditMode(false)
+                        setinputData(initialInitialData)
 
                         newNode.data = {
                             ...node.data,
@@ -152,6 +165,8 @@ const ReferenceModal = ({ nodes, setNodes }) => {
                     } else return node
                 })
             )
+
+            onSave()
         }
     }
 
@@ -185,7 +200,8 @@ const ReferenceModal = ({ nodes, setNodes }) => {
             name: data?.name,
             source: data?.source
         })
-        setEditRecord(data?.typeOfInfo + data?.number.toString())
+        setSelectedType(data?.type)
+        setEditRecord(data?.id)
     }
 
     const onChangePage = (page) => {
@@ -361,9 +377,7 @@ const ReferenceModal = ({ nodes, setNodes }) => {
                     }
                 </td>
                 <td>
-                    {editRecord ?
-                        inputData.number :
-                        <div className="pos-r">
+                    <div className="pos-r">
                             {/* <AutoComplete
                                 value={inputData.number}
                                 options={numberDataSource}
@@ -390,15 +404,16 @@ const ReferenceModal = ({ nodes, setNodes }) => {
                             <div className={style.hamburgerContainer} onClick={() => toggleTypeLookup(lookupType.ID)}>
                                 <MenuOutlined />
                             </div>
-                        </div>
-                    }
-
+                    </div>
                 </td>
                 <td>
-                    <input type="text"
-                        value={inputData.name}
-                        onChange={onChangeName}
-                    />
+                    {editRecord ?
+                        inputData.name :
+                        <input type="text"
+                            value={inputData.name}
+                            onChange={onChangeName}
+                        />
+                    }
                 </td>
                 <td>
                     <div className="toggle-btn">
@@ -426,7 +441,19 @@ const ReferenceModal = ({ nodes, setNodes }) => {
             width={'65vw'}
             centered={true}
             closeIcon={< i className='icon-close close-icon' />}>
-            <button className="m-b-20" onClick={onAddReferenceBtnClick} disabled={editMode}>Add Reference</button>
+
+            <div className={`m-b-20 ${style.linkTabsContainer}`}>
+            <button
+                onClick={onAddReferenceBtnClick} 
+                disabled={editMode}>Add Reference
+            </button>
+            <Tooltip title='Refresh References'>
+                <i className={`icon-rotate1 close-icon hover-hand ${style.reloadIcon}`} 
+                    onAnimationEnd={stopSpin} 
+                    onClick={onRefreshReferences}
+                    spin={spin} />
+            </Tooltip>
+            </div>
 
             <table>
                 <tr>
@@ -497,11 +524,11 @@ const ReferenceModal = ({ nodes, setNodes }) => {
                 }
 
                 {selectedNodeReferanceData?.map((data) => {
-                    if (editRecord === data.typeOfInfo + data?.number.toString()) {
+                    if (editRecord === data?.id) {
                         return editRow()
                     } else {
                         return (
-                            <tr key={data?.typeOfInfo + data?.number.toString()}>
+                            <tr key={data?.id}>
                                 <td>{data?.typeOfInfo}</td>
                                 <td>{data?.number}</td>
                                 <td>{data?.name}</td>

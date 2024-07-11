@@ -3,7 +3,7 @@ import Tabs, { changeTab, tabClose } from "../../common/tabComponent";
 import { TabContext } from '../../utils/contextStore';
 import { NAVIGATION_PAGES } from '../../utils/enums';
 import DrawingTool from '../../common/chartDrawingComponent';
-// import { FetchCurrentCompany } from "../../hooks/index";
+import { FetchCurrentCompany } from "../../hooks/index";
 import { useDiagramStore } from './chartDrawingStore'
 import { useTranslation } from "react-i18next";
 import DrawingToolHome from './DrawingToolHome';
@@ -16,12 +16,13 @@ const ChartDrawing = ({ openTab = NAVIGATION_PAGES.DRAWING_TOOL_HOME }) => {
     const [params, setParams] = useState({})
 
     const setCurrentUser = useDiagramStore((state) => state.setCurrentUser);
+    const setCurrentCompany = useDiagramStore((state) => state.setCurrentCompany);
     const getCollectionData = useDiagramStore((state) => state.getCollectionData);
 
     const haveUnsavedDataRef = useRef(false);
     const shouldBeClosed = useRef({ state: false, tab: '' });
 
-    // const [selectedCompany] = FetchCurrentCompany();
+    const [selectedCompany] = FetchCurrentCompany();
     const [currentUser] = FetchCurrentUser();
 
     const { t } = useTranslation();
@@ -33,6 +34,12 @@ const ChartDrawing = ({ openTab = NAVIGATION_PAGES.DRAWING_TOOL_HOME }) => {
             });
         }
     }, [currentUser])
+
+    useEffect(() => {
+        if (selectedCompany?.companyPartyId){
+            setCurrentCompany(selectedCompany)
+        }
+    }, [selectedCompany])
 
     const changeActiveTab = (tab, params = null, multiple = false, label) => {
         changeTab({

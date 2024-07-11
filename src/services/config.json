@@ -45,6 +45,7 @@
     
     "GET_USER": "actionapi/bridge/getuser",
     "GET_CONTACTS": "actionapi/PersonTs/GetWithChildren",
+    "GET_CONTACTS_BY_COMPANY": "actionapi/PersonTs/GetContactPersonsByCompanyPartyId?companyPartyTId=",
     "GET_USER_PERSON": "actionapi/bridge/getperson",
     "GET_SELECTED_COMPANY": "sessionbridge/getselectedcompany",
     "GET_COMPANY_USERS": "actionapi/users/GetCompanyUsers",
@@ -139,6 +140,7 @@
     "GET_SOFTWARE_SYSTEMS": "actionapi/SoftwareSystems/GetSoftwareSystem?companyPartyId=null",
     "GET_AGREEMENTS": "actionapi/Agreements/Get",
     "GET_COMPANY_TS": "actionapi/CompanyTs/Get",
+    "GET_ALL_REFERENCE_TYPES": "actionapi/core/GlobalReferences/Get",
     
     "GET_FORMS": "actionapi/SurveyForms",
     "ADD_FORM": "actionapi/SurveyForms/Post?userId="

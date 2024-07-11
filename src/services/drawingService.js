@@ -71,6 +71,11 @@ export async function getCompanies() {
     return data;
 }
 
+export async function getReferenceTypes() {
+    const { data } = await http.get(config.GET_ALL_REFERENCE_TYPES);
+    return data;
+}
+
 export async function getForms(userId) {
     const { data } = await http.get(`${config.GET_FORMS}`);
     return data;

@@ -13,9 +13,11 @@ import {
     getWorkInstructions,
     getSoftwareSystems,
     getAgreements,
+    getReferenceTypes,
     getCompanies,
     getForms
 } from "../../services/drawingService";
+import { getContactsByCompanyId } from '../../services/userService';
 import { getContacts } from "../../services/userService";
 import { ReferenceTypes } from '../../utils/constants';
 
@@ -28,6 +30,7 @@ export const useUserStore = create((set) => ({
 
 export const useDiagramStore = create((set, get) => ({
     currentUser: null,
+    currentCompany: null,
     loading: false,
     collectionData: [],
     currentCollectionId: '',
@@ -35,11 +38,13 @@ export const useDiagramStore = create((set, get) => ({
     filterdContacts: [],
     uploadedImages: [],
     referenceData: {},
+    referenceTypes: [],
     formsData: [],
     formFillData: "",
     formsModalVisible: false,
 
     setCurrentUser: async (user) => set({ currentUser: user }),
+    setCurrentCompany: async (company) => set({ currentCompany: company }),
     setCurrentCollectionId: (currentCollectionId) => set({ currentCollectionId }),
     getContactsList: async () => {
         const response = await getContacts();
@@ -48,7 +53,8 @@ export const useDiagramStore = create((set, get) => ({
                 key: user.Id,
                 label: user.Name,
                 value: user.Name,
-                PersonId: user.PersonId
+                PersonId: user.PersonId,
+                GovernmentIdNo: user.GovernmentIdNo
             };
         }) : [];
 
@@ -150,30 +156,36 @@ export const useDiagramStore = create((set, get) => ({
         }
     },
     getReferanceData: () => {
-        const mapValues = (result, numberKey, nameKey = 'Name', idKey = 'Id') => {
+        const mapValues = (result, idKey = 'Id', nameKey = 'Name') => {
             const response = result.map((item) => {
                 return {
                     Id: item[idKey],
-                    Number: item[numberKey],
                     Name: item[nameKey]
                 };
             })
             return response
         }
 
-        set({ referenceData: { ...get().referenceData, [ReferenceTypes.contactPersons]: mapValues(get().filterdContacts, 'PersonId', 'label', 'key') } })
+        getReferenceTypes().then(result => {
+            set({ referenceTypes: result })
+        });
+
+        set({ referenceData: { ...get().referenceData, [ReferenceTypes.contactPersons]: mapValues(get().filterdContacts, 'GovernmentIdNo', 'label') } })
 
         getWorkInstructions().then(result => {
             set({ referenceData: { ...get().referenceData, [ReferenceTypes.workInstructions]: result } })
         });
         getSoftwareSystems().then(result => {
-            set({ referenceData: { ...get().referenceData, [ReferenceTypes.softwareSystems]: result } })
+            set({ referenceData: { ...get().referenceData, [ReferenceTypes.softwareSystems]: mapValues(result, 'SystemId') } })
         });
         getAgreements().then(result => {
-            set({ referenceData: { ...get().referenceData, [ReferenceTypes.agreements]: result } })
+            set({ referenceData: { ...get().referenceData, [ReferenceTypes.agreements]: mapValues(result, 'CompanyTId') } })
         });
         getCompanies().then(result => {
-            set({ referenceData: { ...get().referenceData, [ReferenceTypes.companies]: result } })
+            set({ referenceData: { ...get().referenceData, [ReferenceTypes.companies]: mapValues(result, 'CompanyRegistrationID') } })
+        });
+        getContactsByCompanyId(get()?.currentCompany?.companyPartyId).then(result => {
+            set({ referenceData: { ...get().referenceData, [ReferenceTypes.contactPersonsByCompanies]: result } })
         });
     },
     getFormsData: () => {

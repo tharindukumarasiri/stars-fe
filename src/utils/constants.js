@@ -118,5 +118,6 @@ export const ReferenceTypes = {
     softwareSystems: 'softwareSystems',
     agreements: 'agreements',
     contactPersons: 'contactPersons',
+    contactPersonsByCompanies: 'contactPersonsByCompanies',
     companies: 'companies'
 }
