@@ -24,7 +24,7 @@ const defaultFormData = {
     value: null,
 }
 
-const FormBuilder = ({ screenContainerStyle, currentUser, closeModal }) => {
+const FormBuilder = ({ screenContainerStyle, currentUser, closeModal, addFormToShape }) => {
     const filterdContacts = useDiagramStore((state) => state.filterdContacts);
 
     const initVal = formEl[0]?.value;
@@ -41,7 +41,7 @@ const FormBuilder = ({ screenContainerStyle, currentUser, closeModal }) => {
     const [contactList, setContactList] = useState([]);
     const [newContactInput, setNewContactInput] = useState(newContactDefaultState);
     const [newContactInputErrors, setNewContactInputErrors] = useState(newContactDefaultState);
-    console.log(data)
+
     const items = data;
 
     const onChangeTitle = (e) => {
@@ -130,6 +130,7 @@ const FormBuilder = ({ screenContainerStyle, currentUser, closeModal }) => {
             addNewForm(currentUser, payload).then((result) => {
                 message.success("Form saved")
                 // moveToParticipantsStep();
+                addFormToShape && addFormToShape(null, result)
                 closeModal && closeModal()
             }).catch(e => {
                 message.error("Form save failed please try again")

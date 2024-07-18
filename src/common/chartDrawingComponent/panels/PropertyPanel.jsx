@@ -1155,7 +1155,7 @@ const PropertyPanel = ({ nodes, selectedNodes = [], selectedEdges = [], setNodes
                     }
                 </div>
             </div>
-            <FormModal />
+            <FormModal addFormToShape={onSelectForm} />
         </aside>
     );
 };

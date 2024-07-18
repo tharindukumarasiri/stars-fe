@@ -101,7 +101,7 @@
 }
 
 .dateTimePickerContainer {
-    width: 200px;
+    max-width: 200px;
 }
 
 .hiddenElm {
@@ -124,5 +124,16 @@
     border: 1px solid #D6D7D8;
     max-width: 420px;
     border-radius: 8px;
+    margin-bottom: 10px;
+}
+
+.formFillContainer {
+    padding-left: 50px;
+    padding-right: 100px;
+}
+
+.formTitle {
+    font-size: large;
+    font-weight: bold;
     margin-bottom: 10px;
 }

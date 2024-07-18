@@ -7,7 +7,7 @@ import style from '../DndStyles.module.scss'
 import { useDiagramStore } from "../../../Views/ChartDrawing/chartDrawingStore";
 import FormFill from "../../formBuilder/FormFill";
 
-const FormModal = () => {
+const FormModal = ({ addFormToShape }) => {
     const currentUser = useDiagramStore((state) => state.currentUser);
     const getFormsData = useDiagramStore((state) => state.getFormsData);
     const formsModalVisible = useDiagramStore((state) => state.formsModalVisible);
@@ -35,7 +35,12 @@ const FormModal = () => {
             closeIcon={< i className='icon-close close-icon' />}>
             {formFillData ?
                 <FormFill />
-                : <FormBuilder screenContainerStyle={style.formContainer} currentUser={currentUser?.Id} closeModal={closeModal} />
+                : <FormBuilder
+                    screenContainerStyle={style.formContainer}
+                    currentUser={currentUser?.Id}
+                    closeModal={closeModal}
+                    addFormToShape={addFormToShape}
+                />
             }
             <div className="n-float" />
         </Modal>
