@@ -29,6 +29,7 @@ import {
     downloadTypes,
     readFile
 } from '../utils';
+import { message } from 'antd';
 
 import { useNodeDataStore } from '../store'
 
@@ -73,6 +74,11 @@ export default ({ onSave, pasteNodes, clearSelectedNodes, getAllData, setEdges, 
 
     const onCopy = () => {
         setCopiedNodes(selectedNodes)
+    }
+
+    const onSaveHandler = () => {
+        message.success('Diagram Saved')
+        onSave()
     }
 
     const onExport = () => {
@@ -126,7 +132,7 @@ export default ({ onSave, pasteNodes, clearSelectedNodes, getAllData, setEdges, 
             let fileDataUrl = await readFile(file, true)
 
             try {
-                const uploadedJson = JSON.parse(fileDataUrl)
+                const uploadedJson = JSON.parse(fileDataUrl)[0]
 
                 setNodes(uploadedJson?.nodes || []);
                 setEdges(uploadedJson?.edges || []);
@@ -182,7 +188,7 @@ export default ({ onSave, pasteNodes, clearSelectedNodes, getAllData, setEdges, 
                 <div className={style.toolBarSeparator} />
 
                 <Tooltip title='Save changes'>
-                    <SaveOutlined className={style.toolBarIcon} onClick={onSave} />
+                    <SaveOutlined className={style.toolBarIcon} onClick={onSaveHandler} />
                 </Tooltip>
                 <Tooltip title='Download'>
                     <DownloadOutlined className={style.toolBarIcon} onClick={toggleModal} />

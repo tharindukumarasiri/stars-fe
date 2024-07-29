@@ -85,6 +85,7 @@ export default function ContextMenu({ id, top, left, ...props }) {
 
     const openFormModal = (form) => {
         setFormsModalVisible(true);
+        form.nodeId = id
         setFormFillData(form);
     }
 
@@ -102,14 +103,19 @@ export default function ContextMenu({ id, top, left, ...props }) {
                         {node?.data?.forms?.map((form, index) => {
                             return (
                                 <div key={index} >
-                                    <button onClick={() => openFormModal(form)}>{form?.Name}</button>
+                                    <button onClick={() => openFormModal(form)} className='pos-r'>
+                                        {form?.Name}
+                                        {form?.responded ? 
+                                            <i className='icon-success white pos-a' style={{ right: 3}} /> : null
+                                        }
+                                    </button>
+                                    
                                 </div>
                             )
                         })}
                     </div>
                 </div>
             }
-            {/* <button onClick={() => openFormModal('form')}>dscsd</button> */}
         </div>
     );
 }

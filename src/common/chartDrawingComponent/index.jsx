@@ -10,7 +10,6 @@ import ReactFlow, {
     MarkerType,
 } from 'reactflow';
 import 'reactflow/dist/style.css';
-import { message } from 'antd';
 
 import CustomNode from './shapes/CustomNode.js';
 import LineChart from './shapes/LineChart.js';
@@ -59,6 +58,7 @@ const DnDFlow = ({ props }) => {
     const reactFlowWrapper = useRef(null);
     const dragRef = useRef(null);
     const saveDiagram = useDiagramStore((state) => state.saveDiagram);
+    const timeoutRef = useRef(null);
 
     const [nodes, setNodes, onNodesChange] = useNodesState(data?.nodes || []);
     const [edges, setEdges, onEdgesChange] = useEdgesState(data?.edges || []);
@@ -93,6 +93,18 @@ const DnDFlow = ({ props }) => {
         setPagesData(JSON.parse(props?.DrawingContent) || [{ nodes: [], edges: [], nodesData: [], nodeSizes: [], chartData: [], pageName: 'Page 1' }])
         setAllData(data?.nodeSizes || [], data?.nodesData || [], data?.chartData || [])
     }, [props])
+
+    // Auto save functionality
+    const debounceSave = () => {
+        if (timeoutRef.current) {
+          clearTimeout(timeoutRef.current);
+        }
+        timeoutRef.current = setTimeout(onSave, 3000);
+      };
+    
+      useEffect(() => {
+        debounceSave();
+      }, [nodes, edges, textdata, size, chartData]);
 
     const nodeTypes = useMemo(() => {
         const types = { ...Shapes }
@@ -296,7 +308,6 @@ const DnDFlow = ({ props }) => {
             'DrawingContent': JSON.stringify(getAllData()),
         }
         saveDiagram(payload);
-        message.success('Diagram Saved')
     }
 
     const clearSelectedNodes = () => {

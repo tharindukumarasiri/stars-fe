@@ -143,6 +143,9 @@
     "GET_ALL_REFERENCE_TYPES": "actionapi/core/GlobalReferences/Get",
     
     "GET_FORMS": "actionapi/SurveyForms",
-    "ADD_FORM": "actionapi/SurveyForms/Post?userId="
+    "ADD_FORM": "actionapi/SurveyForms/Post?userId=",
+    "ADD_FORM_RESPONSE": "actionapi/SurveyFormResponses/Post?userId=",
+    "UPDATE_FORM_RESPONSE": "actionapi/SurveyFormResponses?userId=",
+    "GET_FORM_RESPONSE": "actionapi/SurveyFormResponses/GetSurveyFormResponseByFormId?elementId="
 
 }

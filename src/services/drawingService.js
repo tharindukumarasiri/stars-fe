@@ -85,3 +85,18 @@ export async function addNewForm(userId, payload) {
     const { data } = await http.post(`${config.ADD_FORM}${userId}`, payload);
     return data;
 }
+
+export async function addFormResponse(userId, payload) {
+    const { data } = await http.post(`${config.ADD_FORM_RESPONSE}${userId}`, payload);
+    return data;
+}
+
+export async function updateFormResponse(userId, payload) {
+    const { data } = await http.put(`${config.UPDATE_FORM_RESPONSE}${userId}`, payload);
+    return data;
+}
+
+export async function getFormResponse(formId) {
+    const { data } = await http.get(`${config.GET_FORM_RESPONSE}${formId}`);
+    return data;
+}

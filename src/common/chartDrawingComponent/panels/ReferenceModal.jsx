@@ -76,6 +76,7 @@ const ReferenceModal = ({ nodes, setNodes, onSave }) => {
         setinputData(initialInitialData);
         setEditMode(false);
         setEditRecord('');
+        onSave()
     }
 
     const onSelectFilterType = (type) => {

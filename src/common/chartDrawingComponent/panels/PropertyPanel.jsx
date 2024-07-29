@@ -280,6 +280,29 @@ const PropertyPanel = ({ nodes, selectedNodes = [], selectedEdges = [], setNodes
         )
     }
 
+    const onFormResponse = (id) => {
+        setNodes((nodes) =>
+            nodes.map((node) => {
+                if (node?.id === selectedNodes[0]?.id) {
+                    const newNode = { ...node }
+                    const newForms = JSON.parse(JSON.stringify(node?.data?.forms || []))
+                    const index = newForms.findIndex(data => data.Id === id)
+                    const newData = {
+                        ...newForms[index],
+                        responded: true
+                    }
+                    newForms[index] = newData
+
+                    newNode.data = {
+                        ...node.data,
+                        forms: newForms
+                    }
+                    return newNode
+                } else return node
+            })
+        )
+    }
+
     const onRemoveForm = (index) => {
         setNodes((nodes) =>
             nodes.map((node) => {
@@ -1155,7 +1178,7 @@ const PropertyPanel = ({ nodes, selectedNodes = [], selectedEdges = [], setNodes
                     }
                 </div>
             </div>
-            <FormModal addFormToShape={onSelectForm} />
+            <FormModal addFormToShape={onSelectForm} onFormResponse={onFormResponse} />
         </aside>
     );
 };
