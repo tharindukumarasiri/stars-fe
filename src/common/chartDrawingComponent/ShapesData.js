@@ -21,12 +21,14 @@ export default {
     Circle: {
         image: <rect x="0.5" y="0.5" width="25" height="25" rx="12.5" vectorEffect="non-scaling-stroke" />,
         viewBox: "0 0 26 26",
-        category: [Categories.FLOWCHART]
+        category: [Categories.FLOWCHART],
+        keepAspectRatio: false,
     },
     Triangle: {
         image: <path d="M1.14359 25L15 0.999999L28.8564 25H1.14359Z" vectorEffect="non-scaling-stroke" />,
         viewBox: "0 0 30 26",
-        category: [Categories.SHAPES]
+        category: [Categories.SHAPES],
+        keepAspectRatio: false,
     },
     Diamond: {
         image: <>
@@ -34,11 +36,13 @@ export default {
         </>,
         viewBox: "0 0 100 100",
         category: [Categories.FLOWCHART],
+        keepAspectRatio: false,
     },
     Star: {
         image: <path d="M14 1.61804L16.6677 9.82827L16.7799 10.1738H17.1432H25.776L18.7919 15.248L18.498 15.4615L18.6103 15.807L21.2779 24.0172L14.2939 18.943L14 18.7295L13.7061 18.943L6.72206 24.0172L9.38973 15.807L9.50199 15.4615L9.20809 15.248L2.22405 10.1738H10.8568H11.2201L11.3323 9.82827L14 1.61804Z" vectorEffect="non-scaling-stroke" />,
         viewBox: "0 0 28 26",
-        category: [Categories.SHAPES]
+        category: [Categories.SHAPES],
+        keepAspectRatio: false,
     },
     Tick: {
         image: <>

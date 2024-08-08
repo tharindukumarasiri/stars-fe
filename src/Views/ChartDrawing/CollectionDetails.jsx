@@ -12,18 +12,19 @@ import Dropdown from "../../common/dropdown";
 import Input from "../../common/input";
 import EmptyTableView from "../SupplierRole/Components/emptyTableView";
 import { SavedDiagramsTableHeaders, membersTableHeaders } from "../../utils/tableHeaders";
-import { getMembers, addNewMember, deleteMember, updateProject } from "../../services/projectService";
+import { getMembers, deleteMember } from "../../services/projectService";
 import DatePickerInput from "../../common/datePickerInput";
 import { TabContext } from "../../utils/contextStore";
 import { NAVIGATION_PAGES } from "../../utils/enums";
 import { getCompanyMembers } from "../../services/userService";
 import { FetchCurrentCompany } from "../../hooks";
 import style from './chartDrawingStyle.module.scss'
+import { getDrawingMembers, addDrawingMembers } from "../../services/drawingService";
 
 const { TabPane } = Tabs;
 const { confirm } = Modal;
 
-const CollectionDetails = ({ props }) => {
+const CollectionDetails = ({ props, loggedUser }) => {
     const [editable, setEditable] = useState(false);
     const [sectionData, setSectionData] = useState([]);
     const [newCollectionData, setNewCollectionData] = useState({});
@@ -227,6 +228,8 @@ const CollectionDetails = ({ props }) => {
                             sectionId={props.Sections && props.Sections[0]?.id || ""}
                             sectionData={sectionData}
                             setSectionData={setSectionData}
+                            loggedUser={loggedUser}
+                            collectionId={props.Id}
                         />
                     </TabPane>
                 </Tabs>
@@ -239,6 +242,7 @@ const DrawingsList = ({ collectionId }) => {
     const { changeActiveTab } = useContext(TabContext);
     const [modalVisible, setModalVisible] = useState(false);
     const [newDrawingName, setNewDrawingName] = useState('')
+    const [editDrawingData, setEditDrawingData] = useState(null)
     // const [companyUsers] = FetchCompanyUsers();
 
     const getDiagramData = useDiagramStore((state) => state.getDiagramData);
@@ -247,6 +251,7 @@ const DrawingsList = ({ collectionId }) => {
     const getFormsData = useDiagramStore((state) => state.getFormsData);
     const diagramData = useDiagramStore((state) => state.diagramData);
     const addDiagram = useDiagramStore((state) => state.addDiagram);
+    const saveDiagram = useDiagramStore((state) => state.saveDiagram);
     const deleteDiagram = useDiagramStore((state) => state.deleteDiagram);
 
     const { t } = useTranslation();
@@ -269,7 +274,11 @@ const DrawingsList = ({ collectionId }) => {
                 title: '',
                 render: (_, record) => (
                     <div className={style.collectionTableIconRow} >
-                        <i className="icon-edit table-icon" ></i>
+                        <i className="icon-edit table-icon" onClick={(e) => {
+                                e.stopPropagation();
+                                toggleModal(record?.Name);
+                                setEditDrawingData(record);
+                            }} />
                         <i className="icon-delete table-icon"
                             onClick={(e) => {
                                 e.stopPropagation();
@@ -303,24 +312,41 @@ const DrawingsList = ({ collectionId }) => {
         });
     };
 
-    const toggleModal = () => {
+    const toggleModal = (name = '') => {
         setModalVisible(!modalVisible);
-        setNewDrawingName('');
+        setNewDrawingName(name);
     };
 
     const handleOk = () => {
         if (newDrawingName !== '') {
-            const payload = {
-                'CollectionId': collectionId,
-                'Name': newDrawingName,
-                'DrawingContent': 'null',
+            if(!editDrawingData){
+                const payload = {
+                    'CollectionId': collectionId,
+                    'Name': newDrawingName,
+                    'DrawingContent': null,
+                }
+                addDiagram(payload).then((response) => {
+                    changeActiveTab(NAVIGATION_PAGES.CHART_DRAWING, response, true, newDrawingName)
+                    toggleModal();
+                }).catch(() => {
+                    message.error("Create drawing failed");
+                })
+            } else {
+                const payload = {
+                    'Id': editDrawingData?.Id,
+                    'CollectionId': editDrawingData?.CollectionId,
+                    'Name': newDrawingName,
+                    'DrawingContent': editDrawingData.DrawingContent,
+                }
+                saveDiagram(payload).then(() => {
+                    setEditDrawingData(null)
+                    toggleModal();
+                }).catch(() => {
+                    message.error("Edit drawing failed");
+                })
             }
-            addDiagram(payload).then((response) => {
-                changeActiveTab(NAVIGATION_PAGES.CHART_DRAWING, response, true, newDrawingName)
-                toggleModal();
-            }).catch(() => {
-                message.error("Create drawing failed");
-            })
+            
+
         }
     };
 
@@ -355,11 +381,14 @@ const DrawingsList = ({ collectionId }) => {
             />
 
             <Modal
-                title='Create  Drawing'
+                title={editDrawingData ? 'Edit Drawing' : 'Create Drawing'}
                 visible={modalVisible}
                 onOk={handleOk}
                 okText={t("SAVE")}
-                onCancel={toggleModal}
+                onCancel={() => {
+                    setEditDrawingData(null);
+                    toggleModal();
+                }}
                 cancelText={t("CANCEL")}
                 centered={true}
                 width={400}
@@ -381,16 +410,6 @@ const DrawingsList = ({ collectionId }) => {
 const MembersView = (props) => {
     const [membersData, setMembersData] = useState([]);
     const [modalVisible, setModalVisible] = useState(false);
-    const [addMemberData, setAddMemberData] = useState({
-        Name: "",
-        Sections: [],
-        Responsible: "",
-        Email: "",
-        ToDate: null,
-        Phone: "",
-        Company: "",
-        Status: "active",
-    });
 
     const [companyUsers, setCompanyUsers] = useState([]);
     const [selectedUser, setSelectedUser] = useState(null);
@@ -420,7 +439,10 @@ const MembersView = (props) => {
     };
 
     useEffect(() => {
-        // getUsers();
+        getUsers();
+        getDrawingMembers(props.collectionId) .then((result) => {
+            setMembersData(result);
+        })
     }, []);
 
     const tableHeaders = useMemo(() => {
@@ -445,27 +467,11 @@ const MembersView = (props) => {
     }, [props.sectionData, membersData]);
 
     const toggleModal = () => {
-        setAddMemberData({
-            Name: "",
-            Sections: [],
-            Responsible: "",
-            Email: "",
-            ToDate: null,
-            Phone: "",
-            Company: "",
-            Status: "active",
-            PartyId: "",
-            ProjectId: projectId
-        });
         setModalVisible(!modalVisible);
     };
 
     const addMember = () => {
-        if (props.projectStatus?.toUpperCase() === "CLOSE") {
-            message.error(t('MSG_CANT_EDIT_CLOSED_PROJECTS'))
-        } else {
             toggleModal();
-        }
     };
 
     const deleteProjectMember = (member) => {
@@ -497,29 +503,15 @@ const MembersView = (props) => {
         }
 
         const member = {
-            ...addMemberData,
-            Name: selectedUser?.value,
-            FromDate: moment().toISOString(),
-            ToDate: null,
-            Email: selectedUser?.email,
-            Company: selectedCompany.name,
-            PartyId: selectedUser?.key,
-            ProjectTId: projectId
+            MemberId : selectedUser?.key,
+            CollectionId: props.collectionId
         };
-
-        addNewMember(member, loggedUser.Id)
+console.log(member)
+        addDrawingMembers(loggedUser.Id, member)
             .then(() => {
-                getMembers(props.id)
-                    .then((result) => {
-                        setMembersData(result);
-                        setSelectedUser({});
-                        setText("");
-                        setAddMemberData({ Sections: [], Responsible: "", FromDate: "", ToDate: null, Name: "", PartyId: "", Email: "" });
-                        message.success(t("MSG_ADD_MEMBER_SUCCESS"));
-                    })
-                    .catch(() => {
-                        message.warning(t("MSG_ADD_MEMBER_WARNING"));
-                    });
+                getDrawingMembers(props.collectionId).then((result) => {
+                    setMembersData(result);
+                })
                 toggleModal();
             })
             .catch(() => {

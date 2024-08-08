@@ -51,6 +51,14 @@ const LinkTypes = {
 }
 
 const colorPickerStyles = { right: 0, top: 80 };
+const transparentColorObj = {
+    "rgb": {
+        "r": 255,
+        "g": 255,
+        "b": 255,
+        "a": 0
+    },
+}
 
 const PropertyPanel = ({ nodes, selectedNodes = [], selectedEdges = [], setNodes, setEdges }) => {
     const { changeActiveTab } = useContext(TabContext);
@@ -70,6 +78,12 @@ const PropertyPanel = ({ nodes, selectedNodes = [], selectedEdges = [], setNodes
     const changeTextData = useNodeDataStore((state) => state.onTextChange);
     const selectedNodeId = useNodeDataStore((state) => state.selectedNodeId);
     const textdata = useNodeDataStore((state) => state.textdata).find(item => item.id === selectedNodeId);
+    
+    const sizes = useNodeDataStore((state) => state.size);
+    const onSizeCahnge = useNodeDataStore((state) => state.setSize);
+
+    const size = sizes.find(item => item.id === selectedNodeId) || { height: 0, width: 0 };
+    const setSize = (value) => onSizeCahnge(selectedNodeId, value)
 
     const onTextChange = (value) => changeTextData(selectedNodeId, value)
 
@@ -359,6 +373,24 @@ const PropertyPanel = ({ nodes, selectedNodes = [], selectedEdges = [], setNodes
         }
     }
 
+    const onShapeWidthChange = (e) => {
+        e.preventDefault();
+        const number = e.target.value
+
+        if (!isNaN(number)) {
+            setSize({ height: size.height, width: number })
+        }
+    }
+
+    const onShapeHeightChange = (e) => {
+        e.preventDefault();
+        const number = e.target.value
+
+        if (!isNaN(number)) {
+            setSize({ height: number, width: size.width })
+        }
+    }
+
     const increaseFontSize = () => {
         const newSize = Number(fontSize) + 1
 
@@ -599,7 +631,16 @@ const PropertyPanel = ({ nodes, selectedNodes = [], selectedEdges = [], setNodes
                         }
                     </div>
                 </div>
-
+                <div className={style.appearanceRow}>
+                    <div className={style.widthHeightSizeContainer}>
+                        <input value={size.width} onChange={onShapeWidthChange} type="text" />
+                        <div className={style.sizeInputEndText}>W</div>
+                    </div>
+                    <div className={style.widthHeightSizeContainer}>
+                        <input value={size.height} onChange={onShapeHeightChange} type="text" />
+                        <div className={style.sizeInputEndText}>H</div>
+                    </div>
+                </div>
 
                 {(selectedNodes?.length === 1 && selectedNodes?.[0].type === 'MatrixChart') ?
                     <>
@@ -806,10 +847,13 @@ const PropertyPanel = ({ nodes, selectedNodes = [], selectedEdges = [], setNodes
                                     </div> : null
                                 }
                             </div>
-                            <div className={style.flex6}>
+                            <div className={style.flex4}>
                                 <div className={style.hexCodeInput} >
                                     {rgbToHex(backgroundColor)}
                                 </div>
+                            </div>
+                            <div onClick={() => onChangeBackgroundColor(transparentColorObj)} className={style.flex2} >
+                                <i className={`icon-minus ${style.toolBarIcon}`} />
                             </div>
                         </div>
                         <div className={style.appearanceRow}>
@@ -834,8 +878,8 @@ const PropertyPanel = ({ nodes, selectedNodes = [], selectedEdges = [], setNodes
                                     {rgbToHex(borderColor)}
                                 </div>
                             </div>
-                            <div className={style.flex2}>
-                                <AlignCenterOutlined className={style.toolBarIcon} />
+                            <div onClick={() => onChangeBorderColor(transparentColorObj)} className={style.flex2} >
+                                <i className={`icon-minus ${style.toolBarIcon}`} />
                             </div>
                         </div>
                         <div className={style.appearanceRow}>

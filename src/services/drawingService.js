@@ -100,3 +100,13 @@ export async function getFormResponse(formId) {
     const { data } = await http.get(`${config.GET_FORM_RESPONSE}${formId}`);
     return data;
 }
+
+export async function getDrawingMembers(collectionId) {
+    const { data } = await http.get(`${config.GET_DRAWING_MEMBERS}${collectionId}`);
+    return data;
+}
+
+export async function addDrawingMembers(userId, payload) {
+    const { data } = await http.post(`${config.ADD_DRAWING_MEMBERS}${userId}`, payload);
+    return data;
+}

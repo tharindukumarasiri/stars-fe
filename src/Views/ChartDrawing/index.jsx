@@ -78,7 +78,7 @@ const ChartDrawing = ({ openTab = NAVIGATION_PAGES.DRAWING_TOOL_HOME }) => {
                     <DrawingToolHome />
                 </div>
                 <div id={NAVIGATION_PAGES.COLLECTION_DETAILS} >
-                    <CollectionDetails />
+                    <CollectionDetails loggedUser={currentUser}/>
                 </div>
                 <div id={NAVIGATION_PAGES.CHART_DRAWING} >
                     <DrawingTool />

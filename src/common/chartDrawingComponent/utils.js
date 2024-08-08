@@ -233,12 +233,12 @@ export const getGradientRgbaColor = (color) => {
 
 const componentToHex = (c) => {
     var hex = c?.toString(16);
-    return hex.length == 1 ? "0" + hex : hex;
+    return hex?.length == 1 ? "0" + hex : hex;
 }
 
 export const rgbToHex = (color) => {
-    if (!color?.r || !color?.g || !color?.b)
-        return color
+    if (!color?.hasOwnProperty('r'))
+        return String(color)
     return "#" + componentToHex(color?.r) + componentToHex(color?.g) + componentToHex(color?.b);
 }
 

@@ -102,6 +102,8 @@
     font-size: 8px;
     background-color: transparent;
     margin-top: 10px;
+    -ms-overflow-style: none; 
+    scrollbar-width: none;  
 }
 
 @media screen and (min-width: 768px) {
@@ -384,6 +386,15 @@ div.customHandle2Bottom {
     display: flex;
     flex-direction: row;
     position: relative;
+}
+
+.widthHeightSizeContainer {
+    width: 85px;
+    display: flex;
+    flex-direction: row;
+    position: relative;
+    margin-left: 15px;
+    margin-right: 15px;
 }
 
 .sizeInputEndText {

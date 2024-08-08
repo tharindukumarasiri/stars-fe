@@ -100,14 +100,6 @@ function Text({ id, selected, type, data }) {
 
     const onDeleteNode = () => data.setDeleteNodeId(id);
 
-    const rotateText = () => {
-        if (rotate !== '0') {
-            setRotate('0')
-        } else {
-            setRotate('-90')
-        }
-    }
-
     return (
         <div style={mainContainerStyle} className={style.customNodeContainer}>
             <NodeResizer
@@ -122,15 +114,11 @@ function Text({ id, selected, type, data }) {
                 style={{
                     display: selected ? 'block' : 'none',
                 }}
-                className={`nodrag ${style.rotateHandle}`}
+                className={`nodrag ${style.textBtnRotate} icon-rotate1`}
             />
 
             {selected &&
                 <i className={style.nodeCloseBtn + " icon-close-small-x"} onClick={onDeleteNode} />
-            }
-
-            {selected &&
-                <i className={style.textBtnRotate + ' icon-rotate1'} onClick={rotateText} />
             }
 
             <div className={handleContainerStyle}>
