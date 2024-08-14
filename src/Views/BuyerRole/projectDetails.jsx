@@ -46,6 +46,10 @@ const ProjectDetails = ({ props, loggedUser }) => {
             });
     };   
 
+    const getFormattedState = () => {
+        return props.Permission.charAt(0) + props.Permission.slice(1).toLowerCase()
+    }
+
     return (
         <>
             <div className="g-row detail-stripe-tab-top">
@@ -80,7 +84,7 @@ const ProjectDetails = ({ props, loggedUser }) => {
                             </div>
                             <div className="g-col-2">
                                 <div className="body-text-bold">{t("PERMISSION_TYPE")}</div>
-                                <div className="body-text m-b-20">{props.Permission}</div>
+                                <div className="body-text m-b-20">{getFormattedState()}</div>
                                 <div className="body-text-bold m-t-20 p-t-20">{t("RESPONSIBLE")}</div>
                                 <div className="body-text">{props.Responsible}</div>
                             </div>

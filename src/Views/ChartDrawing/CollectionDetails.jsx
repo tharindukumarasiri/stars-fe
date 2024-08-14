@@ -96,6 +96,10 @@ const CollectionDetails = ({ props, loggedUser }) => {
         }
     }
 
+    const getFormattedState = (str) => {
+        return str.charAt(0) + str.slice(1).toLowerCase()
+    }
+
     return (
         <div className={loading ? 'loading-overlay' : ''}>
             {loading &&
@@ -186,7 +190,7 @@ const CollectionDetails = ({ props, loggedUser }) => {
                                             selected={newCollectionData.PermissionType || 'PRIVATE'}
                                             placeholder="PERMISSION_TYPE" />
                                     </div>
-                                    : <div className="body-text m-b-20">{getKeyByValue(permissionTypes, cuurentCollection?.PermissionType)}</div>
+                                    : <div className="body-text m-b-20">{getFormattedState(getKeyByValue(permissionTypes, cuurentCollection?.PermissionType))}</div>
                                 }
                                 <div className="body-text-bold m-t-20 p-t-20">{t("RESPONSIBLE")}</div>
                                 {editable ?
@@ -275,10 +279,10 @@ const DrawingsList = ({ collectionId }) => {
                 render: (_, record) => (
                     <div className={style.collectionTableIconRow} >
                         <i className="icon-edit table-icon" onClick={(e) => {
-                                e.stopPropagation();
-                                toggleModal(record?.Name);
-                                setEditDrawingData(record);
-                            }} />
+                            e.stopPropagation();
+                            toggleModal(record?.Name);
+                            setEditDrawingData(record);
+                        }} />
                         <i className="icon-delete table-icon"
                             onClick={(e) => {
                                 e.stopPropagation();
@@ -319,11 +323,11 @@ const DrawingsList = ({ collectionId }) => {
 
     const handleOk = () => {
         if (newDrawingName !== '') {
-            if(!editDrawingData){
+            if (!editDrawingData) {
                 const payload = {
                     'CollectionId': collectionId,
                     'Name': newDrawingName,
-                    'DrawingContent': null,
+                    'DrawingContent': 'null',
                 }
                 addDiagram(payload).then((response) => {
                     changeActiveTab(NAVIGATION_PAGES.CHART_DRAWING, response, true, newDrawingName)
@@ -345,7 +349,7 @@ const DrawingsList = ({ collectionId }) => {
                     message.error("Edit drawing failed");
                 })
             }
-            
+
 
         }
     };
@@ -364,7 +368,7 @@ const DrawingsList = ({ collectionId }) => {
         <div>
             <div className="g-row">
                 <div className="g-col-6 m-b-15">
-                    <button className="primary-btn" onClick={toggleModal} >Create Drawing</button>
+                    <button className="primary-btn" onClick={() => toggleModal()} >Create Drawing</button>
                 </div>
             </div>
             <Table
@@ -372,7 +376,6 @@ const DrawingsList = ({ collectionId }) => {
                 dataSource={diagramData}
                 columns={tableHeaders}
                 pagination={false}
-                locale={{ emptyText: <EmptyTableView tableName="Drawings" onButtonClick={toggleModal} /> }}
                 onRow={(record, rowIndex) => {
                     return {
                         onClick: () => onClickRow(record),
@@ -440,7 +443,7 @@ const MembersView = (props) => {
 
     useEffect(() => {
         getUsers();
-        getDrawingMembers(props.collectionId) .then((result) => {
+        getDrawingMembers(props.collectionId).then((result) => {
             setMembersData(result);
         })
     }, []);
@@ -471,7 +474,7 @@ const MembersView = (props) => {
     };
 
     const addMember = () => {
-            toggleModal();
+        toggleModal();
     };
 
     const deleteProjectMember = (member) => {
@@ -503,10 +506,10 @@ const MembersView = (props) => {
         }
 
         const member = {
-            MemberId : selectedUser?.key,
+            MemberId: selectedUser?.key,
             CollectionId: props.collectionId
         };
-console.log(member)
+
         addDrawingMembers(loggedUser.Id, member)
             .then(() => {
                 getDrawingMembers(props.collectionId).then((result) => {
@@ -562,7 +565,6 @@ console.log(member)
                 rowKey={(record) => record.id}
                 dataSource={membersData}
                 columns={tableHeaders}
-                locale={{ emptyText: <EmptyTableView tableName="Members" onButtonClick={addMember} /> }}
             />
 
             <Modal title={t('ADD_MEMBER')}
