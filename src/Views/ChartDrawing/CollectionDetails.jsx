@@ -1,7 +1,6 @@
 import React, { useState, useMemo, useContext, useEffect } from "react";
 import { Tabs, Table, Modal, message, AutoComplete } from "antd";
 import { ExclamationCircleOutlined } from '@ant-design/icons';
-import moment from "moment";
 import { useTranslation } from "react-i18next";
 
 // import { FetchCompanyUsers } from "../../hooks";
@@ -10,7 +9,6 @@ import { diagramTypes, permissionTypes, statuses } from "./DrawingToolHome";
 import { formatDate, getKeyByValue } from "../../utils";
 import Dropdown from "../../common/dropdown";
 import Input from "../../common/input";
-import EmptyTableView from "../SupplierRole/Components/emptyTableView";
 import { SavedDiagramsTableHeaders, membersTableHeaders } from "../../utils/tableHeaders";
 import { getMembers, deleteMember } from "../../services/projectService";
 import DatePickerInput from "../../common/datePickerInput";
@@ -323,6 +321,11 @@ const DrawingsList = ({ collectionId }) => {
 
     const handleOk = () => {
         if (newDrawingName !== '') {
+            if(diagramData.some(diagram => diagram.Name === newDrawingName)){
+                message.error("Drawing already exists.");
+                return;
+            }
+
             if (!editDrawingData) {
                 const payload = {
                     'CollectionId': collectionId,

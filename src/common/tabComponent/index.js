@@ -3,7 +3,7 @@ import Tabs from "./tabs"
 export const changeTab = ({ tab, params = null, label = '', multiple = false, openTabs = [], setOpenTabs, setActiveTab, setParams }) => {
     const tabId = tab?.split(':')?.length > 1 || !multiple ? tab : `${tab}:${label}`
 
-    if (openTabs.indexOf(tab) < 0 || multiple) {
+    if (openTabs.indexOf(tabId) < 0) {
         const newOpenTabs = Array.from(openTabs)
 
         newOpenTabs.push(tabId);

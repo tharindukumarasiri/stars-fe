@@ -168,6 +168,10 @@ const DrawingToolHome = () => {
             setNewCollectionDataErrors(pre => ({ ...pre, Name: "Please enter name" }))
             validation = false
         }
+        if(collectionData?.some(collection => collection?.Name === newCollectionData.Name)){
+            setNewCollectionDataErrors(pre => ({ ...pre, Name: "Collection name already exists" }))
+            validation = false
+        }
         if (!newCollectionData.RefTableId) {
             setNewCollectionDataErrors(pre => ({ ...pre, RefTableId: "Please select a type" }))
             validation = false
