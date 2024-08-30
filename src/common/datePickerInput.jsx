@@ -48,7 +48,7 @@ const DatePickerInput = ({
             <div className={value ? "input-hint-text-visible" : "input-hint-text-hidden"}>{t(placeholder)}</div>
             <div >
                 {value ? value : t(placeholder)}
-                {!value && <i className="icon-calander datapicker-icon" />}
+                {!value && <i className={`datapicker-icon ${timePicker ? " icon-hourly " : "icon-calander"}`} />}
             </div>
         </div>
     ));

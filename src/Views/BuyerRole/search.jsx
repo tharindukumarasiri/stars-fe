@@ -1232,6 +1232,14 @@ export default function Search(props) {
             Status: "",
             ProjectId: 0
         })
+        setNewProjectDataError({
+            Project: "",
+            Name: "",
+            Purpose: "",
+            FromDate: "",
+            ToDate: "",
+            Status: "",
+        })
     }
 
     const validate = () => {
@@ -2133,7 +2141,7 @@ export default function Search(props) {
     return (
         <div className={loading && "loading-overlay"}>
             <div className="g-col-6 ">
-                <div className="bg-white buyer-search-crieteria-container">
+                <div className="bg-white">
                     <form onSubmit={onShowResults}>
                         {!props?.removeSearch && (
                             <div className="g-row flex-center-middle m-b-15">
@@ -2155,13 +2163,15 @@ export default function Search(props) {
                                 </div>
                             </div>
                         )}
-                        <p>{t("NARROW_DOWN_YOUR_SEARCH")}</p>
-                        {getCompanyInfoCriteria()}
-                        {/* {getMarketCriteria()} */}
-                        {getMarketTreeCriteria()}
-                        {getProductGroupsCriteria()}
-                        {getProfessionCriteria()}
-                        {getPeppolCriteria()}
+                        <div className="g-row buyer-search-crieteria-container">
+                            <p>{t("NARROW_DOWN_YOUR_SEARCH")}</p>
+                            {getCompanyInfoCriteria()}
+                            {/* {getMarketCriteria()} */}
+                            {getMarketTreeCriteria()}
+                            {getProductGroupsCriteria()}
+                            {getProfessionCriteria()}
+                            {getPeppolCriteria()}
+                        </div>
                     </form>
                 </div>
             </div>
@@ -2290,15 +2300,15 @@ export default function Search(props) {
                     )}
                 </div>
             </div>
-            <div className="action-bar">
+            <div className="buyer-action-bar-container">
                 <div className="g-row">
                     <div className="g-col-6">
-                        <button className="primary-btn m-l-10 m-r-20" onClick={onShowResults}>
+                        <button className="primary-btn m-l-10 m-r-20 fr" onClick={onShowResults}>
                             {props?.removeSearch ? t("FILTER_RESULT") : t("SHOW_RESULT")}
                         </button>
                         {!props?.sectionSearch && (
                             <button
-                                className="primary-btn"
+                                className="primary-btn fr"
                                 onClick={() => {
                                     changeActiveTab(NAVIGATION_PAGES.BUYER_SEARCHRESULTS);
                                 }}

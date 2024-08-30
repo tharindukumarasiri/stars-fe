@@ -44,7 +44,7 @@ const CommunicationBasketDetails = ({ props }) => {
                 setTemplatesData(result)
 
                 const selectedTemplate = result?.filter(template => template?.Id === props?.MessageTemplateId)[0]
-                setBasketDetails({...basketDetails, "template": selectedTemplate })
+                setBasketDetails({ ...basketDetails, "template": selectedTemplate })
             });
 
         }
@@ -125,7 +125,7 @@ const CommunicationBasketDetails = ({ props }) => {
             setBasketDataErrors(pre => ({ ...pre, name: 'Enter basket name' }));
             validation = false;
         }
-        if (!basketDetails.template) {
+        if (Object.keys(basketDetails.template)?.length === 0) {
             setBasketDataErrors(pre => ({ ...pre, template: 'Please select a template' }));
             validation = false;
         }

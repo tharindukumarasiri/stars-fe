@@ -102,8 +102,8 @@
     font-size: 8px;
     background-color: transparent;
     margin-top: 10px;
-    -ms-overflow-style: none; 
-    scrollbar-width: none;  
+    -ms-overflow-style: none;
+    scrollbar-width: none;
 }
 
 @media screen and (min-width: 768px) {
@@ -909,8 +909,8 @@ div.customHandle2Bottom {
 }
 
 @keyframes spin {
-    100% { 
-        -webkit-transform: rotate(360deg); 
-        transform:rotate(360deg);
-    } 
+    100% {
+        -webkit-transform: rotate(360deg);
+        transform: rotate(360deg);
+    }
 }

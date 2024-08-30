@@ -80,7 +80,7 @@ const CreateTemplate = ({ closeModal, getSavedTemplates, editTemplate }) => {
                     MessageBody: html,
                     MessageBodyJson: JSON.stringify(design),
                     LanguageId: 2057,
-                    CompanyPartyId: selectedCompany?.tenantId,
+                    TenantId: selectedCompany?.tenantId,
                     IsSubTemplate: false,
                     MessageMedium: null,
                     MessageType: null,

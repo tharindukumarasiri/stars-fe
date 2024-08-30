@@ -35,10 +35,10 @@ const CompaniesAndPersons = (props) => {
     const [countryList, setCountryList] = useState([])
     const [currentUser] = FetchCurrentUser();
     const [selectedCompany] = FetchCurrentCompany();
-    const [loading, setLoading] = useState(true);    
-    const {t} = useTranslation();
+    const [loading, setLoading] = useState(true);
+    const { t } = useTranslation();
 
-    useEffect(() => {      
+    useEffect(() => {
         getGetCountries().then(result => {
             setCountryList(result);
         }).finally(() => setLoading(false));
@@ -117,7 +117,7 @@ const CompaniesPage = ({ basketId, countryList, currentUser, selectedCompany, up
     const [selectedCompanyToUpdate, setSelectedCompanyToUpdate] = useState({});
     const [checkedCompaniesUsers, setCheckedCompaniesUsers] = useState([]);
     const [loading, setLoading] = useState(false);
-    const {t} = useTranslation();
+    const { t } = useTranslation();
 
     useEffect(() => {
         if (selectedCompany?.companyId) {
@@ -227,9 +227,9 @@ const CompaniesPage = ({ basketId, countryList, currentUser, selectedCompany, up
                         {Person?.Email && emailRegEx.test(Person?.Email) &&
                             <input type="checkbox" className="check-box"
                                 checked={isPersonChecked(CompanyData?.Company?.PartyTId, Person?.PartyTId)}
-                                onChange={(e) => onClickUsersTableCheckBox(e, CompanyData?.Company, Person)} 
+                                onChange={(e) => onClickUsersTableCheckBox(e, CompanyData?.Company, Person)}
                                 disabled={IsDisabled}
-                                />
+                            />
                         }
                     </>
                 )
@@ -502,7 +502,7 @@ const CompaniesPage = ({ basketId, countryList, currentUser, selectedCompany, up
                 // setCompaniesData(result?.Value)
                 setDisplayCompanies(companiesToShow)
             }).finally(() => setLoading(false))
-        } 
+        }
     }
 
     const onSearchCompanies = (inputValue, option) => {
@@ -750,21 +750,21 @@ const CompaniesPage = ({ basketId, countryList, currentUser, selectedCompany, up
     const addNewCompany = () => {
         return (
             <div className="recivers-companies-footer user-input-box">
-                <div className="basket-new-company-input">
+                <div className="basket-new-company-input" style={{ width: 150 }}>
                     <Input placeholder='ORG_ID'
                         value={newCompaniesData.orgId}
                         onChange={(e) => onChangeNewOrgData(e, 'orgId')}
                         error={newCompaniesErrors.orgId}
                     />
                 </div>
-                <div className="basket-new-company-input">
+                <div className="basket-new-company-input" style={{ width: 150 }}>
                     <Input placeholder='NAME'
                         value={newCompaniesData.name}
                         onChange={(e) => onChangeNewOrgData(e, 'name')}
                         error={newCompaniesErrors.name}
                     />
                 </div>
-                <div className="user-drop-down basket-new-company-input">
+                <div className="basket-new-company-input" style={{ width: 150 }}>
                     <Dropdown
                         values={countryList}
                         onChange={onChangeCountry}
@@ -774,13 +774,13 @@ const CompaniesPage = ({ basketId, countryList, currentUser, selectedCompany, up
                         error={newCompaniesErrors.country}
                     />
                 </div>
-                <div className="basket-new-company-input">
+                <div className="basket-new-company-input" style={{ width: 150 }}>
                     <Input placeholder='EMAIL' value={newCompaniesData.email}
                         onChange={(e) => onChangeNewOrgData(e, 'email')}
                         error={newCompaniesErrors.email}
                     />
                 </div>
-                <div className="basket-new-company-input">
+                <div className="basket-new-company-input" style={{ width: 150 }}>
                     <Input placeholder='PHONE'
                         value={newCompaniesData.phone}
                         onChange={(e) => onChangeNewOrgData(e, 'phone')}
@@ -829,7 +829,6 @@ const CompaniesPage = ({ basketId, countryList, currentUser, selectedCompany, up
                     dataSource={displayCompanies}
                     scroll={{
                         y: '40vh',
-                        x: '70vw'
                     }}
                     columns={companiesTableHeaders}
                     pagination={false}
@@ -846,7 +845,7 @@ const CompaniesPage = ({ basketId, countryList, currentUser, selectedCompany, up
                 okText={t('OK')}
                 onCancel={toggelEmailModal}
                 cancelText={t('CANCEL')}
-                closeIcon={< i className='icon-close close-icon'/>}
+                closeIcon={< i className='icon-close close-icon' />}
             >
                 <div className="user-input-box">
                     <Input value={newUserEmail} onChange={onChangeNewUserEmail} error={newUserFieldError} />
@@ -859,7 +858,7 @@ const CompaniesPage = ({ basketId, countryList, currentUser, selectedCompany, up
                 okText={t('OK')}
                 onCancel={toggelPhoneModal}
                 cancelText={t('CANCEL')}
-                closeIcon={< i className='icon-close close-icon'/>}
+                closeIcon={< i className='icon-close close-icon' />}
             >
                 <div className="user-input-box">
                     <Input value={newUserPhone} onChange={onChangeNewUserPhone} error={newUserFieldError} />
@@ -875,7 +874,7 @@ const CompaniesPage = ({ basketId, countryList, currentUser, selectedCompany, up
 
 const newPersonObject = { firstName: '', lastName: '', title: null, country: null, email: '', mobileNumb: '', companyId: '', companyName: '' }
 
-const PersonsPage = ({ basketId, countryList, currentUser, selectedCompany, updateRecipients  }) => {
+const PersonsPage = ({ basketId, countryList, currentUser, selectedCompany, updateRecipients }) => {
     const [allPersonsData, setAllPersonsData] = useState();
     const [displayPersons, setDisplayPersons] = useState();
     const [selectedFieldToUpdate, setSelectedFieldToUpdate] = useState({});
@@ -885,7 +884,7 @@ const PersonsPage = ({ basketId, countryList, currentUser, selectedCompany, upda
     const [loading, setLoading] = useState(true);
     const [modalVisible, setModalVisible] = useState(false);
     const [modalTextField, setModalTextField] = useState({});
-    const {t} = useTranslation();
+    const { t } = useTranslation();
 
     useEffect(() => {
         if (selectedCompany?.companyId) {
@@ -963,7 +962,7 @@ const PersonsPage = ({ basketId, countryList, currentUser, selectedCompany, upda
                         {Person?.Email && emailRegEx.test(Person?.Email) &&
                             <input type="checkbox" className='check-box'
                                 checked={isPersonChecked(Person?.PartyTId)}
-                                onChange={(e) => onClickPersonsTableCheckBox(e, Person, BasketReceiverId)} 
+                                onChange={(e) => onClickPersonsTableCheckBox(e, Person, BasketReceiverId)}
                                 disabled={IsDisabled}
                             />
                         }
@@ -1407,7 +1406,7 @@ const PersonsPage = ({ basketId, countryList, currentUser, selectedCompany, upda
                 okText={t('OK')}
                 onCancel={toggelModal}
                 cancelText={t('CANCEL')}
-                closeIcon={< i className='icon-close close-icon'/>}
+                closeIcon={< i className='icon-close close-icon' />}
             >
                 <div className="user-input-box">
                     <Input value={modalTextField?.value || ''} onChange={onChangeModalTextField} error={modalTextField?.error || ''} />

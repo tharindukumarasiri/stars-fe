@@ -83,7 +83,7 @@ const SideBar = () => {
         <aside className={sidebarVisible ? style.aside : ''}>
             <div className={style.sidebarColapsBtnContainer}>
                 {sidebarVisible &&
-                    <h3>Library</h3>
+                    <h3>Drawing Types</h3>
                 }
                 <i className={style.sidebarColapsBtn + (sidebarVisible ? ' icon-circle-arrow-left' : ' icon-circle-arrow-right')}
                     onClick={onArrowClicked} />

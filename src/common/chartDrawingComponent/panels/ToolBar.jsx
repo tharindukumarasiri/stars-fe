@@ -175,12 +175,12 @@ export default ({ onSave, pasteNodes, clearSelectedNodes, getAllData, setEdges, 
 
                 <div className={style.toolBarSeparator} />
 
-                <Tooltip title='Undo'>
+                {/* <Tooltip title='Undo'>
                     <UndoOutlined className={style.toolBarIcon} />
                 </Tooltip>
                 <Tooltip title='Redo'>
                     <RedoOutlined className={style.toolBarIcon} />
-                </Tooltip>
+                </Tooltip> */}
 
                 <div className={style.copyPasteContainer} onClick={onCopy} >Copy</div>
                 <div className={style.copyPasteContainer} onClick={pasteNodes}>Paste</div>

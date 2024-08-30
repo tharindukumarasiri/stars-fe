@@ -7,6 +7,8 @@ import Shapes from '../ShapesData.js';
 
 import style from '../DndStyles.module.scss'
 
+const resizerHandleStyle = { width: 12, height: 12 }
+
 function LineChart({ id, selected, type, data }) {
     const shapeData = Shapes[type]
     const initialHeight = shapeData.size?.height;
@@ -113,7 +115,7 @@ function LineChart({ id, selected, type, data }) {
                 minHeight={initialWidth}
                 onResize={onResize}
                 keepAspectRatio={shapeData?.keepAspectRatio ?? true}
-                handleClassName={style.resizerHandleStyle}
+                handleStyle={resizerHandleStyle}
             />
             <NodeToolbar position={Position.Right}>
                 <div>Number of Lines</div>

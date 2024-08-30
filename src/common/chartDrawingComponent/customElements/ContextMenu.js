@@ -1,19 +1,26 @@
 import React, { useCallback, useMemo } from 'react';
 import { useReactFlow } from 'reactflow';
+import { Modal } from "antd";
+import { ExclamationCircleOutlined } from '@ant-design/icons';
 
 import style from '../DndStyles.module.scss'
 import { useNodeDataStore } from '../store'
 import { useDiagramStore } from '../../../Views/ChartDrawing/chartDrawingStore'
 import { getId } from '../utils'
 
+const { confirm } = Modal;
+
 export default function ContextMenu({ id, top, left, ...props }) {
     const { getNode, setNodes, setEdges, getNodes } = useReactFlow();
 
-    const textdata = useNodeDataStore((state) => state.textdata)?.find(item => item.id === id);
+    const allTextData = useNodeDataStore((state) => state.textdata);
+    const textdata = allTextData?.find(item => item.id === id);
     const onTextChange = useNodeDataStore((state) => state.onTextChange);
-    const size = useNodeDataStore((state) => state.size)?.find(item => item.id === id);
+    const allSize = useNodeDataStore((state) => state.size);
+    const size = allSize?.find(item => item.id === id);
     const setSize = useNodeDataStore((state) => state.setSize);
-    const chartData = useNodeDataStore((state) => state.chartData).find(item => item.id === id);
+    const allChartData = useNodeDataStore((state) => state.chartData);
+    const chartData = allChartData.find(item => item.id === id);
     const changeChartData = useNodeDataStore((state) => state.setChartData);
     const setReferenceModalId = useNodeDataStore((state) => state.setReferenceModalId);
     const setFormsModalVisible = useDiagramStore((state) => state.setFormsModalVisible);
@@ -55,8 +62,19 @@ export default function ContextMenu({ id, top, left, ...props }) {
     }, [id, getNode, setNodes, textdata, chartData]);
 
     const deleteNode = useCallback(() => {
-        setNodes((nodes) => nodes.filter((node) => node?.id !== id && node?.parentNode !== id));
-        setEdges((edges) => edges.filter((edge) => edge?.source !== id));
+        confirm({
+            title: 'Are you sure you want to delete the shape',
+            icon: <ExclamationCircleOutlined />,
+
+            okText: 'Yes',
+            okType: 'danger',
+            cancelText: 'No',
+
+            onOk() {
+                setNodes((nodes) => nodes.filter((node) => node?.id !== id && node?.parentNode !== id));
+                setEdges((edges) => edges.filter((edge) => edge?.source !== id));
+            },
+        });
     }, [id, setNodes, setEdges]);
 
     const moveToBack = useCallback(() => {
@@ -91,7 +109,7 @@ export default function ContextMenu({ id, top, left, ...props }) {
 
     return (
         <div style={{ top, left }} className={style.canvasContextMenu} {...props}>
-            <button onClick={duplicateNode}>Duplicate</button>
+            {node?.type !== "group" && <button onClick={duplicateNode}>Duplicate</button>}
             <button onClick={deleteNode}>Delete</button>
             <button onClick={moveToBack}>Move to back</button>
             <button onClick={moveToFront}>Move to front</button>
@@ -105,11 +123,11 @@ export default function ContextMenu({ id, top, left, ...props }) {
                                 <div key={index} >
                                     <button onClick={() => openFormModal(form)} className='pos-r'>
                                         {form?.Name}
-                                        {form?.responded ? 
-                                            <i className='icon-success white pos-a' style={{ right: 3}} /> : null
+                                        {form?.responded ?
+                                            <i className='icon-success white pos-a' style={{ right: 3 }} /> : null
                                         }
                                     </button>
-                                    
+
                                 </div>
                             )
                         })}

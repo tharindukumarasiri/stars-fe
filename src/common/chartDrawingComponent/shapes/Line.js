@@ -9,6 +9,7 @@ import { getRgbaColor } from '../utils';
 import TextInput from "../../../common/input";
 
 import style from '../DndStyles.module.scss'
+import DeleteBtn from '../customElements/DeleteBtn';
 
 const resizerHandleStyle = { width: 6, height: 6 }
 const lineTypes = {
@@ -126,8 +127,6 @@ function Line({ id, selected, type, data }) {
         }
     };
 
-    const onDeleteNode = () => data.setDeleteNodeId(id);
-
     const onChangeLineWidth = (e) => {
         e.preventDefault();
         if (isHorizontalLine) {
@@ -160,7 +159,7 @@ function Line({ id, selected, type, data }) {
             }
 
             {selected &&
-                <i className={style.nodeCloseBtn + " icon-close-small-x"} onClick={onDeleteNode} />
+                <DeleteBtn nodeId={id} />
             }
 
             <NodeToolbar position={isHorizontalLine ? Position.Bottom : Position.Right}>

@@ -1,10 +1,12 @@
 import React from 'react';
 
 export const Categories = {
-    'FLOWCHART': 'Flowchart',
-    'SHAPES': 'Shapes',
-    'BPMN': 'BPMN 2.0',
-    'STRUCTURES': 'Structures and Hiarchies'
+    'FLOWCHART': 'Flows',
+    'STRUCTURES': 'Structures and Hiarchies',
+    'DATA_COLLECTIONS': 'Data Collection',
+    'DATA_MAPPING': 'Data Mapping',
+    'SHAPES': 'Data Object Structure',
+    'DATA_VISUALIZATION': 'Data Visualization'
 }
 
 export const parentNodes = ['Table', 'LineChart']
@@ -182,7 +184,7 @@ export default {
         ,
         viewBox: "0 0 100 100",
         size: { width: 100, height: 100 },
-        category: [Categories.STRUCTURES]
+        category: [Categories.DATA_COLLECTIONS]
     },
     MatrixChart: {
         image: <>
@@ -377,7 +379,7 @@ export default {
         viewBox: "0 0 819.7 640.1",
         size: { width: 300, height: 300 },
         keepAspectRatio: false,
-        category: [Categories.STRUCTURES]
+        category: [Categories.DATA_COLLECTIONS]
     },
     Annotation: {
         image: <>
@@ -386,7 +388,7 @@ export default {
         </>,
         viewBox: "0 0 100 100",
         hideTextInput: true,
-        category: [Categories.BPMN]
+        category: [Categories.FLOWCHART]
     },
     Task: {
         image: <>
@@ -395,7 +397,7 @@ export default {
         viewBox: "0 0 100 100",
         size: { width: 75, height: 75 },
         keepAspectRatio: false,
-        category: [Categories.BPMN]
+        category: [Categories.FLOWCHART]
     },
     Activity: {
         image: <>
@@ -407,7 +409,7 @@ export default {
         </>,
         viewBox: "0 0 100 100",
         keepAspectRatio: false,
-        category: [Categories.BPMN]
+        category: [Categories.FLOWCHART]
     },
     Transaction: {
         image: <>
@@ -422,7 +424,7 @@ export default {
         </>,
         viewBox: "0 0 100 100",
         size: { width: 60, height: 60 },
-        category: [Categories.BPMN]
+        category: [Categories.FLOWCHART]
     },
     DataStore: {
         image: <>
@@ -435,12 +437,12 @@ export default {
         </>,
         viewBox: "0 0 100 100",
         hideTextInput: true,
-        category: [Categories.BPMN]
+        category: [Categories.FLOWCHART]
     },
     Event: {
         image: <circle class="st0" cx="49.2" cy="49.9" r="41.1" />,
         viewBox: "0 0 100 100",
-        category: [Categories.BPMN]
+        category: [Categories.FLOWCHART]
     },
     Event2: {
         image: <>
@@ -448,7 +450,7 @@ export default {
             <circle class="st0" cx="49.3" cy="49.4" r="41.1" />
         </>,
         viewBox: "0 0 100 100",
-        category: [Categories.BPMN]
+        category: [Categories.FLOWCHART]
     },
     Event3: {
         image: <>
@@ -457,12 +459,12 @@ export default {
             <ellipse class="st1" cx="48.9" cy="48.3" rx="34.8" ry="34.4" />
         </>,
         viewBox: "0 0 100 100",
-        category: [Categories.BPMN]
+        category: [Categories.FLOWCHART]
     },
     Hex: {
         image: <polygon class="st0" points="73.6,9.1 26.1,9.1 2.4,50.2 26.1,91.3 73.6,91.3 97.3,50.2 " />,
         viewBox: "0 0 100 100",
-        category: [Categories.BPMN]
+        category: [Categories.FLOWCHART]
     },
     Hex2: {
         image: <>
@@ -470,7 +472,7 @@ export default {
             <polygon class="st1" points="70.9,12.9 28.3,12.9 7,50.2 28.3,87.6 70.9,87.6 92.2,50.2 " />
         </>,
         viewBox: "0 0 100 100",
-        category: [Categories.BPMN]
+        category: [Categories.FLOWCHART]
     },
     Participant: {
         image: <>
@@ -485,7 +487,7 @@ export default {
         </>,
         viewBox: "0 0 100 100",
         hideTextInput: true,
-        category: [Categories.BPMN]
+        category: [Categories.FLOWCHART]
     },
     Pool: {
         image: <>
@@ -495,7 +497,7 @@ export default {
         </>,
         viewBox: "0 0 100 100",
         hideTextInput: true,
-        category: [Categories.BPMN]
+        category: [Categories.FLOWCHART]
     },
     Document: {
         image: <>
@@ -509,7 +511,7 @@ export default {
         </>,
         viewBox: "0 0 100 100",
         size: { width: 80, height: 80 },
-        category: [Categories.SHAPES, Categories.BPMN]
+        category: [Categories.SHAPES, Categories.FLOWCHART]
     },
     DocPause: {
         image: <>
@@ -526,7 +528,7 @@ export default {
         </>,
         viewBox: "0 0 100 100",
         hideTextInput: true,
-        category: [Categories.BPMN]
+        category: [Categories.FLOWCHART]
     },
     DocOutput: {
         image: <>
@@ -549,7 +551,7 @@ export default {
         </>,
         viewBox: "0 0 100 100",
         hideTextInput: true,
-        category: [Categories.BPMN]
+        category: [Categories.FLOWCHART]
     },
     DocInput: {
         image: <>
@@ -572,7 +574,7 @@ export default {
         </>,
         viewBox: "0 0 100 100",
         hideTextInput: true,
-        category: [Categories.BPMN]
+        category: [Categories.FLOWCHART]
     },
     HouseRoof: {
         image: <>
@@ -658,5 +660,13 @@ export default {
         hideTextInput: true,
         keepAspectRatio: false,
         category: [Categories.STRUCTURES]
+    },
+    Graph: {
+        image: <>
+            <g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <g> <path fill="#231F20" d="m216.3,45.4c-106,15.4-184.4,105.4-184.4,213.8-7.10543e-15,119.2 97,216.2 216.2,216.2 52,0 101.7-18.6 141-52.5l-163.5-163.5c-6-6-9.3-14-9.3-22.5v-191.5l0-0zm31.7,450.8c-130.7,0-237-106.3-237-237 0-123 92.3-224.5 214.7-235.9 2.9-0.3 5.8,0.7 8,2.7 2.2,2 3.4,4.8 3.4,7.7v203.3c0,2.9 1.1,5.7 3.2,7.7l171.2,171.2c2,2 3.1,4.7 3.1,7.5 0,2.8-1.2,5.5-3.2,7.4-44.4,42.2-102.4,65.4-163.4,65.4z"></path> <g fill="#231F20"> <path d="m286.3,15.8c-3-0.3-10.4,0.9-11.4,10.4v194.4c0,2.8 1.1,5.4 3.1,7.4l162.8,162.8c7.4,6.4 14.1,1.2 15.8-1.3 29-40.5 44.4-88.2 44.4-137.8-5.68434e-14-123-92.3-224.4-214.7-235.9zm160.3,351.4l-150.9-150.9v-178.3c105.9,15.5 184.4,105.4 184.4,213.8 0,41.1-11.5,80.7-33.5,115.4z"></path> <path d="m240.3,244.7c-2.1-2.1-3.2-4.8-3.2-7.7v-203.4c-0.8-9.3-8.5-10.7-11.4-10.4-122.4,11.5-214.7,112.9-214.7,236 0,130.7 106.3,237 237,237 60.9,0 118.9-23.3 163.3-65.5 2-1.9 6-8.1 0.2-14.9l-171.2-171.1zm7.7,230.7c-119.2,0-216.2-97-216.2-216.2 0-108.4 78.5-198.3 184.4-213.8v191.5c0,8.5 3.3,16.5 9.3,22.5l163.5,163.4c-39.3,34-89,52.6-141,52.6z"></path> </g> </g> </g>
+        </>,
+        viewBox: "0 0 512 512",
+        hideTextInput: true,
+        category: [Categories.DATA_VISUALIZATION]
     },
 }

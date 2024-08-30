@@ -16,6 +16,7 @@ import LineChart from './shapes/LineChart.js';
 import MatrixChart from './shapes/MatrixChart.js';
 import Line from './shapes/Line.js';
 import Text from './shapes/Text.js';
+import Graph from './shapes/Graph.js';
 import UploadNode from './shapes/UploadNode.js';
 import Shapes, { parentNodes, uploadNodeId } from './ShapesData.js';
 import FloatingEdge from './customElements/FloatingEdge';
@@ -66,7 +67,6 @@ const DnDFlow = ({ props }) => {
     const [target, setTarget] = useState(null);
     const [menu, setMenu] = useState(null);
     const [reactFlowInstance, setReactFlowInstance] = useState(null);
-    const [deleteNodeId, setDeleteNodeId] = useState('')
     const [spacebarActive, setSpacebarActive] = useState(false)
 
     const currentPage = useNodeDataStore((state) => state.currentPage);
@@ -97,14 +97,14 @@ const DnDFlow = ({ props }) => {
     // Auto save functionality
     const debounceSave = () => {
         if (timeoutRef.current) {
-          clearTimeout(timeoutRef.current);
+            clearTimeout(timeoutRef.current);
         }
         timeoutRef.current = setTimeout(onSave, 3000);
-      };
-    
-      useEffect(() => {
+    };
+
+    useEffect(() => {
         debounceSave();
-      }, [nodes, edges, textdata, size, chartData]);
+    }, [nodes, edges, textdata, size, chartData]);
 
     const nodeTypes = useMemo(() => {
         const types = { ...Shapes }
@@ -114,6 +114,7 @@ const DnDFlow = ({ props }) => {
         types['HorizontalLine'] = Line
         types['VerticalLine'] = Line
         types['Text'] = Text
+        types['Graph'] = Graph
         types[uploadNodeId] = UploadNode
         return types;
     }, []);
@@ -146,10 +147,11 @@ const DnDFlow = ({ props }) => {
                 id: getId(type),
                 type: type,
                 position,
-                data: {
-                    setDeleteNodeId,
-                },
+                selected: true,
+                data: {},
             };
+
+            clearSelectedNodes();
 
             if (type === 'Table') {
                 newNode.data = { ...newNode.data, addTableLine }
@@ -202,14 +204,6 @@ const DnDFlow = ({ props }) => {
             document.removeEventListener("keyup", spacebarRelease, false);
         };
     }, [spacebarPress, spacebarRelease]);
-
-    useEffect(() => {
-        if (deleteNodeId !== '') {
-            const nodeToDelete = nodes.find(node => node.id === deleteNodeId)
-            reactFlowInstance.deleteElements({ nodes: [nodeToDelete] })
-            setDeleteNodeId('')
-        }
-    }, [deleteNodeId])
 
     const getAllData = useCallback(() => {
         const newPagesData = JSON.parse(JSON.stringify(pagesData))
@@ -290,7 +284,6 @@ const DnDFlow = ({ props }) => {
             parentNode: parentId,
             extent: 'parent',
             data: {
-                setDeleteNodeId,
                 hideHandle: true,
                 size: parentSize,
                 resizeToParentId: parentId,

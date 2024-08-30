@@ -95,7 +95,7 @@ const CollectionDetails = ({ props, loggedUser }) => {
     }
 
     const getFormattedState = (str) => {
-        return str.charAt(0) + str.slice(1).toLowerCase()
+        return str?.charAt(0) + str?.slice(1)?.toLowerCase()
     }
 
     return (
@@ -321,7 +321,7 @@ const DrawingsList = ({ collectionId }) => {
 
     const handleOk = () => {
         if (newDrawingName !== '') {
-            if(diagramData.some(diagram => diagram.Name === newDrawingName)){
+            if (diagramData.some(diagram => diagram.Name === newDrawingName)) {
                 message.error("Drawing already exists.");
                 return;
             }

@@ -332,7 +332,7 @@ const GetNotified = () => {
         };
 
         const userParams = selectedUsers.map((user) => {
-            return { TenantId: selectedCompany?.tenantId, MessageTypeId: 2, PartyTId: user?.Key };
+            return { TenantId: selectedCompany?.tenantId, MessageTypeId: 2, UserId: Number(user?.Key) };
         });
 
         updateTenementCPV(params)
@@ -388,7 +388,7 @@ const GetNotified = () => {
                     dataArr={["DIVISION", "GROUP", "CLASS", "CATEGORY", "SUB_CATEGORY"]}
                     containerStyle="selected-codes"
                 />
-                <div className="overflow-scroll-y max-h-500"><UserSelectedFields data={tenderCpvs} dataFeieldName="description" closable={true} onClose={onDelete} /></div> 
+                <div className="overflow-scroll-y max-h-500"><UserSelectedFields data={tenderCpvs} dataFeieldName="description" closable={true} onClose={onDelete} /></div>
             </div>
         );
     };
@@ -572,10 +572,10 @@ const GetNotified = () => {
                                                                                                                                 handleChekBox(
                                                                                                                                     {
                                                                                                                                         mostChild:
-                                                                                                                                            {
-                                                                                                                                                code: subCategoryData.code,
-                                                                                                                                                value: subCategoryData.desscription,
-                                                                                                                                            },
+                                                                                                                                        {
+                                                                                                                                            code: subCategoryData.code,
+                                                                                                                                            value: subCategoryData.desscription,
+                                                                                                                                        },
                                                                                                                                         parents:
                                                                                                                                             [
                                                                                                                                                 {
@@ -636,8 +636,8 @@ const GetNotified = () => {
             )}
             <div className="g-row">
                 <div className="action-bar">
-                <button className={`primary-btn ${(selectedUsers?.length === 0 || tenderCpvs?.length === 0) && 'disable-div'}`} disabled={selectedUsers?.length === 0 || tenderCpvs?.length === 0} onClick={onUpdate}>
-                    {t('UPDATE')}
+                    <button className={`primary-btn ${(selectedUsers?.length === 0 || tenderCpvs?.length === 0) && 'disable-div'}`} disabled={selectedUsers?.length === 0 || tenderCpvs?.length === 0} onClick={onUpdate}>
+                        {t('UPDATE')}
                     </button>
                 </div>
             </div>
@@ -659,7 +659,7 @@ const GetNotified = () => {
                 <div className="g-col-5 ">
                     <h3 className="text-center">{t('YOU_WILL_GET_NOTIFICATIONS')} </h3>
                     <div className="m-t-5"><YourCpvData /></div>
-                    
+
                 </div>
                 <div className="g-col-2">
                     <h3>{t('RECEIVERS')}</h3>
@@ -680,18 +680,18 @@ const GetNotified = () => {
                     </div> */}
                     { /*  <h6 className="m-t-20 text-left">{t('SELECT_USERS')}</h6>*/}
                     <div className="m-t-5">
-                    <DropdownMultiSelect
-                        placeholder={t('USERS')}
-                        dataList={users}
-                        dataName="Value"
-                        keyName="Key"
-                        selectedList={selectedUsers}
-                        setSelectedState={setSelectedUsers}
+                        <DropdownMultiSelect
+                            placeholder={t('USERS')}
+                            dataList={users}
+                            dataName="Value"
+                            keyName="Key"
+                            selectedList={selectedUsers}
+                            setSelectedState={setSelectedUsers}
                         />
                     </div>
                 </div>
             </div>
-            
+
         </div>
     );
 };

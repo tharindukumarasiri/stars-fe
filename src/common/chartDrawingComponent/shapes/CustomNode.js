@@ -8,6 +8,7 @@ import { PaperClipOutlined } from '@ant-design/icons';
 import { useNodeDataStore } from '../store'
 import Shapes from '../ShapesData.js';
 import { getRgbaColor } from '../utils';
+import DeleteBtn from '../customElements/DeleteBtn'
 
 import style from '../DndStyles.module.scss'
 import ConnectionDot from '../customElements/ConnectionDot';
@@ -160,8 +161,6 @@ function CustomNode({ id, selected, type, data }) {
 
     const onResize = (_, size) => setSize(size);
 
-    const onDeleteNode = () => data.setDeleteNodeId(id);
-
     const addVerticalLine = () => {
         data.addTableLine('VerticalLine', id, { height: size?.height }, { x: 20, y: 0 })
     }
@@ -205,7 +204,7 @@ function CustomNode({ id, selected, type, data }) {
             }
 
             {selected &&
-                <i className={style.nodeCloseBtn + " icon-close-small-x"} onClick={onDeleteNode} />
+                <DeleteBtn nodeId={id} />
             }
 
             {selected && isTable &&

@@ -1,11 +1,11 @@
-import React, { memo, useCallback, useEffect, useRef } from 'react';
+import React, { memo, useEffect, useRef } from 'react';
 import { useUpdateNodeInternals, NodeResizer, useStore } from 'reactflow';
 import { drag } from 'd3-drag';
 import { select } from 'd3-selection';
+import { PieChart, Pie, Cell } from 'recharts';
 
 import { useNodeDataStore } from '../store'
 import Shapes from '../ShapesData.js';
-import { getRgbaColor } from '../utils';
 
 import style from '../DndStyles.module.scss'
 import ConnectionDot from '../customElements/ConnectionDot';
@@ -14,8 +14,17 @@ import DeleteBtn from '../customElements/DeleteBtn';
 const connectionNodeIdSelector = (state) => state.connectionNodeId;
 
 const resizerHandleStyle = { width: 6, height: 6 }
+const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
+const RADIAN = Math.PI / 180;
 
-function Text({ id, selected, type, data }) {
+const pieChartData = [
+    { name: 'Group A', value: 100 },
+    { name: 'Group B', value: 300 },
+    { name: 'Group C', value: 300 },
+    { name: 'Group D', value: 200 },
+];
+
+function Graph({ id, selected, type, data }) {
     const rotateControlRef = useRef(null);
     const updateNodeInternals = useUpdateNodeInternals();
 
@@ -41,18 +50,6 @@ function Text({ id, selected, type, data }) {
 
     const rotate = textdata?.rotate || '0'
     const setRotate = (value) => onTextChange(id, { rotate: value })
-
-    const fonstSize = Number(textdata?.fonstSize) || 8
-    const textType = textdata?.textType || { label: 'Poppins', type: 'Poppins' }
-    const textColor = getRgbaColor(textdata?.textColor) || 'black'
-    const textBold = textdata?.textBold || false
-
-    const textAreaStyle = {
-        fontFamily: textType.type,
-        fontSize: fonstSize,
-        color: textColor,
-        fontWeight: textBold ? 'bolder' : 'normal',
-    }
 
     const mainContainerStyle = {
         height: size?.height,
@@ -93,10 +90,6 @@ function Text({ id, selected, type, data }) {
         selection.call(dragHandler);
     }, [id, updateNodeInternals]);
 
-    const onChange = useCallback((evt) => {
-        onTextChange(id, { value: evt.target.value })
-    }, []);
-
     const onResize = (_, size) => setSize(size);
 
     return (
@@ -124,19 +117,36 @@ function Text({ id, selected, type, data }) {
                 <ConnectionDot isConnecting={isConnecting} isTarget={isTarget} />
             </div>
 
-            <textarea
-                id="textarea"
-                type="textarea"
-                name="textarea"
-                placeholder={type}
-                className={style.drawingTextArea}
-                value={textdata?.value}
-                onChange={onChange}
-                multiple
-                style={textAreaStyle}
-            />
+            <PieChart width={200} height={200} >
+                <Pie
+                    data={pieChartData}
+                    cx="50%"
+                    cy="50%"
+                    labelLine={false}
+                    label={renderCustomizedLabel}
+                    outerRadius={80}
+                    fill="#8884d8"
+                    dataKey="value"
+                >
+                    {pieChartData.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                    ))}
+                </Pie>
+            </PieChart>
         </div>
     );
 }
 
-export default memo(Text);
+const renderCustomizedLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, percent, index }) => {
+    const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
+    const x = cx + radius * Math.cos(-midAngle * RADIAN);
+    const y = cy + radius * Math.sin(-midAngle * RADIAN);
+
+    return (
+        <text x={x} y={y} fill="white" textAnchor={x > cx ? 'start' : 'end'} dominantBaseline="central">
+            {`${(percent * 100).toFixed(0)}%`}
+        </text>
+    );
+};
+
+export default memo(Graph);
