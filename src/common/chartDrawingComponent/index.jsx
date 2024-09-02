@@ -16,7 +16,8 @@ import LineChart from './shapes/LineChart.js';
 import MatrixChart from './shapes/MatrixChart.js';
 import Line from './shapes/Line.js';
 import Text from './shapes/Text.js';
-import Graph from './shapes/Graph.js';
+import PieChart from './shapes/PieChart.js';
+import BarChart from './shapes/BarChart.js';
 import UploadNode from './shapes/UploadNode.js';
 import Shapes, { parentNodes, uploadNodeId } from './ShapesData.js';
 import FloatingEdge from './customElements/FloatingEdge';
@@ -114,7 +115,8 @@ const DnDFlow = ({ props }) => {
         types['HorizontalLine'] = Line
         types['VerticalLine'] = Line
         types['Text'] = Text
-        types['Graph'] = Graph
+        types['PieChart'] = PieChart
+        types['BarChart'] = BarChart
         types[uploadNodeId] = UploadNode
         return types;
     }, []);

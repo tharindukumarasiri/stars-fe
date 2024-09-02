@@ -1,4 +1,4 @@
-import React, { memo, useEffect, useRef } from 'react';
+import React, { memo, useEffect, useRef, useState } from 'react';
 import { useUpdateNodeInternals, NodeResizer, useStore } from 'reactflow';
 import { drag } from 'd3-drag';
 import { select } from 'd3-selection';
@@ -17,14 +17,19 @@ const resizerHandleStyle = { width: 6, height: 6 }
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
 const RADIAN = Math.PI / 180;
 
-const pieChartData = [
-    { name: 'Group A', value: 100 },
-    { name: 'Group B', value: 300 },
-    { name: 'Group C', value: 300 },
-    { name: 'Group D', value: 200 },
-];
 
-function Graph({ id, selected, type, data }) {
+function PieChartComponent({ id, selected, type, data }) {
+    const [apiData, setApiData] = useState([])
+    useEffect(() => {
+        const fetchData = async () => {
+            const response = await fetch("https://dummyjson.com/c/3ac4-4c8d-4ff6-8e97")
+            const result = await response.json()
+            setApiData(result.data)
+        }
+
+        fetchData()
+    }, [])
+
     const rotateControlRef = useRef(null);
     const updateNodeInternals = useUpdateNodeInternals();
 
@@ -117,22 +122,26 @@ function Graph({ id, selected, type, data }) {
                 <ConnectionDot isConnecting={isConnecting} isTarget={isTarget} />
             </div>
 
-            <PieChart width={200} height={200} >
-                <Pie
-                    data={pieChartData}
-                    cx="50%"
-                    cy="50%"
-                    labelLine={false}
-                    label={renderCustomizedLabel}
-                    outerRadius={80}
-                    fill="#8884d8"
-                    dataKey="value"
-                >
-                    {pieChartData.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                    ))}
-                </Pie>
-            </PieChart>
+            {apiData?.length > 0 ?
+                <PieChart width={200} height={200} >
+                    <Pie
+                        data={apiData}
+                        cx="50%"
+                        cy="50%"
+                        labelLine={false}
+                        label={renderCustomizedLabel}
+                        outerRadius={80}
+                        fill="#8884d8"
+                        dataKey="value"
+                    >
+                        {apiData?.map((entry, index) => (
+                            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                        ))}
+                    </Pie>
+                </PieChart> : <div>Loading...</div>
+
+            }
+
         </div>
     );
 }
@@ -149,4 +158,4 @@ const renderCustomizedLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, per
     );
 };
 
-export default memo(Graph);
+export default memo(PieChartComponent);

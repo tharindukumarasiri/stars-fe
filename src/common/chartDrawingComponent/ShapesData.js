@@ -17,7 +17,7 @@ export default {
     Square: {
         image: <rect x="0.5" y="0.5" width="25" height="25" vectorEffect="non-scaling-stroke" />,
         viewBox: "0 0 26 26",
-        category: [Categories.FLOWCHART, Categories.SHAPES],
+        category: [Categories.FLOWCHART],
         keepAspectRatio: false,
     },
     Circle: {
@@ -29,7 +29,7 @@ export default {
     Triangle: {
         image: <path d="M1.14359 25L15 0.999999L28.8564 25H1.14359Z" vectorEffect="non-scaling-stroke" />,
         viewBox: "0 0 30 26",
-        category: [Categories.SHAPES],
+        category: [Categories.FLOWCHART],
         keepAspectRatio: false,
     },
     Diamond: {
@@ -43,7 +43,7 @@ export default {
     Star: {
         image: <path d="M14 1.61804L16.6677 9.82827L16.7799 10.1738H17.1432H25.776L18.7919 15.248L18.498 15.4615L18.6103 15.807L21.2779 24.0172L14.2939 18.943L14 18.7295L13.7061 18.943L6.72206 24.0172L9.38973 15.807L9.50199 15.4615L9.20809 15.248L2.22405 10.1738H10.8568H11.2201L11.3323 9.82827L14 1.61804Z" vectorEffect="non-scaling-stroke" />,
         viewBox: "0 0 28 26",
-        category: [Categories.SHAPES],
+        category: [Categories.FLOWCHART],
         keepAspectRatio: false,
     },
     Tick: {
@@ -54,7 +54,7 @@ export default {
             </g>
         </>,
         viewBox: "0 0 50 50",
-        category: [Categories.SHAPES],
+        category: [Categories.FLOWCHART],
     },
     Thumbs: {
         image: <>
@@ -66,7 +66,7 @@ export default {
        c-0.3,0.2-0.4,0.5-0.4,0.8c0,0.3,0.2,0.6,0.5,0.8c0.8,0.4,1.2,1.1,1.2,2C44.9,29.4,44,30.4,42.9,30.5z"/>
         </>,
         viewBox: "0 0 50 50",
-        category: [Categories.SHAPES]
+        category: [Categories.FLOWCHART]
     },
     Male: {
         image: <>
@@ -75,7 +75,7 @@ export default {
        c1.9,0,3.4-1.5,3.4-3.4v-7.5c1.6-1.1,2.7-2.9,2.7-5V20.1C31,16.8,28.2,14.1,24.9,14.1z"/>
         </>,
         viewBox: "0 0 50 50",
-        category: [Categories.SHAPES]
+        category: [Categories.FLOWCHART]
     },
     Female: {
         image: <>
@@ -84,7 +84,7 @@ export default {
        c-0.1,0.3-0.2,0.6-0.3,0.9l-4.6,16h6.5h0.8v7.6c0,1.8,1.5,3.4,3.4,3.4c1.8,0,3.4-1.5,3.4-3.4v-7.6H36.1z"/>
         </>,
         viewBox: "0 0 50 50",
-        category: [Categories.SHAPES]
+        category: [Categories.FLOWCHART]
     },
     Bell: {
         image: <>
@@ -119,7 +119,7 @@ export default {
             </g>
         </>,
         viewBox: "0 0 50 50",
-        category: [Categories.SHAPES]
+        category: [Categories.FLOWCHART]
     },
     HorizontalLine: {
         image: <rect x="0.5" width="134" height="2" rx="2" strokeWidth="0" fill='black' vectorEffect="non-scaling-stroke" />,
@@ -511,7 +511,7 @@ export default {
         </>,
         viewBox: "0 0 100 100",
         size: { width: 80, height: 80 },
-        category: [Categories.SHAPES, Categories.FLOWCHART]
+        category: [Categories.FLOWCHART]
     },
     DocPause: {
         image: <>
@@ -661,12 +661,21 @@ export default {
         keepAspectRatio: false,
         category: [Categories.STRUCTURES]
     },
-    Graph: {
+    PieChart: {
         image: <>
             <g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <g> <path fill="#231F20" d="m216.3,45.4c-106,15.4-184.4,105.4-184.4,213.8-7.10543e-15,119.2 97,216.2 216.2,216.2 52,0 101.7-18.6 141-52.5l-163.5-163.5c-6-6-9.3-14-9.3-22.5v-191.5l0-0zm31.7,450.8c-130.7,0-237-106.3-237-237 0-123 92.3-224.5 214.7-235.9 2.9-0.3 5.8,0.7 8,2.7 2.2,2 3.4,4.8 3.4,7.7v203.3c0,2.9 1.1,5.7 3.2,7.7l171.2,171.2c2,2 3.1,4.7 3.1,7.5 0,2.8-1.2,5.5-3.2,7.4-44.4,42.2-102.4,65.4-163.4,65.4z"></path> <g fill="#231F20"> <path d="m286.3,15.8c-3-0.3-10.4,0.9-11.4,10.4v194.4c0,2.8 1.1,5.4 3.1,7.4l162.8,162.8c7.4,6.4 14.1,1.2 15.8-1.3 29-40.5 44.4-88.2 44.4-137.8-5.68434e-14-123-92.3-224.4-214.7-235.9zm160.3,351.4l-150.9-150.9v-178.3c105.9,15.5 184.4,105.4 184.4,213.8 0,41.1-11.5,80.7-33.5,115.4z"></path> <path d="m240.3,244.7c-2.1-2.1-3.2-4.8-3.2-7.7v-203.4c-0.8-9.3-8.5-10.7-11.4-10.4-122.4,11.5-214.7,112.9-214.7,236 0,130.7 106.3,237 237,237 60.9,0 118.9-23.3 163.3-65.5 2-1.9 6-8.1 0.2-14.9l-171.2-171.1zm7.7,230.7c-119.2,0-216.2-97-216.2-216.2 0-108.4 78.5-198.3 184.4-213.8v191.5c0,8.5 3.3,16.5 9.3,22.5l163.5,163.4c-39.3,34-89,52.6-141,52.6z"></path> </g> </g> </g>
         </>,
         viewBox: "0 0 512 512",
         hideTextInput: true,
         category: [Categories.DATA_VISUALIZATION]
+    },
+    BarChart: {
+        image: <>
+            <g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <g> <g fill="#231F20"> <path d="M21.4,432.5h76.1c5.8,0,10.4-4.7,10.4-10.4V116c0-5.8-4.7-10.4-10.4-10.4H21.4c-5.8,0-10.4,4.7-10.4,10.4 v306.1C11,427.9,15.7,432.5,21.4,432.5z M31.9,126.4h55.2v285.2H31.9V126.4z"></path> <path d="m152.5,432.5h76.1c5.8,0 10.4-4.7 10.4-10.4v-212.8c0-5.8-4.7-10.4-10.4-10.4h-76.1c-5.8,0-10.4,4.7-10.4,10.4v212.8c-0.1,5.8 4.6,10.4 10.4,10.4zm10.4-212.7h55.2v191.9h-55.2v-191.9z"></path> <path d="m283.5,432.5h76.1c5.8,0 10.4-4.7 10.4-10.4v-375.8c0-5.8-4.7-10.4-10.4-10.4h-76.1c-5.8,0-10.4,4.7-10.4,10.4v375.8c0,5.8 4.6,10.4 10.4,10.4zm10.4-375.8h55.2v355h-55.2v-355z"></path> <path d="m490.6,152.7h-76.1c-5.8,0-10.4,4.7-10.4,10.4v259c0,5.8 4.7,10.4 10.4,10.4h76.1c5.8,0 10.4-4.7 10.4-10.4v-259c0-5.7-4.7-10.4-10.4-10.4zm-10.5,259h-55.2v-238.1h55.2v238.1z"></path> <path d="m490.6,455.3h-469.2c-5.8,0-10.4,4.7-10.4,10.4s4.7,10.4 10.4,10.4h469.1c5.8,0 10.4-4.7 10.4-10.4s-4.6-10.4-10.3-10.4z"></path> </g> </g> </g>
+        </>,
+        viewBox: "0 0 512 512",
+        hideTextInput: true,
+        category: [Categories.DATA_VISUALIZATION],
+        size: { width: 440, height: 280 },
     },
 }
