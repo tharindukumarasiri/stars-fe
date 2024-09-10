@@ -181,7 +181,7 @@ const TimeConfig = forwardRef((props, ref) => {
                         "MessageTemplateId": basketDetails?.template?.Id,
                         "MessageTypeId": basketDetails?.template?.MessageTypeId,
                         "MessageMediumId": basketDetails?.template?.MessageMediumId,
-                        "CompanyPartyId": selectedCompany?.companyId,
+                        "CompanyPartyId": selectedCompany?.companyPartyId,
                         "UserId": currentUser?.Id,
                         "IsScheduled": true,
                     },
@@ -196,7 +196,7 @@ const TimeConfig = forwardRef((props, ref) => {
                     const basketParams = {
                         "PageSize": 10,
                         "PageCount": 1,
-                        "CompanyPartyId": selectedCompany?.companyId
+                        "CompanyPartyId": selectedCompany?.companyPartyId
                     }
                     getCommunicationBasketData(basketParams)
                 }).catch(() => {

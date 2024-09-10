@@ -120,10 +120,10 @@ const CompaniesPage = ({ basketId, countryList, currentUser, selectedCompany, up
     const { t } = useTranslation();
 
     useEffect(() => {
-        if (selectedCompany?.companyId) {
+        if (selectedCompany?.companyPartyId) {
             setLoading(true)
             getCompaniesData();
-            getCompanies('', selectedCompany?.companyId, '', selectedTemplate?.MessageTriggerPointId).then(result => {
+            getCompanies('', selectedCompany?.companyPartyId, '', selectedTemplate?.MessageTriggerPointId).then(result => {
                 setAllCompaniesData(result?.Value)
                 setLoading(false)
             })
@@ -317,7 +317,7 @@ const CompaniesPage = ({ basketId, countryList, currentUser, selectedCompany, up
             const params = {
                 "Company": selectedCompanyToUpdate?.companyData,
                 "CommunicationBasketId": basketId,
-                "SelectedCompanyPartyId": selectedCompany?.companyId,
+                "SelectedCompanyPartyId": selectedCompany?.companyPartyId,
                 "UserId": currentUser?.Id,
                 "IsReceiver": selectedCompanyToUpdate?.isReceiver
             }
@@ -337,7 +337,7 @@ const CompaniesPage = ({ basketId, countryList, currentUser, selectedCompany, up
                 "Person": selectedCompanyToUpdate.person,
                 "SelectedCompany": selectedCompanyToUpdate.companyData?.Company,
                 "CommunicationBasketId": basketId,
-                "CompanyPartyId": selectedCompany?.companyId,
+                "CompanyPartyId": selectedCompany?.companyPartyId,
                 "UserId": currentUser?.Id,
                 "IsReceiver": selectedCompanyToUpdate?.isReceiver
             }
@@ -369,7 +369,7 @@ const CompaniesPage = ({ basketId, countryList, currentUser, selectedCompany, up
             const params = {
                 "Company": selectedCompanyToUpdate?.companyData,
                 "CommunicationBasketId": basketId,
-                "SelectedCompanyPartyId": selectedCompany?.companyId,
+                "SelectedCompanyPartyId": selectedCompany?.companyPartyId,
                 "UserId": currentUser?.Id,
                 "IsReceiver": selectedCompanyToUpdate?.isReceiver
             }
@@ -389,7 +389,7 @@ const CompaniesPage = ({ basketId, countryList, currentUser, selectedCompany, up
                 "Person": selectedCompanyToUpdate.person,
                 "SelectedCompany": selectedCompanyToUpdate.companyData?.Company,
                 "CommunicationBasketId": basketId,
-                "CompanyPartyId": selectedCompany?.companyId,
+                "CompanyPartyId": selectedCompany?.companyPartyId,
                 "UserId": currentUser?.Id,
                 "IsReceiver": selectedCompanyToUpdate?.isReceiver
             }
@@ -463,7 +463,7 @@ const CompaniesPage = ({ basketId, countryList, currentUser, selectedCompany, up
     const getCompaniesData = () => {
         if (basketId) {
             setLoading(true);
-            getCompanies(basketId, selectedCompany?.companyId, '', selectedTemplate?.MessageTriggerPointId).then(result => {
+            getCompanies(basketId, selectedCompany?.companyPartyId, '', selectedTemplate?.MessageTriggerPointId).then(result => {
                 const newCheckedCompaniesUsers = []
 
                 const companiesToShow = result?.Value?.filter(company => {
@@ -570,7 +570,7 @@ const CompaniesPage = ({ basketId, countryList, currentUser, selectedCompany, up
                 },
                 "SelectedCompany": companyData,
                 "CommunicationBasketId": basketId,
-                "CompanyPartyId": selectedCompany?.companyId
+                "CompanyPartyId": selectedCompany?.companyPartyId
             }
 
             addPerson(params).then(() => {
@@ -711,7 +711,7 @@ const CompaniesPage = ({ basketId, countryList, currentUser, selectedCompany, up
                 "CreatedUserId": currentUser?.Id
             },
             "CommunicationBasketId": basketId,
-            "SelectedCompanyPartyId": selectedCompany?.companyId
+            "SelectedCompanyPartyId": selectedCompany?.companyPartyId
         }
         addCompany(params).then(() => {
             message.success('Company created')
@@ -727,7 +727,7 @@ const CompaniesPage = ({ basketId, countryList, currentUser, selectedCompany, up
     const onUpdate = () => {
         setLoading(true)
         const params = {
-            "EntityPartyId": selectedCompany?.companyId,
+            "EntityPartyId": selectedCompany?.companyPartyId,
             "EntityName": selectedCompany?.name,
             "CommunicationBasketId": basketId,
             "UserId": currentUser?.Id,
@@ -887,14 +887,14 @@ const PersonsPage = ({ basketId, countryList, currentUser, selectedCompany, upda
     const { t } = useTranslation();
 
     useEffect(() => {
-        if (selectedCompany?.companyId) {
+        if (selectedCompany?.companyPartyId) {
             getPersonsData();
             getAllPersons();
         }
     }, [selectedCompany])
 
     const getAllPersons = () => {
-        getPersons(selectedCompany?.companyId, '').then(result => {
+        getPersons(selectedCompany?.companyPartyId, '').then(result => {
             setAllPersonsData(result?.Value)
         })
     }
@@ -1037,7 +1037,7 @@ const PersonsPage = ({ basketId, countryList, currentUser, selectedCompany, upda
                 "CommunicationBasketId": basketId,
                 "UserId": currentUser?.Id,
                 "IsReceiver": selectedFieldToUpdate?.isReceiver,
-                "CompanyPartyId": selectedCompany?.companyId,
+                "CompanyPartyId": selectedCompany?.companyPartyId,
                 "SelectedCompany": null,
             }
 
@@ -1061,7 +1061,7 @@ const PersonsPage = ({ basketId, countryList, currentUser, selectedCompany, upda
             //     "Company": selectedCompanyToUpdate.person,
             //     "SelectedCompany": selectedCompanyToUpdate.companyData?.Company,
             //     "CommunicationBasketId": basketId,
-            //     "CompanyPartyId": selectedCompany?.companyId,
+            //     "CompanyPartyId": selectedCompany?.companyPartyId,
             //     "UserId": currentUser?.Id,
             //     "IsReceiver": selectedCompanyToUpdate?.isReceiver
             // }
@@ -1137,7 +1137,7 @@ const PersonsPage = ({ basketId, countryList, currentUser, selectedCompany, upda
     const onUpdate = () => {
         setLoading(true)
         const params = {
-            "EntityPartyId": selectedCompany?.companyId,
+            "EntityPartyId": selectedCompany?.companyPartyId,
             "EntityName": selectedCompany?.name,
             "CommunicationBasketId": basketId,
             "UserId": currentUser?.Id,
@@ -1151,7 +1151,7 @@ const PersonsPage = ({ basketId, countryList, currentUser, selectedCompany, upda
 
     const getPersonsData = () => {
         setLoading(true);
-        getPersons(selectedCompany?.companyId, basketId).then(result => {
+        getPersons(selectedCompany?.companyPartyId, basketId).then(result => {
             const newCheckedPersons = []
 
             const personsToShow = result?.Value?.filter(person => {
@@ -1266,7 +1266,7 @@ const PersonsPage = ({ basketId, countryList, currentUser, selectedCompany, upda
                 },
                 "SelectedCompany": null,
                 "CommunicationBasketId": basketId,
-                "CompanyPartyId": selectedCompany?.companyId
+                "CompanyPartyId": selectedCompany?.companyPartyId
             }
 
             addPerson(params).then(() => {

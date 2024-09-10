@@ -14,6 +14,7 @@ import 'reactflow/dist/style.css';
 import CustomNode from './shapes/CustomNode.js';
 import LineChart from './shapes/LineChart.js';
 import MatrixChart from './shapes/MatrixChart.js';
+import MatrixTable from './shapes/MatrixTable.js';
 import Line from './shapes/Line.js';
 import Text from './shapes/Text.js';
 import PieChart from './shapes/PieChart.js';
@@ -112,6 +113,7 @@ const DnDFlow = ({ props }) => {
         Object.keys(types).forEach(key => types[key] = CustomNode);
         types['LineChart'] = LineChart
         types['MatrixChart'] = MatrixChart
+        types['MatrixTable'] = MatrixTable
         types['HorizontalLine'] = Line
         types['VerticalLine'] = Line
         types['Text'] = Text

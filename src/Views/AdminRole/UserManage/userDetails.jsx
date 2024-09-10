@@ -67,7 +67,7 @@ const UserDetails = ({ props }) => {
             setLoading(true)
             setStatus(e.target.value);
 
-            activateUsers([selectedCompany?.companyId, props?.UserId]).then(() => {
+            activateUsers([selectedCompany?.companyPartyId, props?.UserId]).then(() => {
                 message.success(t('MSG_USERS_ACTIVATED'));
                 getUsersData();
                 setLoading(false)
@@ -79,7 +79,7 @@ const UserDetails = ({ props }) => {
             setLoading(true)
             setStatus(e.target.value);
 
-            deActivateUsers([selectedCompany?.companyId, props?.UserId]).then(() => {
+            deActivateUsers([selectedCompany?.companyPartyId, props?.UserId]).then(() => {
                 message.success(t('MSG_USERS_DEACTIVATE_SUCESS'))
                 getUsersData();
                 setLoading(false)
@@ -101,7 +101,7 @@ const UserDetails = ({ props }) => {
                 cancelText: t("NO"),
                 onOk() {
                     setLoading(true);
-                    const userLisyPayload = [selectedCompany?.companyId, currentUser?.Id, props?.UserId]
+                    const userLisyPayload = [selectedCompany?.companyPartyId, currentUser?.Id, props?.UserId]
 
                     deleteUser(userLisyPayload).then(() => {
                         message.success(t('DELETE_SUCCESSFUL'))

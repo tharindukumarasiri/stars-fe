@@ -710,6 +710,12 @@ div.customHandle2Bottom {
     border-color: #d3d3d3;
 }
 
+.matrixTableContainer {
+    display: flex;
+    flex-direction: column;
+    background-color: transparent;
+}
+
 .matrixChartHeader {
     border: solid 1px;
     margin-bottom: 10px;
@@ -735,6 +741,127 @@ div.customHandle2Bottom {
     border: solid 1px;
     margin-bottom: 10px;
     padding-bottom: 10px;
+}
+
+.matrixTableMainRow {
+    display: flex;
+    flex: 1;
+    justify-content: space-around;
+    flex-direction: row;
+}
+
+.matrixTableSection {
+    width: 100%;
+    border: solid 2px #9E9E9E;
+    outline: dashed 1px red;
+}
+
+.matrixTableRowHeader {
+    // min-width: 45px;
+    position: relative;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    padding: 10px;
+}
+
+.matrixTableRowHeaderText {
+    transform: rotate(270deg);
+    font-weight: 700;
+}
+
+.matrixTableRowHeaderTextContainer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #8B8B8B;
+    height: 100%;
+    width: 50px;
+}
+
+.matrixTableRowLineContainer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #53B651;
+    height: 50%;
+    width: 30px;
+}
+
+.matrixTableRowLine {
+    position: absolute;
+    border: dashed 1px #53B651;
+    height: 90%;
+    width: 1px;
+    left: 24px;
+}
+
+.matrixTableRowLineHorizontal {
+    display: flex;
+    justify-content: center;
+    position: absolute;
+    border: dashed 1px #E71F2E;
+    height: 1px;
+    width: 95%;
+    top: -30px
+}
+
+.matrixTableRowLineHorizontalText {
+    position: absolute;
+    background-color: #E71F2E;
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-bottom: 5px;
+    padding-top: 5px;
+    top: -44px;
+    color: white;
+}
+
+.matrixTableColumnHeaderTextContainer {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #D9D9D9;
+    width: 100%;
+    min-height: 50px;
+}
+
+.matrixTableColumnHeaderText {
+    transform: rotate(270deg);
+    font-weight: 700;
+}
+
+.matrixTableArrow {
+    position: absolute;
+    left: -0.25rem;
+    top: -5px;
+    border-color: #53B651;
+}
+
+.matrixTableArrowDown {
+    top: 97%
+}
+
+.matrixTableArrowRight {
+    position: absolute;
+
+    border-color: #E71F2E;
+    left: 100%;
+    // top: 97%
+}
+
+.matrixTableArrowLeft {
+    border-color: #E71F2E;
+}
+
+.matrixTableItem {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100px;
+    background-color: #D9D9D9;
+    border-radius: 5px;
 }
 
 .matrixChartItem {

@@ -80,7 +80,7 @@ const CommunicationBaskets = () => {
     }, []);
 
     useEffect(() => {
-        if (selectedCompany?.companyId && communicationsData.length === 0) {
+        if (selectedCompany?.companyPartyId && communicationsData.length === 0) {
             getCommunicationBasketData()
         }
     }, [selectedCompany]);
@@ -94,7 +94,7 @@ const CommunicationBaskets = () => {
             "ToDate": filterTypes.endDate,
             "PageSize": pageSize,
             "PageCount": pgNumb,
-            "CompanyPartyId": selectedCompany?.companyId
+            "CompanyPartyId": selectedCompany?.companyPartyId
         }
 
         getCommunicationsData(params)

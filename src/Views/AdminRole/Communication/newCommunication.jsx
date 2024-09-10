@@ -34,13 +34,13 @@ const NewCommunication = (props) => {
         setLoading(true);
 
         if (!props.showOnlyDefaultRecievers) {
-            GetCommunicationTemplatesByTenant(selectedCompany.companyId, 1)
+            GetCommunicationTemplatesByTenant(selectedCompany.companyPartyId, 1)
                 .then((result) => {
                     setTemplateList(result);
                 })
                 .finally(() => setLoading(false));
         } else {
-            GetCommunicationTemplatesByTenant(selectedCompany.companyId, 2)
+            GetCommunicationTemplatesByTenant(selectedCompany.companyPartyId, 2)
                 .then((result) => {
                     setTemplateList(result);
                 })
@@ -49,7 +49,7 @@ const NewCommunication = (props) => {
     };
 
     useEffect(() => {
-        if (selectedCompany && selectedCompany.companyId) {
+        if (selectedCompany && selectedCompany.companyPartyId) {
             getSavedTemplates();
         }
     }, [selectedCompany, props.showOnlyDefaultRecievers]);
@@ -163,7 +163,7 @@ const NewCommunication = (props) => {
 
     const sendNotifications = () => {
         let dto = {
-            EntityPartyId: selectedCompany.companyId,
+            EntityPartyId: selectedCompany.companyPartyId,
             EntityName: selectedCompany.name,
             UserId: currentUser?.Id,
             BasketReceivers: [],

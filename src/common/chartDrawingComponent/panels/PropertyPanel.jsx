@@ -33,10 +33,12 @@ import { useDiagramStore } from '../../../Views/ChartDrawing/chartDrawingStore'
 import { TabContext } from '../../../utils/contextStore';
 import { NAVIGATION_PAGES } from "../../../utils/enums";
 import FormModal from './FormModal';
+import Input from '../../input'
 
 import style from '../DndStyles.module.scss'
 
 const propertyCategories = {
+    GRID: 'Grid',
     APPEARANCE: 'Appearance',
     LAYERS: 'Layers',
     LINK: 'Link',
@@ -78,7 +80,7 @@ const PropertyPanel = ({ nodes, selectedNodes = [], selectedEdges = [], setNodes
     const changeTextData = useNodeDataStore((state) => state.onTextChange);
     const selectedNodeId = useNodeDataStore((state) => state.selectedNodeId);
     const textdata = useNodeDataStore((state) => state.textdata).find(item => item.id === selectedNodeId);
-    
+
     const sizes = useNodeDataStore((state) => state.size);
     const onSizeCahnge = useNodeDataStore((state) => state.setSize);
 
@@ -121,8 +123,20 @@ const PropertyPanel = ({ nodes, selectedNodes = [], selectedEdges = [], setNodes
     const sectionsCount = chartData?.sectionsCount || 1
     const setSectionsCount = (value) => onChangeChartData({ sectionsCount: value })
 
+    const rowsCount = chartData?.rowsCount || 1
+    const setRowsCount = (value) => onChangeChartData({ rowsCount: value })
+
+    const rowsData = chartData?.rowsData || []
+    const setRowsData = (value) => onChangeChartData({ rowsData: value })
+
+    const matrixPadding = chartData?.matrixPadding || 2
+    const setMatrixPadding = (value) => onChangeChartData({ matrixPadding: value })
+
     const columnsCount = chartData?.columnsCount || 1
     const setColumnsCount = (value) => onChangeChartData({ columnsCount: value })
+
+    const columnsData = chartData?.columnsData || []
+    const setColumnsData = (value) => onChangeChartData({ columnsData: value })
 
     const sectionBackgroundColor = chartData?.sectionBackgroundColor || '#EAEAEA'
     const setSectionBackgroundColor = (value) => onChangeChartData({ sectionBackgroundColor: value })
@@ -179,6 +193,24 @@ const PropertyPanel = ({ nodes, selectedNodes = [], selectedEdges = [], setNodes
         }
     };
 
+    const onRowsCountIncrease = () => setRowsCount(rowsCount + 1);
+    const onRowsCountDecrease = () => setRowsCount(rowsCount - 1 > 0 ? rowsCount - 1 : 0);
+    const onRowsCountChange = (e) => {
+        e.preventDefault();
+        const number = e.target.value
+
+        if (!isNaN(number) && Number(number) > 0) {
+            setRowsCount(Number(number))
+        }
+    };
+
+    const onRowsDataChange = (e, index) => {
+        e.preventDefault();
+        const copyOfRowsData = [...rowsData]
+        copyOfRowsData[index] = e.target.value
+        setRowsData(copyOfRowsData)
+    }
+
     const onColumnsCountIncrease = () => setColumnsCount(columnsCount + 1);
     const onColumnsCountDecrease = () => setColumnsCount(columnsCount - 1 > 0 ? columnsCount - 1 : 0);
     const onColumnsCountChange = (e) => {
@@ -190,10 +222,40 @@ const PropertyPanel = ({ nodes, selectedNodes = [], selectedEdges = [], setNodes
         }
     };
 
+    const onColumnDataChange = (e, index) => {
+        e.preventDefault();
+        const copyOfColumnsData = [...columnsData]
+        copyOfColumnsData[index] = e.target.value
+        setColumnsData(copyOfColumnsData)
+    }
+
+    const onPaddingIncrease = () => setMatrixPadding(matrixPadding + 1);
+    const onPaddingDecrease = () => setMatrixPadding(matrixPadding - 1 > 0 ? matrixPadding - 1 : 0);
+    const onPaddingChange = (e) => {
+        e.preventDefault();
+        const number = e.target.value
+
+        if (!isNaN(number) && Number(number) > 0) {
+            setMatrixPadding(Number(number))
+        }
+    };
+
     const handleLinkInput = (e) => {
         e.preventDefault();
         setUrlInput(e.target.value)
     }
+
+    const columnList = useMemo(() => {
+        return (
+            Array.from(Array(columnsCount))
+        )
+    }, [columnsCount])
+
+    const rowList = useMemo(() => {
+        return (
+            Array.from(Array(rowsCount))
+        )
+    }, [rowsCount])
 
     const addNewLink = () => {
         setNodes((nodes) =>
@@ -932,6 +994,95 @@ const PropertyPanel = ({ nodes, selectedNodes = [], selectedEdges = [], setNodes
         )
     }
 
+    const gridContent = () => {
+        return (
+            <div className={style.propertyPanelContainer}>
+                <div className={style.appearanceRow}>
+                    <div className={style.flex5}>
+                        Number of Columns
+                    </div>
+
+                    <div className={style.flex8}>
+                        <div className={style.fontSizeContainer}>
+                            <div
+                                className='hover-hand m-r-10 m-t-10 bold'
+                                onClick={onColumnsCountDecrease}>-</div>
+                            <input value={columnsCount} onChange={onColumnsCountChange} type="text" />
+                            <div
+                                className='hover-hand m-l-10 m-t-10 bold'
+                                onClick={onColumnsCountIncrease}
+                            >+</div>
+                        </div>
+                    </div>
+                </div>
+                <div className={style.appearanceRow}>
+                    <div className={style.flex5}>
+                        Number of Rows
+                    </div>
+
+                    <div className={style.flex8}>
+                        <div className={style.fontSizeContainer}>
+                            <div
+                                className='hover-hand m-r-10 m-t-10 bold'
+                                onClick={onRowsCountDecrease}>-</div>
+                            <input value={rowsCount} onChange={onRowsCountChange} type="text" />
+                            <div
+                                className='hover-hand m-l-10 m-t-10 bold'
+                                onClick={onRowsCountIncrease}
+                            >+</div>
+                        </div>
+                    </div>
+                </div>
+                <div className={style.appearanceRow}>
+                    <div className={style.flex5}>
+                        Padding (px)
+                    </div>
+
+                    <div className={style.flex8}>
+                        <div className={style.fontSizeContainer}>
+                            <div
+                                className='hover-hand m-r-10 m-t-10 bold'
+                                onClick={onPaddingDecrease}>-</div>
+                            <input value={matrixPadding} onChange={onPaddingChange} type="text" />
+                            <div
+                                className='hover-hand m-l-10 m-t-10 bold'
+                                onClick={onPaddingIncrease}
+                            >+</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div className='m-b-10 p-t-10 bold'>Columns</div>
+                {columnList.map((_, columnIndex) => {
+                    return (
+                        <div className={style.linkInputContainer} key={columnIndex}>
+                            <Input
+                                placeholder={`Column ${columnIndex + 1}`}
+                                value={columnsData[columnIndex]}
+                                onChange={(e) => onColumnDataChange(e, columnIndex)}
+                            />
+                        </div>
+                    )
+                })}
+
+                <div className='m-b-10 p-t-10 bold'>Rows</div>
+                {rowList.map((_, rowIndex) => {
+                    return (
+                        <div className={style.linkInputContainer} key={rowIndex}>
+                            <Input
+                                placeholder={`Row ${rowIndex + 1}`}
+                                value={rowsData[rowIndex]}
+                                onChange={(e) => onRowsDataChange(e, rowIndex)}
+                            />
+                        </div>
+                    )
+                })}
+
+
+            </div>
+        )
+    }
+
     const layersContent = () => {
         return (
             <div>
@@ -1165,6 +1316,20 @@ const PropertyPanel = ({ nodes, selectedNodes = [], selectedEdges = [], setNodes
                 <div className={style.sidebarMainContainer}>
                     {sidebarVisible &&
                         <>
+                            {selectedNodes?.[0]?.type === 'MatrixTable' &&
+                                <div className='m-b-10' >
+                                    <div className={style.sidebarCategoryheader} onClick={() => { onCategoryClick(propertyCategories.APPEARANCE) }} >
+                                        <div>{propertyCategories.GRID}</div>
+                                        <i className={(!closedCategories.includes(propertyCategories.GRID) ? ' icon-arrow-down' : ' icon-arrow-up')} />
+                                    </div>
+
+                                    {!closedCategories.includes(propertyCategories.GRID) &&
+                                        gridContent()
+                                    }
+                                </div>
+                            }
+
+
                             <div className='m-b-10' >
                                 <div className={style.sidebarCategoryheader} onClick={() => { onCategoryClick(propertyCategories.APPEARANCE) }} >
                                     <div>{propertyCategories.APPEARANCE}</div>

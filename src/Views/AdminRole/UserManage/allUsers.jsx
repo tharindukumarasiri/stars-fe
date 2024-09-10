@@ -39,11 +39,11 @@ const AllUsers = (props) => {
     }, [usersLoading]);
 
     useEffect(() => {
-        if (selectedCompany?.companyId && users.length === 0) {
-            getMessageTemplatesNewUserInvitation(selectedCompany?.companyId).then(result => {
+        if (selectedCompany?.companyPartyId && users.length === 0) {
+            getMessageTemplatesNewUserInvitation(selectedCompany?.companyPartyId).then(result => {
                 setSavedTemplates(result);
             })
-            getCommunicationEntitiesWithRoles(selectedCompany?.companyId).then(result => {
+            getCommunicationEntitiesWithRoles(selectedCompany?.companyPartyId).then(result => {
                 setExistingClients(result)
             })
             getUsersData();
@@ -61,7 +61,7 @@ const AllUsers = (props) => {
 
     const onActivate = () => {
         setLoading(true);
-        const userListPayload = [selectedCompany?.companyId].concat(selectedUsers)
+        const userListPayload = [selectedCompany?.companyPartyId].concat(selectedUsers)
 
         activateUsers(userListPayload).then(() => {
             message.success(t('MSG_USERS_ACTIVATED'));
@@ -74,7 +74,7 @@ const AllUsers = (props) => {
 
     const onDeActivate = () => {
         setLoading(true);
-        const userLisyPayload = [selectedCompany?.companyId].concat(selectedUsers)
+        const userLisyPayload = [selectedCompany?.companyPartyId].concat(selectedUsers)
 
         deActivateUsers(userLisyPayload).then(() => {
             message.success(t('MSG_USERS_DEACTIVATE_SUCESS'))
@@ -103,7 +103,7 @@ const AllUsers = (props) => {
             cancelText: t("NO"),
             onOk() {
                 setLoading(true);
-                const userLisyPayload = [selectedCompany?.companyId, currentUser?.Id].concat(selectedUsers)
+                const userLisyPayload = [selectedCompany?.companyPartyId, currentUser?.Id].concat(selectedUsers)
 
                 deleteUser(userLisyPayload).then(() => {
                     message.success(t('DELETE_SUCCESSFUL'))
@@ -271,7 +271,7 @@ const AllUsers = (props) => {
         const newSelectedRoles = JSON.parse(JSON.stringify(selecteduserRoles))
         if (e.target.checked) {
             const params = {
-                "EntityPartyId": selectedCompany?.companyId,
+                "EntityPartyId": selectedCompany?.companyPartyId,
                 "UserId": currentUser?.Id,
                 "UserId": currentUser?.Id,
                 "RoleId": role?.Key,
@@ -292,7 +292,7 @@ const AllUsers = (props) => {
     }
 
     const getCurrentCompanyRoles = () => {
-        const roles = existingClients?.find(client => client?.CompanyPartyId === selectedCompany?.companyId)
+        const roles = existingClients?.find(client => client?.CompanyPartyId === selectedCompany?.companyPartyId)
 
         return roles?.Roles.map(role => {
             return (
@@ -356,7 +356,7 @@ const AllUsers = (props) => {
             if (validateFields()) {
                 setLoading(true);
                 const params = {
-                    Key: selectedCompany?.companyId,
+                    Key: selectedCompany?.companyPartyId,
                     Value: {
                         "Email": newUserData.email,
                         "UserName": newUserData.email,
@@ -383,11 +383,11 @@ const AllUsers = (props) => {
             }
         } else {
             setLoading(true)
-            const userRoles = existingClients?.find(client => client?.CompanyPartyId === selectedCompany?.companyId)
+            const userRoles = existingClients?.find(client => client?.CompanyPartyId === selectedCompany?.companyPartyId)
             const userRole = userRoles?.Roles?.find(role => role?.Value?.toUpperCase() === 'USER')
             const newSelectedRoles = JSON.parse(JSON.stringify(selecteduserRoles))
             const userRoleData = {
-                "EntityPartyId": selectedCompany?.companyId,
+                "EntityPartyId": selectedCompany?.companyPartyId,
                 "UserId": currentUser?.Id,
                 "UserId": currentUser?.Id,
                 "RoleId": userRole?.Key,

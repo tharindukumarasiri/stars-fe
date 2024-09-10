@@ -3,10 +3,15 @@ import { message } from 'antd';
 
 axios.interceptors.response.use(null, error => {
     const expectedError = error.response && error.response.status >= 400 && error.response.status < 500;
+    const sessionExpired = error.response.status === 302
 
     if (!expectedError) {
         console.log("Http error: ", error);
         message.error('An unexpected network error occurred.');
+    }
+
+    if (sessionExpired) {
+        window.location.replace('/');
     }
 
     return Promise.reject(error);

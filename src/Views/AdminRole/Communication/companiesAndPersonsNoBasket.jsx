@@ -130,7 +130,7 @@ const CompaniesPage = ({ countryList, currentUser, selectedCompany, updateRecipi
     const { t } = useTranslation();
 
     useEffect(() => {
-        if (selectedCompany?.companyId) {
+        if (selectedCompany?.companyPartyId) {
             getCompaniesData();
         }
     }, [selectedCompany]);
@@ -279,9 +279,9 @@ const CompaniesPage = ({ countryList, currentUser, selectedCompany, updateRecipi
         else return true;
     };
 
-    const isPersonChecked = (companyId, personId) => {
+    const isPersonChecked = (companyPartyId, personId) => {
         const index = checkedCompaniesUsers.findIndex((element) => {
-            return element?.IsReceiver && element?.CompanyPartyTId === companyId && element?.PersonPartyTId === personId;
+            return element?.IsReceiver && element?.CompanyPartyTId === companyPartyId && element?.PersonPartyTId === personId;
         });
 
         if (index < 0) return false;
@@ -342,7 +342,7 @@ const CompaniesPage = ({ countryList, currentUser, selectedCompany, updateRecipi
         if (selectedCompanyToUpdate?.isCompany) {
             const params = {
                 Company: selectedCompanyToUpdate?.companyData,
-                SelectedCompanyPartyId: selectedCompany?.companyId,
+                SelectedCompanyPartyId: selectedCompany?.companyPartyId,
                 UserId: currentUser?.Id,
                 IsReceiver: selectedCompanyToUpdate?.isReceiver,
             };
@@ -363,7 +363,7 @@ const CompaniesPage = ({ countryList, currentUser, selectedCompany, updateRecipi
             const params = {
                 Person: selectedCompanyToUpdate.person,
                 SelectedCompany: selectedCompanyToUpdate.companyData?.Company,
-                CompanyPartyId: selectedCompany?.companyId,
+                CompanyPartyId: selectedCompany?.companyPartyId,
                 UserId: currentUser?.Id,
                 IsReceiver: selectedCompanyToUpdate?.isReceiver,
             };
@@ -396,7 +396,7 @@ const CompaniesPage = ({ countryList, currentUser, selectedCompany, updateRecipi
         if (selectedCompanyToUpdate?.isCompany) {
             const params = {
                 Company: selectedCompanyToUpdate?.companyData,
-                SelectedCompanyPartyId: selectedCompany?.companyId,
+                SelectedCompanyPartyId: selectedCompany?.companyPartyId,
                 UserId: currentUser?.Id,
                 IsReceiver: selectedCompanyToUpdate?.isReceiver,
             };
@@ -417,7 +417,7 @@ const CompaniesPage = ({ countryList, currentUser, selectedCompany, updateRecipi
             const params = {
                 Person: selectedCompanyToUpdate.person,
                 SelectedCompany: selectedCompanyToUpdate.companyData?.Company,
-                CompanyPartyId: selectedCompany?.companyId,
+                CompanyPartyId: selectedCompany?.companyPartyId,
                 UserId: currentUser?.Id,
                 IsReceiver: selectedCompanyToUpdate?.isReceiver,
             };
@@ -501,7 +501,7 @@ const CompaniesPage = ({ countryList, currentUser, selectedCompany, updateRecipi
 
     const getCompaniesData = () => {
         setLoading(true);
-        getCompanies("", selectedCompany?.companyId, "", selectedTemplate?.MessageTriggerPointId).then((result) => {
+        getCompanies("", selectedCompany?.companyPartyId, "", selectedTemplate?.MessageTriggerPointId).then((result) => {
             const newDisplay = displayCompanies?.map(company => {
                 return result?.Value?.find(c => c?.Company?.Id === company?.Company?.Id)
             })
@@ -575,7 +575,7 @@ const CompaniesPage = ({ countryList, currentUser, selectedCompany, updateRecipi
                     Phone: newUserData.mobileNumb,
                 },
                 SelectedCompany: companyData,
-                CompanyPartyId: selectedCompany?.companyId,
+                CompanyPartyId: selectedCompany?.companyPartyId,
             };
 
             addPerson(params)
@@ -734,7 +734,7 @@ const CompaniesPage = ({ countryList, currentUser, selectedCompany, updateRecipi
                 Phone: newCompaniesData.phone,
                 CreatedUserId: currentUser?.Id,
             },
-            SelectedCompanyPartyId: selectedCompany?.companyId,
+            SelectedCompanyPartyId: selectedCompany?.companyPartyId,
         };
         addCompany(params)
             .then((result) => {
@@ -890,7 +890,7 @@ const newPersonObject = {
     country: null,
     email: "",
     mobileNumb: "",
-    companyId: "",
+    companyPartyId: "",
     companyName: "",
 };
 
@@ -907,7 +907,7 @@ const PersonsPage = ({ countryList, currentUser, selectedCompany, updateRecipien
     const { t } = useTranslation();
 
     useEffect(() => {
-        if (selectedCompany?.companyId) {
+        if (selectedCompany?.companyPartyId) {
             getPersonsData();
         }
     }, [selectedCompany]);
@@ -1026,7 +1026,7 @@ const PersonsPage = ({ countryList, currentUser, selectedCompany, updateRecipien
                 "CommunicationBasketId": null,
                 "UserId": currentUser?.Id,
                 "IsReceiver": selectedFieldToUpdate?.isReceiver,
-                "CompanyPartyId": selectedCompany?.companyId,
+                "CompanyPartyId": selectedCompany?.companyPartyId,
                 "SelectedCompany": null,
             }
 
@@ -1109,7 +1109,7 @@ const PersonsPage = ({ countryList, currentUser, selectedCompany, updateRecipien
 
     const getPersonsData = (dispPersons = displayPersons) => {
         setLoading(true);
-        getPersons(selectedCompany?.companyId)
+        getPersons(selectedCompany?.companyPartyId)
             .then((result) => {
                 setPersonsData(result?.Value);
 
@@ -1191,7 +1191,7 @@ const PersonsPage = ({ countryList, currentUser, selectedCompany, updateRecipien
                 },
                 "SelectedCompany": null,
                 "CommunicationBasketId": null,
-                "CompanyPartyId": selectedCompany?.companyId
+                "CompanyPartyId": selectedCompany?.companyPartyId
             }
 
             addPerson(params).then((result) => {

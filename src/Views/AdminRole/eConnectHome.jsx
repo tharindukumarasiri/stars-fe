@@ -64,7 +64,7 @@ const EConnectHome = () => {
                             getCommunicationBasketData({
                                     "PageSize": 10,
                                     "PageCount": 1,
-                                    "CompanyPartyId": selectedCompany?.companyId
+                                    "CompanyPartyId": selectedCompany?.companyPartyId
                                 }
                             )
                         onClickCard(NAVIGATION_PAGES.COMMUNICATIONS_BASKET)

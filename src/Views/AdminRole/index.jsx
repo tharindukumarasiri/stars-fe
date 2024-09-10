@@ -87,7 +87,7 @@ const AdminRole = ({ openTab = NAVIGATION_PAGES.ADMIN_TEMPLATES }) => {
     //User functions
     const getUsersData = (pgNumb = pageNumber) => {
         setUsersLoading(true)
-        getAllUsers(selectedCompany?.companyId, searchText, pgNumb).then(result => {
+        getAllUsers(selectedCompany?.companyPartyId, searchText, pgNumb).then(result => {
             setUsersLoading(false)
             setUsers(result?.Value)
             setTotalResults(result?.Key)
