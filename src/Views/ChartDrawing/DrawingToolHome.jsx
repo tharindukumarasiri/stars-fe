@@ -49,6 +49,7 @@ const DrawingToolHome = () => {
     const deleteCollection = useDiagramStore((state) => state.deleteCollection);
     const filterdContacts = useDiagramStore((state) => state.filterdContacts);
     const getContactsList = useDiagramStore((state) => state.getContactsList);
+    const currentCompany = useDiagramStore((state) => state.currentCompany);
 
     const [showModel, setShowModel] = useState(false)
     const [newCollectionData, setNewCollectionData] = useState(newCollectionPayload);
@@ -60,8 +61,8 @@ const DrawingToolHome = () => {
     const { changeActiveTab } = useContext(TabContext);
 
     useEffect(() => {
-        getContactsList();
-    }, [])
+      if (currentCompany?.tenantId) getContactsList();
+    }, [currentCompany]);
 
     useEffect(() => {
         if (collectionData?.length > 0)

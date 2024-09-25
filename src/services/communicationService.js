@@ -88,7 +88,7 @@ export async function deleteCommunicationBasket(params) {
 }
 
 export async function getCompanies(basketId = '', companyId, searchText = '', triggerPointId = '' ) {
-    const { data } = await http.get(`${config.GET_COMPANIES}${companyId}&communicationBasketId=${basketId}&searchText=${searchText}&triggerPointId=${triggerPointId}`);
+    const { data } = await http.get(`${config.GET_COMPANIES}${companyId}&triggerPointId=${triggerPointId}&communicationBasketId=${basketId}&searchText=${searchText}`);
     return data;
 }
 
@@ -102,8 +102,8 @@ export async function addCompany(params) {
     return data;
 }
 
-export async function updateCompany(params) {
-    const { data } = await http.put(config.UPDATE_COMPANY, params);
+export async function updateCompany(params, userId) {
+    const { data } = await http.put(`${config.UPDATE_COMPANY}?userId=${userId}`, params);
     return data;
 }
 
@@ -117,8 +117,8 @@ export async function addPerson(params) {
     return data;
 }
 
-export async function updatePerson(params) {
-    const { data } = await http.put(config.UPDATE_PERSON, params);
+export async function updatePerson(params, userId) {
+    const { data } = await http.put(`${config.UPDATE_PERSON}?userId=${userId}`, params);
     return data;
 }
 

@@ -17,8 +17,8 @@ import {
     getCompanies,
     getForms
 } from "../../services/drawingService";
+import { getNotSubscribedPartyTsByTenantId } from '../../services/organizationsService';
 import { getContactsByCompanyId } from '../../services/userService';
-import { getContacts } from "../../services/userService";
 import { ReferenceTypes } from '../../utils/constants';
 
 export const useUserStore = create((set) => ({
@@ -47,14 +47,14 @@ export const useDiagramStore = create((set, get) => ({
     setCurrentCompany: async (company) => set({ currentCompany: company }),
     setCurrentCollectionId: (currentCollectionId) => set({ currentCollectionId }),
     getContactsList: async () => {
-        const response = await getContacts();
+        const response = await getNotSubscribedPartyTsByTenantId(get()?.currentCompany?.tenantId);
         const options = response ? response.map((user) => {
             return {
-                key: user.Id,
-                label: user.Name,
-                value: user.Name,
-                PersonId: user.PersonId,
-                GovernmentIdNo: user.GovernmentIdNo
+                key: user.Key,
+                label: user.Value,
+                value: user.Value,
+                // PersonId: user.PersonId,
+                // GovernmentIdNo: user.GovernmentIdNo
             };
         }) : [];
 

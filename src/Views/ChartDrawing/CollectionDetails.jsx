@@ -14,10 +14,11 @@ import { getMembers, deleteMember } from "../../services/projectService";
 import DatePickerInput from "../../common/datePickerInput";
 import { TabContext } from "../../utils/contextStore";
 import { NAVIGATION_PAGES } from "../../utils/enums";
-import { getCompanyMembers } from "../../services/userService";
+import { deleteDrawingMember } from "../../services/drawingService";
 import { FetchCurrentCompany } from "../../hooks";
 import style from './chartDrawingStyle.module.scss'
 import { getDrawingMembers, addDrawingMembers } from "../../services/drawingService";
+import { getNotSubscribedPartyTsByTenantId } from "../../services/organizationsService";
 
 const { TabPane } = Tabs;
 const { confirm } = Modal;
@@ -428,15 +429,14 @@ const MembersView = (props) => {
     const { t } = useTranslation();
 
     const getUsers = async () => {
-        const response = await getCompanyMembers();
+        const response = await getNotSubscribedPartyTsByTenantId(selectedCompany?.tenantId)
         setCompanyUsers(response || []);
         const options = response
             ? response.map((user) => {
                 return {
-                    key: user.Id,
-                    label: user.Name,
-                    value: user.Name,
-                    email: user.Email,
+                    key: user.Key,
+                    label: user.Value,
+                    value: user.Value,
                 };
             })
             : [];
@@ -444,12 +444,28 @@ const MembersView = (props) => {
         setFilteredUsers(options);
     };
 
-    useEffect(() => {
-        getUsers();
+    const getDrawingMembersData = () => {
         getDrawingMembers(props.collectionId).then((result) => {
             setMembersData(result);
         })
+    }
+
+    useEffect(() => {
+        getDrawingMembersData()
     }, []);
+
+    useEffect(() => {
+        if(selectedCompany?.tenantId)
+            getUsers();
+    }, [selectedCompany]);
+
+    const filterdMembersData = useMemo(() => {
+        const filterdData = membersData.map((member) => {
+            const userData = companyUsers.find(user => user.Key === member.MemberId)
+            return {...userData, ...member}
+        })
+        return filterdData
+    },[membersData, companyUsers])
 
     const tableHeaders = useMemo(() => {
         const headers = membersTableHeaders(t)
@@ -481,22 +497,24 @@ const MembersView = (props) => {
     };
 
     const deleteProjectMember = (member) => {
+      confirm({
+        title: <strong className="red">{t("ARE_YOU_SURE")}?</strong>,
+        icon: <ExclamationCircleOutlined />,
 
-        deleteMember(member, loggedUser.Id)
+        okText: t("YES"),
+        okType: "danger",
+        cancelText: t("NO"),
+
+        onOk() {
+            deleteDrawingMember(member, loggedUser.Id)
             .then(() => {
-                getMembers(props.id)
-                    .then((result) => {
-                        setMembersData(result);
-                        message.success(t('MSG_DELETE_MEMBER_SUCESS'));
-                    })
-                    .catch(() => {
-                        message.warning(t('MSG_DELETE_MEMBER_WARNING'));
-                    });
-
+                getDrawingMembersData()
             })
             .catch(() => {
-                message.error(t('MSG_DELETE_MEMBER_FAIL'));
+              message.error(t("MSG_DELETE_MEMBER_FAIL"));
             });
+        },
+      });
     };
 
     const handleOk = () => {
@@ -508,6 +526,11 @@ const MembersView = (props) => {
             return;
         }
 
+        if (membersData.some((member) => member.MemberId === selectedUser.key)) {
+            message.warning("Member already included");
+            return;
+        }
+
         const member = {
             MemberId: selectedUser?.key,
             CollectionId: props.collectionId
@@ -515,9 +538,7 @@ const MembersView = (props) => {
 
         addDrawingMembers(loggedUser.Id, member)
             .then(() => {
-                getDrawingMembers(props.collectionId).then((result) => {
-                    setMembersData(result);
-                })
+                getDrawingMembersData()
                 toggleModal();
             })
             .catch(() => {
@@ -565,9 +586,13 @@ const MembersView = (props) => {
             <h3 className="p-t-20 m-b-20 m-l-10 fl">{t("MEMBERS_LIST")}</h3>
 
             <Table
-                rowKey={(record) => record.id}
-                dataSource={membersData}
+                rowKey={(record) => record?.Id}
+                dataSource={filterdMembersData}
                 columns={tableHeaders}
+                pagination={false}
+                scroll={{
+                    y: '35vh',
+                }}
             />
 
             <Modal title={t('ADD_MEMBER')}

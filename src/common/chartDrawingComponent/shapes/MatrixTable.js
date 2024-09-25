@@ -9,7 +9,7 @@ import ColorPicker from "../../../common/colorPicker";
 import style from "../DndStyles.module.scss";
 
 //Bellow is the data structure of nodeData
-// { row: 0, col: 0 } = {
+// { sectionId } = {
 //     cols: 3,
 //     elementData: [
 //         [{ text: 'row1 col1' }],
@@ -21,6 +21,8 @@ function MatrixChart({ id, selected, type, data }) {
     const shapeData = Shapes[type];
     const initialHeight = shapeData.size?.height;
     const initialWidth = shapeData.size?.width;
+
+    let sectionNumber = 0
 
     const setSelectedNodeId = useNodeDataStore(
         (state) => state.setSelectedNodeId
@@ -114,17 +116,20 @@ function MatrixChart({ id, selected, type, data }) {
 
     const onColumnsCountDecrease = () =>
         setColumnsCount(columnsCount - 1 > 0 ? columnsCount - 1 : 0);
+    // console.log(nodeData)
 
-    const addNewItem = (section, column) => {
+    const addNewItem = (sectionNumber, elementColIndex) => {
         const newNodeData = JSON.parse(JSON.stringify(nodeData));
+        const sectionData = newNodeData[sectionNumber]
+        const allElementsData = sectionData?.elementData ?? []
 
-        const newSection = newNodeData[section] || [];
-        const newColumn = newSection[column] || [];
+        const elementsColumnData = allElementsData[elementColIndex] ?? []
 
-        newColumn.push({ text: "", color: newColumn[0]?.color || "" });
+        elementsColumnData.push({ text: '' })
 
-        newSection[column] = newColumn;
-        newNodeData[section] = newSection;
+        allElementsData[elementColIndex] = elementsColumnData
+        sectionData.elementData = allElementsData
+        newNodeData[sectionNumber] = sectionData
 
         setNodeData(newNodeData);
     };
@@ -240,8 +245,8 @@ function MatrixChart({ id, selected, type, data }) {
 
             {rowsList.map((_, rowIndex) => {
                 return (
-                    <div className={style.matrixTableMainRow} key={rowIndex}>
-                        <div className={style.matrixTableRowHeader} key={rowIndex}>
+                    <div className={style.matrixTableMainRow} key={rowIndex + 'main'}>
+                        <div className={style.matrixTableRowHeader} key={rowIndex + 'guide'}>
                             <div className={style.matrixTableRowLine}>
                                 <i className={`arrow arrowUp ${style.matrixTableArrow}`} />
                                 <i
@@ -257,7 +262,7 @@ function MatrixChart({ id, selected, type, data }) {
                         <div
                             className={style.matrixTableRowHeader}
                             style={{ padding: matrixPadding }}
-                            key={rowIndex}
+                            key={rowIndex + 'title'}
                         >
                             <div className={style.matrixTableRowHeaderTextContainer}>
                                 <div className={style.matrixTableRowHeaderText}>
@@ -266,13 +271,13 @@ function MatrixChart({ id, selected, type, data }) {
                             </div>
                         </div>
                         {columnList.map((_, columnIndex) => {
-                            const sectiondata = nodeData[rowIndex] || [];
-                            const rowsdata = sectiondata[columnIndex] || [];
-                            const columnId = `${rowIndex}${columnIndex}`;
+                            const sectionData = nodeData[sectionNumber] || {};
+                            const elementList = Array.from(Array(sectionData?.columnsCount ?? 0))
+                            sectionNumber++
 
                             return (
                                 <div
-                                    key={columnId}
+                                    key={sectionNumber}
                                     style={{
                                         margin: matrixPadding,
                                         outlineOffset: matrixPadding,
@@ -294,8 +299,41 @@ function MatrixChart({ id, selected, type, data }) {
                                             {columnsData[columnIndex]}
                                         </div>
                                     )}
+                                    <div className={style.sectionNumberContainer}>
+                                        {sectionNumber.toString().padStart(2, '0')}
+                                    </div>
 
-                                    {rowsdata?.map((item, rowIndex) => {
+                                    <div className={style.matrixTableSectionContainer} style={{
+                                        margin: matrixPadding,
+                                    }}>
+                                        {elementList?.map((_, elementColIndex) => {
+                                            return (
+                                                <div className={style.matrixElementColumnContainer} key={`${sectionNumber} ${elementColIndex}`} >
+                                                    {sectionData?.elementData?.[elementColIndex] ?
+                                                        sectionData?.elementData?.[elementColIndex]?.map((element, elementIndex) => {
+                                                            return (
+                                                                <div key={elementIndex} className={style.matrixTableItem}>{element?.text}</div>
+                                                            )
+                                                        })
+                                                        : null
+                                                    }
+                                                    {!hideTools && (
+                                                        <div className={style.matrixAddNewItemContainer}>
+                                                            <div
+                                                                className={style.matrixAddNewItem}
+                                                                onClick={() => addNewItem(sectionData.sectionNumber, elementColIndex)}
+                                                            >
+                                                                +
+                                                            </div>
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            )
+                                        })}
+                                    </div>
+
+
+                                    {/* {rowsdata?.map((item, rowIndex) => {
                                         const rowId = `${rowIndex}${columnIndex}${rowIndex}`;
 
                                         return (
@@ -355,19 +393,7 @@ function MatrixChart({ id, selected, type, data }) {
                                                 />
                                             </div>
                                         );
-                                    })}
-                                    <div className={style.matrixToolbarContainer}>
-                                        {!hideTools && (
-                                            <div>
-                                                <div
-                                                    className={style.matrixAddNewItem}
-                                                    onClick={() => addNewItem(rowIndex, columnIndex)}
-                                                >
-                                                    +
-                                                </div>
-                                            </div>
-                                        )}
-                                    </div>
+                                    })} */}
                                 </div>
                             );
                         })}

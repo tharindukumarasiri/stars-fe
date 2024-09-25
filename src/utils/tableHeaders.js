@@ -1,7 +1,7 @@
 import React from "react";
 import { formatDate, getDateDiff, getCountryFlag, projectCodeFormat } from "../utils"
 import { Badge, Tooltip } from "antd";
-import logo_thumb from "../assets/images/logo_thumb.png";
+import avatar_thumb from "../assets/images/avatar.png";
 
 const t = (text) => text;
 
@@ -147,12 +147,12 @@ export const membersTableHeaders = (t) => [
     {
         title: '',
         render: (_) => (
-            <img src={logo_thumb} className="logo-thumb" alt="img" />
+            <img src={avatar_thumb} className="logo-thumb" alt="img" />
         )
     },
     {
         title: t('NAME'),
-        dataIndex: 'Name',
+        dataIndex: 'Value',
     },
     {
         title: t('EMAIL'),
@@ -160,37 +160,37 @@ export const membersTableHeaders = (t) => [
     },
     {
         title: t('ASSIGNED_DATE'),
-        dataIndex: 'FromDate',
+        dataIndex: 'CreatedDateTime',
         sorter: (a, b) => {
-            if (getDateDiff(a.FromDate, b.FromDate) > 0)
+            if (getDateDiff(a?.CreatedDateTime, b?.CreatedDateTime) > 0)
                 return 1
             else
                 return -1
         },
-        render: (_, { FromDate }) => (
-            formatDate(FromDate)
+        render: (_, { CreatedDateTime }) => (
+            formatDate(CreatedDateTime)
         ),
     },
     {
         title: t('LAST_DATE'),
-        dataIndex: 'ToDate',
+        dataIndex: 'DeletedDateTime',
         sorter: (a, b) => {
-            if (getDateDiff(a.ToDate, b.ToDate) > 0)
+            if (getDateDiff(a?.DeletedDateTime, b?.DeletedDateTime) > 0)
                 return 1
             else
                 return -1
-        }, render: (_, { ToDate }) => (
-            formatDate(ToDate)
+        }, render: (_, { DeletedDateTime }) => (
+            formatDate(DeletedDateTime)
         ),
     },
 
-    {
-        title: t('STATUS'),
-        dataIndex: 'Status',
-        render: (_, { Status }) => (
-            <Badge status={Status === 'active' || Status === 'Open' ? "success" : "default"} text={Status === 'active' || Status === 'Open' ? t('OPEN') : t('CLOSE')} />
-        )
-    },
+    // {
+    //     title: t('STATUS'),
+    //     dataIndex: 'Status',
+    //     render: (_, { Status }) => (
+    //         <Badge status={Status === 'active' || Status === 'Open' ? "success" : "default"} text={Status === 'active' || Status === 'Open' ? t('OPEN') : t('CLOSE')} />
+    //     )
+    // },
 ];
 
 export const searchResultsTableHeaders = (t) => [

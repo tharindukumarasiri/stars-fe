@@ -480,6 +480,30 @@ div.customHandle2Bottom {
     }
 }
 
+.sectionListItemContainer {
+    display: flex;
+    justify-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #9E9E9E;
+}
+
+.sectionNumberContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    right: -10px;
+    top: -10px;
+    width: 31px;
+    height: 29px;
+    background-color: #F67D39;
+    color: white;
+    z-index: 5;
+}
+
 .colorIcon {
     border: 1px solid rgba(223, 212, 212, 0.573);
     height: 27px;
@@ -754,6 +778,13 @@ div.customHandle2Bottom {
     width: 100%;
     border: solid 2px #9E9E9E;
     outline: dashed 1px red;
+    position: relative;
+}
+
+.matrixTableSectionContainer {
+    display: flex;
+    flex-direction: row;
+    width: 550px;
 }
 
 .matrixTableRowHeader {
@@ -859,9 +890,13 @@ div.customHandle2Bottom {
     position: relative;
     display: flex;
     align-items: center;
+    justify-content: center;
     width: 100px;
+    min-height: 20px;
     background-color: #D9D9D9;
     border-radius: 5px;
+    margin-bottom: 5px;
+    margin-top: 5px;
 }
 
 .matrixChartItem {
@@ -878,6 +913,12 @@ div.customHandle2Bottom {
 
 .matrixChartItemLarge {
     min-height: 70px;
+}
+
+.matrixAddNewItemContainer {
+    display: flex;
+    justify-content: center;
+    min-width: 100px;
 }
 
 .matrixAddNewItem {
@@ -926,6 +967,13 @@ div.customHandle2Bottom {
     flex-direction: row;
     justify-content: center;
     position: relative;
+}
+
+.matrixElementColumnContainer {
+    display: flex;
+    flex-direction: column;
+    margin-left: 5px;
+    margin-right: 5px;
 }
 
 .matrixColorPickerRow {

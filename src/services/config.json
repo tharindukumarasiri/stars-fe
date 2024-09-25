@@ -142,8 +142,9 @@
     "GET_COMPANY_TS": "actionapi/CompanyTs/Get",
     "GET_ALL_REFERENCE_TYPES": "actionapi/core/GlobalReferences/Get",
 
-    "GET_DRAWING_MEMBERS": "actionapi/DrawingMembers/GetMemberByCollectionId?collectionId=",
+    "GET_DRAWING_MEMBERS": "actionapi/DrawingMembers/GetMemberByCollectionId?userId=",
     "ADD_DRAWING_MEMBERS": "actionapi/DrawingMembers/Post?userId=",
+    "DELETE_DRAWING_MEMBER": "actionapi/DrawingMembers/Delete?Id=",
     
     "GET_FORMS": "actionapi/SurveyForms",
     "ADD_FORM": "actionapi/SurveyForms/Post?userId=",

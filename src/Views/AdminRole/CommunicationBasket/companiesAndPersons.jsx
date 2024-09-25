@@ -324,7 +324,7 @@ const CompaniesPage = ({ basketId, countryList, currentUser, selectedCompany, up
 
             params.Company.Email = newUserEmail;
 
-            updateCompany(params).then(() => {
+            updateCompany(params, currentUser?.Id).then(() => {
                 message.success('Company update success')
                 setLoading(false);
                 getCompaniesData();
@@ -344,7 +344,7 @@ const CompaniesPage = ({ basketId, countryList, currentUser, selectedCompany, up
 
             params.Person.Email = newUserEmail;
 
-            updatePerson(params).then(() => {
+            updatePerson(params, currentUser?.Id).then(() => {
                 message.success('User update success')
                 setLoading(false);
                 getCompaniesData();
@@ -376,7 +376,7 @@ const CompaniesPage = ({ basketId, countryList, currentUser, selectedCompany, up
 
             params.Company.Phone = newUserPhone;
 
-            updateCompany(params).then(() => {
+            updateCompany(params, currentUser?.Id).then(() => {
                 message.success('Company update success')
                 setLoading(false);
                 getCompaniesData();
@@ -396,7 +396,7 @@ const CompaniesPage = ({ basketId, countryList, currentUser, selectedCompany, up
 
             params.Person.Phone = newUserPhone;
 
-            updatePerson(params).then(() => {
+            updatePerson(params, currentUser?.Id).then(() => {
                 message.success('User update success')
                 setLoading(false);
                 getCompaniesData();
@@ -1048,7 +1048,7 @@ const PersonsPage = ({ basketId, countryList, currentUser, selectedCompany, upda
             }
 
 
-            updatePerson(params).then(() => {
+            updatePerson(params, currentUser?.Id).then(() => {
                 message.success('Person update success')
                 setLoading(false);
                 getPersonsData();

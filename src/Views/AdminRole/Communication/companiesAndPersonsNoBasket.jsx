@@ -349,7 +349,7 @@ const CompaniesPage = ({ countryList, currentUser, selectedCompany, updateRecipi
 
             params.Company.Email = newUserEmail;
 
-            updateCompany(params)
+            updateCompany(params, currentUser?.Id)
                 .then(() => {
                     message.success(t('MSG_COMPANY_UPDATE_SUCCESS'));
                     setLoading(false);
@@ -370,7 +370,7 @@ const CompaniesPage = ({ countryList, currentUser, selectedCompany, updateRecipi
 
             params.Person.Email = newUserEmail;
 
-            updatePerson(params)
+            updatePerson(params, currentUser?.Id)
                 .then(() => {
                     message.success(t('USER_UPDATE_SUCCESS'));
                     setLoading(false);
@@ -403,7 +403,7 @@ const CompaniesPage = ({ countryList, currentUser, selectedCompany, updateRecipi
 
             params.Company.Phone = newUserPhone;
 
-            updateCompany(params)
+            updateCompany(params, currentUser?.Id)
                 .then(() => {
                     message.success(t('MSG_COMPANY_UPDATE_SUCCESS'));
                     setLoading(false);
@@ -424,7 +424,7 @@ const CompaniesPage = ({ countryList, currentUser, selectedCompany, updateRecipi
 
             params.Person.Phone = newUserPhone;
 
-            updatePerson(params)
+            updatePerson(params, currentUser?.Id)
                 .then(() => {
                     message.success(t('USER_UPDATE_SUCCESS'));
                     setLoading(false);
@@ -1037,7 +1037,7 @@ const PersonsPage = ({ countryList, currentUser, selectedCompany, updateRecipien
             }
 
 
-            updatePerson(params).then(() => {
+            updatePerson(params, currentUser?.Id).then(() => {
                 message.success(t('MSG_PERSON_UPDATE_SUCCESS'))
                 setLoading(false);
                 getPersonsData();

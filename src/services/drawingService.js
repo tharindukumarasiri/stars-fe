@@ -110,3 +110,8 @@ export async function addDrawingMembers(userId, payload) {
     const { data } = await http.post(`${config.ADD_DRAWING_MEMBERS}${userId}`, payload);
     return data;
 }
+
+export async function deleteDrawingMember(payload, userId) {
+    const { data } = await http.delete(`${config.DELETE_DRAWING_MEMBER}${payload.Id}&userId=${userId}`, { data: payload });
+    return data;
+}

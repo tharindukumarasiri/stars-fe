@@ -39,6 +39,8 @@ import style from '../DndStyles.module.scss'
 
 const propertyCategories = {
     GRID: 'Grid',
+    SECTIONS: 'Sections',
+    ITEMS: 'Items',
     APPEARANCE: 'Appearance',
     LAYERS: 'Layers',
     LINK: 'Link',
@@ -72,6 +74,7 @@ const PropertyPanel = ({ nodes, selectedNodes = [], selectedEdges = [], setNodes
     const [uploadedFile, setUploadedFile] = useState('');
     const [selectedLinkType, setSelectedLinkType] = useState(LinkTypes.URL);
     const [selectedDrawing, setSelectedDrawing] = useState({});
+    const [selectedSection, setSelectedSection] = useState()
 
     const diagramData = useDiagramStore((state) => state.diagramData);
     const formsData = useDiagramStore((state) => state.formsData);
@@ -92,6 +95,9 @@ const PropertyPanel = ({ nodes, selectedNodes = [], selectedEdges = [], setNodes
     const chartData = useNodeDataStore((state) => state.chartData).find(item => item.id === selectedNodeId);
     const changeChartData = useNodeDataStore((state) => state.setChartData);
     const onChangeChartData = (value) => changeChartData(selectedNodeId, value)
+
+    const nodeData = chartData?.nodeData || [];
+    const setNodeData = (value) => onChangeChartData({ nodeData: value });
 
     const backgroundColor = textdata?.backgroundColor || '#ffffff'
     const setBackgroundColor = (value) => onTextChange({ backgroundColor: value })
@@ -240,9 +246,61 @@ const PropertyPanel = ({ nodes, selectedNodes = [], selectedEdges = [], setNodes
         }
     };
 
+    const getSectionId = (sectionName) => {
+        const sectionNumber = sectionName.replace("Section ", "")
+        return Number(sectionNumber) - 1
+    }
+
+    const onNodeColumnsCountIncrease = () => {
+        const newNodeData = JSON.parse(JSON.stringify(nodeData));
+        const currentNodeData = newNodeData[getSectionId(selectedSection)]
+
+        newNodeData[getSectionId(selectedSection)] = {
+            sectionNumber: getSectionId(selectedSection),
+            columnsCount: (currentNodeData?.columnsCount ?? 0) + 1,
+            elementData: currentNodeData?.elementData
+        }
+
+        setNodeData(newNodeData);
+    };
+    const onNodeColumnsCountDecrease = () => {
+        const newNodeData = JSON.parse(JSON.stringify(nodeData));
+        const currentNodeData = newNodeData[getSectionId(selectedSection)]
+
+        if (currentNodeData?.columnsCount < 2) return
+
+        newNodeData[getSectionId(selectedSection)] = {
+            sectionNumber: getSectionId(selectedSection),
+            columnsCount: (currentNodeData?.columnsCount ?? 0) - 1,
+            elementData: currentNodeData?.elementData
+        }
+
+        setNodeData(newNodeData);
+    };
+    const onNodeColumnsCountChange = (e) => {
+        e.preventDefault();
+        const number = e.target.value
+
+        const newNodeData = JSON.parse(JSON.stringify(nodeData));
+        const currentNodeData = newNodeData[getSectionId(selectedSection)]
+
+        newNodeData[getSectionId(selectedSection)] = {
+            sectionNumber: getSectionId(selectedSection),
+            columnsCount: number,
+            elementData: currentNodeData?.elementData
+        }
+
+        setNodeData(newNodeData);
+    };
+
     const handleLinkInput = (e) => {
         e.preventDefault();
         setUrlInput(e.target.value)
+    }
+
+    const onSelectSection = (e) => {
+        e.preventDefault();
+        setSelectedSection(e.target.value)
     }
 
     const columnList = useMemo(() => {
@@ -256,6 +314,19 @@ const PropertyPanel = ({ nodes, selectedNodes = [], selectedEdges = [], setNodes
             Array.from(Array(rowsCount))
         )
     }, [rowsCount])
+
+    const sectionList = useMemo(() => {
+        let sectionNumber = 1
+        const sectionArr = []
+        for (let i = 1; i <= rowsCount; i++) {
+            for (let j = 1; j <= columnsCount; j++) {
+                sectionArr.push(`Section ${sectionNumber}`)
+                sectionNumber++;
+            }
+        }
+
+        return sectionArr
+    }, [rowsCount, columnsCount])
 
     const addNewLink = () => {
         setNodes((nodes) =>
@@ -1083,6 +1154,56 @@ const PropertyPanel = ({ nodes, selectedNodes = [], selectedEdges = [], setNodes
         )
     }
 
+    const sectionsContent = () => {
+        return (
+            <div className={style.propertyPanelContainer}>
+                {sectionList.map((section) => {
+                    return (
+                        <div className={style.sectionListItemContainer} key={section}>
+                            <div>{section}</div>
+                            <input type="checkbox" className="check-box" />
+                        </div>
+                    )
+                })}
+            </div>
+        )
+    }
+
+    const elementsContent = () => {
+        return (
+            <div className={style.propertyPanelContainer}>
+                <Dropdown
+                    values={sectionList}
+                    onChange={onSelectSection}
+                    selected={selectedSection}
+                    placeholder="Levels"
+                />
+
+                {selectedSection &&
+                    <div className={style.appearanceRow}>
+                        <div className={style.flex5}>
+                            Number of Columns
+                        </div>
+
+                        <div className={style.flex8}>
+                            <div className={style.fontSizeContainer}>
+                                <div
+                                    className='hover-hand m-r-10 m-t-10 bold'
+                                    onClick={onNodeColumnsCountDecrease}>-</div>
+                                <input value={nodeData[getSectionId(selectedSection)]?.columnsCount ?? 0} onChange={onNodeColumnsCountChange} type="text" />
+                                <div
+                                    className='hover-hand m-l-10 m-t-10 bold'
+                                    onClick={onNodeColumnsCountIncrease}
+                                >+</div>
+                            </div>
+                        </div>
+                    </div>
+                }
+
+            </div>
+        )
+    }
+
     const layersContent = () => {
         return (
             <div>
@@ -1317,16 +1438,38 @@ const PropertyPanel = ({ nodes, selectedNodes = [], selectedEdges = [], setNodes
                     {sidebarVisible &&
                         <>
                             {selectedNodes?.[0]?.type === 'MatrixTable' &&
-                                <div className='m-b-10' >
-                                    <div className={style.sidebarCategoryheader} onClick={() => { onCategoryClick(propertyCategories.APPEARANCE) }} >
-                                        <div>{propertyCategories.GRID}</div>
-                                        <i className={(!closedCategories.includes(propertyCategories.GRID) ? ' icon-arrow-down' : ' icon-arrow-up')} />
-                                    </div>
+                                <>
+                                    <div className='m-b-10' >
+                                        <div className={style.sidebarCategoryheader} onClick={() => { onCategoryClick(propertyCategories.GRID) }} >
+                                            <div>{propertyCategories.GRID}</div>
+                                            <i className={(!closedCategories.includes(propertyCategories.GRID) ? ' icon-arrow-down' : ' icon-arrow-up')} />
+                                        </div>
 
-                                    {!closedCategories.includes(propertyCategories.GRID) &&
-                                        gridContent()
-                                    }
-                                </div>
+                                        {!closedCategories.includes(propertyCategories.GRID) &&
+                                            gridContent()
+                                        }
+                                    </div>
+                                    <div className='m-b-10' >
+                                        <div className={style.sidebarCategoryheader} onClick={() => { onCategoryClick(propertyCategories.SECTIONS) }} >
+                                            <div>{propertyCategories.SECTIONS}</div>
+                                            <i className={(!closedCategories.includes(propertyCategories.SECTIONS) ? ' icon-arrow-down' : ' icon-arrow-up')} />
+                                        </div>
+
+                                        {!closedCategories.includes(propertyCategories.SECTIONS) &&
+                                            sectionsContent()
+                                        }
+                                    </div>
+                                    <div className='m-b-10' >
+                                        <div className={style.sidebarCategoryheader} onClick={() => { onCategoryClick(propertyCategories.ITEMS) }} >
+                                            <div>{propertyCategories.ITEMS}</div>
+                                            <i className={(!closedCategories.includes(propertyCategories.ITEMS) ? ' icon-arrow-down' : ' icon-arrow-up')} />
+                                        </div>
+
+                                        {!closedCategories.includes(propertyCategories.ITEMS) &&
+                                            elementsContent()
+                                        }
+                                    </div>
+                                </>
                             }
 
 
