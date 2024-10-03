@@ -2,6 +2,7 @@ import React, { memo, useCallback, useEffect, useRef } from 'react';
 import { useUpdateNodeInternals, NodeResizer, useStore } from 'reactflow';
 import { drag } from 'd3-drag';
 import { select } from 'd3-selection';
+import { Input } from 'antd';
 
 import { useNodeDataStore } from '../store'
 import Shapes from '../ShapesData.js';
@@ -10,6 +11,8 @@ import { getRgbaColor } from '../utils';
 import style from '../DndStyles.module.scss'
 import ConnectionDot from '../customElements/ConnectionDot';
 import DeleteBtn from '../customElements/DeleteBtn';
+
+const { TextArea } = Input;
 
 const connectionNodeIdSelector = (state) => state.connectionNodeId;
 
@@ -111,29 +114,24 @@ function Text({ id, selected, type, data }) {
             <div
                 ref={rotateControlRef}
                 style={{
-                    display: selected ? 'block' : 'none',
+                    display: selected ? "block" : "none",
                 }}
                 className={`nodrag ${style.textBtnRotate} icon-rotate1`}
             />
 
-            {selected &&
-                <DeleteBtn nodeId={id} />
-            }
+            {selected && <DeleteBtn nodeId={id} />}
 
             <div className={handleContainerStyle}>
                 <ConnectionDot isConnecting={isConnecting} isTarget={isTarget} />
             </div>
 
-            <textarea
-                id="textarea"
-                type="textarea"
-                name="textarea"
+            <TextArea
+                autoSize
+                style={textAreaStyle}
                 placeholder={type}
                 className={style.drawingTextArea}
                 value={textdata?.value}
                 onChange={onChange}
-                multiple
-                style={textAreaStyle}
             />
         </div>
     );

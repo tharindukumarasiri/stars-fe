@@ -1,6 +1,6 @@
 import React, { memo, useCallback, useEffect, useRef, useState } from 'react';
 import { useUpdateNodeInternals, NodeResizer, useStore } from 'reactflow';
-import { Tooltip } from "antd";
+import { Tooltip, Input } from "antd";
 import { drag } from 'd3-drag';
 import { select } from 'd3-selection';
 import { PaperClipOutlined } from '@ant-design/icons';
@@ -13,6 +13,8 @@ import DeleteBtn from '../customElements/DeleteBtn'
 import style from '../DndStyles.module.scss'
 import ConnectionDot from '../customElements/ConnectionDot';
 import { ReferenceTypes } from "../../../utils/constants";
+
+const { TextArea } = Input;
 
 const connectionNodeIdSelector = (state) => state.connectionNodeId;
 
@@ -222,18 +224,16 @@ function CustomNode({ id, selected, type, data }) {
                 <ConnectionDot isConnecting={isConnecting} isTarget={isTarget} />
             </div>
             {!shapeData?.hideTextInput ?
-                <textarea
-                    id="textarea"
-                    type="textarea"
-                    name="textarea"
+                <TextArea
+                    autoSize
+                    style={textAreaStyle}
                     placeholder={type}
                     className={style.drawingTextArea}
                     value={textdata?.value}
                     onChange={onChange}
-                    multiple
-                    style={textAreaStyle}
                     onKeyDown={onKeyDown}
-                /> : null
+                />
+                : null
             }
         </div>
     );

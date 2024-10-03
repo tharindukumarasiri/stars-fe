@@ -1,7 +1,7 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 
-const Input = ({ value, placeholder = '', onChange, lines = 1, endImage = '', disabled = false, error = '', maxLength = 100, type = "text" }) => {
+const Input = ({ value, placeholder = '', onChange, lines = 1, endImage = '', disabled = false, error = '', maxLength = null, type = "text" }) => {
     const { t } = useTranslation();
 
     const hintTextStyle = value ? 'input-hint-text-visible' : 'input-hint-text-hidden';

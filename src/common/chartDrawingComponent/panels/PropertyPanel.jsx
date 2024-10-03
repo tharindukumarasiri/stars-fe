@@ -2,12 +2,11 @@ import React, { useState, memo, useMemo, useContext } from 'react';
 import { AutoComplete } from "antd";
 import {
     SettingOutlined,
-    AlignCenterOutlined,
     EyeOutlined,
     EyeInvisibleOutlined,
     LockOutlined,
     UnlockOutlined,
-    DownOutlined
+    DownOutlined,
 } from '@ant-design/icons';
 import {
     MarkerType,
@@ -50,7 +49,7 @@ const propertyCategories = {
 
 const LinkTypes = {
     URL: 'Url',
-    DRAWING: 'Drawing',
+    PAGE: 'Page',
     DOCUMENT: 'Document',
 }
 
@@ -64,19 +63,21 @@ const transparentColorObj = {
     },
 }
 
-const PropertyPanel = ({ nodes, selectedNodes = [], selectedEdges = [], setNodes, setEdges }) => {
+const PropertyPanel = ({ nodes, selectedNodes = [], selectedEdges = [], setNodes, setEdges, onChangePage }) => {
     const { changeActiveTab } = useContext(TabContext);
 
     const [sidebarVisible, setSidebarVisible] = useState(true);
     const [colorPickerVisible, setColorPickerVisible] = useState('')
     const [closedCategories, setClosedCategories] = useState([]);
     const [urlInput, setUrlInput] = useState('');
-    const [uploadedFile, setUploadedFile] = useState('');
+    // const [uploadedFile, setUploadedFile] = useState('');
     const [selectedLinkType, setSelectedLinkType] = useState(LinkTypes.URL);
     const [selectedDrawing, setSelectedDrawing] = useState({});
+    const [selectedPage, setSelectedPage] = useState({});
     const [selectedSection, setSelectedSection] = useState()
 
     const diagramData = useDiagramStore((state) => state.diagramData);
+    const pagesData = useNodeDataStore((state) => state.pagesData);
     const formsData = useDiagramStore((state) => state.formsData);
     const setFormsModalVisible = useDiagramStore((state) => state.setFormsModalVisible);
 
@@ -328,6 +329,16 @@ const PropertyPanel = ({ nodes, selectedNodes = [], selectedEdges = [], setNodes
         return sectionArr
     }, [rowsCount, columnsCount])
 
+    const formattedPagesData = useMemo(() => {
+        const formattedList = pagesData?.map((page, index) => {
+            return {
+                pageIndex: index,
+                pageName: page.pageName
+            }
+        })
+        return formattedList
+    }, [pagesData])
+
     const addNewLink = () => {
         setNodes((nodes) =>
             nodes.map((node) => {
@@ -342,20 +353,25 @@ const PropertyPanel = ({ nodes, selectedNodes = [], selectedEdges = [], setNodes
                                 value: urlInput
                             })
                             break;
-                        case LinkTypes.DRAWING:
+                        case LinkTypes.PAGE:
+                            newLinks.push({
+                                type: selectedLinkType,
+                                name: selectedPage?.pageName,
+                                pageIndex: selectedPage?.pageIndex,
+                            })
+                            break;
+                        case LinkTypes.DOCUMENT:
                             newLinks.push({
                                 type: selectedLinkType,
                                 name: selectedDrawing?.Name,
                                 collectionId: selectedDrawing?.CollectionId,
                                 drawingId: selectedDrawing?.Id
                             })
-                            break;
-                        case LinkTypes.DOCUMENT:
-                            newLinks.push({
-                                type: selectedLinkType,
-                                file: uploadedFile,
-                                fileName: urlInput
-                            })
+                            // newLinks.push({
+                            //     type: selectedLinkType,
+                            //     file: uploadedFile,
+                            //     fileName: urlInput
+                            // })
                             break;
                         default:
                             break;
@@ -375,6 +391,11 @@ const PropertyPanel = ({ nodes, selectedNodes = [], selectedEdges = [], setNodes
     const onSelectDrawing = (e) => {
         e.preventDefault();
         setSelectedDrawing(JSON.parse(e.target.value));
+    }
+
+    const onSelectPage = (e) => {
+        e.preventDefault();
+        setSelectedPage(JSON.parse(e.target.value));
     }
 
     const onClickDrawingRecord = (linkData) => {
@@ -597,6 +618,27 @@ const PropertyPanel = ({ nodes, selectedNodes = [], selectedEdges = [], setNodes
                     return newEdge;
                 } else return e
             })
+        );
+    }
+
+    const onHideEdge = () => {
+        setEdges((edges) =>
+            edges.map((e) => {
+                const isSelected = selectedEdges?.some(selectedEdge => selectedEdge?.id === e?.id);
+
+                if (isSelected) {
+                    const newEdge = { ...e }
+                    newEdge.hidden = true
+
+                    return newEdge;
+                } else return e
+            })
+        );
+    }
+
+    const onDeleteEdge = () => {
+        setEdges((edges) =>
+            edges.filter((e) => !selectedEdges?.some(selectedEdge => selectedEdge?.id === e?.id))
         );
     }
 
@@ -1017,33 +1059,6 @@ const PropertyPanel = ({ nodes, selectedNodes = [], selectedEdges = [], setNodes
                         </div>
                         <div className={style.appearanceRow}>
                             <div className={style.flex4}>
-                                Endpoint
-                            </div>
-                            <div className={style.matrixColumnActionRow + ' ' + style.flex8}>
-                                <div className={style.activityContainer}>
-                                    <CustomDropdown
-                                        values={arrowStartTypes}
-                                        onChange={onChangeEdgeStart}
-                                        dataName='label'
-                                        iconName='icon'
-                                        selected={getSelectedEdgeStart}
-                                        hideHintText
-                                    />
-                                </div>
-                                <div className={style.activityContainer}>
-                                    <CustomDropdown
-                                        values={arrowEndTypes}
-                                        onChange={onChangeEdgeEnd}
-                                        dataName='label'
-                                        iconName='icon'
-                                        selected={getSelectedEdgeEnd}
-                                        hideHintText
-                                    />
-                                </div>
-                            </div>
-                        </div>
-                        <div className={style.appearanceRow}>
-                            <div className={style.flex4}>
                                 Activity
                             </div>
                             <div className={style.flex8}>
@@ -1059,6 +1074,47 @@ const PropertyPanel = ({ nodes, selectedNodes = [], selectedEdges = [], setNodes
                                 </div>
                             </div>
                         </div>
+                        {selectedEdges?.length > 0 &&
+                            <>
+                                <div className={style.appearanceRow}>
+                                    <div className={style.flex4}>
+                                        Endpoint
+                                    </div>
+                                    <div className={style.matrixColumnActionRow + ' ' + style.flex8}>
+                                        <div className={style.activityContainer}>
+                                            <CustomDropdown
+                                                values={arrowStartTypes}
+                                                onChange={onChangeEdgeStart}
+                                                dataName='label'
+                                                iconName='icon'
+                                                selected={getSelectedEdgeStart}
+                                                hideHintText
+                                            />
+                                        </div>
+                                        <div className={style.activityContainer}>
+                                            <CustomDropdown
+                                                values={arrowEndTypes}
+                                                onChange={onChangeEdgeEnd}
+                                                dataName='label'
+                                                iconName='icon'
+                                                selected={getSelectedEdgeEnd}
+                                                hideHintText
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className={style.appearanceRow}>
+                                    <div className="hover-hand" onClick={onHideEdge}>
+                                        <EyeOutlined />
+                                    </div>
+                                    <div className={style.flex8}>
+                                        <i className="icon-delete-1 table-icon m-l-5" onClick={onDeleteEdge} />
+                                    </div>
+                                </div>
+                            </>
+                        }
+
+
                     </>
                 }
             </div>
@@ -1275,13 +1331,24 @@ const PropertyPanel = ({ nodes, selectedNodes = [], selectedEdges = [], setNodes
         )
     }
 
-    const onFileChange = async (e) => {
-        if (e.target.files && e.target.files.length > 0) {
-            const file = e.target.files[0]
-            let fileDataUrl = await readFile(file)
+    // const onFileChange = async (e) => {
+    //     if (e.target.files && e.target.files.length > 0) {
+    //         const file = e.target.files[0]
+    //         let fileDataUrl = await readFile(file)
 
-            setUrlInput(file?.name)
-            setUploadedFile(fileDataUrl)
+    //         setUrlInput(file?.name)
+    //         setUploadedFile(fileDataUrl)
+    //     }
+    // }
+
+    const formatExternalLink = (externalLink) => {
+        if (!externalLink) return ""
+
+        const includesKey = externalLink.includes("https://");
+        if (includesKey) {
+            return externalLink
+        } else {
+            return "https://" + externalLink
         }
     }
 
@@ -1309,28 +1376,30 @@ const PropertyPanel = ({ nodes, selectedNodes = [], selectedEdges = [], setNodes
                                 return
                             return (
                                 <div key={index} className={style.linkItemContainer}>
-                                    <a href={link?.value} target="_blank" rel="noopener noreferrer" className={style.linkItem}>{link?.value}</a>
+                                    <a href={formatExternalLink(link?.value)} target="_blank" rel="noopener noreferrer" className={style.linkItem}>{link?.value}</a>
                                     <i className="close-btn icon-close-small-x fr red" onClick={() => onRemoveLink(index)} />
                                 </div>
                             )
                         })}
                     </>
                 );
-            case LinkTypes.DRAWING:
+            case LinkTypes.PAGE:
                 return (
                     <>
                         <div className={style.linkInputContainer}>
                             <Dropdown
-                                values={diagramData}
-                                onChange={onSelectDrawing}
-                                dataName='Name'
-                                selected={JSON.stringify(selectedDrawing)}
+                                values={formattedPagesData}
+                                onChange={onSelectPage}
+                                dataName='pageName'
+                                placeholder="Select page"
+                                selected={selectedPage?.pageIndex ? JSON.stringify(selectedPage) : null}
+                                disabled={pagesData?.length === 0}
                             />
                         </div>
                         <button
                             className={style.linkAddBtn}
                             onClick={addNewLink}
-                            disabled={selectedNodes?.length !== 1 || !selectedDrawing?.Name}
+                            disabled={selectedNodes?.length !== 1 || !selectedPage?.pageName}
                         >Add
                         </button>
                         {selectedNodes?.[0]?.data?.links?.map((link, index) => {
@@ -1340,7 +1409,7 @@ const PropertyPanel = ({ nodes, selectedNodes = [], selectedEdges = [], setNodes
                                 <div key={index} className={style.linkItemContainer}>
                                     <div
                                         className={style.linkItem}
-                                        onClick={() => onClickDrawingRecord(link)}
+                                        onClick={() => onChangePage(link.pageIndex)}
                                     >
                                         {link?.name}
                                     </div>
@@ -1351,32 +1420,65 @@ const PropertyPanel = ({ nodes, selectedNodes = [], selectedEdges = [], setNodes
                     </>
                 );
             case LinkTypes.DOCUMENT:
-                return (
-                    <>
-                        <input
-                            className={style.linkInputContainer}
-                            type="file" id="myFile" name="filename"
-                            onChange={onFileChange}
+                return (<>
+                    <div className={style.linkInputContainer}>
+                        <Dropdown
+                            values={diagramData}
+                            onChange={onSelectDrawing}
+                            dataName='Name'
+                            placeholder="Select drawing"
+                            selected={selectedDrawing?.Id ? JSON.stringify(selectedDrawing) : null}
+                            disabled={diagramData?.length === 0}
                         />
-                        <button
-                            className={style.linkAddBtn}
-                            onClick={addNewLink}
-                            disabled={selectedNodes?.length !== 1 || !uploadedFile}
-                        >Add
-                        </button>
-                        {selectedNodes?.[0]?.data?.links?.map((link, index) => {
-                            if (link.type !== selectedLinkType)
-                                return
-
-                            return (
-                                <div key={index} className={style.linkItemContainer}>
-                                    <a href={link?.file} download={link?.fileName} className={style.linkItem}>{link?.fileName}</a>
-                                    <i className="close-btn icon-close-small-x fr red" onClick={() => onRemoveLink(index)} />
+                    </div>
+                    <button
+                        className={style.linkAddBtn}
+                        onClick={addNewLink}
+                        disabled={selectedNodes?.length !== 1 || !selectedDrawing?.Name}
+                    >Add
+                    </button>
+                    {selectedNodes?.[0]?.data?.links?.map((link, index) => {
+                        if (link.type !== selectedLinkType)
+                            return
+                        return (
+                            <div key={index} className={style.linkItemContainer}>
+                                <div
+                                    className={style.linkItem}
+                                    onClick={() => onClickDrawingRecord(link)}
+                                >
+                                    {link?.name}
                                 </div>
-                            )
-                        })}
-                    </>
-                );
+                                <i className="close-btn icon-close-small-x fr red" onClick={() => onRemoveLink(index)} />
+                            </div>
+                        )
+                    })}
+                </>)
+            // return (
+            //     <>
+            //         <input
+            //             className={style.linkInputContainer}
+            //             type="file" id="myFile" name="filename"
+            //             onChange={onFileChange}
+            //         />
+            //         <button
+            //             className={style.linkAddBtn}
+            //             onClick={addNewLink}
+            //             disabled={selectedNodes?.length !== 1 || !uploadedFile}
+            //         >Add
+            //         </button>
+            //         {selectedNodes?.[0]?.data?.links?.map((link, index) => {
+            //             if (link.type !== selectedLinkType)
+            //                 return
+
+            //             return (
+            //                 <div key={index} className={style.linkItemContainer}>
+            //                     <a href={link?.file} download={link?.fileName} className={style.linkItem}>{link?.fileName}</a>
+            //                     <i className="close-btn icon-close-small-x fr red" onClick={() => onRemoveLink(index)} />
+            //                 </div>
+            //             )
+            //         })}
+            //     </>
+            // );
             default:
                 return null
 

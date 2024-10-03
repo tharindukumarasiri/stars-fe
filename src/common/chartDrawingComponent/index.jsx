@@ -8,6 +8,7 @@ import ReactFlow, {
     Background,
     Panel,
     MarkerType,
+    applyNodeChanges
 } from 'reactflow';
 import 'reactflow/dist/style.css';
 
@@ -29,9 +30,10 @@ import ToolBar from './panels/ToolBar.jsx';
 import ReferenceModal from './panels/ReferenceModal.jsx';
 import ContextMenu from './customElements/ContextMenu.js';
 import { useNodeDataStore } from './store'
+import HelperLines from "./customElements/HelperLines.jsx";
 
 import { useDiagramStore } from '../../Views/ChartDrawing/chartDrawingStore'
-import { getId, arrowColor } from './utils'
+import { getId, arrowColor, getHelperLines } from './utils'
 
 import style from './DndStyles.module.scss'
 import PagesPanel from './panels/PagesPanel.jsx';
@@ -63,8 +65,10 @@ const DnDFlow = ({ props }) => {
     const saveDiagram = useDiagramStore((state) => state.saveDiagram);
     const timeoutRef = useRef(null);
 
-    const [nodes, setNodes, onNodesChange] = useNodesState(data?.nodes || []);
+    const [nodes, setNodes] = useNodesState(data?.nodes || []);
     const [edges, setEdges, onEdgesChange] = useEdgesState(data?.edges || []);
+    const [helperLineHorizontal, setHelperLineHorizontal] = useState(undefined);
+    const [helperLineVertical, setHelperLineVertical] = useState(undefined);
 
     const [target, setTarget] = useState(null);
     const [menu, setMenu] = useState(null);
@@ -86,14 +90,57 @@ const DnDFlow = ({ props }) => {
 
     const onConnect = useCallback((params) => setEdges((eds) => addEdge(params, eds)), []);
 
+    const customApplyNodeChanges = useCallback(
+        (changes, nodes) => {
+            // reset the helper lines (clear existing lines, if any)
+            setHelperLineHorizontal(undefined);
+            setHelperLineVertical(undefined);
+
+            // this will be true if it's a single node being dragged
+            // inside we calculate the helper lines and snap position for the position where the node is being moved to
+            if (
+                changes.length === 1 &&
+                changes[0].type === 'position' &&
+                changes[0].dragging &&
+                changes[0].position
+            ) {
+                const helperLines = getHelperLines(changes[0], nodes);
+
+                // if we have a helper line, we snap the node to the helper line position
+                // this is being done by manipulating the node position inside the change object
+                changes[0].position.x =
+                    helperLines.snapPosition.x ?? changes[0].position.x;
+                changes[0].position.y =
+                    helperLines.snapPosition.y ?? changes[0].position.y;
+
+                // if helper lines are returned, we set them so that they can be displayed
+                setHelperLineHorizontal(helperLines.horizontal);
+                setHelperLineVertical(helperLines.vertical);
+            }
+
+            return applyNodeChanges(changes, nodes);
+        },
+        []
+    );
+
+    const onNodesChange = useCallback(
+        (changes) => {
+            setNodes((nodes) => customApplyNodeChanges(changes, nodes));
+        },
+        [setNodes, customApplyNodeChanges]
+    );
+
+
     const onDragOver = useCallback((event) => {
         event.preventDefault();
         event.dataTransfer.dropEffect = 'move';
     }, []);
 
     useEffect(() => {
-        setPagesData(JSON.parse(props?.DrawingContent) || [{ nodes: [], edges: [], nodesData: [], nodeSizes: [], chartData: [], pageName: 'Page 1' }])
-        setAllData(data?.nodeSizes || [], data?.nodesData || [], data?.chartData || [])
+        if (props?.DrawingContent) {
+            setPagesData(JSON.parse(props?.DrawingContent) || [{ nodes: [], edges: [], nodesData: [], nodeSizes: [], chartData: [], pageName: 'Page 1' }])
+            setAllData(data?.nodeSizes || [], data?.nodesData || [], data?.chartData || [])
+        }
     }, [props])
 
     // Auto save functionality
@@ -386,7 +433,6 @@ const DnDFlow = ({ props }) => {
                         onNodeContextMenu={onNodeContextMenu}
                         onPaneClick={onPaneClick}
                         onNodeClick={onPaneClick}
-                        fitView
                         panOnScroll={true}
                         selectionOnDrag={true}
                         panOnDrag={panOnDrag}
@@ -402,6 +448,10 @@ const DnDFlow = ({ props }) => {
                     >
                         <Background variant="dots" gap={8} size={0.5} id={props?.CollectionId} />
                         <Panel />
+                        <HelperLines
+                            horizontal={helperLineHorizontal}
+                            vertical={helperLineVertical}
+                        />
                     </ReactFlow>
                 </div>
                 {menu && <ContextMenu onClick={onPaneClick} {...menu} />}
@@ -412,6 +462,7 @@ const DnDFlow = ({ props }) => {
                     selectedEdges={selectedEdges}
                     setNodes={setNodes}
                     setEdges={setEdges}
+                    onChangePage={onChangePage}
                 />
 
                 <PagesPanel onChangePage={onChangePage} />

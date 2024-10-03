@@ -169,7 +169,7 @@ export default ({ onSave, pasteNodes, clearSelectedNodes, getAllData, setEdges, 
 
                 <div className='flex-center-middle'>
                     <PlusOutlined className={style.toolBarIcon} onClick={zoomInCanvas} />
-                    <div className={style.zoomValueContainer}>{zoomValue}%</div>
+                    <div className={style.zoomValueContainer}>{zoomValue * 2}%</div>
                     <MinusOutlined className={style.toolBarIcon} onClick={zoomOutCanvas} />
                 </div>
 
