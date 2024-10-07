@@ -248,6 +248,7 @@ const DrawingsList = ({ collectionId }) => {
     const [editDrawingData, setEditDrawingData] = useState(null)
     // const [companyUsers] = FetchCompanyUsers();
 
+    const currentCollectionId = useDiagramStore((state) => state.currentCollectionId);
     const getDiagramData = useDiagramStore((state) => state.getDiagramData);
     const getUploadedImages = useDiagramStore((state) => state.getUploadedImages);
     const getReferanceData = useDiagramStore((state) => state.getReferanceData);
@@ -256,6 +257,7 @@ const DrawingsList = ({ collectionId }) => {
     const addDiagram = useDiagramStore((state) => state.addDiagram);
     const saveDiagram = useDiagramStore((state) => state.saveDiagram);
     const deleteDiagram = useDiagramStore((state) => state.deleteDiagram);
+    const filterdContacts = useDiagramStore((state) => state.filterdContacts);
 
     const { t } = useTranslation();
 
@@ -264,14 +266,22 @@ const DrawingsList = ({ collectionId }) => {
         getUploadedImages();
         getReferanceData();
         getFormsData();
-    }, []);
+    }, [currentCollectionId]);
 
     const tableHeaders = useMemo(() => {
         const headers = SavedDiagramsTableHeaders(t);
         headers.push(
             {
                 title: 'Created By',
-                dataIndex: 'type',
+                dataIndex: 'CreatedUserId',
+                render: (_, { CreatedUserId }) => {
+                    const createdUser = filterdContacts.find(user => user.key === CreatedUserId)
+                    return (
+                        <div>
+                            {createdUser?.value}
+                        </div>
+                    )
+                },
             },
             {
                 title: '',
@@ -293,7 +303,7 @@ const DrawingsList = ({ collectionId }) => {
             },
         )
         return headers
-    }, [diagramData])
+    }, [diagramData, filterdContacts])
 
     const showDeleteConfirm = (record) => {
         confirm({

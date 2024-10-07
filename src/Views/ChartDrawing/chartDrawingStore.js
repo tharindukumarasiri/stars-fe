@@ -101,6 +101,7 @@ export const useDiagramStore = create((set, get) => ({
     },
     getDiagramData: () => {
         set({ loading: true })
+        set({ diagramData: [] })
         getAllDrawings(get().currentCollectionId).then(result => {
             set({ diagramData: result })
         }).finally(() => set({ loading: false }));
@@ -139,10 +140,9 @@ export const useDiagramStore = create((set, get) => ({
         }
     },
     getUploadedImages: () => {
-        set({ loading: true })
         getDrawingImages(get().currentUser?.Id).then(result => {
             set({ uploadedImages: result })
-        }).finally(() => set({ loading: false }));
+        });
     },
     uploadImage: async (data) => {
         try {
