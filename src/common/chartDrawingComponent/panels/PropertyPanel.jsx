@@ -7,6 +7,11 @@ import {
     LockOutlined,
     UnlockOutlined,
     DownOutlined,
+    VerticalAlignTopOutlined,
+    AlignLeftOutlined,
+    AlignRightOutlined,
+    VerticalAlignBottomOutlined,
+    ExpandAltOutlined
 } from '@ant-design/icons';
 import {
     MarkerType,
@@ -23,7 +28,6 @@ import {
     markerTypes,
     arrowColor,
     getId,
-    readFile
 } from '../utils';
 import { useNodeDataStore } from '../store'
 import Dropdown from '../../dropdown';
@@ -32,14 +36,12 @@ import { useDiagramStore } from '../../../Views/ChartDrawing/chartDrawingStore'
 import { TabContext } from '../../../utils/contextStore';
 import { NAVIGATION_PAGES } from "../../../utils/enums";
 import FormModal from './FormModal';
-import Input from '../../input'
 
 import style from '../DndStyles.module.scss'
 
 const propertyCategories = {
     GRID: 'Grid',
     SECTIONS: 'Sections',
-    ITEMS: 'Items',
     APPEARANCE: 'Appearance',
     LAYERS: 'Layers',
     LINK: 'Link',
@@ -97,9 +99,6 @@ const PropertyPanel = ({ nodes, selectedNodes = [], selectedEdges = [], setNodes
     const changeChartData = useNodeDataStore((state) => state.setChartData);
     const onChangeChartData = (value) => changeChartData(selectedNodeId, value)
 
-    const nodeData = chartData?.nodeData || [];
-    const setNodeData = (value) => onChangeChartData({ nodeData: value });
-
     const backgroundColor = textdata?.backgroundColor || '#ffffff'
     const setBackgroundColor = (value) => onTextChange({ backgroundColor: value })
 
@@ -133,17 +132,11 @@ const PropertyPanel = ({ nodes, selectedNodes = [], selectedEdges = [], setNodes
     const rowsCount = chartData?.rowsCount || 1
     const setRowsCount = (value) => onChangeChartData({ rowsCount: value })
 
-    const rowsData = chartData?.rowsData || []
-    const setRowsData = (value) => onChangeChartData({ rowsData: value })
-
     const matrixPadding = chartData?.matrixPadding || 2
     const setMatrixPadding = (value) => onChangeChartData({ matrixPadding: value })
 
     const columnsCount = chartData?.columnsCount || 1
     const setColumnsCount = (value) => onChangeChartData({ columnsCount: value })
-
-    const columnsData = chartData?.columnsData || []
-    const setColumnsData = (value) => onChangeChartData({ columnsData: value })
 
     const sectionBackgroundColor = chartData?.sectionBackgroundColor || '#EAEAEA'
     const setSectionBackgroundColor = (value) => onChangeChartData({ sectionBackgroundColor: value })
@@ -211,13 +204,6 @@ const PropertyPanel = ({ nodes, selectedNodes = [], selectedEdges = [], setNodes
         }
     };
 
-    const onRowsDataChange = (e, index) => {
-        e.preventDefault();
-        const copyOfRowsData = [...rowsData]
-        copyOfRowsData[index] = e.target.value
-        setRowsData(copyOfRowsData)
-    }
-
     const onColumnsCountIncrease = () => setColumnsCount(columnsCount + 1);
     const onColumnsCountDecrease = () => setColumnsCount(columnsCount - 1 > 0 ? columnsCount - 1 : 0);
     const onColumnsCountChange = (e) => {
@@ -229,12 +215,7 @@ const PropertyPanel = ({ nodes, selectedNodes = [], selectedEdges = [], setNodes
         }
     };
 
-    const onColumnDataChange = (e, index) => {
-        e.preventDefault();
-        const copyOfColumnsData = [...columnsData]
-        copyOfColumnsData[index] = e.target.value
-        setColumnsData(copyOfColumnsData)
-    }
+
 
     const onPaddingIncrease = () => setMatrixPadding(matrixPadding + 1);
     const onPaddingDecrease = () => setMatrixPadding(matrixPadding - 1 > 0 ? matrixPadding - 1 : 0);
@@ -247,74 +228,10 @@ const PropertyPanel = ({ nodes, selectedNodes = [], selectedEdges = [], setNodes
         }
     };
 
-    const getSectionId = (sectionName) => {
-        const sectionNumber = sectionName.replace("Section ", "")
-        return Number(sectionNumber) - 1
-    }
-
-    const onNodeColumnsCountIncrease = () => {
-        const newNodeData = JSON.parse(JSON.stringify(nodeData));
-        const currentNodeData = newNodeData[getSectionId(selectedSection)]
-
-        newNodeData[getSectionId(selectedSection)] = {
-            sectionNumber: getSectionId(selectedSection),
-            columnsCount: (currentNodeData?.columnsCount ?? 0) + 1,
-            elementData: currentNodeData?.elementData
-        }
-
-        setNodeData(newNodeData);
-    };
-    const onNodeColumnsCountDecrease = () => {
-        const newNodeData = JSON.parse(JSON.stringify(nodeData));
-        const currentNodeData = newNodeData[getSectionId(selectedSection)]
-
-        if (currentNodeData?.columnsCount < 2) return
-
-        newNodeData[getSectionId(selectedSection)] = {
-            sectionNumber: getSectionId(selectedSection),
-            columnsCount: (currentNodeData?.columnsCount ?? 0) - 1,
-            elementData: currentNodeData?.elementData
-        }
-
-        setNodeData(newNodeData);
-    };
-    const onNodeColumnsCountChange = (e) => {
-        e.preventDefault();
-        const number = e.target.value
-
-        const newNodeData = JSON.parse(JSON.stringify(nodeData));
-        const currentNodeData = newNodeData[getSectionId(selectedSection)]
-
-        newNodeData[getSectionId(selectedSection)] = {
-            sectionNumber: getSectionId(selectedSection),
-            columnsCount: number,
-            elementData: currentNodeData?.elementData
-        }
-
-        setNodeData(newNodeData);
-    };
-
     const handleLinkInput = (e) => {
         e.preventDefault();
         setUrlInput(e.target.value)
     }
-
-    const onSelectSection = (e) => {
-        e.preventDefault();
-        setSelectedSection(e.target.value)
-    }
-
-    const columnList = useMemo(() => {
-        return (
-            Array.from(Array(columnsCount))
-        )
-    }, [columnsCount])
-
-    const rowList = useMemo(() => {
-        return (
-            Array.from(Array(rowsCount))
-        )
-    }, [rowsCount])
 
     const sectionList = useMemo(() => {
         let sectionNumber = 1
@@ -754,6 +671,95 @@ const PropertyPanel = ({ nodes, selectedNodes = [], selectedEdges = [], setNodes
         return newNodes;
     }
 
+    const alignLeft = () => {
+        const minXPosition = Math.min(...selectedNodes.map(item => item.position.x))
+
+        setNodes((nodes) =>
+            nodes.map((node) => {
+                if (selectedNodes.some(selectedNode => selectedNode.id === node.id)) {
+                    const newNode = JSON.parse(JSON.stringify(node))
+
+                    newNode.position.x = minXPosition
+                    return newNode
+                } else return node
+            })
+        )
+    }
+
+    const alignRight = () => {
+        const maxXPosition = Math.max(...selectedNodes.map(item => item.position.x))
+
+        setNodes((nodes) =>
+            nodes.map((node) => {
+                if (selectedNodes.some(selectedNode => selectedNode.id === node.id)) {
+                    const newNode = JSON.parse(JSON.stringify(node))
+
+                    newNode.position.x = maxXPosition
+                    return newNode
+                } else return node
+            })
+        )
+    }
+
+    const alignTop = () => {
+        const maxYPosition = Math.min(...selectedNodes.map(item => item.position.y))
+
+        setNodes((nodes) =>
+            nodes.map((node) => {
+                if (selectedNodes.some(selectedNode => selectedNode.id === node.id)) {
+                    const newNode = JSON.parse(JSON.stringify(node))
+
+                    newNode.position.y = maxYPosition
+                    return newNode
+                } else return node
+            })
+        )
+    }
+
+    const alignBottom = () => {
+        const minYPosition = Math.max(...selectedNodes.map(item => item.position.y))
+
+        setNodes((nodes) =>
+            nodes.map((node) => {
+                if (selectedNodes.some(selectedNode => selectedNode.id === node.id)) {
+                    const newNode = JSON.parse(JSON.stringify(node))
+
+                    newNode.position.y = minYPosition
+                    return newNode
+                } else return node
+            })
+        )
+    }
+
+    const resize = (width = true, height = true) => {
+        const maxWidth = Math.max(...selectedNodes.map(item => item.width))
+        const maxHeight = Math.max(...selectedNodes.map(item => item.height))
+
+        setNodes((nodes) =>
+            nodes.map((node) => {
+                if (selectedNodes.some(selectedNode => selectedNode.id === node.id)) {
+                    const newNode = JSON.parse(JSON.stringify(node))
+                    const newSize = {
+                        width: newNode.width,
+                        height: newNode.height
+                    }
+
+                    if (width) {
+                        newNode.width = maxWidth
+                        newSize.width = maxWidth
+                    }
+                    if (height) {
+                        newNode.height = maxHeight
+                        newSize.height = maxHeight
+                    }
+
+                    onSizeCahnge(node.id, newSize)
+                    return newNode
+                } else return node
+            })
+        )
+    }
+
     const sortedLayers = () => {
         const groupNodes = nodes.filter(node => node.type === 'group')
         const singleNodes = nodes.filter(node => node.type !== 'group' && !node?.parentNode)
@@ -1057,6 +1063,41 @@ const PropertyPanel = ({ nodes, selectedNodes = [], selectedEdges = [], setNodes
                                 <i className={`icon-minus ${style.toolBarIcon}`} />
                             </div>
                         </div>
+                        {selectedNodes?.length > 1 &&
+                            <>
+                                <div className={style.appearanceRow}>
+                                    <div className={style.flex4}>
+                                        Align selected
+                                    </div>
+                                    <div className={'hover-hand ' + style.flex2} onClick={alignLeft} >
+                                        <AlignLeftOutlined />
+                                    </div>
+                                    <div className={'hover-hand ' + style.flex2} onClick={alignRight} >
+                                        <AlignRightOutlined />
+                                    </div>
+                                    <div className={'hover-hand ' + style.flex2} onClick={alignTop} >
+                                        <VerticalAlignTopOutlined />
+                                    </div>
+                                    <div className={'hover-hand ' + style.flex2} onClick={alignBottom} >
+                                        <VerticalAlignBottomOutlined />
+                                    </div>
+                                </div>
+                                <div className={style.appearanceRow}>
+                                    <div className={style.flex4}>
+                                        Resize
+                                    </div>
+                                    <div className={'hover-hand ' + style.flex2} onClick={resize} >
+                                        <ExpandAltOutlined />
+                                    </div>
+                                    <div className={'hover-hand ' + style.flex2} onClick={() => resize(true, false)} >
+                                        <ExpandAltOutlined rotate={45} />
+                                    </div>
+                                    <div className={'hover-hand ' + style.flex2} onClick={() => resize(false, true)} >
+                                        <ExpandAltOutlined rotate={135} />
+                                    </div>
+                                </div>
+                            </>
+                        }
                         <div className={style.appearanceRow}>
                             <div className={style.flex4}>
                                 Activity
@@ -1178,34 +1219,6 @@ const PropertyPanel = ({ nodes, selectedNodes = [], selectedEdges = [], setNodes
                         </div>
                     </div>
                 </div>
-
-                <div className='m-b-10 p-t-10 bold'>Columns</div>
-                {columnList.map((_, columnIndex) => {
-                    return (
-                        <div className={style.linkInputContainer} key={columnIndex}>
-                            <Input
-                                placeholder={`Column ${columnIndex + 1}`}
-                                value={columnsData[columnIndex]}
-                                onChange={(e) => onColumnDataChange(e, columnIndex)}
-                            />
-                        </div>
-                    )
-                })}
-
-                <div className='m-b-10 p-t-10 bold'>Rows</div>
-                {rowList.map((_, rowIndex) => {
-                    return (
-                        <div className={style.linkInputContainer} key={rowIndex}>
-                            <Input
-                                placeholder={`Row ${rowIndex + 1}`}
-                                value={rowsData[rowIndex]}
-                                onChange={(e) => onRowsDataChange(e, rowIndex)}
-                            />
-                        </div>
-                    )
-                })}
-
-
             </div>
         )
     }
@@ -1221,41 +1234,6 @@ const PropertyPanel = ({ nodes, selectedNodes = [], selectedEdges = [], setNodes
                         </div>
                     )
                 })}
-            </div>
-        )
-    }
-
-    const elementsContent = () => {
-        return (
-            <div className={style.propertyPanelContainer}>
-                <Dropdown
-                    values={sectionList}
-                    onChange={onSelectSection}
-                    selected={selectedSection}
-                    placeholder="Levels"
-                />
-
-                {selectedSection &&
-                    <div className={style.appearanceRow}>
-                        <div className={style.flex5}>
-                            Number of Columns
-                        </div>
-
-                        <div className={style.flex8}>
-                            <div className={style.fontSizeContainer}>
-                                <div
-                                    className='hover-hand m-r-10 m-t-10 bold'
-                                    onClick={onNodeColumnsCountDecrease}>-</div>
-                                <input value={nodeData[getSectionId(selectedSection)]?.columnsCount ?? 0} onChange={onNodeColumnsCountChange} type="text" />
-                                <div
-                                    className='hover-hand m-l-10 m-t-10 bold'
-                                    onClick={onNodeColumnsCountIncrease}
-                                >+</div>
-                            </div>
-                        </div>
-                    </div>
-                }
-
             </div>
         )
     }
@@ -1559,16 +1537,6 @@ const PropertyPanel = ({ nodes, selectedNodes = [], selectedEdges = [], setNodes
 
                                         {!closedCategories.includes(propertyCategories.SECTIONS) &&
                                             sectionsContent()
-                                        }
-                                    </div>
-                                    <div className='m-b-10' >
-                                        <div className={style.sidebarCategoryheader} onClick={() => { onCategoryClick(propertyCategories.ITEMS) }} >
-                                            <div>{propertyCategories.ITEMS}</div>
-                                            <i className={(!closedCategories.includes(propertyCategories.ITEMS) ? ' icon-arrow-down' : ' icon-arrow-up')} />
-                                        </div>
-
-                                        {!closedCategories.includes(propertyCategories.ITEMS) &&
-                                            elementsContent()
                                         }
                                     </div>
                                 </>

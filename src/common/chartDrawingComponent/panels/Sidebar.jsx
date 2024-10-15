@@ -14,7 +14,7 @@ const savedShapesKey = 'SAVED_SHAPES';
 
 const SideBar = () => {
     const [sidebarVisible, setSidebarVisible] = useState(true);
-    const [closedCategories, setClosedCategories] = useState([]);
+    const [closedCategories, setClosedCategories] = useState(Object.keys(Categories));
     const [searchText, setSearchText] = useState('');
 
     const loading = useDiagramStore((state) => state.loading);

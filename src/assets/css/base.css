@@ -2,7 +2,9 @@
 /*#0592D9;*/
 /* #2bb201; */
 /*#ff9900*/
-
+.tab-list-active {
+    border-top: 3px solid #0592D9 !important;
+}
 .ant-tabs{max-width:99.6% !important}
 .theme {
   color: #2196F3;

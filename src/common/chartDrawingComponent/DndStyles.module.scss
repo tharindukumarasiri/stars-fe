@@ -491,20 +491,6 @@ div.customHandle2Bottom {
     border-bottom: 1px solid #9E9E9E;
 }
 
-.sectionNumberContainer {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    position: absolute;
-    right: -10px;
-    top: -10px;
-    width: 31px;
-    height: 29px;
-    background-color: #F67D39;
-    color: white;
-    z-index: 5;
-}
-
 .colorIcon {
     border: 1px solid rgba(223, 212, 212, 0.573);
     height: 27px;
@@ -778,28 +764,19 @@ div.customHandle2Bottom {
 .matrixTableSection {
     width: 100%;
     border: solid 2px #9E9E9E;
-    outline: dashed 1px red;
     position: relative;
 }
 
 .matrixTableSectionContainer {
     display: flex;
     flex-direction: row;
-    width: 550px;
 }
 
 .matrixTableRowHeader {
-    // min-width: 45px;
     position: relative;
     height: 100%;
     display: flex;
     align-items: center;
-    padding: 10px;
-}
-
-.matrixTableRowHeaderText {
-    transform: rotate(270deg);
-    font-weight: 700;
 }
 
 .matrixTableRowHeaderTextContainer {
@@ -809,44 +786,6 @@ div.customHandle2Bottom {
     background-color: #8B8B8B;
     height: 100%;
     width: 50px;
-}
-
-.matrixTableRowLineContainer {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: #53B651;
-    height: 50%;
-    width: 30px;
-}
-
-.matrixTableRowLine {
-    position: absolute;
-    border: dashed 1px #53B651;
-    height: 90%;
-    width: 1px;
-    left: 24px;
-}
-
-.matrixTableRowLineHorizontal {
-    display: flex;
-    justify-content: center;
-    position: absolute;
-    border: dashed 1px #E71F2E;
-    height: 1px;
-    width: 95%;
-    top: -30px
-}
-
-.matrixTableRowLineHorizontalText {
-    position: absolute;
-    background-color: #E71F2E;
-    padding-left: 10px;
-    padding-right: 10px;
-    padding-bottom: 5px;
-    padding-top: 5px;
-    top: -44px;
-    color: white;
 }
 
 .matrixTableColumnHeaderTextContainer {
@@ -864,28 +803,6 @@ div.customHandle2Bottom {
     font-weight: 700;
 }
 
-.matrixTableArrow {
-    position: absolute;
-    left: -0.25rem;
-    top: -5px;
-    border-color: #53B651;
-}
-
-.matrixTableArrowDown {
-    top: 97%
-}
-
-.matrixTableArrowRight {
-    position: absolute;
-
-    border-color: #E71F2E;
-    left: 100%;
-    // top: 97%
-}
-
-.matrixTableArrowLeft {
-    border-color: #E71F2E;
-}
 
 .matrixTableItem {
     position: relative;

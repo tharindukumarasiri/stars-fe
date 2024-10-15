@@ -170,3 +170,6 @@ div[id^=tile-menu-] button:nth-child(even) {
     color: $white !important;
     background-color: $theme-dark1
 }
+.tab-list-active {
+    border-top: 3px solid #0592D9 !important;
+}

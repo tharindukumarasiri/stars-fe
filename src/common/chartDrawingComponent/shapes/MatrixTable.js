@@ -1,21 +1,14 @@
 import React, { memo, useEffect, useCallback, useMemo, useState } from "react";
 import { NodeResizer } from "reactflow";
+import { Input } from "antd";
 
 import { useNodeDataStore } from "../store";
 import Shapes from "../ShapesData.js";
 import { getRgbaColor, getGradientRgbaColor } from "../utils";
-import ColorPicker from "../../../common/colorPicker";
 
 import style from "../DndStyles.module.scss";
 
-//Bellow is the data structure of nodeData
-// { sectionId } = {
-//     cols: 3,
-//     elementData: [
-//         [{ text: 'row1 col1' }],
-//         [{ text: 'row2 col1' }],
-//     ]
-// }
+const { TextArea } = Input;
 
 function MatrixChart({ id, selected, type, data }) {
     const shapeData = Shapes[type];
@@ -51,7 +44,9 @@ function MatrixChart({ id, selected, type, data }) {
     const setNodeData = (value) => onChangeChartData({ nodeData: value });
 
     const rowsCount = chartData?.rowsCount || 1;
+
     const rowsData = chartData?.rowsData || [];
+    const setRowsData = (value) => onChangeChartData({ rowsData: value })
 
     const matrixPadding = chartData?.matrixPadding || 2;
     const hideTools = chartData?.hideTools || false;
@@ -62,7 +57,9 @@ function MatrixChart({ id, selected, type, data }) {
 
     const columnsCount = chartData?.columnsCount || 1;
     const setColumnsCount = (value) => onChangeChartData({ columnsCount: value });
+
     const columnsData = chartData?.columnsData || [];
+    const setColumnsData = (value) => onChangeChartData({ columnsData: value })
 
     const textdata = useNodeDataStore((state) => state.textdata)?.find(
         (item) => item.id === id
@@ -72,6 +69,19 @@ function MatrixChart({ id, selected, type, data }) {
     const headerBackgroundColor =
         getRgbaColor(textdata?.headerBackgroundColor) || "#d3d3d3";
     const removeHeader = chartData?.removeHeader || false;
+
+    const onColumnDataChange = (e, index) => {
+        const copyOfColumnsData = [...columnsData]
+        copyOfColumnsData[index] = e.target.value
+        setColumnsData(copyOfColumnsData)
+    }
+
+    const onRowsDataChange = (e, index) => {
+        const copyOfRowsData = [...rowsData]
+        copyOfRowsData[index] = e.target.value
+        setRowsData(copyOfRowsData)
+    }
+
 
     const fonstSize = Number(textdata?.fonstSize) || 8;
     const textType = textdata?.textType || { label: "Poppins", type: "Poppins" };
@@ -103,6 +113,13 @@ function MatrixChart({ id, selected, type, data }) {
     const onChangeHeader = useCallback((evt) => {
         onChangeChartData({ header: evt.target.value });
     }, []);
+
+
+    const onChange = useCallback((evt) => {
+        // if (!disableInput) {
+        //     onTextChange(id, { value: evt.target.value });
+        // }
+    }, [disableInput]);
 
     const rowsList = useMemo(() => {
         return Array.from(Array(rowsCount));
@@ -246,28 +263,26 @@ function MatrixChart({ id, selected, type, data }) {
             {rowsList.map((_, rowIndex) => {
                 return (
                     <div className={style.matrixTableMainRow} key={rowIndex + 'main'}>
-                        <div className={style.matrixTableRowHeader} key={rowIndex + 'guide'}>
-                            <div className={style.matrixTableRowLine}>
-                                <i className={`arrow arrowUp ${style.matrixTableArrow}`} />
-                                <i
-                                    className={`arrow arrowDown ${style.matrixTableArrow} ${style.matrixTableArrowDown}`}
-                                />
-                            </div>
-                            <div className={style.matrixTableRowLineContainer}>
-                                <div
-                                    className={style.matrixTableRowHeaderText + " white"}
-                                >{`Row`}</div>
-                            </div>
-                        </div>
                         <div
                             className={style.matrixTableRowHeader}
-                            style={{ padding: matrixPadding }}
                             key={rowIndex + 'title'}
+                            style={{ paddingTop: matrixPadding, paddingBottom: matrixPadding }}
                         >
                             <div className={style.matrixTableRowHeaderTextContainer}>
-                                <div className={style.matrixTableRowHeaderText}>
-                                    {rowsData[rowIndex]}
-                                </div>
+                                {/* {rowsData[rowIndex]} */}
+                                <TextArea
+                                    autoSize
+                                    style={{
+                                        ...textAreaStyle, ...{
+                                            transform: 'rotate(270deg)'
+                                        }
+                                    }}
+                                    placeholder={`Row ${rowIndex + 1}`}
+                                    className={style.drawingTextArea}
+                                    value={rowsData[rowIndex]}
+                                    onChange={(e) => onRowsDataChange(e, rowIndex)}
+                                    onKeyDown={onKeyDown}
+                                />
                             </div>
                         </div>
                         {columnList.map((_, columnIndex) => {
@@ -278,34 +293,24 @@ function MatrixChart({ id, selected, type, data }) {
                             return (
                                 <div
                                     key={sectionNumber}
-                                    style={{
-                                        margin: matrixPadding,
-                                        outlineOffset: matrixPadding,
-                                    }}
                                     className={style.matrixTableSection}
+                                    style={{ marginRight: matrixPadding, marginBottom: matrixPadding, marginTop: matrixPadding }}
                                 >
                                     {rowIndex === 0 && (
                                         <div className={style.matrixTableColumnHeaderTextContainer}>
-                                            <div className={style.matrixTableRowLineHorizontal}>
-                                                <i className={`arrow arrowLeft ${style.matrixTableArrow} ${style.matrixTableArrowLeft}`} />
-                                                <i
-                                                    className={`arrow arrowRight ${style.matrixTableArrow} ${style.matrixTableArrowRight}`}
-                                                />
-
-                                            </div>
-                                            <div className={style.matrixTableRowLineHorizontalText}>
-                                                <div>{`Column ${columnIndex + 1}`}</div>
-                                            </div>
-                                            {columnsData[columnIndex]}
+                                            <TextArea
+                                                autoSize
+                                                style={textAreaStyle}
+                                                placeholder={`Column ${columnIndex + 1}`}
+                                                className={style.drawingTextArea}
+                                                value={columnsData[columnIndex]}
+                                                onChange={(e) => onColumnDataChange(e, columnIndex)}
+                                                onKeyDown={onKeyDown}
+                                            />
                                         </div>
                                     )}
-                                    <div className={style.sectionNumberContainer}>
-                                        {sectionNumber.toString().padStart(2, '0')}
-                                    </div>
 
-                                    <div className={style.matrixTableSectionContainer} style={{
-                                        margin: matrixPadding,
-                                    }}>
+                                    <div className={style.matrixTableSectionContainer}>
                                         {elementList?.map((_, elementColIndex) => {
                                             return (
                                                 <div className={style.matrixElementColumnContainer} key={`${sectionNumber} ${elementColIndex}`} >
@@ -331,69 +336,6 @@ function MatrixChart({ id, selected, type, data }) {
                                             )
                                         })}
                                     </div>
-
-
-                                    {/* {rowsdata?.map((item, rowIndex) => {
-                                        const rowId = `${rowIndex}${columnIndex}${rowIndex}`;
-
-                                        return (
-                                            <div
-                                                className={style.matrixTableItem}
-                                                style={{ backgroundImage: item?.color, margin: matrixPadding }}
-                                                key={rowId}
-                                            >
-                                                {rowId === focusedInput && !hideTools && (
-                                                    <>
-                                                        <i
-                                                            className={
-                                                                style.matrixItemClose + " icon-close-small-x"
-                                                            }
-                                                            onClick={() =>
-                                                                onDeleteItem(rowIndex, columnIndex, rowIndex)
-                                                            }
-                                                        />
-                                                        <i
-                                                            className={
-                                                                style.matrixItemClose +
-                                                                " icon-paint-bucket m-t-15"
-                                                            }
-                                                            onClick={() => setOpenColorPicker(rowId)}
-                                                        />
-
-                                                        {rowId === openColorPicker && (
-                                                            <ColorPicker
-                                                                color={item?.color || "lightcoral"}
-                                                                onChange={(color) =>
-                                                                    onChangeItemColor(
-                                                                        color?.rgb,
-                                                                        rowIndex,
-                                                                        columnIndex,
-                                                                        rowIndex
-                                                                    )
-                                                                }
-                                                                onMouseLeave={onMouseLeave}
-                                                                reduced
-                                                                styles={{ top: 30, left: 80 }}
-                                                            />
-                                                        )}
-                                                    </>
-                                                )}
-                                                <textarea
-                                                    key={rowId}
-                                                    onFocus={onFocusInput}
-                                                    placeholder="Element"
-                                                    className={style.matrixItemText}
-                                                    value={item?.text}
-                                                    onChange={(e) =>
-                                                        onChangeItemText(e, rowIndex, columnIndex, rowIndex)
-                                                    }
-                                                    multiple
-                                                    onKeyDown={onKeyDown}
-                                                    rows={item?.rows || 1}
-                                                />
-                                            </div>
-                                        );
-                                    })} */}
                                 </div>
                             );
                         })}
