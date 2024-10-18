@@ -22,9 +22,17 @@ export default function ContextMenu({ id, top, left, ...props }) {
     const allChartData = useNodeDataStore((state) => state.chartData);
     const chartData = allChartData.find(item => item.id === id);
     const changeChartData = useNodeDataStore((state) => state.setChartData);
+    const onChangeChartData = (value) => changeChartData(id, value);
     const setReferenceModalId = useNodeDataStore((state) => state.setReferenceModalId);
     const setFormsModalVisible = useDiagramStore((state) => state.setFormsModalVisible);
     const setFormFillData = useDiagramStore((state) => state.setFormFillData);
+    const selectedColumn = chartData?.selectedColumn ?? null;
+
+    const columnsCount = chartData?.columnsCount || 1;
+    const setColumnsCount = (value) => onChangeChartData({ columnsCount: value });
+
+    const columnsData = chartData?.columnsData || [];
+    const setColumnsData = (value) => onChangeChartData({ columnsData: value })
 
     const node = useMemo(() => {
         return getNode(id);
@@ -107,8 +115,28 @@ export default function ContextMenu({ id, top, left, ...props }) {
         setFormFillData(form);
     }
 
+    const addColumnToRight = () => {
+        const newColumnData = [...columnsData]
+        newColumnData.splice(selectedColumn + 1, 0, "")
+        setColumnsCount(columnsCount + 1)
+        setColumnsData(newColumnData)
+    }
+
+    const addColumnToLeft = () => {
+        const newColumnData = [...columnsData]
+        newColumnData.splice(selectedColumn, 0, "")
+        setColumnsCount(columnsCount + 1)
+        setColumnsData(newColumnData)
+    }
+
     return (
         <div style={{ top, left }} className={style.canvasContextMenu} {...props}>
+            {node?.type === "MatrixTable" && selectedColumn !== null &&
+                <>
+                    <button onClick={addColumnToRight}>Add column to right</button>
+                    <button onClick={addColumnToLeft}>Add column to left</button>
+                </>
+            }
             {node?.type !== "group" && <button onClick={duplicateNode}>Duplicate</button>}
             <button onClick={deleteNode}>Delete</button>
             <button onClick={moveToBack}>Move to back</button>

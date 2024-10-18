@@ -37,6 +37,11 @@ import { TabContext } from '../../../utils/contextStore';
 import { NAVIGATION_PAGES } from "../../../utils/enums";
 import FormModal from './FormModal';
 
+import { ReactComponent as AlignLeft } from '../../../assets/images/align-icons/align-left.svg'
+import { ReactComponent as AlignRight } from '../../../assets/images/align-icons/align-right.svg'
+import { ReactComponent as AlignTop } from '../../../assets/images/align-icons/align-top.svg'
+import { ReactComponent as AlignBottom } from '../../../assets/images/align-icons/align-bottom.svg'
+
 import style from '../DndStyles.module.scss'
 
 const propertyCategories = {
@@ -1070,16 +1075,16 @@ const PropertyPanel = ({ nodes, selectedNodes = [], selectedEdges = [], setNodes
                                         Align selected
                                     </div>
                                     <div className={'hover-hand ' + style.flex2} onClick={alignLeft} >
-                                        <AlignLeftOutlined />
+                                        <AlignLeft width={15} height={15} />
                                     </div>
                                     <div className={'hover-hand ' + style.flex2} onClick={alignRight} >
-                                        <AlignRightOutlined />
+                                        <AlignRight width={15} height={15} />
                                     </div>
                                     <div className={'hover-hand ' + style.flex2} onClick={alignTop} >
-                                        <VerticalAlignTopOutlined />
+                                        <AlignTop width={15} height={15} />
                                     </div>
                                     <div className={'hover-hand ' + style.flex2} onClick={alignBottom} >
-                                        <VerticalAlignBottomOutlined />
+                                        <AlignBottom width={15} height={15} />
                                     </div>
                                 </div>
                                 <div className={style.appearanceRow}>

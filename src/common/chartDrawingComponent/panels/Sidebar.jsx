@@ -1,14 +1,15 @@
 import React, { useState, memo } from 'react';
 import { InboxOutlined } from '@ant-design/icons';
-import { Upload } from 'antd';
+import { Upload, Collapse } from 'antd';
 
 import { useDiagramStore } from '../../../Views/ChartDrawing/chartDrawingStore'
 import style from '../DndStyles.module.scss'
-import Shapes, { Categories, uploadNodeId } from '../ShapesData.js';
+import Shapes, { Categories, uploadNodeId, OtherCategories } from '../ShapesData.js';
 import Input from '../../../common/input'
 import { readFile } from '../utils';
 
 const { Dragger } = Upload;
+const { Panel } = Collapse;
 
 const savedShapesKey = 'SAVED_SHAPES';
 
@@ -109,38 +110,50 @@ const SideBar = () => {
                                     })
                                 }
                             </div> :
-                            <>
-                                {Object.entries(Categories)?.map(category => {
-                                    return (
-                                        <div key={category[0]} className='m-b-10'>
-                                            <div className={style.sidebarCategoryheader} onClick={() => { onCategoryClick(category[0]) }} >
-                                                <div className=''>{category[1]}</div>
-                                                <i className={(!closedCategories.includes(category[0]) ? ' icon-arrow-down' : ' icon-arrow-up')} />
-                                            </div>
+                            <Collapse accordion>
+                                <Panel header="Shapes" key="1">
+                                    <Collapse accordion>
+                                        {Object.entries(Categories)?.map(category => {
+                                            return (
+                                                <Panel header={category[1]} key={category[1]}>
+                                                    <div className={style.sidebarCategoryContainer}>
+                                                        {
+                                                            Object.entries(Shapes)?.map(shape => {
+                                                                if (shape[1]?.category?.includes(category[1]))
+                                                                    return (
+                                                                        <div className={style.sidebarItemContainer} onDragStart={(event) => onDragStart(event, shape[0])} draggable key={shape[0]}>
+                                                                            <CustomShape shape={shape[1]} />
+                                                                        </div>
+                                                                    )
+                                                            })
+                                                        }
+                                                    </div>
+                                                </Panel>
+                                            )
+                                        })}
+                                    </Collapse>
+                                </Panel>
 
-                                            {!closedCategories.includes(category[0]) &&
-                                                <div className={style.sidebarCategoryContainer}>
-                                                    {
-                                                        Object.entries(Shapes)?.map(shape => {
-                                                            if (shape[1]?.category?.includes(category[1]))
-                                                                return (
-                                                                    <div className={style.sidebarItemContainer} onDragStart={(event) => onDragStart(event, shape[0])} draggable key={shape[0]}>
-                                                                        <CustomShape shape={shape[1]} />
-                                                                    </div>
-                                                                )
-                                                        })
-                                                    }
-                                                </div>
-                                            }
-                                        </div>
+                                {Object.entries(OtherCategories)?.map(category => {
+                                    return (
+                                        <Panel header={category[1]} key={category[1]}>
+                                            <div className={style.sidebarCategoryContainer}>
+                                                {
+                                                    Object.entries(Shapes)?.map(shape => {
+                                                        if (shape[1]?.category?.includes(category[1]))
+                                                            return (
+                                                                <div className={style.sidebarItemContainer} onDragStart={(event) => onDragStart(event, shape[0])} draggable key={shape[0]}>
+                                                                    <CustomShape shape={shape[1]} />
+                                                                </div>
+                                                            )
+                                                    })
+                                                }
+                                            </div>
+                                        </Panel>
                                     )
                                 })}
-                                <div className='m-b-10'>
-                                    <div className={style.sidebarCategoryheader} onClick={() => { onCategoryClick(savedShapesKey) }} >
-                                        <div>My saved shapes</div>
-                                        <i className={(!closedCategories.includes(savedShapesKey) ? ' icon-arrow-down' : ' icon-arrow-up')} />
-                                    </div>
 
+                                <Panel header="My saved shapes" key="4">
                                     {!closedCategories.includes(savedShapesKey) &&
                                         <div className={style.sidebarCategoryImageUploadContainer}>
                                             <Dragger {...props}>
@@ -163,9 +176,8 @@ const SideBar = () => {
                                             </div>
                                         </div>
                                     }
-                                </div>
-                            </>
-
+                                </Panel>
+                            </Collapse>
                         }
 
                     </>

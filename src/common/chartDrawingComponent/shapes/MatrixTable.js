@@ -1,10 +1,10 @@
-import React, { memo, useEffect, useCallback, useMemo, useState } from "react";
+import React, { memo, useEffect, useMemo, useState } from "react";
 import { NodeResizer } from "reactflow";
 import { Input } from "antd";
 
 import { useNodeDataStore } from "../store";
 import Shapes from "../ShapesData.js";
-import { getRgbaColor, getGradientRgbaColor } from "../utils";
+import { getRgbaColor } from "../utils";
 
 import style from "../DndStyles.module.scss";
 
@@ -21,8 +21,6 @@ function MatrixChart({ id, selected, type, data }) {
         (state) => state.setSelectedNodeId
     );
 
-    const [openColorPicker, setOpenColorPicker] = useState("");
-    const [focusedInput, setFocusedInput] = useState("");
     const [disableInput, setDisableInput] = useState(false);
 
     const sizes = useNodeDataStore((state) => state.size);
@@ -48,12 +46,14 @@ function MatrixChart({ id, selected, type, data }) {
     const rowsData = chartData?.rowsData || [];
     const setRowsData = (value) => onChangeChartData({ rowsData: value })
 
+    const selectedColumn = chartData?.selectedColumn ?? null;
+    const setSelectedColumn = (value) => onChangeChartData({ selectedColumn: value, selectedRow: null })
+
+    const selectedRow = chartData?.selectedRow ?? null;
+    const setSelectedRow = (value) => onChangeChartData({ selectedRow: value, selectedColumn: null })
+
     const matrixPadding = chartData?.matrixPadding || 2;
     const hideTools = chartData?.hideTools || false;
-    const sectionBackgroundColor =
-        getRgbaColor(chartData?.sectionBackgroundColor) || "#EAEAEA";
-    const sectionBorderColor =
-        getRgbaColor(chartData?.sectionBorderColor) || "#434343";
 
     const columnsCount = chartData?.columnsCount || 1;
     const setColumnsCount = (value) => onChangeChartData({ columnsCount: value });
@@ -64,11 +64,6 @@ function MatrixChart({ id, selected, type, data }) {
     const textdata = useNodeDataStore((state) => state.textdata)?.find(
         (item) => item.id === id
     );
-    const backgroundColor = getRgbaColor(textdata?.backgroundColor) || "#E7E7BF";
-    const borderColor = getRgbaColor(textdata?.borderColor) || "#434343";
-    const headerBackgroundColor =
-        getRgbaColor(textdata?.headerBackgroundColor) || "#d3d3d3";
-    const removeHeader = chartData?.removeHeader || false;
 
     const onColumnDataChange = (e, index) => {
         const copyOfColumnsData = [...columnsData]
@@ -110,17 +105,6 @@ function MatrixChart({ id, selected, type, data }) {
         if (selected) setSelectedNodeId(id);
     }, [selected]);
 
-    const onChangeHeader = useCallback((evt) => {
-        onChangeChartData({ header: evt.target.value });
-    }, []);
-
-
-    const onChange = useCallback((evt) => {
-        // if (!disableInput) {
-        //     onTextChange(id, { value: evt.target.value });
-        // }
-    }, [disableInput]);
-
     const rowsList = useMemo(() => {
         return Array.from(Array(rowsCount));
     }, [rowsCount]);
@@ -130,10 +114,6 @@ function MatrixChart({ id, selected, type, data }) {
     }, [columnsCount]);
 
     const onResize = (_, size) => setSize(size);
-
-    const onColumnsCountDecrease = () =>
-        setColumnsCount(columnsCount - 1 > 0 ? columnsCount - 1 : 0);
-    // console.log(nodeData)
 
     const addNewItem = (sectionNumber, elementColIndex) => {
         const newNodeData = JSON.parse(JSON.stringify(nodeData));
@@ -151,35 +131,6 @@ function MatrixChart({ id, selected, type, data }) {
         setNodeData(newNodeData);
     };
 
-    const onChangeItemText = (e, section, column, row) => {
-        const getRowsCount = (rowData) => {
-            if (!rowData?.scrollHeight) return 1;
-
-            if (rowData?.scrollHeight < e.target.scrollHeight)
-                return rowData?.rows + 1;
-            else return rowData?.rows;
-        };
-
-        if (!disableInput) {
-            const newNodeData = JSON.parse(JSON.stringify(nodeData));
-
-            const newSection = newNodeData[section] || [];
-            const newColumn = newSection[column] || [];
-
-            newColumn[row] = {
-                text: e.target.value,
-                color: newColumn[row] || "",
-                rows: getRowsCount(newColumn[row]),
-                scrollHeight: e.target.scrollHeight,
-            };
-
-            newSection[column] = newColumn;
-            newNodeData[section] = newSection;
-
-            setNodeData(newNodeData);
-        }
-    };
-
     const onKeyDown = (e) => {
         if (e.key === " " && e.repeat) {
             setDisableInput(true);
@@ -188,71 +139,11 @@ function MatrixChart({ id, selected, type, data }) {
         }
     };
 
-    const onDeleteItem = (section, column, row) => {
-        const newNodeData = JSON.parse(JSON.stringify(nodeData));
-
-        const newSection = newNodeData[section] || [];
-        const newColumn = newSection[column] || [];
-
-        newColumn?.splice(row, 1);
-
-        newSection[column] = newColumn;
-        newNodeData[section] = newSection;
-
-        setNodeData(newNodeData);
-    };
-
-    const onMouseLeave = () => {
-        setOpenColorPicker("");
-    };
-
-    const onChangeColumnColor = (color, column) => {
-        const newNodeData = JSON.parse(JSON.stringify(nodeData));
-
-        newNodeData?.map((section) => {
-            const newColumn = section[column] || [];
-
-            newColumn?.map((row) => {
-                row.color = getGradientRgbaColor(color);
-            });
-
-            return newColumn;
-        });
-
-        setNodeData(newNodeData);
-    };
-
-    const onChangeItemColor = (color, section, column, row) => {
-        const newNodeData = JSON.parse(JSON.stringify(nodeData));
-
-        const newSection = newNodeData[section] || [];
-        const newColumn = newSection[column] || [];
-
-        newColumn[row].color = getGradientRgbaColor(color);
-
-        newSection[column] = newColumn;
-        newNodeData[section] = newSection;
-
-        setNodeData(newNodeData);
-    };
-
-    const deleteColumn = (column) => {
-        const newNodeData = JSON.parse(JSON.stringify(nodeData));
-
-        newNodeData?.map((section) => {
-            return section?.splice(column, 1);
-        });
-
-        setNodeData(newNodeData);
-        onColumnsCountDecrease();
-    };
-
-    const onFocusInput = (e) => {
-        setFocusedInput(e?.target?.id);
-    };
-
     return (
-        <div className={style.matrixTableContainer} style={mainContainerStyle}>
+        <div className={style.matrixTableContainer} style={mainContainerStyle} onClick={() => {
+            if (selectedColumn !== null)
+                setSelectedColumn(null)
+        }}>
             <NodeResizer
                 isVisible={selected}
                 onResize={onResize}
@@ -294,10 +185,23 @@ function MatrixChart({ id, selected, type, data }) {
                                 <div
                                     key={sectionNumber}
                                     className={style.matrixTableSection}
-                                    style={{ marginRight: matrixPadding, marginBottom: matrixPadding, marginTop: matrixPadding }}
+                                    style={{
+                                        marginRight: matrixPadding, marginBottom: matrixPadding, marginTop: matrixPadding,
+                                        ...(selectedColumn === columnIndex ?
+                                            {
+                                                borderLeftColor: 'blue', borderRightColor: 'blue',
+                                                ...(rowIndex === 0 ? { borderTopColor: 'blue' } : {}),
+                                                ...(rowIndex === rowsList.length - 1 ? { borderBottomColor: 'blue' } : {})
+                                            }
+                                            : {})
+                                    }}
                                 >
                                     {rowIndex === 0 && (
-                                        <div className={style.matrixTableColumnHeaderTextContainer}>
+                                        <div className={style.matrixTableColumnHeaderTextContainer}
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                setSelectedColumn(columnIndex)
+                                            }}>
                                             <TextArea
                                                 autoSize
                                                 style={textAreaStyle}
