@@ -35,6 +35,7 @@ export const useDiagramStore = create((set, get) => ({
     collectionData: [],
     currentCollectionId: '',
     diagramData: [],
+    drawingsData: [],
     filterdContacts: [],
     uploadedImages: [],
     referenceData: {},
@@ -106,6 +107,17 @@ export const useDiagramStore = create((set, get) => ({
             set({ diagramData: result })
         }).finally(() => set({ loading: false }));
     },
+    getDrawingsForCollection: async (collectionId) => {
+        set({ loading: true })
+        set({ drawingsData: [] })
+
+        const result = await getAllDrawings(collectionId)
+
+        set({ drawingsData: result })
+        set({ loading: false })
+
+        return result
+    }, 
     addDiagram: async (data) => {
         try {
             set({ loading: true })

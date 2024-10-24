@@ -12,8 +12,8 @@ const { TextArea } = Input;
 
 function MatrixChart({ id, selected, type, data }) {
     const shapeData = Shapes[type];
-    const initialHeight = shapeData.size?.height;
-    const initialWidth = shapeData.size?.width;
+    const initialHeight = shapeData?.size?.height;
+    const initialWidth = shapeData?.size?.width;
 
     let sectionNumber = 0
 
@@ -23,7 +23,7 @@ function MatrixChart({ id, selected, type, data }) {
 
     const [disableInput, setDisableInput] = useState(false);
 
-    const sizes = useNodeDataStore((state) => state.size);
+    const sizes = useNodeDataStore((state) => state?.size);
     const onSizeCahnge = useNodeDataStore((state) => state.setSize);
 
     const size = sizes.find((item) => item.id === id) || {
@@ -47,10 +47,16 @@ function MatrixChart({ id, selected, type, data }) {
     const setRowsData = (value) => onChangeChartData({ rowsData: value })
 
     const selectedColumn = chartData?.selectedColumn ?? null;
-    const setSelectedColumn = (value) => onChangeChartData({ selectedColumn: value, selectedRow: null })
+    const setSelectedColumn = (value) => {
+        onChangeChartData({ selectedRow: null })
+        onChangeChartData({ selectedColumn: value })
+    }
 
     const selectedRow = chartData?.selectedRow ?? null;
-    const setSelectedRow = (value) => onChangeChartData({ selectedRow: value, selectedColumn: null })
+    const setSelectedRow = (value) => {
+        onChangeChartData({ selectedColumn: null })
+        onChangeChartData({ selectedRow: value })
+    }
 
     const matrixPadding = chartData?.matrixPadding || 2;
     const hideTools = chartData?.hideTools || false;
@@ -143,6 +149,8 @@ function MatrixChart({ id, selected, type, data }) {
         <div className={style.matrixTableContainer} style={mainContainerStyle} onClick={() => {
             if (selectedColumn !== null)
                 setSelectedColumn(null)
+            if (selectedRow !== null)
+                setSelectedRow(null)
         }}>
             <NodeResizer
                 isVisible={selected}
@@ -159,7 +167,12 @@ function MatrixChart({ id, selected, type, data }) {
                             key={rowIndex + 'title'}
                             style={{ paddingTop: matrixPadding, paddingBottom: matrixPadding }}
                         >
-                            <div className={style.matrixTableRowHeaderTextContainer}>
+                            <div className={style.matrixTableRowHeaderTextContainer}
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    setSelectedRow(rowIndex)
+                                }}
+                            >
                                 {/* {rowsData[rowIndex]} */}
                                 <TextArea
                                     autoSize
@@ -192,6 +205,14 @@ function MatrixChart({ id, selected, type, data }) {
                                                 borderLeftColor: 'blue', borderRightColor: 'blue',
                                                 ...(rowIndex === 0 ? { borderTopColor: 'blue' } : {}),
                                                 ...(rowIndex === rowsList.length - 1 ? { borderBottomColor: 'blue' } : {})
+                                            }
+                                            : {}),
+
+                                        ...(selectedRow === rowIndex ?
+                                            {
+                                                borderTopColor: 'blue', borderBottomColor: 'blue',
+                                                ...(columnIndex === 0 ? { borderLeftColor: 'blue' } : {}),
+                                                ...(columnIndex === columnList.length - 1 ? { borderRightColor: 'blue' } : {})
                                             }
                                             : {})
                                     }}

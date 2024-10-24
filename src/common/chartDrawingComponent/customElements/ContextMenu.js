@@ -26,13 +26,24 @@ export default function ContextMenu({ id, top, left, ...props }) {
     const setReferenceModalId = useNodeDataStore((state) => state.setReferenceModalId);
     const setFormsModalVisible = useDiagramStore((state) => state.setFormsModalVisible);
     const setFormFillData = useDiagramStore((state) => state.setFormFillData);
+
     const selectedColumn = chartData?.selectedColumn ?? null;
+    const setSelectedColumn = (value) => onChangeChartData({ selectedColumn: value })
+
+    const selectedRow = chartData?.selectedRow ?? null;
+    const setSelectedRow = (value) => onChangeChartData({ selectedRow: value })
 
     const columnsCount = chartData?.columnsCount || 1;
     const setColumnsCount = (value) => onChangeChartData({ columnsCount: value });
 
+    const rowsCount = chartData?.rowsCount || 1;
+    const setRowsCount = (value) => onChangeChartData({ rowsCount: value });
+
     const columnsData = chartData?.columnsData || [];
     const setColumnsData = (value) => onChangeChartData({ columnsData: value })
+
+    const rowsData = chartData?.rowsData || [];
+    const setRowsData = (value) => onChangeChartData({ rowsData: value })
 
     const node = useMemo(() => {
         return getNode(id);
@@ -127,6 +138,22 @@ export default function ContextMenu({ id, top, left, ...props }) {
         newColumnData.splice(selectedColumn, 0, "")
         setColumnsCount(columnsCount + 1)
         setColumnsData(newColumnData)
+        setSelectedColumn(selectedColumn + 1)
+    }
+
+    const addRowToTop = () => {
+        const newRowsData = [...rowsData]
+        newRowsData.splice(selectedRow, 0, "")
+        setRowsCount(rowsCount + 1)
+        setRowsData(newRowsData)
+        setSelectedRow(selectedRow + 1)
+    }
+
+    const addRowToBottom = () => {
+        const newRowsData = [...rowsData]
+        newRowsData.splice(selectedRow + 1, 0, "")
+        setRowsCount(rowsCount + 1)
+        setRowsData(newRowsData)
     }
 
     return (
@@ -135,6 +162,12 @@ export default function ContextMenu({ id, top, left, ...props }) {
                 <>
                     <button onClick={addColumnToRight}>Add column to right</button>
                     <button onClick={addColumnToLeft}>Add column to left</button>
+                </>
+            }
+            {node?.type === "MatrixTable" && selectedRow !== null &&
+                <>
+                    <button onClick={addRowToTop}>Add row to Top</button>
+                    <button onClick={addRowToBottom}>Add row to Bottom</button>
                 </>
             }
             {node?.type !== "group" && <button onClick={duplicateNode}>Duplicate</button>}

@@ -25,8 +25,8 @@ import style from '../DndStyles.module.scss'
 
 function MatrixChart({ id, selected, type, data }) {
     const shapeData = Shapes[type]
-    const initialHeight = shapeData.size?.height;
-    const initialWidth = shapeData.size?.width;
+    const initialHeight = shapeData?.size?.height;
+    const initialWidth = shapeData?.size?.width;
 
     const setSelectedNodeId = useNodeDataStore((state) => state.setSelectedNodeId);
 
@@ -34,7 +34,7 @@ function MatrixChart({ id, selected, type, data }) {
     const [focusedInput, setFocusedInput] = useState('')
     const [disableInput, setDisableInput] = useState(false)
 
-    const sizes = useNodeDataStore((state) => state.size);
+    const sizes = useNodeDataStore((state) => state?.size);
     const onSizeCahnge = useNodeDataStore((state) => state.setSize);
 
     const size = sizes.find(item => item.id === id) || { height: initialHeight, width: initialWidth };

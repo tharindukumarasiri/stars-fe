@@ -1,4 +1,4 @@
-import React, { useState, memo, useMemo, useContext } from 'react';
+import React, { useState, memo, useMemo, useContext, useEffect } from 'react';
 import { AutoComplete } from "antd";
 import {
     SettingOutlined,
@@ -79,14 +79,24 @@ const PropertyPanel = ({ nodes, selectedNodes = [], selectedEdges = [], setNodes
     const [urlInput, setUrlInput] = useState('');
     // const [uploadedFile, setUploadedFile] = useState('');
     const [selectedLinkType, setSelectedLinkType] = useState(LinkTypes.URL);
+    const [selectedCollection, setSelectedCollection] = useState({});
     const [selectedDrawing, setSelectedDrawing] = useState({});
+    const [selectedDrawingPage, setSelectedDrawingPage] = useState({});
+    const [selectedDrawingPagesData, setSelectedDrawingPagesData] = useState([])
     const [selectedPage, setSelectedPage] = useState({});
-    const [selectedSection, setSelectedSection] = useState()
 
     const diagramData = useDiagramStore((state) => state.diagramData);
     const pagesData = useNodeDataStore((state) => state.pagesData);
     const formsData = useDiagramStore((state) => state.formsData);
     const setFormsModalVisible = useDiagramStore((state) => state.setFormsModalVisible);
+    const collectionData = useDiagramStore((state) => state.collectionData);
+    const getDrawingsForCollection = useDiagramStore((state) => state.getDrawingsForCollection);
+    const drawingsData = useDiagramStore((state) => state.drawingsData);
+    const setCurrentCollectionId = useDiagramStore((state) => state.setCurrentCollectionId);
+    const getDiagramData = useDiagramStore((state) => state.getDiagramData);
+    const getUploadedImages = useDiagramStore((state) => state.getUploadedImages);
+    const getReferanceData = useDiagramStore((state) => state.getReferanceData);
+    const getFormsData = useDiagramStore((state) => state.getFormsData);
 
     const changeTextData = useNodeDataStore((state) => state.onTextChange);
     const selectedNodeId = useNodeDataStore((state) => state.selectedNodeId);
@@ -261,6 +271,16 @@ const PropertyPanel = ({ nodes, selectedNodes = [], selectedEdges = [], setNodes
         return formattedList
     }, [pagesData])
 
+    const formattedDrawingPagesData = useMemo(() => {
+        const formattedList = selectedDrawingPagesData?.map((page, index) => {
+            return {
+                pageIndex: index,
+                pageName: page.pageName
+            }
+        })
+        return formattedList
+    }, [selectedDrawingPagesData])
+
     const addNewLink = () => {
         setNodes((nodes) =>
             nodes.map((node) => {
@@ -285,10 +305,17 @@ const PropertyPanel = ({ nodes, selectedNodes = [], selectedEdges = [], setNodes
                         case LinkTypes.DOCUMENT:
                             newLinks.push({
                                 type: selectedLinkType,
-                                name: selectedDrawing?.Name,
-                                collectionId: selectedDrawing?.CollectionId,
-                                drawingId: selectedDrawing?.Id
+                                collectionName: selectedCollection.Name,
+                                collectionId: selectedCollection?.Id,
+                                drawingName: selectedDrawing?.Name,
+                                drawingId: selectedDrawing?.Id,
+                                pageName: selectedDrawingPage?.pageName,
+                                pageIndex: selectedDrawingPage?.pageIndex,
                             })
+                            setSelectedCollection({})
+                            setSelectedDrawing({})
+                            setSelectedDrawingPage({})
+                            setSelectedDrawingPagesData([])
                             // newLinks.push({
                             //     type: selectedLinkType,
                             //     file: uploadedFile,
@@ -310,21 +337,99 @@ const PropertyPanel = ({ nodes, selectedNodes = [], selectedEdges = [], setNodes
         setUrlInput('')
     }
 
-    const onSelectDrawing = (e) => {
+    const onSelectCollection = (e) => {
         e.preventDefault();
-        setSelectedDrawing(JSON.parse(e.target.value));
+        const collectionData = JSON.parse(e.target.value)
+        setSelectedCollection(collectionData);
+        getDrawingsForCollection(collectionData?.Id)
+        setSelectedDrawingPage({});
+        setSelectedDrawingPagesData([])
     }
 
+    const onSelectDrawing = (e) => {
+        e.preventDefault();
+        const drawingsData = JSON.parse(e.target.value)
+        setSelectedDrawing(drawingsData);
+        setSelectedDrawingPagesData(JSON.parse(drawingsData?.DrawingContent))
+    }
+
+    const onSelectPageForDrawing = (e) => {
+        e.preventDefault();
+        setSelectedDrawingPage(JSON.parse(e.target.value));
+    }
+
+    const getSelectedDocumentData = () => {
+        let documentText = ''
+
+        if(selectedCollection?.Name)
+            documentText = selectedCollection?.Name
+
+        if(selectedDrawing?.Id)
+            documentText += " > " + selectedDrawing?.Name
+
+        if(selectedDrawingPage?.pageName)
+            documentText += " > " + selectedDrawingPage?.pageName
+      
+        return documentText
+    }
+  
     const onSelectPage = (e) => {
         e.preventDefault();
         setSelectedPage(JSON.parse(e.target.value));
     }
 
-    const onClickDrawingRecord = (linkData) => {
-        const record = diagramData?.find(drawing => drawing.CollectionId === linkData?.collectionId && drawing.Id === linkData?.drawingId)
+    const onClickDrawingRecord = async (linkData) => {
+      if (linkData?.pageIndex || linkData?.drawingId) {
+        const record = drawingsData?.find(
+          (drawing) =>
+            drawing.CollectionId === linkData?.collectionId &&
+            drawing.Id === linkData?.drawingId
+        );
+    
+        if (record) {
+          changeActiveTab(
+            NAVIGATION_PAGES.CHART_DRAWING,
+            record,
+            true,
+            record?.Name
+          );
+        } else {
+          const drawingsForCollection = await getDrawingsForCollection(
+            linkData?.collectionId
+          );
+  
+          const selectedRecord = drawingsForCollection?.find(
+            (drawing) =>
+              drawing.CollectionId === linkData?.collectionId &&
+              drawing.Id === linkData?.drawingId
+          );
 
-        changeActiveTab(NAVIGATION_PAGES.CHART_DRAWING, record, true, record?.Name)
-    }
+          if (selectedRecord) {
+            changeActiveTab(
+              NAVIGATION_PAGES.CHART_DRAWING,
+              selectedRecord,
+              true,
+              selectedRecord?.Name
+            );
+          }
+        }
+        // setCurrentCollectionId(linkData?.collectionId);
+        // getDiagramData();
+        // getUploadedImages();
+        // getReferanceData();
+        // getFormsData();
+        // if (linkData?.pageIndex) {
+        //   onChangePage(linkData?.pageIndex);
+        // }
+      } else {
+        const record = collectionData?.find(
+            (collection) =>
+                collection.Id === linkData?.collectionId
+          );
+
+        changeActiveTab(NAVIGATION_PAGES.COLLECTION_DETAILS, record, true, record?.Name)
+      }
+    };
 
     const onChangeTab = (tab) => {
         setSelectedLinkType(tab)
@@ -1403,39 +1508,90 @@ const PropertyPanel = ({ nodes, selectedNodes = [], selectedEdges = [], setNodes
                     </>
                 );
             case LinkTypes.DOCUMENT:
-                return (<>
+                return (
+                  <>
                     <div className={style.linkInputContainer}>
-                        <Dropdown
-                            values={diagramData}
-                            onChange={onSelectDrawing}
-                            dataName='Name'
-                            placeholder="Select drawing"
-                            selected={selectedDrawing?.Id ? JSON.stringify(selectedDrawing) : null}
-                            disabled={diagramData?.length === 0}
-                        />
+                      <Dropdown
+                        values={collectionData}
+                        onChange={onSelectCollection}
+                        dataName="Name"
+                        placeholder="Collection"
+                        selected={
+                          selectedCollection?.Id
+                            ? JSON.stringify(selectedCollection)
+                            : null
+                        }
+                        disabled={collectionData?.length === 0}
+                      />
+                    </div>
+                    <div className={style.linkInputContainer}>
+                      <Dropdown
+                        values={drawingsData}
+                        onChange={onSelectDrawing}
+                        dataName="Name"
+                        placeholder="Drawing"
+                        selected={
+                          selectedDrawing?.Id
+                            ? JSON.stringify(selectedDrawing)
+                            : null
+                        }
+                        disabled={!selectedCollection?.Id}
+                      />
+                    </div>
+                    <div className={style.linkInputContainer}>
+                      <Dropdown
+                        values={formattedDrawingPagesData}
+                        onChange={onSelectPageForDrawing}
+                        dataName="pageName"
+                        placeholder="Page"
+                        selected={
+                          selectedDrawingPage?.pageName
+                            ? JSON.stringify(selectedDrawingPage)
+                            : null
+                        }
+                        disabled={selectedDrawingPagesData.length === 0}
+                      />
+                    </div>
+                    <div className="blue m-b-10">
+                      {getSelectedDocumentData()}
                     </div>
                     <button
-                        className={style.linkAddBtn}
-                        onClick={addNewLink}
-                        disabled={selectedNodes?.length !== 1 || !selectedDrawing?.Name}
-                    >Add
+                      className={style.linkAddBtn}
+                      onClick={addNewLink}
+                      disabled={
+                        selectedNodes?.length !== 1 || !selectedCollection?.Id
+                      }
+                    >
+                      Add
                     </button>
                     {selectedNodes?.[0]?.data?.links?.map((link, index) => {
-                        if (link.type !== selectedLinkType)
-                            return
-                        return (
-                            <div key={index} className={style.linkItemContainer}>
-                                <div
-                                    className={style.linkItem}
-                                    onClick={() => onClickDrawingRecord(link)}
-                                >
-                                    {link?.name}
-                                </div>
-                                <i className="close-btn icon-close-small-x fr red" onClick={() => onRemoveLink(index)} />
-                            </div>
-                        )
+                      if (link.type !== selectedLinkType) return;
+
+                      let documentText = "";
+                      if (link?.collectionName)
+                        documentText = link?.collectionName;
+                      if (link?.drawingName)
+                        documentText += " > " + link?.drawingName;
+                      if (link?.pageName)
+                        documentText += " > " + link?.pageName;
+
+                      return (
+                        <div key={index} className={style.linkItemContainer}>
+                          <div
+                            className={style.linkItem}
+                            onClick={() => onClickDrawingRecord(link)}
+                          >
+                            {documentText}
+                          </div>
+                          <i
+                            className="close-btn icon-close-small-x fr red"
+                            onClick={() => onRemoveLink(index)}
+                          />
+                        </div>
+                      );
                     })}
-                </>)
+                  </>
+                );
             // return (
             //     <>
             //         <input

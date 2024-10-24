@@ -11,10 +11,10 @@ const resizerHandleStyle = { width: 12, height: 12 }
 
 function LineChart({ id, selected, type, data }) {
     const shapeData = Shapes[type]
-    const initialHeight = shapeData.size?.height;
-    const initialWidth = shapeData.size?.width;
+    const initialHeight = shapeData?.size?.height;
+    const initialWidth = shapeData?.size?.width;
 
-    const sizes = useNodeDataStore((state) => state.size);
+    const sizes = useNodeDataStore((state) => state?.size);
     const onSizeCahnge = useNodeDataStore((state) => state.setSize);
 
     const size = sizes.find(item => item.id === id) || { height: initialHeight, width: initialWidth };

@@ -27,8 +27,8 @@ function CustomNode({ id, selected, type, data }) {
     const [disableInput, setDisableInput] = useState(false)
 
     const shapeData = Shapes[type]
-    const initialHeight = shapeData.size?.height ?? 50;
-    const initialWidth = shapeData.size?.width ?? 50;
+    const initialHeight = shapeData?.size?.height ?? 50;
+    const initialWidth = shapeData?.size?.width ?? 50;
     const isTable = type === 'Table';
 
     const connectionNodeId = useStore(connectionNodeIdSelector);
@@ -37,7 +37,7 @@ function CustomNode({ id, selected, type, data }) {
 
     const handleContainerStyle = (!((selected || isTarget) && !isTable) || data?.hideHandle) ? style.handleHidden : '';
 
-    const sizes = useNodeDataStore((state) => state.size);
+    const sizes = useNodeDataStore((state) => state?.size);
     const onSizeCahnge = useNodeDataStore((state) => state.setSize);
 
     const size = sizes.find(item => item.id === id) || { height: initialHeight, width: initialWidth };

@@ -35,8 +35,8 @@ function BarChartComponent({ id, selected, type, data }) {
     const updateNodeInternals = useUpdateNodeInternals();
 
     const shapeData = Shapes[type];
-    const initialHeight = shapeData.size?.height ?? 50;
-    const initialWidth = shapeData.size?.width ?? 50;
+    const initialHeight = shapeData?.size?.height ?? 50;
+    const initialWidth = shapeData?.size?.width ?? 50;
 
     const connectionNodeId = useStore(connectionNodeIdSelector);
     const isConnecting = !!connectionNodeId;
@@ -44,7 +44,7 @@ function BarChartComponent({ id, selected, type, data }) {
 
     const handleContainerStyle = selected || isTarget ? "" : style.handleHidden;
 
-    const sizes = useNodeDataStore((state) => state.size);
+    const sizes = useNodeDataStore((state) => state?.size);
     const onSizeCahnge = useNodeDataStore((state) => state.setSize);
 
     const size = sizes.find((item) => item.id === id) || {
