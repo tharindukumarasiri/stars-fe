@@ -114,6 +114,8 @@ export const colorPickerTypes = {
     SECTION_BG: 'SECTION_BG',
     SECTION_BORDER: 'SECTION_BORDER',
     HEADER_BORDER: 'HEADER_BORDER',
+    COLUMN_BG: 'COLUMN_BG',
+    ROW_BG: 'ROW_BG',
 }
 
 export const getId = (type) => `${type}_${+new Date()}`;

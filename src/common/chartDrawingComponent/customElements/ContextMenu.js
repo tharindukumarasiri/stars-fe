@@ -128,14 +128,14 @@ export default function ContextMenu({ id, top, left, ...props }) {
 
     const addColumnToRight = () => {
         const newColumnData = [...columnsData]
-        newColumnData.splice(selectedColumn + 1, 0, "")
+        newColumnData.splice(selectedColumn + 1, 0, { title: "" })
         setColumnsCount(columnsCount + 1)
         setColumnsData(newColumnData)
     }
 
     const addColumnToLeft = () => {
         const newColumnData = [...columnsData]
-        newColumnData.splice(selectedColumn, 0, "")
+        newColumnData.splice(selectedColumn, 0, { title: "" })
         setColumnsCount(columnsCount + 1)
         setColumnsData(newColumnData)
         setSelectedColumn(selectedColumn + 1)
@@ -143,7 +143,7 @@ export default function ContextMenu({ id, top, left, ...props }) {
 
     const addRowToTop = () => {
         const newRowsData = [...rowsData]
-        newRowsData.splice(selectedRow, 0, "")
+        newRowsData.splice(selectedRow, 0, { title: "" })
         setRowsCount(rowsCount + 1)
         setRowsData(newRowsData)
         setSelectedRow(selectedRow + 1)
@@ -151,7 +151,7 @@ export default function ContextMenu({ id, top, left, ...props }) {
 
     const addRowToBottom = () => {
         const newRowsData = [...rowsData]
-        newRowsData.splice(selectedRow + 1, 0, "")
+        newRowsData.splice(selectedRow + 1, 0, { title: "" })
         setRowsCount(rowsCount + 1)
         setRowsData(newRowsData)
     }

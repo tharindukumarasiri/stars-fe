@@ -77,7 +77,7 @@ export default ({ onSave, pasteNodes, clearSelectedNodes, getAllData, setEdges, 
     }
 
     const onSaveHandler = () => {
-        message.success('Diagram Saved')
+        message.success('Saving drawing')
         onSave()
     }
 

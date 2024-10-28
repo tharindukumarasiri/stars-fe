@@ -1,11 +1,15 @@
 import axios from "axios";
 import { message } from 'antd';
 
+import config from './config.json'
+
 axios.interceptors.response.use(null, error => {
     const expectedError = error.response && error.response.status >= 400 && error.response.status < 500;
     const sessionExpired = error.response.status === 302
 
-    if (!expectedError) {
+    if (error.config?.url?.includes(config.UPDATE_DRAWING_ITEM)) {
+        message.error('Failed to save drawing');
+    } else if (!expectedError) {
         console.log("Http error: ", error);
         message.error('An unexpected network error occurred.');
     }

@@ -62,7 +62,8 @@ function MatrixChart({ id, selected, type, data }) {
     const hideTools = chartData?.hideTools || false;
 
     const columnsCount = chartData?.columnsCount || 1;
-    const setColumnsCount = (value) => onChangeChartData({ columnsCount: value });
+    const columnsColor = chartData?.columnsColor || '#D9D9D9'
+    const rowsColor = chartData?.rowsColor || '#8B8B8B'
 
     const columnsData = chartData?.columnsData || [];
     const setColumnsData = (value) => onChangeChartData({ columnsData: value })
@@ -73,13 +74,19 @@ function MatrixChart({ id, selected, type, data }) {
 
     const onColumnDataChange = (e, index) => {
         const copyOfColumnsData = [...columnsData]
-        copyOfColumnsData[index] = e.target.value
+        copyOfColumnsData[index] = {
+            ...copyOfColumnsData[index],
+            title: e.target.value
+        }
         setColumnsData(copyOfColumnsData)
     }
 
     const onRowsDataChange = (e, index) => {
         const copyOfRowsData = [...rowsData]
-        copyOfRowsData[index] = e.target.value
+        copyOfRowsData[index] = {
+            ...copyOfRowsData[index],
+            title: e.target.value
+        }
         setRowsData(copyOfRowsData)
     }
 
@@ -165,9 +172,15 @@ function MatrixChart({ id, selected, type, data }) {
                         <div
                             className={style.matrixTableRowHeader}
                             key={rowIndex + 'title'}
-                            style={{ paddingTop: matrixPadding, paddingBottom: matrixPadding }}
+                            style={{
+                                paddingTop: matrixPadding,
+                                paddingBottom: matrixPadding,
+                            }}
                         >
                             <div className={style.matrixTableRowHeaderTextContainer}
+                                style={{
+                                    backgroundColor: rowsData[rowIndex]?.color ?? rowsColor
+                                }}
                                 onClick={(e) => {
                                     e.stopPropagation();
                                     setSelectedRow(rowIndex)
@@ -183,7 +196,7 @@ function MatrixChart({ id, selected, type, data }) {
                                     }}
                                     placeholder={`Row ${rowIndex + 1}`}
                                     className={style.drawingTextArea}
-                                    value={rowsData[rowIndex]}
+                                    value={rowsData[rowIndex]?.title}
                                     onChange={(e) => onRowsDataChange(e, rowIndex)}
                                     onKeyDown={onKeyDown}
                                 />
@@ -219,6 +232,9 @@ function MatrixChart({ id, selected, type, data }) {
                                 >
                                     {rowIndex === 0 && (
                                         <div className={style.matrixTableColumnHeaderTextContainer}
+                                            style={{
+                                                backgroundColor: columnsData[columnIndex]?.color ?? columnsColor
+                                            }}
                                             onClick={(e) => {
                                                 e.stopPropagation();
                                                 setSelectedColumn(columnIndex)
@@ -228,7 +244,7 @@ function MatrixChart({ id, selected, type, data }) {
                                                 style={textAreaStyle}
                                                 placeholder={`Column ${columnIndex + 1}`}
                                                 className={style.drawingTextArea}
-                                                value={columnsData[columnIndex]}
+                                                value={columnsData[columnIndex]?.title}
                                                 onChange={(e) => onColumnDataChange(e, columnIndex)}
                                                 onKeyDown={onKeyDown}
                                             />

@@ -7,10 +7,6 @@ import {
     LockOutlined,
     UnlockOutlined,
     DownOutlined,
-    VerticalAlignTopOutlined,
-    AlignLeftOutlined,
-    AlignRightOutlined,
-    VerticalAlignBottomOutlined,
     ExpandAltOutlined
 } from '@ant-design/icons';
 import {
@@ -147,11 +143,26 @@ const PropertyPanel = ({ nodes, selectedNodes = [], selectedEdges = [], setNodes
     const rowsCount = chartData?.rowsCount || 1
     const setRowsCount = (value) => onChangeChartData({ rowsCount: value })
 
+    const columnsData = chartData?.columnsData || [];
+    const setColumnsData = (value) => onChangeChartData({ columnsData: value })
+
+    const rowsData = chartData?.rowsData || [];
+    const setRowsData = (value) => onChangeChartData({ rowsData: value })
+
+    const selectedColumn = chartData?.selectedColumn ?? null;
+    const selectedRow = chartData?.selectedRow ?? null;
+
     const matrixPadding = chartData?.matrixPadding || 2
     const setMatrixPadding = (value) => onChangeChartData({ matrixPadding: value })
 
     const columnsCount = chartData?.columnsCount || 1
     const setColumnsCount = (value) => onChangeChartData({ columnsCount: value })
+
+    const columnsColor = chartData?.columnsColor || '#D9D9D9'
+    const setColumnsColor = (value) => onChangeChartData({ columnsColor: value })
+
+    const rowsColor = chartData?.rowsColor || '#8B8B8B'
+    const setRowsColor = (value) => onChangeChartData({ rowsColor: value })
 
     const sectionBackgroundColor = chartData?.sectionBackgroundColor || '#EAEAEA'
     const setSectionBackgroundColor = (value) => onChangeChartData({ sectionBackgroundColor: value })
@@ -242,6 +253,66 @@ const PropertyPanel = ({ nodes, selectedNodes = [], selectedEdges = [], setNodes
             setMatrixPadding(Number(number))
         }
     };
+
+    const onChangeRowBgColor = (color) => {
+        if (selectedRow !== null) {
+            const copyOfRowsData = [...rowsData]
+            copyOfRowsData[selectedRow] = {
+                ...copyOfRowsData[selectedRow],
+                color: color?.hex
+            }
+            setRowsData(copyOfRowsData)
+        } else {
+            const newRowsData = rowsData.map(rowData => {
+                const data = {
+                    ...rowData,
+                    color: color?.hex
+                }
+                return data
+            })
+
+            setRowsColor(color?.hex)
+            setRowsData(newRowsData)
+        }
+    }
+
+    const selectedRowColor = () => {
+        if (selectedRow === null) {
+            return rowsColor;
+        } else {
+            return rowsData[selectedRow]?.color ?? rowsColor
+        }
+    }
+
+    const onChangeColumnBgColor = (color) => {
+        if (selectedColumn !== null) {
+            const copyOfColumnsData = [...columnsData]
+            copyOfColumnsData[selectedColumn] = {
+                ...copyOfColumnsData[selectedColumn],
+                color: color?.hex
+            }
+            setColumnsData(copyOfColumnsData)
+        } else {
+            const newColumnsData = columnsData.map(colData => {
+                const data = {
+                    ...colData,
+                    color: color?.hex
+                }
+                return data
+            })
+
+            setColumnsColor(color?.hex)
+            setColumnsData(newColumnsData)
+        }
+    }
+
+    const selectedColumnColor = () => {
+        if (selectedColumn === null) {
+            return columnsColor;
+        } else {
+            return columnsData[selectedColumn]?.color ?? columnsColor
+        }
+    }
 
     const handleLinkInput = (e) => {
         e.preventDefault();
@@ -361,74 +432,74 @@ const PropertyPanel = ({ nodes, selectedNodes = [], selectedEdges = [], setNodes
     const getSelectedDocumentData = () => {
         let documentText = ''
 
-        if(selectedCollection?.Name)
+        if (selectedCollection?.Name)
             documentText = selectedCollection?.Name
 
-        if(selectedDrawing?.Id)
+        if (selectedDrawing?.Id)
             documentText += " > " + selectedDrawing?.Name
 
-        if(selectedDrawingPage?.pageName)
+        if (selectedDrawingPage?.pageName)
             documentText += " > " + selectedDrawingPage?.pageName
-      
+
         return documentText
     }
-  
+
     const onSelectPage = (e) => {
         e.preventDefault();
         setSelectedPage(JSON.parse(e.target.value));
     }
 
     const onClickDrawingRecord = async (linkData) => {
-      if (linkData?.pageIndex || linkData?.drawingId) {
-        const record = drawingsData?.find(
-          (drawing) =>
-            drawing.CollectionId === linkData?.collectionId &&
-            drawing.Id === linkData?.drawingId
-        );
-    
-        if (record) {
-          changeActiveTab(
-            NAVIGATION_PAGES.CHART_DRAWING,
-            record,
-            true,
-            record?.Name
-          );
-        } else {
-          const drawingsForCollection = await getDrawingsForCollection(
-            linkData?.collectionId
-          );
-  
-          const selectedRecord = drawingsForCollection?.find(
-            (drawing) =>
-              drawing.CollectionId === linkData?.collectionId &&
-              drawing.Id === linkData?.drawingId
-          );
-
-          if (selectedRecord) {
-            changeActiveTab(
-              NAVIGATION_PAGES.CHART_DRAWING,
-              selectedRecord,
-              true,
-              selectedRecord?.Name
+        if (linkData?.pageIndex || linkData?.drawingId) {
+            const record = drawingsData?.find(
+                (drawing) =>
+                    drawing.CollectionId === linkData?.collectionId &&
+                    drawing.Id === linkData?.drawingId
             );
-          }
-        }
-        // setCurrentCollectionId(linkData?.collectionId);
-        // getDiagramData();
-        // getUploadedImages();
-        // getReferanceData();
-        // getFormsData();
-        // if (linkData?.pageIndex) {
-        //   onChangePage(linkData?.pageIndex);
-        // }
-      } else {
-        const record = collectionData?.find(
-            (collection) =>
-                collection.Id === linkData?.collectionId
-          );
 
-        changeActiveTab(NAVIGATION_PAGES.COLLECTION_DETAILS, record, true, record?.Name)
-      }
+            if (record) {
+                changeActiveTab(
+                    NAVIGATION_PAGES.CHART_DRAWING,
+                    record,
+                    true,
+                    record?.Name
+                );
+            } else {
+                const drawingsForCollection = await getDrawingsForCollection(
+                    linkData?.collectionId
+                );
+
+                const selectedRecord = drawingsForCollection?.find(
+                    (drawing) =>
+                        drawing.CollectionId === linkData?.collectionId &&
+                        drawing.Id === linkData?.drawingId
+                );
+
+                if (selectedRecord) {
+                    changeActiveTab(
+                        NAVIGATION_PAGES.CHART_DRAWING,
+                        selectedRecord,
+                        true,
+                        selectedRecord?.Name
+                    );
+                }
+            }
+            // setCurrentCollectionId(linkData?.collectionId);
+            // getDiagramData();
+            // getUploadedImages();
+            // getReferanceData();
+            // getFormsData();
+            // if (linkData?.pageIndex) {
+            //   onChangePage(linkData?.pageIndex);
+            // }
+        } else {
+            const record = collectionData?.find(
+                (collection) =>
+                    collection.Id === linkData?.collectionId
+            );
+
+            changeActiveTab(NAVIGATION_PAGES.COLLECTION_DETAILS, record, true, record?.Name)
+        }
     };
 
     const onChangeTab = (tab) => {
@@ -1329,6 +1400,47 @@ const PropertyPanel = ({ nodes, selectedNodes = [], selectedEdges = [], setNodes
                         </div>
                     </div>
                 </div>
+                <div className={style.appearanceRow}>
+                    <div className={style.flex5}>
+                        Column background color
+                    </div>
+
+                    <div className={style.flex2} onClick={() => showColorPicker(colorPickerTypes.COLUMN_BG)}>
+                        <div className={style.colorIcon} style={{ backgroundColor: selectedColumnColor() }} />
+                        {colorPickerVisible === colorPickerTypes.COLUMN_BG ?
+                            <div className={style.sketchPickerContainer}>
+                                <ColorPicker
+                                    color={selectedColumnColor()}
+                                    onChange={onChangeColumnBgColor}
+                                    onMouseLeave={onMouseLeave}
+                                    styles={colorPickerStyles}
+                                />
+                            </div> : null
+                        }
+                    </div>
+
+                </div>
+                <div className={style.appearanceRow}>
+                    <div className={style.flex5}>
+                        Row background color
+                    </div>
+
+                    <div className={style.flex2} onClick={() => showColorPicker(colorPickerTypes.ROW_BG)}>
+                        <div className={style.colorIcon} style={{ backgroundColor: selectedRowColor() }} />
+                        {colorPickerVisible === colorPickerTypes.ROW_BG ?
+                            <div className={style.sketchPickerContainer}>
+                                <ColorPicker
+                                    color={selectedRowColor()}
+                                    onChange={onChangeRowBgColor}
+                                    onMouseLeave={onMouseLeave}
+                                    styles={colorPickerStyles}
+                                />
+                            </div> : null
+                        }
+                    </div>
+
+                </div>
+
             </div>
         )
     }
@@ -1509,88 +1621,88 @@ const PropertyPanel = ({ nodes, selectedNodes = [], selectedEdges = [], setNodes
                 );
             case LinkTypes.DOCUMENT:
                 return (
-                  <>
-                    <div className={style.linkInputContainer}>
-                      <Dropdown
-                        values={collectionData}
-                        onChange={onSelectCollection}
-                        dataName="Name"
-                        placeholder="Collection"
-                        selected={
-                          selectedCollection?.Id
-                            ? JSON.stringify(selectedCollection)
-                            : null
-                        }
-                        disabled={collectionData?.length === 0}
-                      />
-                    </div>
-                    <div className={style.linkInputContainer}>
-                      <Dropdown
-                        values={drawingsData}
-                        onChange={onSelectDrawing}
-                        dataName="Name"
-                        placeholder="Drawing"
-                        selected={
-                          selectedDrawing?.Id
-                            ? JSON.stringify(selectedDrawing)
-                            : null
-                        }
-                        disabled={!selectedCollection?.Id}
-                      />
-                    </div>
-                    <div className={style.linkInputContainer}>
-                      <Dropdown
-                        values={formattedDrawingPagesData}
-                        onChange={onSelectPageForDrawing}
-                        dataName="pageName"
-                        placeholder="Page"
-                        selected={
-                          selectedDrawingPage?.pageName
-                            ? JSON.stringify(selectedDrawingPage)
-                            : null
-                        }
-                        disabled={selectedDrawingPagesData.length === 0}
-                      />
-                    </div>
-                    <div className="blue m-b-10">
-                      {getSelectedDocumentData()}
-                    </div>
-                    <button
-                      className={style.linkAddBtn}
-                      onClick={addNewLink}
-                      disabled={
-                        selectedNodes?.length !== 1 || !selectedCollection?.Id
-                      }
-                    >
-                      Add
-                    </button>
-                    {selectedNodes?.[0]?.data?.links?.map((link, index) => {
-                      if (link.type !== selectedLinkType) return;
-
-                      let documentText = "";
-                      if (link?.collectionName)
-                        documentText = link?.collectionName;
-                      if (link?.drawingName)
-                        documentText += " > " + link?.drawingName;
-                      if (link?.pageName)
-                        documentText += " > " + link?.pageName;
-
-                      return (
-                        <div key={index} className={style.linkItemContainer}>
-                          <div
-                            className={style.linkItem}
-                            onClick={() => onClickDrawingRecord(link)}
-                          >
-                            {documentText}
-                          </div>
-                          <i
-                            className="close-btn icon-close-small-x fr red"
-                            onClick={() => onRemoveLink(index)}
-                          />
+                    <>
+                        <div className={style.linkInputContainer}>
+                            <Dropdown
+                                values={collectionData}
+                                onChange={onSelectCollection}
+                                dataName="Name"
+                                placeholder="Collection"
+                                selected={
+                                    selectedCollection?.Id
+                                        ? JSON.stringify(selectedCollection)
+                                        : null
+                                }
+                                disabled={collectionData?.length === 0}
+                            />
                         </div>
-                      );
-                    })}
-                  </>
+                        <div className={style.linkInputContainer}>
+                            <Dropdown
+                                values={drawingsData}
+                                onChange={onSelectDrawing}
+                                dataName="Name"
+                                placeholder="Drawing"
+                                selected={
+                                    selectedDrawing?.Id
+                                        ? JSON.stringify(selectedDrawing)
+                                        : null
+                                }
+                                disabled={!selectedCollection?.Id}
+                            />
+                        </div>
+                        <div className={style.linkInputContainer}>
+                            <Dropdown
+                                values={formattedDrawingPagesData}
+                                onChange={onSelectPageForDrawing}
+                                dataName="pageName"
+                                placeholder="Page"
+                                selected={
+                                    selectedDrawingPage?.pageName
+                                        ? JSON.stringify(selectedDrawingPage)
+                                        : null
+                                }
+                                disabled={selectedDrawingPagesData.length === 0}
+                            />
+                        </div>
+                        <div className="blue m-b-10">
+                            {getSelectedDocumentData()}
+                        </div>
+                        <button
+                            className={style.linkAddBtn}
+                            onClick={addNewLink}
+                            disabled={
+                                selectedNodes?.length !== 1 || !selectedCollection?.Id
+                            }
+                        >
+                            Add
+                        </button>
+                        {selectedNodes?.[0]?.data?.links?.map((link, index) => {
+                            if (link.type !== selectedLinkType) return;
+
+                            let documentText = "";
+                            if (link?.collectionName)
+                                documentText = link?.collectionName;
+                            if (link?.drawingName)
+                                documentText += " > " + link?.drawingName;
+                            if (link?.pageName)
+                                documentText += " > " + link?.pageName;
+
+                            return (
+                                <div key={index} className={style.linkItemContainer}>
+                                    <div
+                                        className={style.linkItem}
+                                        onClick={() => onClickDrawingRecord(link)}
+                                    >
+                                        {documentText}
+                                    </div>
+                                    <i
+                                        className="close-btn icon-close-small-x fr red"
+                                        onClick={() => onRemoveLink(index)}
+                                    />
+                                </div>
+                            );
+                        })}
+                    </>
                 );
             // return (
             //     <>

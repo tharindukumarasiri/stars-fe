@@ -2157,7 +2157,7 @@ export default {
         hideTextInput: true,
         keepAspectRatio: false,
         category: [Categories.MISC],
-        size: { width: 98.3, height: 98.3},
+        size: { width: 98.3, height: 98.3 },
     },
     Delete: {
         image: <>
@@ -2210,7 +2210,7 @@ export default {
         hideTextInput: true,
         keepAspectRatio: false,
         category: [Categories.MISC],
-        size: { width: 85.3, height: 89.7},
+        size: { width: 85.3, height: 89.7 },
     },
     Drag: {
         image: <>
@@ -2363,7 +2363,7 @@ export default {
         hideTextInput: true,
         keepAspectRatio: false,
         category: [Categories.MISC],
-        size: { width: 77.6, height: 82.1},
+        size: { width: 77.6, height: 82.1 },
     },
     Company2: {
         image: <>
@@ -2430,7 +2430,7 @@ export default {
         hideTextInput: true,
         keepAspectRatio: false,
         category: [Categories.MISC],
-        size: { width: 84.1, height: 81.3},
+        size: { width: 84.1, height: 81.3 },
     },
     Shippping2: {
         image: <>
