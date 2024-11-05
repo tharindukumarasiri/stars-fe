@@ -7,11 +7,13 @@ import {
     LockOutlined,
     UnlockOutlined,
     DownOutlined,
+    RightOutlined,
     ExpandAltOutlined
 } from '@ant-design/icons';
 import {
     MarkerType,
 } from 'reactflow';
+import Nestable from 'react-nestable';
 
 import ColorPicker from '../../colorPicker';
 import {
@@ -24,6 +26,7 @@ import {
     markerTypes,
     arrowColor,
     getId,
+    defaultNewLayerRestData
 } from '../utils';
 import { useNodeDataStore } from '../store'
 import Dropdown from '../../dropdown';
@@ -39,6 +42,7 @@ import { ReactComponent as AlignTop } from '../../../assets/images/align-icons/a
 import { ReactComponent as AlignBottom } from '../../../assets/images/align-icons/align-bottom.svg'
 
 import style from '../DndStyles.module.scss'
+import 'react-nestable/dist/styles/index.css';
 
 const propertyCategories = {
     GRID: 'Grid',
@@ -80,6 +84,7 @@ const PropertyPanel = ({ nodes, selectedNodes = [], selectedEdges = [], setNodes
     const [selectedDrawingPage, setSelectedDrawingPage] = useState({});
     const [selectedDrawingPagesData, setSelectedDrawingPagesData] = useState([])
     const [selectedPage, setSelectedPage] = useState({});
+    const [isFocusedLayersInput, setIsFocusedLayersInput] = useState(false)
 
     const diagramData = useDiagramStore((state) => state.diagramData);
     const pagesData = useNodeDataStore((state) => state.pagesData);
@@ -173,6 +178,12 @@ const PropertyPanel = ({ nodes, selectedNodes = [], selectedEdges = [], setNodes
     const hideTools = chartData?.hideTools || false
     const setHideTools = (value) => onChangeChartData({ hideTools: value })
 
+    const currentLayer = useNodeDataStore((state) => state.currentLayer);
+    const setCurrentLayer = useNodeDataStore((state) => state.setCurrentLayer);
+
+    const layers = useNodeDataStore((state) => state.layers);
+    const setLayers = useNodeDataStore((state) => state.setLayers);
+
     const getSelectedEdgeStart = useMemo(() => {
         //using the first item in the selected edges
         let selectedEdge = selectedEdges[0]
@@ -209,6 +220,7 @@ const PropertyPanel = ({ nodes, selectedNodes = [], selectedEdges = [], setNodes
     const onSectionsCountIncrese = () => setSectionsCount(sectionsCount + 1);
     const onSectionsCountDecrease = () => setSectionsCount(sectionsCount - 1 > 0 ? sectionsCount - 1 : 0);
     const toggleFormModal = () => setFormsModalVisible(true);
+    const onBlur = () => setIsFocusedLayersInput(pre => !pre)
 
     const onSectionsCountChange = (e) => {
         e.preventDefault();
@@ -740,7 +752,14 @@ const PropertyPanel = ({ nodes, selectedNodes = [], selectedEdges = [], setNodes
         );
     }
 
-    const hideShowLayer = (id) => {
+    const onDeleteNode = (e, id) => {
+        e.stopPropagation();
+
+        setNodes((nodes) => nodes.filter((node) => node?.id !== id && node?.parentNode !== id));
+        setEdges((edges) => edges.filter((edge) => edge?.source !== id));
+    }
+
+    const hideShowNode = (id) => {
         setNodes((nodes) =>
             nodes.map((node) => {
                 if (node.id === id) {
@@ -762,6 +781,124 @@ const PropertyPanel = ({ nodes, selectedNodes = [], selectedEdges = [], setNodes
                 } else return node
             })
         )
+    }
+
+    const addNewLayer = () => {
+        const copyOfLayers = [...layers]
+        const newLayerId = getId('layer')
+        let newLayerLabelNumber = copyOfLayers.length + 1;
+
+        while (layers?.some(layer => layer?.label == `Layer ${newLayerLabelNumber}`)) {
+            newLayerLabelNumber++
+        }
+
+        copyOfLayers.push({
+            id: newLayerId,
+            label: `Layer ${newLayerLabelNumber}`,
+            ...defaultNewLayerRestData
+        })
+        setLayers(copyOfLayers)
+        setCurrentLayer(newLayerId)
+    }
+
+    const onChangeLayerText = (e, id) => {
+        e.preventDefault();
+
+        const copyOfLayers = [...layers]
+        const index = copyOfLayers.findIndex(layer => layer.id === id)
+        copyOfLayers[index].label = e.target.value;
+
+        setLayers(copyOfLayers)
+    }
+
+    const onDeleteLayer = (e, id) => {
+        e.stopPropagation();
+
+        const copyOfLayers = [...layers]
+        const index = copyOfLayers.findIndex(layer => layer.id === id)
+        copyOfLayers.splice(index, 1);
+
+        setLayers(copyOfLayers)
+
+        if (currentLayer === id) {
+            let newCurrentLayerIndex = index
+            if (newCurrentLayerIndex > copyOfLayers?.length - 1) {
+                newCurrentLayerIndex = copyOfLayers?.length - 1
+            }
+
+            setCurrentLayer(copyOfLayers[newCurrentLayerIndex]?.id)
+        }
+
+        setNodes((nodes) => nodes.filter((node) => node?.data?.layer !== id));
+    }
+
+    const expandLayer = (id) => {
+        const copyOfLayers = [...layers]
+        const index = copyOfLayers.findIndex(layer => layer.id === id)
+        copyOfLayers[index].expanded = !copyOfLayers[index]?.expanded;
+
+        setLayers(copyOfLayers)
+    }
+
+    const hideLayer = (e, id) => {
+        e.stopPropagation();
+
+        const copyOfLayers = [...layers]
+        const index = copyOfLayers.findIndex(layer => layer.id === id)
+        copyOfLayers[index].hidden = !copyOfLayers[index]?.hidden;
+
+        setLayers(copyOfLayers)
+
+        setNodes((nodes) =>
+            nodes.map((node) => {
+                if (node?.data?.layer === id) {
+                    const newNode = { ...node }
+                    newNode.hidden = !node?.hidden ?? true
+                    return newNode
+                } else return node
+            })
+        )
+    }
+
+    const lockLayer = (e, id) => {
+        e.stopPropagation();
+
+        e.stopPropagation();
+
+        const copyOfLayers = [...layers]
+        const index = copyOfLayers.findIndex(layer => layer.id === id)
+        copyOfLayers[index].locked = !copyOfLayers[index]?.locked;
+
+        setLayers(copyOfLayers)
+
+        setNodes((nodes) =>
+            nodes.map((node) => {
+                if (node?.data?.layer === id) {
+                    const newNode = { ...node }
+                    newNode.draggable = node?.draggable === false ? true : false
+                    return newNode
+                } else return node
+            })
+        )
+    }
+
+    const onMoveLayer = ({ items }) => {
+        const reversedItems = [...items].reverse();
+
+        setLayers(reversedItems)
+
+        // sorting the nodes array according to the layers order bellow
+        const layerOrderMap = reversedItems.reduce((acc, layer, index) => {
+            acc[layer.id] = index;
+            return acc;
+        }, {});
+
+        const copyOfNodes = JSON.parse(JSON.stringify(nodes))
+        const sortedNodes = copyOfNodes.sort((a, b) => {
+            return (layerOrderMap[a.data.layer] ?? Infinity) - (layerOrderMap[b.data.layer] ?? Infinity);
+        });
+
+        setNodes(sortedNodes)
     }
 
     const onGroupNodes = () => {
@@ -1460,7 +1597,86 @@ const PropertyPanel = ({ nodes, selectedNodes = [], selectedEdges = [], setNodes
         )
     }
 
+    const renderLayerItem = ({ item }) => {
+        const reversedItems = [...nodes].reverse();
+
+        return (
+            <>
+                <div key={item?.id}
+                    className={`${style.layerItemContainer} ${currentLayer === item?.id ? style.layerItemSelected : ''} hover-hand`}
+                    onClick={() => setCurrentLayer(item?.id)}
+                    onDoubleClick={onBlur}>
+                    <div className='m-r-5' onClick={() => expandLayer(item?.id)}>
+                        {item?.expanded ?
+                            <DownOutlined /> :
+                            <RightOutlined />
+                        }
+                    </div>
+                    <div className='m-r-5' onClick={(e) => hideLayer(e, item?.id)} >
+                        {item?.hidden ?
+                            <EyeInvisibleOutlined /> : <EyeOutlined />
+                        }
+                    </div>
+                    <div className='m-r-5' onClick={(e) => lockLayer(e, item?.id)} >
+                        {item?.locked ?
+                            <LockOutlined /> : <UnlockOutlined />
+                        }
+                    </div>
+                    {currentLayer === item?.id && isFocusedLayersInput ?
+                        <input type='text'
+                            autoFocus
+                            onBlur={onBlur}
+                            onChange={(e) => onChangeLayerText(e, item?.id)}
+                            className={style.layersInput}
+                            value={item?.label}
+                        /> : item?.label
+                    }
+                    {layers?.length > 1 ?
+                        <i
+                            className={`icon-delete-1 ${style.layerDeleteIcon}`}
+                            onClick={(e) => onDeleteLayer(e, item?.id)}
+                        /> : null
+                    }
+
+                </div>
+                {item?.expanded &&
+                    <>
+                        {reversedItems.map(node => {
+                            if (node?.data?.layer === item?.id) {
+                                return (
+                                    <div
+                                        key={node?.id}
+                                        className={`${style.layerItemContainer} ${node?.selected ? style.layerItemSelected : ''}`}
+                                    >
+                                        <div className='m-r-5 m-l-20 hover-hand' onClick={() => hideShowNode(node?.id)} >
+                                            {node?.hidden ?
+                                                <EyeInvisibleOutlined /> : <EyeOutlined />
+                                            }
+                                        </div>
+                                        <div className='m-r-5 hover-hand' onClick={() => lockNode(node?.id)} >
+                                            {node?.draggable === false ?
+                                                <LockOutlined /> : <UnlockOutlined />
+                                            }
+                                        </div>
+                                        <div className={style.layerShapeLabelContainer}>
+                                            {node?.id}
+                                        </div>
+                                        <i
+                                            className={`icon-delete-1 hover-hand ${style.layerDeleteIcon}`}
+                                            onClick={(e) => onDeleteNode(e, node?.id)}
+                                        />
+                                    </div>
+                                )
+                            }
+                        })}
+                    </>
+                }
+            </>
+        )
+    }
+
     const layersContent = () => {
+        const reversedItems = [...layers].reverse();
         return (
             <div>
                 <div className='flex-align-center'>
@@ -1475,35 +1691,20 @@ const PropertyPanel = ({ nodes, selectedNodes = [], selectedEdges = [], setNodes
                         </div>
                     }
                 </div>
+                <div className='flex-align-center'>
+                    <div className={style.groupLayersBtn} onClick={addNewLayer}>
+                        + Add New Layer
+                    </div>
+                </div>
 
                 <div className={style.layerContainer}>
-                    {
-                        sortedLayers().map(node => {
-                            return (
-                                <div key={node?.id} className={`${style.layerItemContainer} ${node?.selected ? style.layerItemSelected : ''}`}>
-                                    {node?.parentNode &&
-                                        <div className='m-r-20 hover-hand' />
-                                    }
-                                    <div className='m-r-5 hover-hand' onClick={() => hideShowLayer(node?.id)} >
-                                        {node?.hidden ?
-                                            <EyeInvisibleOutlined /> : <EyeOutlined />
-                                        }
-                                    </div>
-                                    <div className='m-r-5 hover-hand' onClick={() => lockNode(node?.id)} >
-                                        {node?.draggable === false ?
-                                            <LockOutlined /> : <UnlockOutlined />
-                                        }
-                                    </div>
-                                    {node?.type === 'group' &&
-                                        <div className='m-r-5 hover-hand'>
-                                            <DownOutlined />
-                                        </div>
-                                    }
-
-                                    {node?.id}
-                                </div>
-                            )
-                        })
+                    {layers?.length > 0 &&
+                        <Nestable
+                            items={reversedItems}
+                            renderItem={renderLayerItem}
+                            onChange={onMoveLayer}
+                            maxDepth={1}
+                        />
                     }
                 </div>
             </div>

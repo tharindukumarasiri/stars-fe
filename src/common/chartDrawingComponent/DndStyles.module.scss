@@ -270,10 +270,23 @@ div.customHandle2Bottom {
     max-width: 70px;
 }
 
+.layersInput {
+    height: 16px !important;
+    border: none;
+}
+
 .toolBarSeparator {
     height: 80%;
     width: 1px;
     background-color: rgba(180, 165, 165, 0.477);
+}
+
+.layerDeleteIcon {
+    margin-left: auto;
+}
+
+.layerShapeLabelContainer {
+    overflow: hidden;
 }
 
 .layerContainer {

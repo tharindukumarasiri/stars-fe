@@ -27,7 +27,8 @@ import {
     downloadImage,
     downloadJson,
     downloadTypes,
-    readFile
+    readFile,
+    formatOldNodesData
 } from '../utils';
 import { message } from 'antd';
 
@@ -134,9 +135,9 @@ export default ({ onSave, pasteNodes, clearSelectedNodes, getAllData, setEdges, 
             try {
                 const uploadedJson = JSON.parse(fileDataUrl)[0]
 
-                setNodes(uploadedJson?.nodes || []);
+                setNodes(formatOldNodesData(uploadedJson?.nodes));
                 setEdges(uploadedJson?.edges || []);
-                setUploadedData(uploadedJson?.nodeSizes, uploadedJson?.nodesData, uploadedJson?.chartData)
+                setUploadedData(uploadedJson?.nodeSizes, uploadedJson?.nodesData, uploadedJson?.chartData, uploadedJson?.layersData)
 
             } catch (e) {
                 console.log("unsuported format")

@@ -118,7 +118,26 @@ export const colorPickerTypes = {
     ROW_BG: 'ROW_BG',
 }
 
+export const defaultNewLayerRestData = {
+    expanded: false,
+    hidden: false,
+    locked: false
+}
+
 export const getId = (type) => `${type}_${+new Date()}`;
+
+export const formatOldNodesData = (nodesData) => {
+    const formattedNodes = nodesData?.map(node => {
+        if (!node?.data?.layer) {
+            node.data.layer = 'layer_1'
+            return node
+        } else {
+            return node
+        }
+    })
+
+    return formattedNodes || []
+}
 
 // this helper function returns the intersection point
 // of the line between the center of the intersectionNode and the target node

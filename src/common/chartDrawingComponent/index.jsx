@@ -33,7 +33,7 @@ import { useNodeDataStore } from './store'
 import HelperLines from "./customElements/HelperLines.jsx";
 
 import { useDiagramStore } from '../../Views/ChartDrawing/chartDrawingStore'
-import { getId, arrowColor, getHelperLines } from './utils'
+import { getId, arrowColor, getHelperLines, formatOldNodesData } from './utils'
 
 import style from './DndStyles.module.scss'
 import PagesPanel from './panels/PagesPanel.jsx';
@@ -65,7 +65,7 @@ const DnDFlow = ({ props }) => {
     const saveDiagram = useDiagramStore((state) => state.saveDiagram);
     const timeoutRef = useRef(null);
 
-    const [nodes, setNodes] = useNodesState(data?.nodes || []);
+    const [nodes, setNodes] = useNodesState(formatOldNodesData(data?.nodes));
     const [edges, setEdges, onEdgesChange] = useEdgesState(data?.edges || []);
     const [helperLineHorizontal, setHelperLineHorizontal] = useState(undefined);
     const [helperLineVertical, setHelperLineVertical] = useState(undefined);
@@ -87,6 +87,9 @@ const DnDFlow = ({ props }) => {
     const chartData = useNodeDataStore((state) => state.chartData);
     const changeChartData = useNodeDataStore((state) => state.setChartData);
     const copiedNodes = useNodeDataStore((state) => state.copiedNodes);
+    const currentLayer = useNodeDataStore((state) => state.currentLayer);
+    const setCurrentLayer = useNodeDataStore((state) => state.setCurrentLayer);
+    const layers = useNodeDataStore((state) => state.layers);
 
     const onConnect = useCallback((params) => setEdges((eds) => addEdge(params, eds)), []);
 
@@ -139,7 +142,7 @@ const DnDFlow = ({ props }) => {
     useEffect(() => {
         if (props?.DrawingContent) {
             setPagesData(JSON.parse(props?.DrawingContent) || [{ nodes: [], edges: [], nodesData: [], nodeSizes: [], chartData: [], pageName: 'Page 1' }])
-            setAllData(data?.nodeSizes || [], data?.nodesData || [], data?.chartData || [])
+            setAllData(data?.nodeSizes || [], data?.nodesData || [], data?.chartData || [], data?.layersData)
         }
     }, [props])
 
@@ -153,7 +156,7 @@ const DnDFlow = ({ props }) => {
 
     useEffect(() => {
         debounceSave();
-    }, [nodes, edges, textdata, size, chartData]);
+    }, [nodes, edges, textdata, size, chartData, layers]);
 
     const nodeTypes = useMemo(() => {
         const types = { ...Shapes }
@@ -173,6 +176,13 @@ const DnDFlow = ({ props }) => {
     const selectedNodes = useMemo(() => {
         return nodes.filter(node => node.selected)
     }, [nodes])
+
+    useEffect(() => {
+        const selectedNodeLayer = selectedNodes?.[0]?.data?.layer
+        if (selectedNodeLayer && selectedNodeLayer !== currentLayer) {
+            setCurrentLayer(selectedNodeLayer)
+        }
+    }, [selectedNodes])
 
     const selectedEdges = useMemo(() => {
         return edges.filter(edge => edge.selected)
@@ -199,10 +209,10 @@ const DnDFlow = ({ props }) => {
                 type: type,
                 position,
                 selected: true,
-                data: {},
+                data: {
+                    layer: currentLayer,
+                },
             };
-
-            clearSelectedNodes();
 
             if (type === 'Table') {
                 newNode.data = { ...newNode.data, addTableLine }
@@ -214,21 +224,40 @@ const DnDFlow = ({ props }) => {
                 newNode.data = { ...newNode.data, image };
             }
 
-            setNodes((nds) => nds.concat(newNode));
-        }, [reactFlowInstance]
+            // Create a layer order map
+            const layerOrderMap = layers.reduce((acc, layer, index) => {
+                acc[layer.id] = index;
+                return acc;
+            }, {});
+
+            const clearSelectedNodes = nodes.map((n) => {
+                const newNode = { ...n }
+                newNode.selected = false;
+                return newNode;
+            })
+
+            const updatedNodes = [...clearSelectedNodes, newNode];
+
+            // Sort shapes based on layer order
+            const sortedNodes = updatedNodes.sort((a, b) => {
+                return (layerOrderMap[a.data.layer] ?? Infinity) - (layerOrderMap[b.data.layer] ?? Infinity);
+            });
+
+            setNodes(sortedNodes);
+        }, [reactFlowInstance, currentLayer, layers, nodes]
     );
 
     const onChangePage = (index, isNewPage = false) => {
         const newPagesData = JSON.parse(JSON.stringify(pagesData))
-        newPagesData[currentPage] = { ...newPagesData[currentPage], nodes: nodes, edges: edges, nodesData: textdata, nodeSizes: size, chartData: chartData }
+        newPagesData[currentPage] = { ...newPagesData[currentPage], nodes: nodes, edges: edges, nodesData: textdata, nodeSizes: size, chartData: chartData, layersData: { layers: layers, currentLayer: currentLayer } }
         if (isNewPage)
             newPagesData.push({ nodes: [], edges: [], nodesData: [], nodeSizes: [], chartData: [], pageName: `Page ${index + 1}` });
 
         setPagesData(newPagesData)
 
         const currentPageData = pagesData?.[index]
-        setAllData(currentPageData?.nodeSizes || [], currentPageData?.nodesData || [], currentPageData?.chartData || [])
-        setNodes(currentPageData?.nodes || [])
+        setAllData(currentPageData?.nodeSizes || [], currentPageData?.nodesData || [], currentPageData?.chartData || [], currentPageData?.layersData)
+        setNodes(formatOldNodesData(currentPageData?.nodes))
         setEdges(currentPageData?.edges || [])
 
         setCurrentPage(index)
@@ -258,10 +287,10 @@ const DnDFlow = ({ props }) => {
 
     const getAllData = useCallback(() => {
         const newPagesData = JSON.parse(JSON.stringify(pagesData))
-        newPagesData[currentPage] = { ...newPagesData[currentPage], nodes: nodes, edges: edges, nodesData: textdata, nodeSizes: size, chartData: chartData }
+        newPagesData[currentPage] = { ...newPagesData[currentPage], nodes: nodes, edges: edges, nodesData: textdata, nodeSizes: size, chartData: chartData, layersData: { layers: layers, currentLayer: currentLayer } }
         setPagesData(newPagesData)
         return newPagesData
-    }, [nodes, edges, textdata, size, chartData]);
+    }, [nodes, edges, textdata, size, chartData, layers, currentLayer]);
 
     const onNodeDragStart = (evt, node) => {
         dragRef.current = node;

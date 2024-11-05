@@ -1,4 +1,5 @@
 import { create } from 'zustand'
+import { defaultNewLayerRestData } from "./utils"
 
 export const useNodeDataStore = create((set, get) => ({
     currentPage: 0,
@@ -10,11 +11,23 @@ export const useNodeDataStore = create((set, get) => ({
     chartData: [],
     copiedNodes: [],
     referenceModalId: '',
+    currentLayer: 'layer_1',
+    layers: [{
+        id: 'layer_1',
+        label: 'Layer 1',
+        ...defaultNewLayerRestData
+    }],
 
     setCurrentPage: (currentPage) => set({ currentPage }),
     setPagesData: (pagesData) => set({ pagesData }),
     setReferenceModalId: (referenceModalId) => set({ referenceModalId }),
-    setAllData: (size, textdata, chartData) => set({ size, textdata, chartData }),
+    setAllData: (size, textdata, chartData, layersData) => set({
+        size, textdata, chartData, layers: layersData?.layers || [{
+            id: 'layer_1',
+            label: 'Layer 1',
+            ...defaultNewLayerRestData
+        }], currentLayer: layersData?.currentLayer || 'layer_1'
+    }),
     setSize: (id, size) => {
         const index = get().size.findIndex(item => item.id === id)
 
@@ -56,9 +69,17 @@ export const useNodeDataStore = create((set, get) => ({
         }
     },
     setCopiedNodes: (data) => set({ copiedNodes: data }),
-    setUploadedData: (size, textdata, chartData) => set({
+    setUploadedData: (size, textdata, chartData, layersData) => set({
         size: size || [],
         textdata: textdata || [],
         chartData: chartData || [],
-    })
+        layers: layersData?.layers || [{
+            id: 'layer_1',
+            label: 'Layer 1',
+            ...defaultNewLayerRestData
+        }],
+        currentLayer: layersData?.currentLayer || 'layer_1'
+    }),
+    setLayers: (data) => set({ layers: data }),
+    setCurrentLayer: (data) => set({ currentLayer: data }),
 }))
