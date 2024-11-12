@@ -90,7 +90,7 @@ const SideBar = () => {
                     onClick={onArrowClicked} />
             </div>
             {sidebarVisible &&
-                <div className='m-t-10 m-r-15'>
+                <div className='m-t-10'>
                     <Input placeholder="Search" value={searchText} onChange={onChangeSearchText} endImage='icon-search-1' />
                 </div>
             }

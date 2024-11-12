@@ -27,28 +27,29 @@ const EConnectHome = () => {
 
     return (
         <div className="page-container econnect">
-            <div className="g-row m-b-20">
-                <TitleCard title={t('ECONNECT')} topIcon={"icon-partners-1"} topBgColor={"bg-green-dark"} />
-                <div className="g-col-9 p-l-20">
-                    <h4 className="text-left">{t('ECONNECT_HOME_TITLE')}</h4>
-                    <div className="g-row">
-                        <div className="g-col-6">
-                            <h5 className="text-left">{t('ECONNECT_HOME_COM_TYPE_TITLE')}</h5>
-                            <p>{t('ECONNECT_HOME_COM_TYPE_MESSAGE')}</p><br></br>
-                            <h5 className="text-left">{t('ECONNECT_HOME_COMUNICATIONS_TITLE')}</h5>
-                            <p>{t('ECONNECT_HOME_COMUNICATIONS_MESSAGE')}</p><br></br>
-                        </div>
-                        <div className="g-col-6">
-                            <h5 className="text-left">{t('ECONNECT_COM_BASKET_TITLE')}</h5>
-                            <p>{t('ECONNECT_COM_BASKET_MESSAGE')}</p><br></br>
-                            <h5 className="text-left">{t('ECONNECT_COM_LOGS_TITLE')}</h5>
-                            <p>{t('ECONNECT_COM_LOGS_MESSAGE')}</p>
-                        </div>
-                    </div>
+            {/*<div className="g-row m-b-20">*/}
+            {/*    <TitleCard title={t('ECONNECT')} topIcon={"icon-partners-1"} topBgColor={"bg-green-dark"} />*/}
+            {/*    <div className="g-col-9 p-l-20">*/}
+            {/*        <h4 className="text-left">{t('ECONNECT_HOME_TITLE')}</h4>*/}
+            {/*        <div className="g-row">*/}
+            {/*            <div className="g-col-6">*/}
+            {/*                <h5 className="text-left">{t('ECONNECT_HOME_COM_TYPE_TITLE')}</h5>*/}
+            {/*                <p>{t('ECONNECT_HOME_COM_TYPE_MESSAGE')}</p><br></br>*/}
+            {/*                <h5 className="text-left">{t('ECONNECT_HOME_COMUNICATIONS_TITLE')}</h5>*/}
+            {/*                <p>{t('ECONNECT_HOME_COMUNICATIONS_MESSAGE')}</p><br></br>*/}
+            {/*            </div>*/}
+            {/*            <div className="g-col-6">*/}
+            {/*                <h5 className="text-left">{t('ECONNECT_COM_BASKET_TITLE')}</h5>*/}
+            {/*                <p>{t('ECONNECT_COM_BASKET_MESSAGE')}</p><br></br>*/}
+            {/*                <h5 className="text-left">{t('ECONNECT_COM_LOGS_TITLE')}</h5>*/}
+            {/*                <p>{t('ECONNECT_COM_LOGS_MESSAGE')}</p>*/}
+            {/*            </div>*/}
+            {/*        </div>*/}
 
-                </div>
-            </div>
+            {/*    </div>*/}
+            {/*</div>*/}
             <div className="g-row">
+                <h4>eConnect</h4>
                 <NavigationCard
                     name={t('ECONNECT_HOME_NAV_CARD_TEMPLATE')}
                     cardColour={"bg-green-dark"}

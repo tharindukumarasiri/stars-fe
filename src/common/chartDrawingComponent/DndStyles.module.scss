@@ -43,8 +43,9 @@
 }
 
 .aside {
-    width: 20%;
+    width: 16%;
     max-width: 250px;
+    border: 1px solid #eee;
 }
 
 .sidebarColapsBtnContainer {
@@ -61,7 +62,7 @@
     position: absolute;
     font-size: 20px;
     cursor: pointer;
-    right: -10px;
+    right: -4px;
 }
 
 .propertyPanelCollapseBtn {
@@ -113,9 +114,8 @@
     }
 
     .dndflow aside {
-        border-right: 1px solid #eee;
-        border-left: 1px solid #eee;
-        padding: 5px 10px;
+        
+        padding: 5px 2px;
         font-size: 12px;
         background: #fcfcfc;
     }
@@ -437,7 +437,7 @@ div.customHandle2Bottom {
     height: 77vh;
     overflow-y: scroll;
     overflow-x: hidden;
-    padding-right: 10px;
+    padding-right: 0;
     margin-top: 10px;
 }
 

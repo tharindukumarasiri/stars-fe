@@ -1,19 +1,13 @@
-import React, { useState, memo, useMemo, useContext, useEffect } from 'react';
+import React, { useState, memo, useMemo, useContext } from 'react';
 import { AutoComplete } from "antd";
 import {
     SettingOutlined,
     EyeOutlined,
-    EyeInvisibleOutlined,
-    LockOutlined,
-    UnlockOutlined,
-    DownOutlined,
-    RightOutlined,
     ExpandAltOutlined
 } from '@ant-design/icons';
 import {
     MarkerType,
 } from 'reactflow';
-import Nestable from 'react-nestable';
 
 import ColorPicker from '../../colorPicker';
 import {
@@ -43,6 +37,7 @@ import { ReactComponent as AlignBottom } from '../../../assets/images/align-icon
 
 import style from '../DndStyles.module.scss'
 import 'react-nestable/dist/styles/index.css';
+import SortableLayer from "../customElements/SortableLayer";
 
 const propertyCategories = {
     GRID: 'Grid',
@@ -84,20 +79,13 @@ const PropertyPanel = ({ nodes, selectedNodes = [], selectedEdges = [], setNodes
     const [selectedDrawingPage, setSelectedDrawingPage] = useState({});
     const [selectedDrawingPagesData, setSelectedDrawingPagesData] = useState([])
     const [selectedPage, setSelectedPage] = useState({});
-    const [isFocusedLayersInput, setIsFocusedLayersInput] = useState(false)
 
-    const diagramData = useDiagramStore((state) => state.diagramData);
     const pagesData = useNodeDataStore((state) => state.pagesData);
     const formsData = useDiagramStore((state) => state.formsData);
     const setFormsModalVisible = useDiagramStore((state) => state.setFormsModalVisible);
     const collectionData = useDiagramStore((state) => state.collectionData);
     const getDrawingsForCollection = useDiagramStore((state) => state.getDrawingsForCollection);
     const drawingsData = useDiagramStore((state) => state.drawingsData);
-    const setCurrentCollectionId = useDiagramStore((state) => state.setCurrentCollectionId);
-    const getDiagramData = useDiagramStore((state) => state.getDiagramData);
-    const getUploadedImages = useDiagramStore((state) => state.getUploadedImages);
-    const getReferanceData = useDiagramStore((state) => state.getReferanceData);
-    const getFormsData = useDiagramStore((state) => state.getFormsData);
 
     const changeTextData = useNodeDataStore((state) => state.onTextChange);
     const selectedNodeId = useNodeDataStore((state) => state.selectedNodeId);
@@ -178,7 +166,6 @@ const PropertyPanel = ({ nodes, selectedNodes = [], selectedEdges = [], setNodes
     const hideTools = chartData?.hideTools || false
     const setHideTools = (value) => onChangeChartData({ hideTools: value })
 
-    const currentLayer = useNodeDataStore((state) => state.currentLayer);
     const setCurrentLayer = useNodeDataStore((state) => state.setCurrentLayer);
 
     const layers = useNodeDataStore((state) => state.layers);
@@ -220,7 +207,6 @@ const PropertyPanel = ({ nodes, selectedNodes = [], selectedEdges = [], setNodes
     const onSectionsCountIncrese = () => setSectionsCount(sectionsCount + 1);
     const onSectionsCountDecrease = () => setSectionsCount(sectionsCount - 1 > 0 ? sectionsCount - 1 : 0);
     const toggleFormModal = () => setFormsModalVisible(true);
-    const onBlur = () => setIsFocusedLayersInput(pre => !pre)
 
     const onSectionsCountChange = (e) => {
         e.preventDefault();
@@ -752,37 +738,6 @@ const PropertyPanel = ({ nodes, selectedNodes = [], selectedEdges = [], setNodes
         );
     }
 
-    const onDeleteNode = (e, id) => {
-        e.stopPropagation();
-
-        setNodes((nodes) => nodes.filter((node) => node?.id !== id && node?.parentNode !== id));
-        setEdges((edges) => edges.filter((edge) => edge?.source !== id));
-    }
-
-    const hideShowNode = (id) => {
-        setNodes((nodes) =>
-            nodes.map((node) => {
-                if (node.id === id) {
-                    const newNode = { ...node }
-                    newNode.hidden = !node?.hidden ?? true
-                    return newNode
-                } else return node
-            })
-        )
-    }
-
-    const lockNode = (id) => {
-        setNodes((nodes) =>
-            nodes.map((node) => {
-                if (node.id === id) {
-                    const newNode = { ...node }
-                    newNode.draggable = node?.draggable === false ? true : false
-                    return newNode
-                } else return node
-            })
-        )
-    }
-
     const addNewLayer = () => {
         const copyOfLayers = [...layers]
         const newLayerId = getId('layer')
@@ -801,88 +756,7 @@ const PropertyPanel = ({ nodes, selectedNodes = [], selectedEdges = [], setNodes
         setCurrentLayer(newLayerId)
     }
 
-    const onChangeLayerText = (e, id) => {
-        e.preventDefault();
-
-        const copyOfLayers = [...layers]
-        const index = copyOfLayers.findIndex(layer => layer.id === id)
-        copyOfLayers[index].label = e.target.value;
-
-        setLayers(copyOfLayers)
-    }
-
-    const onDeleteLayer = (e, id) => {
-        e.stopPropagation();
-
-        const copyOfLayers = [...layers]
-        const index = copyOfLayers.findIndex(layer => layer.id === id)
-        copyOfLayers.splice(index, 1);
-
-        setLayers(copyOfLayers)
-
-        if (currentLayer === id) {
-            let newCurrentLayerIndex = index
-            if (newCurrentLayerIndex > copyOfLayers?.length - 1) {
-                newCurrentLayerIndex = copyOfLayers?.length - 1
-            }
-
-            setCurrentLayer(copyOfLayers[newCurrentLayerIndex]?.id)
-        }
-
-        setNodes((nodes) => nodes.filter((node) => node?.data?.layer !== id));
-    }
-
-    const expandLayer = (id) => {
-        const copyOfLayers = [...layers]
-        const index = copyOfLayers.findIndex(layer => layer.id === id)
-        copyOfLayers[index].expanded = !copyOfLayers[index]?.expanded;
-
-        setLayers(copyOfLayers)
-    }
-
-    const hideLayer = (e, id) => {
-        e.stopPropagation();
-
-        const copyOfLayers = [...layers]
-        const index = copyOfLayers.findIndex(layer => layer.id === id)
-        copyOfLayers[index].hidden = !copyOfLayers[index]?.hidden;
-
-        setLayers(copyOfLayers)
-
-        setNodes((nodes) =>
-            nodes.map((node) => {
-                if (node?.data?.layer === id) {
-                    const newNode = { ...node }
-                    newNode.hidden = !node?.hidden ?? true
-                    return newNode
-                } else return node
-            })
-        )
-    }
-
-    const lockLayer = (e, id) => {
-        e.stopPropagation();
-
-        e.stopPropagation();
-
-        const copyOfLayers = [...layers]
-        const index = copyOfLayers.findIndex(layer => layer.id === id)
-        copyOfLayers[index].locked = !copyOfLayers[index]?.locked;
-
-        setLayers(copyOfLayers)
-
-        setNodes((nodes) =>
-            nodes.map((node) => {
-                if (node?.data?.layer === id) {
-                    const newNode = { ...node }
-                    newNode.draggable = node?.draggable === false ? true : false
-                    return newNode
-                } else return node
-            })
-        )
-    }
-
-    const onMoveLayer = ({ items }) => {
+    const onMoveLayer = (items) => {
         const reversedItems = [...items].reverse();
 
         setLayers(reversedItems)
@@ -1597,86 +1471,9 @@ const PropertyPanel = ({ nodes, selectedNodes = [], selectedEdges = [], setNodes
         )
     }
 
-    const renderLayerItem = ({ item }) => {
-        const reversedItems = [...nodes].reverse();
-
-        return (
-            <>
-                <div key={item?.id}
-                    className={`${style.layerItemContainer} ${currentLayer === item?.id ? style.layerItemSelected : ''} hover-hand`}
-                    onClick={() => setCurrentLayer(item?.id)}
-                    onDoubleClick={onBlur}>
-                    <div className='m-r-5' onClick={() => expandLayer(item?.id)}>
-                        {item?.expanded ?
-                            <DownOutlined /> :
-                            <RightOutlined />
-                        }
-                    </div>
-                    <div className='m-r-5' onClick={(e) => hideLayer(e, item?.id)} >
-                        {item?.hidden ?
-                            <EyeInvisibleOutlined /> : <EyeOutlined />
-                        }
-                    </div>
-                    <div className='m-r-5' onClick={(e) => lockLayer(e, item?.id)} >
-                        {item?.locked ?
-                            <LockOutlined /> : <UnlockOutlined />
-                        }
-                    </div>
-                    {currentLayer === item?.id && isFocusedLayersInput ?
-                        <input type='text'
-                            autoFocus
-                            onBlur={onBlur}
-                            onChange={(e) => onChangeLayerText(e, item?.id)}
-                            className={style.layersInput}
-                            value={item?.label}
-                        /> : item?.label
-                    }
-                    {layers?.length > 1 ?
-                        <i
-                            className={`icon-delete-1 ${style.layerDeleteIcon}`}
-                            onClick={(e) => onDeleteLayer(e, item?.id)}
-                        /> : null
-                    }
-
-                </div>
-                {item?.expanded &&
-                    <>
-                        {reversedItems.map(node => {
-                            if (node?.data?.layer === item?.id) {
-                                return (
-                                    <div
-                                        key={node?.id}
-                                        className={`${style.layerItemContainer} ${node?.selected ? style.layerItemSelected : ''}`}
-                                    >
-                                        <div className='m-r-5 m-l-20 hover-hand' onClick={() => hideShowNode(node?.id)} >
-                                            {node?.hidden ?
-                                                <EyeInvisibleOutlined /> : <EyeOutlined />
-                                            }
-                                        </div>
-                                        <div className='m-r-5 hover-hand' onClick={() => lockNode(node?.id)} >
-                                            {node?.draggable === false ?
-                                                <LockOutlined /> : <UnlockOutlined />
-                                            }
-                                        </div>
-                                        <div className={style.layerShapeLabelContainer}>
-                                            {node?.id}
-                                        </div>
-                                        <i
-                                            className={`icon-delete-1 hover-hand ${style.layerDeleteIcon}`}
-                                            onClick={(e) => onDeleteNode(e, node?.id)}
-                                        />
-                                    </div>
-                                )
-                            }
-                        })}
-                    </>
-                }
-            </>
-        )
-    }
-
     const layersContent = () => {
         const reversedItems = [...layers].reverse();
+
         return (
             <div>
                 <div className='flex-align-center'>
@@ -1699,11 +1496,12 @@ const PropertyPanel = ({ nodes, selectedNodes = [], selectedEdges = [], setNodes
 
                 <div className={style.layerContainer}>
                     {layers?.length > 0 &&
-                        <Nestable
+                        <SortableLayer
                             items={reversedItems}
-                            renderItem={renderLayerItem}
-                            onChange={onMoveLayer}
-                            maxDepth={1}
+                            nodes={nodes}
+                            setNodes={setNodes}
+                            setItems={onMoveLayer}
+                            setEdges={setEdges}
                         />
                     }
                 </div>
