@@ -23,7 +23,9 @@
 @import 'common-landing-page.scss';
 @import 'dropdownList.scss';
 
-*, *:before, *:after {
+*,
+*:before,
+*:after {
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
     box-sizing: border-box;
@@ -47,7 +49,7 @@
     .logo {
         height: 26px !important;
         margin: 12px !important;
-        width:34px;
+        width: 34px;
     }
 
     #top-menu {
@@ -61,7 +63,7 @@
     }
 }
 
-.k-menu:not(.k-context-menu) > .k-item {
+.k-menu:not(.k-context-menu)>.k-item {
     color: #ffffff !important;
 }
 
@@ -79,7 +81,8 @@
     box-sizing: border-box;
 }
 
-html, body {
+html,
+body {
     overflow-x: hidden;
     height: 100%;
     background-color: $body-color;
@@ -105,11 +108,16 @@ html, body {
     bottom: 4px;
     top: 50px;
 }
-.left-0{left:0 !important}
+
+.left-0 {
+    left: 0 !important
+}
+
 #component-container {
     position: relative;
     height: 100%;
 }
+
 .left-menu-icon {
     margin-right: 5px;
     float: left;
@@ -127,7 +135,7 @@ ul.custom-button-list {
 }
 
 
-.m-d.expand-list > li {
+.m-d.expand-list>li {
     position: relative;
 }
 
@@ -153,7 +161,7 @@ ul.custom-button-list {
     left: 0;
     top: 0;
 
-    > span {
+    >span {
         margin-top: 14px
     }
 }
@@ -183,7 +191,8 @@ ul.custom-button-list {
     }
 }
 
-.m-d li[data-md-content="100"] input[class^="tab"]:checked ~ .ex-content, .m-d li[data-md-content="200"] input[class^="tab"]:checked ~ .ex-content {
+.m-d li[data-md-content="100"] input[class^="tab"]:checked~.ex-content,
+.m-d li[data-md-content="200"] input[class^="tab"]:checked~.ex-content {
     display: inline-table;
     transition: all 150ms ease-in-out 0ms;
 }
@@ -226,7 +235,7 @@ ul.custom-button-list {
     transition: transform 150ms ease-in-out 0ms;
 }
 
-.m-d input[class^="tab"]:checked ~ .open-close-icon .icon-right-arrow {
+.m-d input[class^="tab"]:checked~.open-close-icon .icon-right-arrow {
     transform: rotate(90deg);
     transition: transform 150ms ease-in-out 0ms;
 }
@@ -286,7 +295,8 @@ ul.custom-button-list {
     transition: all .2s ease-out;
     line-height: 2em;
 
-    &:hover, &:focus {
+    &:hover,
+    &:focus {
         /* inset | offset-x | offset-y | blur-radius | spread-radius | color */
         outline: 0;
     }
@@ -316,6 +326,7 @@ ul.custom-button-list {
     /* Firefox 18- */
     color: #919293;
 }
+
 /*end/floating lable  =============*/
 
 
@@ -327,7 +338,7 @@ ul.custom-button-list {
 .login-top {
     width: 100%;
     min-height: 50px;
-    padding:1%;
+    padding: 1%;
     display: block;
     text-align: center
 }
@@ -350,7 +361,6 @@ ul.custom-button-list {
     top: 0;
     right: 0;
     bottom: 0;
-    background: $darkest-blue url("/Content/images/night-sky.svg") no-repeat left top;
     z-index: 10001;
 
     .skyline {
@@ -358,6 +368,7 @@ ul.custom-button-list {
         bottom: 0;
     }
 }
+
 // home page
 .main-img-wrapper {
     min-height: 302px
@@ -378,8 +389,7 @@ ul.custom-button-list {
 .home-img-bg {
     width: 100%;
     text-align: center;
-    background: url(/Content/images/footer-email-template.svg) repeat-x;
-    
+
     img {
         width: 100%;
     }
@@ -399,13 +409,16 @@ ul.custom-button-list {
         width: 40px;
         height: auto
     }
-    i{font-size:3em}
-}
-.star-4-logos:hover {
-    transform: scale(1.06);
-    text-decoration:none;
+
+    i {
+        font-size: 3em
+    }
 }
 
+.star-4-logos:hover {
+    transform: scale(1.06);
+    text-decoration: none;
+}
 
 
 .scroll-to {
@@ -414,7 +427,7 @@ ul.custom-button-list {
     width: 100px;
     left: 50%;
     margin-left: -50px;
-  
+
     .scroll-down {
         border: 2px solid $theme;
         border-radius: 20px;
@@ -425,7 +438,7 @@ ul.custom-button-list {
         position: absolute;
         right: 0;
         width: 30px;
-        cursor:pointer;
+        cursor: pointer;
     }
 
     .scroll-down::before {
@@ -443,90 +456,88 @@ ul.custom-button-list {
     }
 
     @-moz-keyframes scrollDownAnimation {
-        0% {opacity: 0; transform: translate(0, 0);}
-        40% { opacity: 1; }
-        80% { opacity: 0;transform: translate(0, 20px); }
-        100% { opacity: 0;}
+        0% {
+            opacity: 0;
+            transform: translate(0, 0);
+        }
+
+        40% {
+            opacity: 1;
+        }
+
+        80% {
+            opacity: 0;
+            transform: translate(0, 20px);
+        }
+
+        100% {
+            opacity: 0;
+        }
     }
 
     @-webkit-keyframes scrollDownAnimation {
-        0% {opacity: 0;transform: translate(0, 0); }
-        40% { opacity: 1; }
-        80% {opacity: 0; transform: translate(0, 20px);  }
-        100% {opacity: 0; }
+        0% {
+            opacity: 0;
+            transform: translate(0, 0);
+        }
+
+        40% {
+            opacity: 1;
+        }
+
+        80% {
+            opacity: 0;
+            transform: translate(0, 20px);
+        }
+
+        100% {
+            opacity: 0;
+        }
     }
 
     @-o-keyframes scrollDownAnimation {
-        0% { opacity: 0;transform: translate(0, 0);  }
-        40% { opacity: 1; }
-        80% {opacity: 0; transform: translate(0, 20px); }
-        100% {opacity: 0; }
+        0% {
+            opacity: 0;
+            transform: translate(0, 0);
+        }
+
+        40% {
+            opacity: 1;
+        }
+
+        80% {
+            opacity: 0;
+            transform: translate(0, 20px);
+        }
+
+        100% {
+            opacity: 0;
+        }
     }
 
     @keyframes scrollDownAnimation {
-        0% { opacity: 0; transform: translate(0, 0);}
-        40% {opacity: 1; }
-        80% { opacity: 0; transform: translate(0, 20px); }
-        100% {opacity: 0; }
-    }
-}
-
-.star-digital-skyline {
-    width: 100%;
-    background: url("/Client/Boot/assets/images/star-digital-skyline.png") repeat-X left top;
-    height: 400px;
-    background-size: cover;
-}
-
-/*=========Star Admin Home styles=====*/
-#tile-menu-9 {
-    > button {
-        padding: 30px;
-        color: $white;
-        border-radius: 4px;
-        > span {
-            font-size: 2em;
+        0% {
+            opacity: 0;
+            transform: translate(0, 0);
         }
-    }
-    > button:nth-child(1) {
-        background-color: $blue-purple;
-    }
-    > button:nth-child(2) {
-        background-color: $vialot;
-    }
-    > button:nth-child(3) {
-        background-color: $vialot-lite;
-    }
-    > button:nth-child(4) {
-        background-color: $blue-purple-dark;
-    }
-    > button:nth-child(5) {
-        background-color: $blue-dark1;
-    }
-}
 
-#tile-menu-12 {
-    > button {
-        padding: 30px;
-        color: $white;
-        border-radius: 4px;
-
-        > span {
-            font-size: 2em;
+        40% {
+            opacity: 1;
         }
-    }
 
-    > button:nth-child(odd) {
-        background-color: $theme-dark1;
-    }
+        80% {
+            opacity: 0;
+            transform: translate(0, 20px);
+        }
 
-    > button:nth-child(even) {
-        background-color: $theme-darkest;
+        100% {
+            opacity: 0;
+        }
     }
 }
 
 .action-bar {
-   // background-color: $theme-tint-99;
+    // background-color: $theme-tint-99;
     position: relative;
     text-align: right;
     padding: 3px;
@@ -540,7 +551,11 @@ ul.custom-button-list {
 }
 
 // MVC overrides
-.company, .contact-persons, .agreements, .Catalogues, .inventory {
+.company,
+.contact-persons,
+.agreements,
+.Catalogues,
+.inventory {
     color: $white;
     font-size: 1em;
 
@@ -551,14 +566,31 @@ ul.custom-button-list {
     color: $white;
     font-size: 1em;
 }
-.company { background-color: $blue-dark1 ;}
-.contact-persons {background-color: $blue-dark2;}
-.agreements {background-color: $blue-dark3;}
-.Catalogues {background-color: $blue-dark1;}
-.inventory { background-color: $blue-dark2;}
+
+.company {
+    background-color: $blue-dark1 ;
+}
+
+.contact-persons {
+    background-color: $blue-dark2;
+}
+
+.agreements {
+    background-color: $blue-dark3;
+}
+
+.Catalogues {
+    background-color: $blue-dark1;
+}
+
+.inventory {
+    background-color: $blue-dark2;
+}
 
 .econnect {
-    h4, h5 {
+
+    h4,
+    h5 {
         color: $green-dark1
     }
 }
@@ -571,6 +603,7 @@ ul.custom-button-list {
     display: grid;
     border-bottom: 2px solid $theme-tint-95
 }
+
 .landing-page-container {
     display: block;
     position: relative;
@@ -615,10 +648,10 @@ ul.custom-button-list {
     color: $red
 }
 
-.overflow-scroll-y{
+.overflow-scroll-y {
     display: block;
     overflow-y: scroll;
-    width:100%;
+    width: 100%;
 }
 
 .result-item {
@@ -640,6 +673,10 @@ ul.custom-button-list {
     border-top-left-radius: 3px;
     border-top-right-radius: 3px;
 }
-.link{color:$link-color; cursor:pointer;
-      &:hover{}
+
+.link {
+    color: $link-color;
+    cursor: pointer;
+
+    &:hover {}
 }

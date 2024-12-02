@@ -262,10 +262,10 @@ const DrawingsList = ({ collectionId }) => {
     const { t } = useTranslation();
 
     useEffect(() => {
-        getDiagramData(collectionId);
-        getUploadedImages();
-        getReferanceData();
-        getFormsData();
+        // getDiagramData(collectionId);
+        // getUploadedImages();
+        // getReferanceData();
+        // getFormsData();
     }, [currentCollectionId]);
 
     const tableHeaders = useMemo(() => {
@@ -326,8 +326,9 @@ const DrawingsList = ({ collectionId }) => {
     };
 
     const toggleModal = (name = '') => {
-        setModalVisible(!modalVisible);
-        setNewDrawingName(name);
+        // setModalVisible(!modalVisible);
+        // setNewDrawingName(name);
+        changeActiveTab(NAVIGATION_PAGES.CHART_DRAWING, { DrawingContent: null, CollectionId: 1 }, true, 'newDrawingName')
     };
 
     const handleOk = () => {
@@ -465,17 +466,17 @@ const MembersView = (props) => {
     }, []);
 
     useEffect(() => {
-        if(selectedCompany?.tenantId)
+        if (selectedCompany?.tenantId)
             getUsers();
     }, [selectedCompany]);
 
     const filterdMembersData = useMemo(() => {
         const filterdData = membersData.map((member) => {
             const userData = companyUsers.find(user => user.Key === member.MemberId)
-            return {...userData, ...member}
+            return { ...userData, ...member }
         })
         return filterdData
-    },[membersData, companyUsers])
+    }, [membersData, companyUsers])
 
     const tableHeaders = useMemo(() => {
         const headers = membersTableHeaders(t)
@@ -507,24 +508,24 @@ const MembersView = (props) => {
     };
 
     const deleteProjectMember = (member) => {
-      confirm({
-        title: <strong className="red">{t("ARE_YOU_SURE")}?</strong>,
-        icon: <ExclamationCircleOutlined />,
+        confirm({
+            title: <strong className="red">{t("ARE_YOU_SURE")}?</strong>,
+            icon: <ExclamationCircleOutlined />,
 
-        okText: t("YES"),
-        okType: "danger",
-        cancelText: t("NO"),
+            okText: t("YES"),
+            okType: "danger",
+            cancelText: t("NO"),
 
-        onOk() {
-            deleteDrawingMember(member, loggedUser.Id)
-            .then(() => {
-                getDrawingMembersData()
-            })
-            .catch(() => {
-              message.error(t("MSG_DELETE_MEMBER_FAIL"));
-            });
-        },
-      });
+            onOk() {
+                deleteDrawingMember(member, loggedUser.Id)
+                    .then(() => {
+                        getDrawingMembersData()
+                    })
+                    .catch(() => {
+                        message.error(t("MSG_DELETE_MEMBER_FAIL"));
+                    });
+            },
+        });
     };
 
     const handleOk = () => {

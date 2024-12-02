@@ -2,16 +2,16 @@ import React, { useState, useEffect } from "react";
 import { getSelectedCompany, getCompanyUsers, getLanguage, getUser } from "../services/userService";
 
 export const FetchCurrentCompany = () => {
-    const [selectedCompany, setSelectedCompany] = useState({ name: '', companyRegistrationId: '' });
+    const [selectedCompany, setSelectedCompany] = useState({ name: '', companyRegistrationId: '922936919', orgId: '922936919' });
 
     useEffect(() => {
         getUserDetails();
     }, []);
 
     const getUserDetails = async () => {
-        getSelectedCompany().then((company) => {
-            setSelectedCompany(company);
-        });
+        // getSelectedCompany().then((company) => {
+        //     setSelectedCompany(company);
+        // });       
     };
 
     return [selectedCompany];
@@ -35,18 +35,22 @@ export const FetchCurrentUser = () => {
 
 
 export const FetchCompanyUsers = () => {
-    const [users, setUsers] = useState(null);
+    const [users, setUsers] = useState([
+        { Email: "ni@gmail.com", UserName: "nime", PartyId: 29 },
+        { Email: "hetti@gmail.com", UserName: "hetti", PartyId: 12 },
+        { Email: "nabc@gmail.com", UserName: "abc", PartyId: 30 },
+    ]);
 
     useEffect(() => {
         getUserDetails();
     }, []);
 
     const getUserDetails = async () => {
-        getSelectedCompany().then((company) => {
-            getCompanyUsers({ id: company.companyPartyId }).then((response) => {
-                setUsers(response.Data);
-            })
-        })
+        // getSelectedCompany().then((company) => {
+        //     getCompanyUsers({ id: company.companyPartyId }).then((response) => {
+        //         setUsers(response.Data);
+        //     })
+        // })
     };
 
     return [users];

@@ -61,7 +61,7 @@ const DrawingToolHome = () => {
     const { changeActiveTab } = useContext(TabContext);
 
     useEffect(() => {
-      if (currentCompany?.tenantId) getContactsList();
+        //   if (currentCompany?.tenantId) getContactsList();
     }, [currentCompany]);
 
     useEffect(() => {
@@ -158,9 +158,10 @@ const DrawingToolHome = () => {
     }
 
     const toggleModal = () => {
-        setShowModel(pre => !pre);
-        setNewCollectionData(newCollectionPayload)
-        setNewCollectionDataErrors(newCollectionPayload)
+        // setShowModel(pre => !pre);
+        // setNewCollectionData(newCollectionPayload)
+        // setNewCollectionDataErrors(newCollectionPayload)
+        changeActiveTab(NAVIGATION_PAGES.COLLECTION_DETAILS, {}, true, 'Test')
     }
 
     const validateFields = () => {
@@ -169,7 +170,7 @@ const DrawingToolHome = () => {
             setNewCollectionDataErrors(pre => ({ ...pre, Name: "Please enter name" }))
             validation = false
         }
-        if(collectionData?.some(collection => collection?.Name === newCollectionData.Name)){
+        if (collectionData?.some(collection => collection?.Name === newCollectionData.Name)) {
             setNewCollectionDataErrors(pre => ({ ...pre, Name: "Collection name already exists" }))
             validation = false
         }

@@ -8,7 +8,7 @@ axios.interceptors.response.use(null, error => {
     const sessionExpired = error.response.status === 302
 
     if (error.config?.url?.includes(config.UPDATE_DRAWING_ITEM)) {
-        message.error('Failed to save drawing');
+        // message.error('Failed to save drawing');
     } else if (!expectedError) {
         console.log("Http error: ", error);
         message.error('An unexpected network error occurred.');
@@ -22,8 +22,8 @@ axios.interceptors.response.use(null, error => {
 });
 
 axios.interceptors.request.use((config) => {
-    config.headers.common['tenant-id'] = localStorage.getItem('tenant-id');
-    config.headers.common['tenant-db'] = localStorage.getItem('tenant-db');
+    config.headers.common['tenant-id'] = 'Star_DT_001';
+    config.headers.common['tenant-db'] = 'Star_DT_001';
     return config;
 }, (error) => {
     return Promise.reject(error);
