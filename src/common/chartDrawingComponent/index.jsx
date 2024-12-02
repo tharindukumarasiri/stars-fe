@@ -8,7 +8,8 @@ import ReactFlow, {
     Background,
     Panel,
     MarkerType,
-    applyNodeChanges
+    applyNodeChanges,
+    useReactFlow
 } from 'reactflow';
 import 'reactflow/dist/style.css';
 
@@ -33,7 +34,7 @@ import { useNodeDataStore } from './store'
 import HelperLines from "./customElements/HelperLines.jsx";
 
 import { useDiagramStore } from '../../Views/ChartDrawing/chartDrawingStore'
-import { getId, arrowColor, getHelperLines, formatOldNodesData } from './utils'
+import { getId, arrowColor, getHelperLines, formatOldNodesData, getNodePositionInsideParent } from './utils'
 
 import style from './DndStyles.module.scss'
 import PagesPanel from './panels/PagesPanel.jsx';
@@ -65,6 +66,7 @@ const DnDFlow = ({ props }) => {
     const saveDiagram = useDiagramStore((state) => state.saveDiagram);
     const timeoutRef = useRef(null);
 
+    const { getIntersectingNodes } = useReactFlow();
     const [nodes, setNodes] = useNodesState(formatOldNodesData(data?.nodes));
     const [edges, setEdges, onEdgesChange] = useEdgesState(data?.edges || []);
     const [helperLineHorizontal, setHelperLineHorizontal] = useState(undefined);
@@ -204,6 +206,15 @@ const DnDFlow = ({ props }) => {
                 x: event.clientX - reactFlowBounds.left,
                 y: event.clientY - reactFlowBounds.top,
             });
+
+            const intersections = getIntersectingNodes({
+                x: position.x,
+                y: position.y,
+                width: 40,
+                height: 40,
+            }).filter((n) => parentNodes.includes(n.type));
+            const groupNode = intersections[0];
+
             const newNode = {
                 id: getId(type),
                 type: type,
@@ -213,6 +224,22 @@ const DnDFlow = ({ props }) => {
                     layer: currentLayer,
                 },
             };
+
+            if (groupNode) {
+                // if we drop a node on a group node, we want to position the node inside the group
+                const pos = getNodePositionInsideParent(
+                    {
+                        position,
+                        width: 40,
+                        height: 40,
+                    },
+                    groupNode
+                )
+
+                newNode.position = pos;
+                newNode.parentNode = groupNode?.id;
+                newNode.extent = 'parent';
+            }
 
             if (type === 'Table') {
                 newNode.data = { ...newNode.data, addTableLine }
@@ -318,11 +345,15 @@ const DnDFlow = ({ props }) => {
         setNodes((nodes) =>
             nodes.map((n) => {
                 const isParentNode = parentNodes.some(parent => target?.id?.includes(parent));
-
                 if (target && isParentNode && node?.id === n?.id && !n?.parentNode) {
+                    const pos = getNodePositionInsideParent(
+                        n,
+                        target
+                    )
+
                     n.parentNode = target?.id;
                     n.extent = 'parent';
-                    n.position = { x: target.width * .4, y: target.height * .4 }
+                    n.position = pos
                 }
                 return n;
             })
@@ -431,72 +462,69 @@ const DnDFlow = ({ props }) => {
     return (
         <div className={style.dndflow}>
             <Sidebar />
-
-            <ReactFlowProvider>
-                <Panel position="top-center">
-                    <ToolBar
-                        onSave={onSave}
-                        pasteNodes={pasteCopiedNodes}
-                        clearSelectedNodes={clearSelectedNodes}
-                        getAllData={getAllData}
-                        edges={edges}
-                        setEdges={setEdges}
-                        setNodes={setNodes}
-                        spacebarActive={spacebarActive}
-                        setSpacebarActive={setSpacebarActive}
-                    />
-                </Panel>
-                <div className={style.reactflowrapper} ref={reactFlowWrapper}>
-                    <ReactFlow
-                        nodes={nodes}
-                        edges={edges}
-                        onNodesChange={onNodesChange}
-                        onEdgesChange={onEdgesChange}
-                        onConnect={onConnect}
-                        onInit={setReactFlowInstance}
-                        onDrop={onDrop}
-                        onDragOver={onDragOver}
-                        onNodeDragStart={onNodeDragStart}
-                        onNodeDrag={onNodeDrag}
-                        onNodeDragStop={onNodeDragStop}
-                        onNodeContextMenu={onNodeContextMenu}
-                        onPaneClick={onPaneClick}
-                        onNodeClick={onPaneClick}
-                        panOnScroll={true}
-                        selectionOnDrag={true}
-                        panOnDrag={panOnDrag}
-                        nodeTypes={nodeTypes}
-                        edgeTypes={edgeTypes}
-                        defaultEdgeOptions={defaultEdgeOptions}
-                        connectionLineComponent={CustomConnectionLine}
-                        connectionLineStyle={connectionLineStyle}
-                        zoomOnDoubleClick={false}
-                        nodesDraggable={!spacebarActive}
-                        nodesFocusable={!spacebarActive}
-                        selectionMode={SelectionMode.Partial}
-                    >
-                        <Background variant="dots" gap={8} size={0.5} id={props?.CollectionId} />
-                        <Panel />
-                        <HelperLines
-                            horizontal={helperLineHorizontal}
-                            vertical={helperLineVertical}
-                        />
-                    </ReactFlow>
-                </div>
-                {menu && <ContextMenu onClick={onPaneClick} {...menu} />}
-
-                <PropertyPanel
-                    nodes={nodes}
-                    selectedNodes={selectedNodes}
-                    selectedEdges={selectedEdges}
-                    setNodes={setNodes}
+            <Panel position="top-center">
+                <ToolBar
+                    onSave={onSave}
+                    pasteNodes={pasteCopiedNodes}
+                    clearSelectedNodes={clearSelectedNodes}
+                    getAllData={getAllData}
+                    edges={edges}
                     setEdges={setEdges}
-                    onChangePage={onChangePage}
+                    setNodes={setNodes}
+                    spacebarActive={spacebarActive}
+                    setSpacebarActive={setSpacebarActive}
                 />
+            </Panel>
+            <div className={style.reactflowrapper} ref={reactFlowWrapper}>
+                <ReactFlow
+                    nodes={nodes}
+                    edges={edges}
+                    onNodesChange={onNodesChange}
+                    onEdgesChange={onEdgesChange}
+                    onConnect={onConnect}
+                    onInit={setReactFlowInstance}
+                    onDrop={onDrop}
+                    onDragOver={onDragOver}
+                    onNodeDragStart={onNodeDragStart}
+                    onNodeDrag={onNodeDrag}
+                    onNodeDragStop={onNodeDragStop}
+                    onNodeContextMenu={onNodeContextMenu}
+                    onPaneClick={onPaneClick}
+                    onNodeClick={onPaneClick}
+                    panOnScroll={true}
+                    selectionOnDrag={true}
+                    panOnDrag={panOnDrag}
+                    nodeTypes={nodeTypes}
+                    edgeTypes={edgeTypes}
+                    defaultEdgeOptions={defaultEdgeOptions}
+                    connectionLineComponent={CustomConnectionLine}
+                    connectionLineStyle={connectionLineStyle}
+                    zoomOnDoubleClick={false}
+                    nodesDraggable={!spacebarActive}
+                    nodesFocusable={!spacebarActive}
+                    selectionMode={SelectionMode.Partial}
+                >
+                    <Background variant="dots" gap={8} size={0.5} id={props?.CollectionId} />
+                    <Panel />
+                    <HelperLines
+                        horizontal={helperLineHorizontal}
+                        vertical={helperLineVertical}
+                    />
+                </ReactFlow>
+            </div>
+            {menu && <ContextMenu onClick={onPaneClick} {...menu} />}
 
-                <PagesPanel onChangePage={onChangePage} />
+            <PropertyPanel
+                nodes={nodes}
+                selectedNodes={selectedNodes}
+                selectedEdges={selectedEdges}
+                setNodes={setNodes}
+                setEdges={setEdges}
+                onChangePage={onChangePage}
+            />
 
-            </ReactFlowProvider>
+            <PagesPanel onChangePage={onChangePage} />
+
             <ReferenceModal
                 nodes={nodes}
                 setNodes={setNodes}
@@ -506,4 +534,10 @@ const DnDFlow = ({ props }) => {
     );
 };
 
-export default DnDFlow;
+export default function Flow({ props }) {
+    return (
+        <ReactFlowProvider>
+            <DnDFlow props={props} />
+        </ReactFlowProvider>
+    );
+}

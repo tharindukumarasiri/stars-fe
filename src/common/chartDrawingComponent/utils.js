@@ -465,3 +465,36 @@ export function getHelperLines(
             return result;
         }, defaultResult);
 }
+
+export const getNodePositionInsideParent = (
+    node,
+    groupNode
+) => {
+    try {
+        const position = node.position ?? { x: node?.x, y: node?.y };
+        const nodeWidth = node?.width ?? 0;
+        const nodeHeight = node?.height ?? 0;
+        const groupWidth = groupNode?.width ?? 0;
+        const groupHeight = groupNode?.height ?? 0;
+
+        if (position.x < groupNode.position.x) {
+            position.x = 0;
+        } else if (position.x + nodeWidth > groupNode.position.x + groupWidth) {
+            position.x = groupWidth - nodeWidth;
+        } else {
+            position.x = position.x - groupNode.position.x;
+        }
+
+        if (position.y < groupNode.position.y) {
+            position.y = 0;
+        } else if (position.y + nodeHeight > groupNode.position.y + groupHeight) {
+            position.y = groupHeight - nodeHeight;
+        } else {
+            position.y = position.y - groupNode.position.y;
+        }
+
+        return position;
+    } catch (e) {
+        return { x: 0, y: 0 }
+    }
+};

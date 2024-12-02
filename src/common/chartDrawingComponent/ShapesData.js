@@ -5,7 +5,7 @@ export const Categories = {
     'ARROWS': 'Arrows',
     'CALLOUTS': 'Callouts',
     'BANNERS': 'Banners',
-    'TECH':'Tech',
+    'TECH': 'Tech',
     'MISC': 'Miscellaneous'
 }
 
@@ -14,9 +14,7 @@ export const OtherCategories = {
     'CHARTS': 'Organizational Charts'
 }
 
-
-
-export const parentNodes = ['Table', 'LineChart']
+export const parentNodes = ['Table', 'LineChart', 'MatrixTable']
 
 export const uploadNodeId = 'UploadedNode';
 
@@ -113,24 +111,26 @@ export default {
     Rounded: {
         image: <>
             <path className="st0" d="M55.5,80.8H26c-13.9,0-25.3-11.3-25.3-25.3V26C0.8,12.1,12.1,0.8,26,0.8h29.5c13.9,0,25.3,11.3,25.3,25.3v29.5
-	C80.8,69.5,69.5,80.8,55.5,80.8z" vectorEffect="non-scaling-stroke"/>
+	C80.8,69.5,69.5,80.8,55.5,80.8z" vectorEffect="non-scaling-stroke" />
         </>
         ,
         viewBox: "0 0 81.5 81.5",
         keepAspectRatio: false,
         category: [Categories.COMMON],
         size: { width: 81.5, height: 81.5 },
+        hideTextInput: true,
     },
     RoundedCut: {
         image: <>
             <path className="st0" d="M42.6,0.8H2.1c8.4,7,13.8,17.6,13.8,29.4S10.5,52.6,2.1,59.6h40.5c10.8,0,19.6-8.8,19.6-19.6V20.3
-	C62.2,9.5,53.4,0.8,42.6,0.8z" vectorEffect="non-scaling-stroke"/>
+	C62.2,9.5,53.4,0.8,42.6,0.8z" vectorEffect="non-scaling-stroke" />
         </>
         ,
         viewBox: "0 0 62.9 60.4",
         keepAspectRatio: false,
         category: [Categories.COMMON],
         size: { width: 62.9, height: 60.4 },
+        hideTextInput: true,
     },
     Funnel: {
         image: <>
@@ -142,6 +142,7 @@ export default {
         hideTextInput: true,
         category: [Categories.COMMON],
         size: { width: 70.7, height: 65.9 },
+        hideTextInput: true,
     },
     Penant: {
         image: <>
@@ -152,11 +153,12 @@ export default {
         keepAspectRatio: false,
         category: [Categories.COMMON],
         size: { width: 38.8, height: 67.6 },
+        hideTextInput: true,
     },
     PinFat: {
         image: <>
             <path className="st0" d="M31.4,66.5c0,0-30.6-21.5-30.6-34.9V25C0.8,11.6,11.6,0.7,25,0.8l11.9,0c13.4,0,24.3,10.9,24.3,24.3v6.6
-	C61.2,45,31.4,66.5,31.4,66.5z" vectorEffect="non-scaling-stroke"/>
+	C61.2,45,31.4,66.5,31.4,66.5z" vectorEffect="non-scaling-stroke" />
         </>
         ,
         viewBox: "0 0 62 67.4",
@@ -177,7 +179,7 @@ export default {
     RoundedRectangle: {
         image: <>
             <path className="st0" d="M58.8,55.8H13.3c-6.9,0-12.6-5.6-12.6-12.6V13.3c0-6.9,5.6-12.6,12.6-12.6h45.5c6.9,0,12.6,5.6,12.6,12.6v29.9
-	C71.3,50.1,65.7,55.8,58.8,55.8z" vectorEffect="non-scaling-stroke"/>
+	C71.3,50.1,65.7,55.8,58.8,55.8z" vectorEffect="non-scaling-stroke" />
         </>
         ,
         viewBox: "0 0 72.1 56.5",
@@ -188,7 +190,7 @@ export default {
     RoundedSqure: {
         image: <>
             <path className="st0" d="M41.6,58.7H17.9C8.4,58.7,0.8,51,0.8,41.6V17.9c0-9.5,7.7-17.1,17.1-17.1h23.7c9.5,0,17.1,7.7,17.1,17.1v23.7
-	C58.7,51,51,58.7,41.6,58.7z" vectorEffect="non-scaling-stroke"/>
+	C58.7,51,51,58.7,41.6,58.7z" vectorEffect="non-scaling-stroke" />
         </>
         ,
         viewBox: "0 0 59.4 59.4",
@@ -215,6 +217,7 @@ export default {
         keepAspectRatio: false,
         category: [Categories.COMMON],
         size: { width: 86.3, height: 41.7 },
+        hideTextInput: true,
     },
     SqureAngled: {
         image: <>
@@ -225,12 +228,13 @@ export default {
         keepAspectRatio: false,
         category: [Categories.COMMON],
         size: { width: 68, height: 68 },
+        hideTextInput: true,
     },
     SqureCornersCut: {
         image: <>
             <path className="st0" d="M63.1,14.7c-7.3,0-13.3-6-13.3-13.3c0-0.2,0-0.4,0-0.6H14.6c0,0.2,0,0.4,0,0.6c0,7.3-6,13.3-13.3,13.3
 	c-0.2,0-0.4,0-0.5,0v35.3c0.2,0,0.4,0,0.5,0c7.3,0,13.3,6,13.3,13.3c0,0,0,0.1,0,0.1h35.2c0,0,0-0.1,0-0.1c0-7.3,6-13.3,13.3-13.3
-	c0.1,0,0.1,0,0.2,0V14.7C63.2,14.7,63.1,14.7,63.1,14.7z" vectorEffect="non-scaling-stroke"/>
+	c0.1,0,0.1,0,0.2,0V14.7C63.2,14.7,63.1,14.7,63.1,14.7z" vectorEffect="non-scaling-stroke" />
         </>
         ,
         viewBox: "0 0 64 64",
@@ -247,6 +251,7 @@ export default {
         keepAspectRatio: false,
         category: [Categories.COMMON],
         size: { width: 68.5, height: 62.2 },
+        hideTextInput: true,
     },
     SqureSlantCut2: {
         image: <>
@@ -257,6 +262,7 @@ export default {
         keepAspectRatio: false,
         category: [Categories.COMMON],
         size: { width: 60, height: 61.3 },
+        hideTextInput: true,
     },
     Star: {
         image: <>
@@ -267,6 +273,7 @@ export default {
         keepAspectRatio: false,
         category: [Categories.COMMON],
         size: { width: 66.7, height: 63.5 },
+        hideTextInput: true,
     },
     TallRectangle: {
         image: <>
@@ -276,20 +283,11 @@ export default {
         viewBox: "0 0 28.3 67",
         keepAspectRatio: false,
         category: [Categories.COMMON],
+        hideTextInput: true,
         size: { width: 28.3, height: 67 },
     },
-    TriangleAngled: {
-        image: <>
-            <rect x="0.8" y="0.8" className="st0" width="26.8" height="65.5" vectorEffect="non-scaling-stroke" />
-        </>
-        ,
-        viewBox: "0 0 67.9 67.9",
-        keepAspectRatio: false,
-        category: [Categories.COMMON],
-        size: { width: 67.9, height: 67.9 },
-    },
     HorizontalLine: {
-        image: <rect x="0.5" width="134" height="2" rx="2" strokeWidth="0" fill='black' vectorEffect="non-scaling-stroke" vectorEffect="non-scaling-stroke"  />,
+        image: <rect x="0.5" width="134" height="2" rx="2" strokeWidth="0" fill='black' vectorEffect="non-scaling-stroke" vectorEffect="non-scaling-stroke" />,
         viewBox: "0 0 135 2",
         keepAspectRatio: false,
         size: { width: 50, height: 2 },
@@ -364,7 +362,7 @@ export default {
             <circle className="st0" cx="3087.7" cy="2465.5" r="29.9" vectorEffect="non-scaling-stroke" />
             <g>
                 <path className="st1" d="M70.1,33.3C70.1,33.3,70.1,33.3,70.1,33.3l0-20.4c0-1.7-1.4-3.1-3.1-3.1H3.9c-1.7,0-3.1,1.4-3.1,3.1v20.4
-		c0,0.5,0.1,0.9,0.3,1.3c1.9,5.6,16.6,9.9,34.4,9.9C54.6,44.4,70.1,39.5,70.1,33.3C70.1,33.3,70.1,33.3,70.1,33.3z" vectorEffect="non-scaling-stroke"/>
+		c0,0.5,0.1,0.9,0.3,1.3c1.9,5.6,16.6,9.9,34.4,9.9C54.6,44.4,70.1,39.5,70.1,33.3C70.1,33.3,70.1,33.3,70.1,33.3z" vectorEffect="non-scaling-stroke" />
                 <ellipse className="st1" cx="35.4" cy="11.7" rx="34.6" ry="11" vectorEffect="non-scaling-stroke" />
             </g>
         </>
@@ -379,7 +377,7 @@ export default {
             <circle className="st0" cx="3009.5" cy="2474.5" r="29.9" vectorEffect="non-scaling-stroke" />
             <g>
                 <path className="st1" d="M63.2,47.5C63.2,47.4,63.2,47.4,63.2,47.5l0-35.8c0-1.5-1.3-2.8-2.8-2.8H3.6c-1.5,0-2.8,1.3-2.8,2.8v35.8
-		c0,0.4,0.1,0.8,0.3,1.2c1.7,5,14.9,8.9,31,8.9C49.2,57.5,63.2,53,63.2,47.5C63.2,47.5,63.2,47.5,63.2,47.5z" vectorEffect="non-scaling-stroke"/>
+		c0,0.4,0.1,0.8,0.3,1.2c1.7,5,14.9,8.9,31,8.9C49.2,57.5,63.2,53,63.2,47.5C63.2,47.5,63.2,47.5,63.2,47.5z" vectorEffect="non-scaling-stroke" />
                 <ellipse className="st1" cx="32" cy="10.6" rx="31.2" ry="9.9" vectorEffect="non-scaling-stroke" />
             </g>
         </>
@@ -1261,7 +1259,7 @@ export default {
         hideTextInput: true,
         keepAspectRatio: true,
         category: [Categories.TECH],
-        size: { width: 102.3, height: 94.9},
+        size: { width: 102.3, height: 94.9 },
     },
     Dashboardview: {
         image: <>
@@ -1303,7 +1301,7 @@ export default {
         hideTextInput: true,
         keepAspectRatio: true,
         category: [Categories.TECH],
-        size: { width: 98.2, height: 71.7},
+        size: { width: 98.2, height: 71.7 },
     },
     Mobile: {
         image: <>
@@ -1560,7 +1558,7 @@ export default {
         hideTextInput: true,
         keepAspectRatio: true,
         category: [Categories.TECH],
-        size: { width: 65.4, height: 100.6},
+        size: { width: 65.4, height: 100.6 },
     },
     Usergroup: {
         image: <>
@@ -1589,7 +1587,7 @@ export default {
         hideTextInput: true,
         keepAspectRatio: true,
         category: [Categories.TECH],
-        size: { width: 87.6, height: 85.7},
+        size: { width: 87.6, height: 85.7 },
     },
     Ban: {
         image: <>

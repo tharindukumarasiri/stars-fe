@@ -1,5 +1,5 @@
 import React, { memo, useEffect, useMemo, useState } from "react";
-import { NodeResizer } from "reactflow";
+import { useReactFlow } from 'reactflow';
 import { Input } from "antd";
 
 import { useNodeDataStore } from "../store";
@@ -10,7 +10,9 @@ import style from "../DndStyles.module.scss";
 
 const { TextArea } = Input;
 
-function MatrixChart({ id, selected, type, data }) {
+function MatrixChart({ id, selected, type }) {
+    const { setNodes } = useReactFlow();
+
     const shapeData = Shapes[type];
     const initialHeight = shapeData?.size?.height;
     const initialWidth = shapeData?.size?.width;
@@ -22,15 +24,16 @@ function MatrixChart({ id, selected, type, data }) {
     );
 
     const [disableInput, setDisableInput] = useState(false);
+    const [isDragging, setIsDragging] = useState(false);
 
     const sizes = useNodeDataStore((state) => state?.size);
-    const onSizeCahnge = useNodeDataStore((state) => state.setSize);
+    const onSizeChange = useNodeDataStore((state) => state.setSize);
 
     const size = sizes.find((item) => item.id === id) || {
         height: initialHeight,
         width: initialWidth,
     };
-    const setSize = (value) => onSizeCahnge(id, value);
+    const setSize = (value) => onSizeChange(id, value);
 
     const chartData = useNodeDataStore((state) => state.chartData).find(
         (item) => item.id === id
@@ -38,8 +41,8 @@ function MatrixChart({ id, selected, type, data }) {
     const changeChartData = useNodeDataStore((state) => state.setChartData);
     const onChangeChartData = (value) => changeChartData(id, value);
 
-    const nodeData = chartData?.nodeData || [];
-    const setNodeData = (value) => onChangeChartData({ nodeData: value });
+    // const nodeData = chartData?.nodeData || [];
+    // const setNodeData = (value) => onChangeChartData({ nodeData: value });
 
     const rowsCount = chartData?.rowsCount || 1;
 
@@ -47,13 +50,31 @@ function MatrixChart({ id, selected, type, data }) {
     const setRowsData = (value) => onChangeChartData({ rowsData: value })
 
     const selectedColumn = chartData?.selectedColumn ?? null;
-    const setSelectedColumn = (value) => {
+    const setSelectedColumn = (value = null) => {
+        setNodes((nodes) =>
+            nodes.map((node) => {
+                if (node.id === id) {
+                    const newNode = { ...node }
+                    newNode.draggable = value === null ? true : false
+                    return newNode
+                } else return node
+            })
+        )
         onChangeChartData({ selectedRow: null })
         onChangeChartData({ selectedColumn: value })
     }
 
     const selectedRow = chartData?.selectedRow ?? null;
     const setSelectedRow = (value) => {
+        setNodes((nodes) =>
+            nodes.map((node) => {
+                if (node.id === id) {
+                    const newNode = { ...node }
+                    newNode.draggable = value === null ? true : false
+                    return newNode
+                } else return node
+            })
+        )
         onChangeChartData({ selectedColumn: null })
         onChangeChartData({ selectedRow: value })
     }
@@ -126,22 +147,90 @@ function MatrixChart({ id, selected, type, data }) {
         return Array.from(Array(columnsCount));
     }, [columnsCount]);
 
-    const onResize = (_, size) => setSize(size);
+    // const onResize = (_, size) => setSize(size);
 
-    const addNewItem = (sectionNumber, elementColIndex) => {
-        const newNodeData = JSON.parse(JSON.stringify(nodeData));
-        const sectionData = newNodeData[sectionNumber]
-        const allElementsData = sectionData?.elementData ?? []
+    // const addNewItem = (sectionNumber, elementColIndex) => {
+    //     const newNodeData = JSON.parse(JSON.stringify(nodeData));
+    //     const sectionData = newNodeData[sectionNumber]
+    //     const allElementsData = sectionData?.elementData ?? []
 
-        const elementsColumnData = allElementsData[elementColIndex] ?? []
+    //     const elementsColumnData = allElementsData[elementColIndex] ?? []
 
-        elementsColumnData.push({ text: '' })
+    //     elementsColumnData.push({ text: '' })
 
-        allElementsData[elementColIndex] = elementsColumnData
-        sectionData.elementData = allElementsData
-        newNodeData[sectionNumber] = sectionData
+    //     allElementsData[elementColIndex] = elementsColumnData
+    //     sectionData.elementData = allElementsData
+    //     newNodeData[sectionNumber] = sectionData
 
-        setNodeData(newNodeData);
+    //     setNodeData(newNodeData);
+    // };
+
+    const handleHorizontalResize = (e, index) => {
+        let preClientX;
+        let increasedAmount = 0;
+
+        setIsDragging(true);
+
+        // Add listeners for mouse move and mouse up
+        const handleMouseMove = (e) => {
+            if (preClientX) {
+                increasedAmount += e.clientX - preClientX
+            }
+
+            preClientX = e.clientX
+
+            if (increasedAmount) {
+                const copyOfColumnsData = [...columnsData]
+                copyOfColumnsData[index] = {
+                    ...copyOfColumnsData[index],
+                    width: (copyOfColumnsData[index]?.width ?? 400) + increasedAmount
+                }
+                setColumnsData(copyOfColumnsData)
+            }
+        };
+
+        const handleMouseUp = () => {
+            setTimeout(() => setIsDragging(false), 500);
+            window.removeEventListener("mousemove", handleMouseMove);
+            window.removeEventListener("mouseup", handleMouseUp);
+        };
+
+        window.addEventListener("mousemove", handleMouseMove);
+        window.addEventListener("mouseup", handleMouseUp);
+    };
+
+    const handleVerticalResize = (e, index) => {
+        let preClientY;
+        let increasedAmount = 0;
+
+        setIsDragging(true);
+
+        // Add listeners for mouse move and mouse up
+        const handleMouseMove = (e) => {
+            if (preClientY) {
+                increasedAmount += e.clientY - preClientY
+            }
+
+            preClientY = e.clientY
+
+            if (increasedAmount) {
+                const copyOfRowsData = [...rowsData]
+                copyOfRowsData[index] = {
+                    ...copyOfRowsData[index],
+                    height: (copyOfRowsData[index]?.height ?? 400) + increasedAmount
+                }
+                setRowsData(copyOfRowsData)
+            }
+        };
+
+        const handleMouseUp = () => {
+            setTimeout(() => setIsDragging(false), 500);
+            window.removeEventListener("mousemove", handleMouseMove);
+            window.removeEventListener("mouseup", handleMouseUp);
+        };
+
+        window.addEventListener("mousemove", handleMouseMove);
+        window.addEventListener("mouseup", handleMouseUp);
     };
 
     const onKeyDown = (e) => {
@@ -154,18 +243,11 @@ function MatrixChart({ id, selected, type, data }) {
 
     return (
         <div className={style.matrixTableContainer} style={mainContainerStyle} onClick={() => {
-            if (selectedColumn !== null)
+            if (selectedColumn !== null && !isDragging)
                 setSelectedColumn(null)
-            if (selectedRow !== null)
+            if (selectedRow !== null && !isDragging)
                 setSelectedRow(null)
         }}>
-            <NodeResizer
-                isVisible={selected}
-                onResize={onResize}
-                keepAspectRatio={shapeData?.keepAspectRatio ?? true}
-                handleClassName={style.resizerHandleStyle}
-            />
-
             {rowsList.map((_, rowIndex) => {
                 return (
                     <div className={style.matrixTableMainRow} key={rowIndex + 'main'}>
@@ -203,8 +285,8 @@ function MatrixChart({ id, selected, type, data }) {
                             </div>
                         </div>
                         {columnList.map((_, columnIndex) => {
-                            const sectionData = nodeData[sectionNumber] || {};
-                            const elementList = Array.from(Array(sectionData?.columnsCount ?? 0))
+                            // const sectionData = nodeData[sectionNumber] || {};
+                            // const elementList = Array.from(Array(sectionData?.columnsCount ?? 0))
                             sectionNumber++
 
                             return (
@@ -213,6 +295,8 @@ function MatrixChart({ id, selected, type, data }) {
                                     className={style.matrixTableSection}
                                     style={{
                                         marginRight: matrixPadding, marginBottom: matrixPadding, marginTop: matrixPadding,
+                                        minWidth: columnsData[columnIndex]?.width ?? 400, maxWidth: columnsData[columnIndex]?.width ?? 400,
+                                        minHeight: rowsData[rowIndex]?.height ?? 400, maxHeight: rowsData[rowIndex]?.height ?? 400,
                                         ...(selectedColumn === columnIndex ?
                                             {
                                                 borderLeftColor: 'blue', borderRightColor: 'blue',
@@ -230,6 +314,19 @@ function MatrixChart({ id, selected, type, data }) {
                                             : {})
                                     }}
                                 >
+                                    {selectedColumn !== null &&
+                                        <div
+                                            className={style.matrixTableRIghtEdgeHandle}
+                                            onMouseDown={(e) => handleHorizontalResize(e, columnIndex)}
+                                        />
+                                    }
+                                    {selectedRow !== null &&
+                                        <div
+                                            className={style.matrixTableBottomEdgeHandle}
+                                            onMouseDown={(e) => handleVerticalResize(e, rowIndex)}
+                                        />
+                                    }
+
                                     {rowIndex === 0 && (
                                         <div className={style.matrixTableColumnHeaderTextContainer}
                                             style={{
@@ -251,7 +348,7 @@ function MatrixChart({ id, selected, type, data }) {
                                         </div>
                                     )}
 
-                                    <div className={style.matrixTableSectionContainer}>
+                                    {/* <div className={style.matrixTableSectionContainer}>
                                         {elementList?.map((_, elementColIndex) => {
                                             return (
                                                 <div className={style.matrixElementColumnContainer} key={`${sectionNumber} ${elementColIndex}`} >
@@ -276,7 +373,7 @@ function MatrixChart({ id, selected, type, data }) {
                                                 </div>
                                             )
                                         })}
-                                    </div>
+                                    </div> */}
                                 </div>
                             );
                         })}

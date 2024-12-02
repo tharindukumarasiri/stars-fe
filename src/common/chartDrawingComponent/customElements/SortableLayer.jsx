@@ -1,4 +1,4 @@
-import React, { useState, forwardRef } from 'react';
+import React, { useState, forwardRef, useEffect } from 'react';
 import {
     DndContext,
     closestCenter,
@@ -23,6 +23,7 @@ import {
     UnlockOutlined,
     DownOutlined,
     RightOutlined,
+    EditOutlined,
 } from '@ant-design/icons';
 import {
     restrictToVerticalAxis,
@@ -62,7 +63,10 @@ import { useNodeDataStore } from '../store'
 //     )
 // });
 
-const DraggableItem = ({ node, hideShowNode, lockNode, onDeleteNode }) => {
+const DraggableItem = ({ node, hideShowNode, lockNode, onDeleteNode, onSetNodeName }) => {
+    const [isFocusedNodeInput, setIsFocusedNodeInput] = useState(false)
+    const [nodeName, setNodeName] = useState(node?.data?.name ?? node?.id)
+
     const { attributes, listeners, setNodeRef, transform } = useDraggable({
         id: node?.id,
     });
@@ -70,10 +74,27 @@ const DraggableItem = ({ node, hideShowNode, lockNode, onDeleteNode }) => {
         transform: CSS.Translate.toString(transform),
     };
 
+    useEffect(() => {
+        setNodeName(node?.data?.name ?? node?.id)
+    }, [node])
+
+    const onClickEdit = () => setIsFocusedNodeInput(true)
+
+    const onBlur = () => {
+        setIsFocusedNodeInput(pre => !pre)
+        onSetNodeName(node?.id, nodeName)
+    }
+
+    const onChangeNodeName = (e) => {
+        e.preventDefault();
+
+        setNodeName(e.target.value);
+    }
+
     return (
         <div
             key={node?.id}
-            ref={setNodeRef} style={attributeStyle} {...listeners} {...attributes}
+            ref={setNodeRef} style={attributeStyle}
             className={`${style.layerItemContainer} ${node?.selected ? style.layerItemSelected : ''}`}
         >
             <div className='m-r-5 m-l-20 hover-hand' onClick={() => hideShowNode(node?.id)} >
@@ -86,8 +107,21 @@ const DraggableItem = ({ node, hideShowNode, lockNode, onDeleteNode }) => {
                     <LockOutlined /> : <UnlockOutlined />
                 }
             </div>
-            <div className={style.layerShapeLabelContainer}>
-                {node?.id}
+            <div className={style.layerShapeLabelContainer}
+                {...(!isFocusedNodeInput ? listeners : {})}
+                {...attributes}>
+                {isFocusedNodeInput ?
+                    <input type='text'
+                        autoFocus
+                        onBlur={onBlur}
+                        onChange={onChangeNodeName}
+                        className={style.layersInput}
+                        value={nodeName}
+                    /> : nodeName
+                }
+            </div>
+            <div className='m-r-5' onClick={onClickEdit} >
+                <EditOutlined />
             </div>
             <i
                 className={`icon-delete-1 hover-hand ${style.layerDeleteIcon}`}
@@ -155,6 +189,19 @@ const SortableItem = ({ item, nodes, setNodes, setEdges }) => {
             })
         )
     }
+
+    const setNodeName = (id, value) => {
+        setNodes((nodes) =>
+            nodes.map((node) => {
+                if (node.id === id) {
+                    const newNode = { ...node }
+                    newNode.data.name = value
+                    return newNode
+                } else return node
+            })
+        )
+    }
+
 
     const onChangeLayerText = (e, id) => {
         e.preventDefault();
@@ -235,9 +282,7 @@ const SortableItem = ({ item, nodes, setNodes, setEdges }) => {
     return (
         <div style={attributeStyle} ref={setDroppableNodeRef} key={item?.id}>
             <div
-                ref={setNodeRef}
-                {...(!isFocusedLayersInput ? listeners : {})}
-                {...attributes}
+                key={item?.id + '1'}
                 className={`${style.layerItemContainer} ${currentLayer === item?.id ? style.layerItemSelected : ''} hover-hand`}
                 onPointerUp={() => setCurrentLayer(item?.id)}
                 onDoubleClick={onBlur}
@@ -258,15 +303,25 @@ const SortableItem = ({ item, nodes, setNodes, setEdges }) => {
                         <LockOutlined /> : <UnlockOutlined />
                     }
                 </div>
-                {currentLayer === item?.id && isFocusedLayersInput ?
-                    <input type='text'
-                        autoFocus
-                        onBlur={onBlur}
-                        onChange={(e) => onChangeLayerText(e, item?.id)}
-                        className={style.layersInput}
-                        value={item?.label}
-                    /> : item?.label
-                }
+                <div ref={setNodeRef}
+                    className={style.layerItemTextArea}
+                    {...(!isFocusedLayersInput ? listeners : {})}
+                    {...attributes}>
+                    {currentLayer === item?.id && isFocusedLayersInput ?
+                        <input type='text'
+                            autoFocus
+                            onBlur={onBlur}
+                            onChange={(e) => onChangeLayerText(e, item?.id)}
+                            className={style.layersInput}
+                            value={item?.label}
+                        /> : item?.label
+                    }
+                </div>
+
+                <div className='m-r-5' onPointerUp={onBlur} >
+                    <EditOutlined />
+                </div>
+
                 {layers?.length > 1 ?
                     <i
                         className={`icon-delete-1 ${style.layerDeleteIcon}`}
@@ -285,6 +340,7 @@ const SortableItem = ({ item, nodes, setNodes, setEdges }) => {
                                     hideShowNode={hideShowNode}
                                     lockNode={lockNode}
                                     onDeleteNode={onDeleteNode}
+                                    onSetNodeName={setNodeName}
                                 />
                             )
                         }
@@ -297,6 +353,8 @@ const SortableItem = ({ item, nodes, setNodes, setEdges }) => {
 
 const SortableLayer = ({ items, nodes, setItems, setNodes, setEdges }) => {
     // const [activeId, setActiveId] = useState(null);
+    const setCurrentLayer = useNodeDataStore((state) => state.setCurrentLayer);
+
     const sensors = useSensors(
         useSensor(PointerSensor),
         useSensor(KeyboardSensor, {
@@ -308,7 +366,7 @@ const SortableLayer = ({ items, nodes, setItems, setNodes, setEdges }) => {
         <DndContext
             sensors={sensors}
             collisionDetection={closestCenter}
-            // onDragStart={handleDragStart}
+            onDragStart={handleDragStart}
             onDragEnd={handleDragEnd}
             modifiers={[restrictToVerticalAxis, restrictToWindowEdges]}
         >
@@ -324,17 +382,17 @@ const SortableLayer = ({ items, nodes, setItems, setNodes, setEdges }) => {
                     setEdges={setEdges}
                 />)}
             </SortableContext>
-            {/* <DragOverlay>
-                {activeId ? <Item id={activeId} layers={items} /> : null}
-            </DragOverlay> */}
+            <DragOverlay>
+                {/* {activeId ? <Item id={activeId} layers={items} /> : null} */}
+            </DragOverlay>
         </DndContext>
     );
 
-    // function handleDragStart(event) {
-    //     const { active } = event;
-
-    //     setActiveId(active.id);
-    // }
+    function handleDragStart(event) {
+        const { active } = event;
+        setCurrentLayer(active.id)
+        // setActiveId(active.id);
+    }
 
     function handleDragEnd(event) {
         const { active, over } = event;

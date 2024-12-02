@@ -114,7 +114,7 @@
     }
 
     .dndflow aside {
-        
+
         padding: 5px 2px;
         font-size: 12px;
         background: #fcfcfc;
@@ -287,6 +287,7 @@ div.customHandle2Bottom {
 
 .layerShapeLabelContainer {
     overflow: hidden;
+    width: 100%;
 }
 
 .layerContainer {
@@ -306,6 +307,10 @@ div.customHandle2Bottom {
     overflow: hidden;
     padding: 5px;
     border-bottom: 1px solid #555555;
+}
+
+.layerItemTextArea {
+    width: 100%;
 }
 
 .layerItemSelected {
@@ -781,6 +786,26 @@ div.customHandle2Bottom {
     width: 100%;
     border: solid 2px #9E9E9E;
     position: relative;
+}
+
+.matrixTableRIghtEdgeHandle {
+    position: absolute;
+    right: -2px;
+    top: 0px;
+    width: 10px;
+    z-index: 10;
+    height: 100%;
+    cursor: ew-resize;
+}
+
+.matrixTableBottomEdgeHandle {
+    position: absolute;
+    bottom: -2px;
+    left: 0px;
+    height: 10px;
+    z-index: 10;
+    width: 100%;
+    cursor: ns-resize;
 }
 
 .matrixTableSectionContainer {
