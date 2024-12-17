@@ -3,7 +3,8 @@ import { AutoComplete } from "antd";
 import {
     SettingOutlined,
     EyeOutlined,
-    ExpandAltOutlined
+    ExpandAltOutlined,
+    EyeInvisibleOutlined,
 } from '@ant-design/icons';
 import {
     MarkerType,
@@ -38,12 +39,15 @@ import { ReactComponent as AlignBottom } from '../../../assets/images/align-icon
 import style from '../DndStyles.module.scss'
 import 'react-nestable/dist/styles/index.css';
 import SortableLayer from "../customElements/SortableLayer";
+import { Algorithm } from '../edges/EditableEdge/constants';
 
 const propertyCategories = {
     GRID: 'Grid',
+    MATRIX: 'Matrix',
     SECTIONS: 'Sections',
     APPEARANCE: 'Appearance',
     LAYERS: 'Layers',
+    CONNECTORS: 'Connectors',
     LINK: 'Link',
     REFERENCE: 'Reference',
     FORMS: 'Forms'
@@ -65,7 +69,7 @@ const transparentColorObj = {
     },
 }
 
-const PropertyPanel = ({ nodes, selectedNodes = [], selectedEdges = [], setNodes, setEdges, onChangePage }) => {
+const PropertyPanel = ({ nodes, edges, selectedNodes = [], selectedEdges = [], setNodes, setEdges, onChangePage }) => {
     const { changeActiveTab } = useContext(TabContext);
 
     const [sidebarVisible, setSidebarVisible] = useState(true);
@@ -171,6 +175,8 @@ const PropertyPanel = ({ nodes, selectedNodes = [], selectedEdges = [], setNodes
     const layers = useNodeDataStore((state) => state.layers);
     const setLayers = useNodeDataStore((state) => state.setLayers);
 
+    const selectedEdgeData = selectedEdges[0]?.data
+
     const getSelectedEdgeStart = useMemo(() => {
         //using the first item in the selected edges
         let selectedEdge = selectedEdges[0]
@@ -191,6 +197,13 @@ const PropertyPanel = ({ nodes, selectedNodes = [], selectedEdges = [], setNodes
         } else {
             return arrowEndTypes?.find(type => type?.markerId === selectedEdge?.markerEnd)
         }
+    }, [selectedEdges])
+
+    const selectedEdgeType = useMemo(() => {
+        //using the first item in the selected edges
+        let selectedEdge = selectedEdges[0]
+
+        return selectedEdge?.data?.algorithm
     }, [selectedEdges])
 
     const onArrowClicked = () => setSidebarVisible(pre => !pre)
@@ -655,6 +668,120 @@ const PropertyPanel = ({ nodes, selectedNodes = [], selectedEdges = [], setNodes
             setFontSize(newSize.toString())
     }
 
+    const onChangeEdgeColor = (color) => {
+        setEdges((edges) =>
+            edges.map((e) => {
+                const isSelected = selectedEdges?.some(selectedEdge => selectedEdge?.id === e?.id);
+
+                if (isSelected) {
+                    const newEdge = { ...e }
+
+                    newEdge.data.color = color?.hex
+                    if (newEdge?.markerStart) {
+                        newEdge.markerStart = {
+                            ...newEdge.markerStart,
+                            color: color?.hex
+                        }
+                    }
+                    if (newEdge?.markerEnd) {
+                        newEdge.markerEnd = {
+                            ...newEdge.markerEnd,
+                            color: color?.hex
+                        }
+                    }
+
+                    return newEdge;
+                } else return e
+            })
+        );
+    }
+
+    const onChangeEdgeType = (type) => {
+        setEdges((edges) =>
+            edges.map((e) => {
+                const isSelected = selectedEdges?.some(selectedEdge => selectedEdge?.id === e?.id);
+
+                if (isSelected) {
+                    const newEdge = { ...e }
+
+                    newEdge.data = {
+                        ...newEdge.data,
+                        algorithm: type,
+                    }
+
+                    return newEdge;
+                } else return e
+            })
+        );
+    };
+
+    const onChangeEdgeWidth = (e) => {
+        e.preventDefault();
+        const number = e.target.value
+
+        if (!isNaN(number) && Number(number) < 33) {
+            setEdges((edges) =>
+                edges.map((e) => {
+                    const isSelected = selectedEdges?.some(selectedEdge => selectedEdge?.id === e?.id);
+
+                    if (isSelected) {
+                        const newEdge = { ...e }
+
+                        newEdge.data = {
+                            ...newEdge.data,
+                            width: number,
+                        }
+
+                        return newEdge;
+                    } else return e
+                })
+            );
+        }
+    }
+
+    const decreesEdgeWidth = () => {
+        const newSize = Number(selectedEdgeData?.width ?? '2') - 1
+
+        if (newSize > 0)
+            setEdges((edges) =>
+                edges.map((e) => {
+                    const isSelected = selectedEdges?.some(selectedEdge => selectedEdge?.id === e?.id);
+
+                    if (isSelected) {
+                        const newEdge = { ...e }
+
+                        newEdge.data = {
+                            ...newEdge.data,
+                            width: newSize.toString(),
+                        }
+
+                        return newEdge;
+                    } else return e
+                })
+            );
+    }
+
+    const increaseEdgeWidth = () => {
+        const newSize = Number(selectedEdgeData?.width ?? '2') + 1
+
+        setEdges((edges) =>
+            edges.map((e) => {
+                const isSelected = selectedEdges?.some(selectedEdge => selectedEdge?.id === e?.id);
+
+                if (isSelected) {
+                    const newEdge = { ...e }
+
+                    newEdge.data = {
+                        ...newEdge.data,
+                        width: newSize.toString(),
+                    }
+
+                    return newEdge;
+                } else return e
+            })
+        );
+    }
+
     const onChangeEdgeStart = (value) => {
         setEdges((edges) =>
             edges.map((e) => {
@@ -667,13 +794,13 @@ const PropertyPanel = ({ nodes, selectedNodes = [], selectedEdges = [], setNodes
                         case 'arrow':
                             newEdge.markerStart = {
                                 type: MarkerType.Arrow,
-                                color: arrowColor,
+                                color: newEdge?.data?.color ?? arrowColor,
                             };
                             break;
                         case 'arrowclosed':
                             newEdge.markerStart = {
                                 type: MarkerType.ArrowClosed,
-                                color: arrowColor,
+                                color: newEdge?.data?.color ?? arrowColor,
                             };
                             break;
                         default:
@@ -698,13 +825,13 @@ const PropertyPanel = ({ nodes, selectedNodes = [], selectedEdges = [], setNodes
                         case 'arrow':
                             newEdge.markerEnd = {
                                 type: MarkerType.Arrow,
-                                color: arrowColor,
+                                color: newEdge?.data?.color ?? arrowColor,
                             };
                             break;
                         case 'arrowclosed':
                             newEdge.markerEnd = {
                                 type: MarkerType.ArrowClosed,
-                                color: arrowColor,
+                                color: newEdge?.data?.color ?? arrowColor,
                             };
                             break;
                         default:
@@ -714,27 +841,6 @@ const PropertyPanel = ({ nodes, selectedNodes = [], selectedEdges = [], setNodes
                     return newEdge;
                 } else return e
             })
-        );
-    }
-
-    const onHideEdge = () => {
-        setEdges((edges) =>
-            edges.map((e) => {
-                const isSelected = selectedEdges?.some(selectedEdge => selectedEdge?.id === e?.id);
-
-                if (isSelected) {
-                    const newEdge = { ...e }
-                    newEdge.hidden = true
-
-                    return newEdge;
-                } else return e
-            })
-        );
-    }
-
-    const onDeleteEdge = () => {
-        setEdges((edges) =>
-            edges.filter((e) => !selectedEdges?.some(selectedEdge => selectedEdge?.id === e?.id))
         );
     }
 
@@ -952,257 +1058,56 @@ const PropertyPanel = ({ nodes, selectedNodes = [], selectedEdges = [], setNodes
         )
     }
 
-    const sortedLayers = () => {
-        const groupNodes = nodes.filter(node => node.type === 'group')
-        const singleNodes = nodes.filter(node => node.type !== 'group' && !node?.parentNode)
-
-        nodes.map(node => {
-            if (node?.parentNode) {
-                const parentIndex = groupNodes?.findIndex(groupNode => groupNode.id === node?.parentNode)
-                groupNodes.splice(parentIndex + 1, 0, node)
-            }
-
-        })
-
-        return [...singleNodes, ...groupNodes]
-    }
-
     const appearanceContent = () => {
         return (
             <div className={style.propertyPanelContainer}>
-                <Dropdown
-                    values={fontTypes}
-                    onChange={onChangeTextType}
-                    dataName='label'
-                    selected={JSON.stringify(textType)}
-                />
-                <div className={style.appearanceRow}>
-                    <div className={style.fontSizeContainer}>
-                        <div
-                            className='hover-hand m-r-10 m-t-10 bold'
-                            onClick={decreesFontSize}>-</div>
-                        <input value={fontSize} onChange={onFontSizeChange} type="text" />
-                        <div className={style.sizeInputEndText}>pt</div>
-                        <div
-                            className='hover-hand m-l-10 m-t-10 bold'
-                            onClick={increaseFontSize}
-                        >+</div>
-                    </div>
-                    <div className={style.fontBoldContainer} style={{ backgroundColor: textBold ? '#D3D3D3' : '' }} onClick={onChangeTextBold}>B</div>
-                    <div className={style.colorPickerContainer} onClick={() => showColorPicker(colorPickerTypes.TEXT)}>
-                        <div className='bold' style={{ color: getRgbaColor(textColor) }}>A</div>
-                        <div className={style.fontColorFooter} style={{ backgroundColor: getRgbaColor(textColor) }} />
-                        {colorPickerVisible === colorPickerTypes.TEXT ?
-                            <div className={style.sketchPickerContainer}>
-                                <ColorPicker
-                                    color={textColor}
-                                    onChange={onChangeTextColor}
-                                    onMouseLeave={onMouseLeave}
-                                    styles={{ right: -60, top: -20 }}
-                                />
-                            </div> : null
-                        }
-                    </div>
-                </div>
-                <div className={style.appearanceRow}>
-                    <div className={style.widthHeightSizeContainer}>
-                        <input value={size.width} onChange={onShapeWidthChange} type="text" />
-                        <div className={style.sizeInputEndText}>W</div>
-                    </div>
-                    <div className={style.widthHeightSizeContainer}>
-                        <input value={size.height} onChange={onShapeHeightChange} type="text" />
-                        <div className={style.sizeInputEndText}>H</div>
-                    </div>
-                </div>
-
-                {(selectedNodes?.length === 1 && selectedNodes?.[0].type === 'MatrixChart') ?
+                {selectedNodes.length > 0 &&
                     <>
+                        <Dropdown
+                            values={fontTypes}
+                            onChange={onChangeTextType}
+                            dataName='label'
+                            selected={JSON.stringify(textType)}
+                        />
                         <div className={style.appearanceRow}>
-                            <div className={style.flex5}>
-                                Header Background
+                            <div className={style.fontSizeContainer}>
+                                <div
+                                    className='hover-hand m-r-10 m-t-10 bold'
+                                    onClick={decreesFontSize}>-</div>
+                                <input value={fontSize} onChange={onFontSizeChange} type="text" />
+                                <div className={style.sizeInputEndText}>pt</div>
+                                <div
+                                    className='hover-hand m-l-10 m-t-10 bold'
+                                    onClick={increaseFontSize}
+                                >+</div>
                             </div>
-                            <div className={style.flex2} onClick={() => showColorPicker(colorPickerTypes.LINE)}>
-                                <div className={style.colorIcon} style={{ backgroundColor: getRgbaColor(headerBackgroundColor) }} />
-                                {colorPickerVisible === colorPickerTypes.LINE ?
+                            <div className={style.fontBoldContainer} style={{ backgroundColor: textBold ? '#D3D3D3' : '' }} onClick={onChangeTextBold}>B</div>
+                            <div className={style.colorPickerContainer} onClick={() => showColorPicker(colorPickerTypes.TEXT)}>
+                                <div className='bold' style={{ color: getRgbaColor(textColor) }}>A</div>
+                                <div className={style.fontColorFooter} style={{ backgroundColor: getRgbaColor(textColor) }} />
+                                {colorPickerVisible === colorPickerTypes.TEXT ?
                                     <div className={style.sketchPickerContainer}>
                                         <ColorPicker
-                                            color={headerBackgroundColor}
-                                            onChange={onChangeHeaderBackgroundColor}
+                                            color={textColor}
+                                            onChange={onChangeTextColor}
                                             onMouseLeave={onMouseLeave}
-                                            styles={colorPickerStyles}
+                                            styles={{ right: -60, top: -20 }}
                                         />
                                     </div> : null
                                 }
                             </div>
-                            <div className={style.flex6}>
-                                <div className={style.hexCodeInput}>
-                                    {rgbToHex(headerBackgroundColor)}
-                                </div>
-                            </div>
                         </div>
                         <div className={style.appearanceRow}>
-                            <div className={style.flex5}>
-                                Header Border
+                            <div className={style.widthHeightSizeContainer}>
+                                <input value={size.width} onChange={onShapeWidthChange} type="text" />
+                                <div className={style.sizeInputEndText}>W</div>
                             </div>
-                            <div className={style.flex2} onClick={() => showColorPicker(colorPickerTypes.HEADER_BORDER)}>
-                                <div className={style.colorIcon} style={{ backgroundColor: getRgbaColor(borderColor) }} />
-                                {colorPickerVisible === colorPickerTypes.HEADER_BORDER ?
-                                    <div className={style.sketchPickerContainer}>
-                                        <ColorPicker
-                                            color={borderColor}
-                                            onChange={onChangeBorderColor}
-                                            onMouseLeave={onMouseLeave}
-                                            styles={colorPickerStyles}
-                                        />
-                                    </div> : null
-                                }
-                            </div>
-                            <div className={style.flex6}>
-                                <div className={style.hexCodeInput}>
-                                    {rgbToHex(borderColor)}
-                                </div>
-                            </div>
-                        </div>
-                        <div className={style.appearanceRow}>
-                            <div className={style.flex5}>
-                                Remove Header
-                            </div>
-
-                            <div className={style.flex8}>
-                                <input type="checkbox" className="check-box m-l-10"
-                                    checked={removeHeader}
-                                    onChange={handleRemoveHeaderCLick}
-                                />
+                            <div className={style.widthHeightSizeContainer}>
+                                <input value={size.height} onChange={onShapeHeightChange} type="text" />
+                                <div className={style.sizeInputEndText}>H</div>
                             </div>
                         </div>
 
-                        <div className={style.separator} />
-
-                        <div className={style.appearanceRow}>
-                            <div className={style.flex5}>
-                                Matrix Background color
-                            </div>
-                            <div className={style.flex2} onClick={() => showColorPicker(colorPickerTypes.BACKGROUND)}>
-                                <div className={style.colorIcon} style={{ backgroundColor: getRgbaColor(backgroundColor) }} />
-                                {colorPickerVisible === colorPickerTypes.BACKGROUND ?
-                                    <div className={style.sketchPickerContainer}>
-                                        <ColorPicker
-                                            color={backgroundColor}
-                                            onChange={onChangeBackgroundColor}
-                                            onMouseLeave={onMouseLeave}
-                                            styles={colorPickerStyles}
-                                        />
-                                    </div> : null
-                                }
-                            </div>
-                            <div className={style.flex6}>
-                                <div className={style.hexCodeInput}>{rgbToHex(backgroundColor)}</div>
-                            </div>
-                        </div>
-
-                        <div className={style.separator} />
-
-                        <div className={style.appearanceRow}>
-                            <div className={style.flex5}>
-                                Section Background
-                            </div>
-                            <div className={style.flex2} onClick={() => showColorPicker(colorPickerTypes.SECTION_BG)}>
-                                <div className={style.colorIcon} style={{ backgroundColor: getRgbaColor(sectionBackgroundColor) }} />
-                                {colorPickerVisible === colorPickerTypes.SECTION_BG ?
-                                    <div className={style.sketchPickerContainer}>
-                                        <ColorPicker
-                                            color={sectionBackgroundColor}
-                                            onChange={onChangeSectionColor}
-                                            onMouseLeave={onMouseLeave}
-                                            styles={colorPickerStyles}
-                                        />
-                                    </div> : null
-                                }
-                            </div>
-                            <div className={style.flex6}>
-                                <div className={style.hexCodeInput} >
-                                    {rgbToHex(sectionBackgroundColor)}
-                                </div>
-                            </div>
-                        </div>
-                        <div className={style.appearanceRow}>
-                            <div className={style.flex5}>
-                                Section Border
-                            </div>
-                            <div className={style.flex2} onClick={() => showColorPicker(colorPickerTypes.SECTION_BORDER)}>
-                                <div className={style.colorIcon} style={{ backgroundColor: getRgbaColor(sectionBorderColor) }} />
-                                {colorPickerVisible === colorPickerTypes.SECTION_BORDER ?
-                                    <div className={style.sketchPickerContainer}>
-                                        <ColorPicker
-                                            color={sectionBorderColor}
-                                            onChange={onChangeSectionBorderColor}
-                                            onMouseLeave={onMouseLeave}
-                                            styles={colorPickerStyles}
-                                        />
-                                    </div> : null
-                                }
-                            </div>
-                            <div className={style.flex6}>
-                                <div className={style.hexCodeInput} >
-                                    {rgbToHex(sectionBorderColor)}
-                                </div>
-                            </div>
-                        </div>
-
-                        <div className={style.appearanceRow}>
-                            <div className={style.flex5}>
-                                Number of sections
-                            </div>
-
-                            <div className={style.flex8}>
-                                <div className={style.fontSizeContainer}>
-                                    <div
-                                        className='hover-hand m-r-10 m-t-10 bold'
-                                        onClick={onSectionsCountDecrease}>-</div>
-                                    <input value={sectionsCount} onChange={onSectionsCountChange} type="text" />
-                                    <div
-                                        className='hover-hand m-l-10 m-t-10 bold'
-                                        onClick={onSectionsCountIncrese}
-                                    >+</div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div className={style.separator} />
-
-                        <div className={style.appearanceRow}>
-                            <div className={style.flex5}>
-                                Number of columns
-                            </div>
-
-                            <div className={style.flex8}>
-                                <div className={style.fontSizeContainer}>
-                                    <div
-                                        className='hover-hand m-r-10 m-t-10 bold'
-                                        onClick={onColumnsCountDecrease}>-</div>
-                                    <input value={columnsCount} onChange={onColumnsCountChange} type="text" />
-                                    <div
-                                        className='hover-hand m-l-10 m-t-10 bold'
-                                        onClick={onColumnsCountIncrease}
-                                    >+</div>
-                                </div>
-                            </div>
-                        </div>
-                        <div className={style.appearanceRow}>
-                            <div className={style.flex5}>
-                                Hide Options
-                            </div>
-
-                            <div className={style.flex8}>
-                                <input type="checkbox" className="check-box m-l-10"
-                                    checked={hideTools}
-                                    onChange={handleCheckboxCLick}
-                                />
-                            </div>
-                        </div>
-
-                    </> :
-                    <>
                         <div className={style.appearanceRow}>
                             <div className={style.flex4}>
                                 Fill
@@ -1307,50 +1212,285 @@ const PropertyPanel = ({ nodes, selectedNodes = [], selectedEdges = [], setNodes
                                 </div>
                             </div>
                         </div>
-                        {selectedEdges?.length > 0 &&
-                            <>
-                                <div className={style.appearanceRow}>
-                                    <div className={style.flex4}>
-                                        Endpoint
-                                    </div>
-                                    <div className={style.matrixColumnActionRow + ' ' + style.flex8}>
-                                        <div className={style.activityContainer}>
-                                            <CustomDropdown
-                                                values={arrowStartTypes}
-                                                onChange={onChangeEdgeStart}
-                                                dataName='label'
-                                                iconName='icon'
-                                                selected={getSelectedEdgeStart}
-                                                hideHintText
-                                            />
-                                        </div>
-                                        <div className={style.activityContainer}>
-                                            <CustomDropdown
-                                                values={arrowEndTypes}
-                                                onChange={onChangeEdgeEnd}
-                                                dataName='label'
-                                                iconName='icon'
-                                                selected={getSelectedEdgeEnd}
-                                                hideHintText
-                                            />
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className={style.appearanceRow}>
-                                    <div className="hover-hand" onClick={onHideEdge}>
-                                        <EyeOutlined />
-                                    </div>
-                                    <div className={style.flex8}>
-                                        <i className="icon-delete-1 table-icon m-l-5" onClick={onDeleteEdge} />
-                                    </div>
-                                </div>
-                            </>
-                        }
+                    </>
+                }
+                {(selectedNodes.length > 0 && selectedEdges?.length > 0) &&
+                    <div className={style.separator} />
+                }
+                {selectedEdges?.length > 0 &&
+                    <>
+                        <div className={style.appearanceRow}>
+                            <div className={style.flex2}>
+                                Stroke Color
+                            </div>
 
+                            <div className={style.flex1} onClick={() => showColorPicker(colorPickerTypes.CONNECTOR)}>
+                                <div className={style.colorIcon} style={{ backgroundColor: selectedEdgeData?.color ?? arrowColor }} />
+                                {colorPickerVisible === colorPickerTypes.CONNECTOR ?
+                                    <div className={style.sketchPickerContainer}>
+                                        <ColorPicker
+                                            color={selectedEdgeData?.color ?? arrowColor}
+                                            onChange={onChangeEdgeColor}
+                                            onMouseLeave={onMouseLeave}
+                                            styles={colorPickerStyles}
+                                        />
+                                    </div> : null
+                                }
+                            </div>
+                        </div>
 
+                        <div className={style.appearanceRow}>
+                            <div className={style.appearanceRow}>
+                                <div className={style.fontSizeContainer}>
+                                    <div
+                                        className='hover-hand m-r-10 m-t-10 bold'
+                                        onClick={decreesEdgeWidth}>-</div>
+                                    <input value={selectedEdgeData?.width ?? '2'} onChange={onChangeEdgeWidth} type="text" />
+                                    <div className={style.sizeInputEndText}>W</div>
+                                    <div
+                                        className='hover-hand m-l-10 m-t-10 bold'
+                                        onClick={increaseEdgeWidth}
+                                    >+</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className={style.appearanceRow}>
+                            <div className={style.arrowTypeContainer}>
+                                <div className={style.arrowTypeItem}
+                                    style={{ backgroundColor: selectedEdgeType === Algorithm.Linear ? '#9bbae7' : 'white' }}
+                                    onClick={() => onChangeEdgeType(Algorithm.Linear)}
+                                >
+                                    <i className='icon-straight-arrow' />
+                                </div>
+                                <div className={style.arrowTypeItem}
+                                    style={{ backgroundColor: selectedEdgeType === Algorithm.CatmullRom ? '#9bbae7' : 'white' }}
+                                    onClick={() => onChangeEdgeType(Algorithm.CatmullRom)}
+                                >
+                                    <i className='icon-curved-arrow' />
+                                </div>
+                                <div className={style.arrowTypeItem}
+                                    style={{ backgroundColor: selectedEdgeType === Algorithm.BezierCatmullRom ? '#9bbae7' : 'white' }}
+                                    onClick={() => onChangeEdgeType(Algorithm.BezierCatmullRom)}
+                                >
+                                    <i className='icon-bend-arrow' />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>Start</div>
+                        <CustomDropdown
+                            values={arrowStartTypes}
+                            onChange={onChangeEdgeStart}
+                            dataName='label'
+                            iconName='icon'
+                            selected={getSelectedEdgeStart}
+                            hideHintText
+                        />
+
+                        <div className='m-t-10'>End</div>
+                        <CustomDropdown
+                            values={arrowEndTypes}
+                            onChange={onChangeEdgeEnd}
+                            dataName='label'
+                            iconName='icon'
+                            selected={getSelectedEdgeEnd}
+                            hideHintText
+                        />
                     </>
                 }
             </div>
+        )
+    }
+
+    const matrixContent = () => {
+        return (
+            <>
+                <div className={style.appearanceRow}>
+                    <div className={style.flex5}>
+                        Header Background
+                    </div>
+                    <div className={style.flex2} onClick={() => showColorPicker(colorPickerTypes.LINE)}>
+                        <div className={style.colorIcon} style={{ backgroundColor: getRgbaColor(headerBackgroundColor) }} />
+                        {colorPickerVisible === colorPickerTypes.LINE ?
+                            <div className={style.sketchPickerContainer}>
+                                <ColorPicker
+                                    color={headerBackgroundColor}
+                                    onChange={onChangeHeaderBackgroundColor}
+                                    onMouseLeave={onMouseLeave}
+                                    styles={colorPickerStyles}
+                                />
+                            </div> : null
+                        }
+                    </div>
+                    <div className={style.flex6}>
+                        <div className={style.hexCodeInput}>
+                            {rgbToHex(headerBackgroundColor)}
+                        </div>
+                    </div>
+                </div>
+                <div className={style.appearanceRow}>
+                    <div className={style.flex5}>
+                        Header Border
+                    </div>
+                    <div className={style.flex2} onClick={() => showColorPicker(colorPickerTypes.HEADER_BORDER)}>
+                        <div className={style.colorIcon} style={{ backgroundColor: getRgbaColor(borderColor) }} />
+                        {colorPickerVisible === colorPickerTypes.HEADER_BORDER ?
+                            <div className={style.sketchPickerContainer}>
+                                <ColorPicker
+                                    color={borderColor}
+                                    onChange={onChangeBorderColor}
+                                    onMouseLeave={onMouseLeave}
+                                    styles={colorPickerStyles}
+                                />
+                            </div> : null
+                        }
+                    </div>
+                    <div className={style.flex6}>
+                        <div className={style.hexCodeInput}>
+                            {rgbToHex(borderColor)}
+                        </div>
+                    </div>
+                </div>
+                <div className={style.appearanceRow}>
+                    <div className={style.flex5}>
+                        Remove Header
+                    </div>
+
+                    <div className={style.flex8}>
+                        <input type="checkbox" className="check-box m-l-10"
+                            checked={removeHeader}
+                            onChange={handleRemoveHeaderCLick}
+                        />
+                    </div>
+                </div>
+
+                <div className={style.separator} />
+
+                <div className={style.appearanceRow}>
+                    <div className={style.flex5}>
+                        Matrix Background color
+                    </div>
+                    <div className={style.flex2} onClick={() => showColorPicker(colorPickerTypes.BACKGROUND)}>
+                        <div className={style.colorIcon} style={{ backgroundColor: getRgbaColor(backgroundColor) }} />
+                        {colorPickerVisible === colorPickerTypes.BACKGROUND ?
+                            <div className={style.sketchPickerContainer}>
+                                <ColorPicker
+                                    color={backgroundColor}
+                                    onChange={onChangeBackgroundColor}
+                                    onMouseLeave={onMouseLeave}
+                                    styles={colorPickerStyles}
+                                />
+                            </div> : null
+                        }
+                    </div>
+                    <div className={style.flex6}>
+                        <div className={style.hexCodeInput}>{rgbToHex(backgroundColor)}</div>
+                    </div>
+                </div>
+
+                <div className={style.separator} />
+
+                <div className={style.appearanceRow}>
+                    <div className={style.flex5}>
+                        Section Background
+                    </div>
+                    <div className={style.flex2} onClick={() => showColorPicker(colorPickerTypes.SECTION_BG)}>
+                        <div className={style.colorIcon} style={{ backgroundColor: getRgbaColor(sectionBackgroundColor) }} />
+                        {colorPickerVisible === colorPickerTypes.SECTION_BG ?
+                            <div className={style.sketchPickerContainer}>
+                                <ColorPicker
+                                    color={sectionBackgroundColor}
+                                    onChange={onChangeSectionColor}
+                                    onMouseLeave={onMouseLeave}
+                                    styles={colorPickerStyles}
+                                />
+                            </div> : null
+                        }
+                    </div>
+                    <div className={style.flex6}>
+                        <div className={style.hexCodeInput} >
+                            {rgbToHex(sectionBackgroundColor)}
+                        </div>
+                    </div>
+                </div>
+                <div className={style.appearanceRow}>
+                    <div className={style.flex5}>
+                        Section Border
+                    </div>
+                    <div className={style.flex2} onClick={() => showColorPicker(colorPickerTypes.SECTION_BORDER)}>
+                        <div className={style.colorIcon} style={{ backgroundColor: getRgbaColor(sectionBorderColor) }} />
+                        {colorPickerVisible === colorPickerTypes.SECTION_BORDER ?
+                            <div className={style.sketchPickerContainer}>
+                                <ColorPicker
+                                    color={sectionBorderColor}
+                                    onChange={onChangeSectionBorderColor}
+                                    onMouseLeave={onMouseLeave}
+                                    styles={colorPickerStyles}
+                                />
+                            </div> : null
+                        }
+                    </div>
+                    <div className={style.flex6}>
+                        <div className={style.hexCodeInput} >
+                            {rgbToHex(sectionBorderColor)}
+                        </div>
+                    </div>
+                </div>
+
+                <div className={style.appearanceRow}>
+                    <div className={style.flex5}>
+                        Number of sections
+                    </div>
+
+                    <div className={style.flex8}>
+                        <div className={style.fontSizeContainer}>
+                            <div
+                                className='hover-hand m-r-10 m-t-10 bold'
+                                onClick={onSectionsCountDecrease}>-</div>
+                            <input value={sectionsCount} onChange={onSectionsCountChange} type="text" />
+                            <div
+                                className='hover-hand m-l-10 m-t-10 bold'
+                                onClick={onSectionsCountIncrese}
+                            >+</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div className={style.separator} />
+
+                <div className={style.appearanceRow}>
+                    <div className={style.flex5}>
+                        Number of columns
+                    </div>
+
+                    <div className={style.flex8}>
+                        <div className={style.fontSizeContainer}>
+                            <div
+                                className='hover-hand m-r-10 m-t-10 bold'
+                                onClick={onColumnsCountDecrease}>-</div>
+                            <input value={columnsCount} onChange={onColumnsCountChange} type="text" />
+                            <div
+                                className='hover-hand m-l-10 m-t-10 bold'
+                                onClick={onColumnsCountIncrease}
+                            >+</div>
+                        </div>
+                    </div>
+                </div>
+                <div className={style.appearanceRow}>
+                    <div className={style.flex5}>
+                        Hide Options
+                    </div>
+
+                    <div className={style.flex8}>
+                        <input type="checkbox" className="check-box m-l-10"
+                            checked={hideTools}
+                            onChange={handleCheckboxCLick}
+                        />
+                    </div>
+                </div>
+
+            </>
         )
     }
 
@@ -1505,6 +1645,73 @@ const PropertyPanel = ({ nodes, selectedNodes = [], selectedEdges = [], setNodes
                         />
                     }
                 </div>
+            </div>
+        )
+    }
+
+    const onSelectEdge = (id) => {
+        setEdges((edges) =>
+            edges.map((edge) => {
+                if (edge.id === id) {
+                    const newEdge = { ...edge }
+                    newEdge.selected = !edge.selected
+
+                    return newEdge
+                } else return edge
+            })
+        )
+    }
+
+    const onHideEdge = (id) => {
+        setEdges((edges) =>
+            edges.map((edge) => {
+                if (edge.id === id) {
+                    const newEdge = { ...edge }
+                    newEdge.hidden = !edge.hidden ?? true
+
+                    return newEdge
+                } else return edge
+            })
+        );
+    }
+
+    const onDeleteEdge = (id) => {
+        setEdges((edges) =>
+            edges.filter((e) => e.id !== id)
+        );
+    }
+
+    const connectorsContent = () => {
+        return (
+            <div className={style.layerContainer}>
+                {edges.map((edge, index) => {
+                    return (
+                        <div
+                            key={edge?.id}
+                            className={`${style.layerItemContainer} ${edge?.selected ? style.layerItemSelected : ''} hover-hand`}
+                            onClick={() => onSelectEdge(edge?.id)}
+                        >
+                            <div className='m-r-5' onClick={(e) => {
+                                e.stopPropagation()
+                                onHideEdge(edge?.id)
+                            }} >
+                                {edge?.hidden ?
+                                    <EyeInvisibleOutlined /> : <EyeOutlined />
+                                }
+                            </div>
+                            <div>
+                                {`Connector ${index + 1}`}
+                            </div>
+                            <i
+                                onClick={(e) => {
+                                    e.stopPropagation()
+                                    onDeleteEdge(edge?.id)
+                                }}
+                                className={`icon-delete-1 ${style.layerDeleteIcon}`}
+                            />
+                        </div>)
+                })
+                }
             </div>
         )
     }
@@ -1815,16 +2022,32 @@ const PropertyPanel = ({ nodes, selectedNodes = [], selectedEdges = [], setNodes
                             }
 
 
-                            <div className='m-b-10' >
-                                <div className={style.sidebarCategoryheader} onClick={() => { onCategoryClick(propertyCategories.APPEARANCE) }} >
-                                    <div>{propertyCategories.APPEARANCE}</div>
-                                    <i className={(!closedCategories.includes(propertyCategories.APPEARANCE) ? ' icon-arrow-down' : ' icon-arrow-up')} />
-                                </div>
+                            {selectedNodes?.[0]?.type === 'MatrixChart' &&
+                                <div className='m-b-10' >
+                                    <div className={style.sidebarCategoryheader} onClick={() => { onCategoryClick(propertyCategories.MATRIX) }} >
+                                        <div>{propertyCategories.MATRIX}</div>
+                                        <i className={(!closedCategories.includes(propertyCategories.MATRIX) ? ' icon-arrow-down' : ' icon-arrow-up')} />
+                                    </div>
 
-                                {!closedCategories.includes(propertyCategories.APPEARANCE) &&
-                                    appearanceContent()
-                                }
-                            </div>
+                                    {!closedCategories.includes(propertyCategories.MATRIX) &&
+                                        matrixContent()
+                                    }
+                                </div>
+                            }
+
+
+                            {selectedNodes?.length > 0 || selectedEdges?.length > 0 ?
+                                <div className='m-b-10' >
+                                    <div className={style.sidebarCategoryheader} onClick={() => { onCategoryClick(propertyCategories.APPEARANCE) }} >
+                                        <div>{propertyCategories.APPEARANCE}</div>
+                                        <i className={(!closedCategories.includes(propertyCategories.APPEARANCE) ? ' icon-arrow-down' : ' icon-arrow-up')} />
+                                    </div>
+
+                                    {!closedCategories.includes(propertyCategories.APPEARANCE) &&
+                                        appearanceContent()
+                                    }
+                                </div> : null
+                            }
 
                             <div className='m-b-10' >
                                 <div className={style.sidebarCategoryheader} onClick={() => { onCategoryClick(propertyCategories.LAYERS) }} >
@@ -1838,6 +2061,21 @@ const PropertyPanel = ({ nodes, selectedNodes = [], selectedEdges = [], setNodes
                                     </div>
                                 }
                             </div>
+
+                            {edges?.length > 0 ?
+                                <div className='m-b-10' >
+                                    <div className={style.sidebarCategoryheader} onClick={() => { onCategoryClick(propertyCategories.CONNECTORS) }} >
+                                        <div>{propertyCategories.CONNECTORS}</div>
+                                        <i className={(!closedCategories.includes(propertyCategories.CONNECTORS) ? ' icon-arrow-down' : ' icon-arrow-up')} />
+                                    </div>
+
+                                    {!closedCategories.includes(propertyCategories.CONNECTORS) &&
+                                        <div className={style.propertyPanelContainer}>
+                                            {connectorsContent()}
+                                        </div>
+                                    }
+                                </div> : null
+                            }
 
                             {selectedNodes?.length === 1 &&
                                 <div>

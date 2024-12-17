@@ -3,46 +3,35 @@ import { Handle, Position } from 'reactflow';
 
 import style from '../DndStyles.module.scss'
 
-const sourceStyle = { zIndex: 2 };
-const targetStyle = { zIndex: 1 };
-
-const ConnectionDot = ({ isConnecting, isTarget }) => {
+const ConnectionDot = () => {
     return (
         <>
-            {!isConnecting && (
-                <>
-                    <Handle
-                        className={style.customHandle2Right}
-                        position={Position.Right}
-                        type="source"
-                        style={sourceStyle}
-                    />
-                    <Handle
-                        className={style.customHandle2Top}
-                        position={Position.Top}
-                        type="source"
-                        style={sourceStyle}
-                    />
-                    <Handle
-                        className={style.customHandle2Bottom}
-                        position={Position.Bottom}
-                        type="source"
-                        style={sourceStyle}
-                    />
-                    <Handle
-                        className={style.customHandle2Left}
-                        position={Position.Left}
-                        type="source"
-                        style={sourceStyle}
-                    />
-                </>
-            )}
-            <Handle className={isTarget ? style.customHandle : style.customHandle2}
-                position={Position.Left}
-                type="target"
-                style={targetStyle}
+            <Handle
+                type="source"
+                position={Position.Top}
+                id="top"
+                className={style.handle}
             />
-        </>)
+            <Handle
+                type="source"
+                position={Position.Left}
+                id="left"
+                className={style.handle}
+            />
+            <Handle
+                type="source"
+                position={Position.Bottom}
+                id="bottom"
+                className={style.handle}
+            />
+            <Handle
+                type="source"
+                position={Position.Right}
+                id="right"
+                className={style.handle}
+            />
+        </>
+    )
 }
 
 export default ConnectionDot

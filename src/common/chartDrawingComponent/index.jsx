@@ -9,7 +9,8 @@ import ReactFlow, {
     Panel,
     MarkerType,
     applyNodeChanges,
-    useReactFlow
+    useReactFlow,
+    ConnectionMode
 } from 'reactflow';
 import 'reactflow/dist/style.css';
 
@@ -23,8 +24,8 @@ import PieChart from './shapes/PieChart.js';
 import BarChart from './shapes/BarChart.js';
 import UploadNode from './shapes/UploadNode.js';
 import Shapes, { parentNodes, uploadNodeId } from './ShapesData.js';
-import FloatingEdge from './customElements/FloatingEdge';
-import CustomConnectionLine from './customElements/CustomConnectionLine';
+import { ConnectionLine } from './edges/ConnectionLine';
+
 import Sidebar from './panels/Sidebar.jsx';
 import PropertyPanel from './panels/PropertyPanel.jsx';
 import ToolBar from './panels/ToolBar.jsx';
@@ -32,6 +33,8 @@ import ReferenceModal from './panels/ReferenceModal.jsx';
 import ContextMenu from './customElements/ContextMenu.js';
 import { useNodeDataStore } from './store'
 import HelperLines from "./customElements/HelperLines.jsx";
+import { DEFAULT_ALGORITHM } from './edges/EditableEdge/constants.js';
+import { EditableEdgeComponent } from './edges/EditableEdge';
 
 import { useDiagramStore } from '../../Views/ChartDrawing/chartDrawingStore'
 import { getId, arrowColor, getHelperLines, formatOldNodesData, getNodePositionInsideParent } from './utils'
@@ -39,24 +42,17 @@ import { getId, arrowColor, getHelperLines, formatOldNodesData, getNodePositionI
 import style from './DndStyles.module.scss'
 import PagesPanel from './panels/PagesPanel.jsx';
 
-const connectionLineStyle = {
-    strokeWidth: 1,
-    stroke: arrowColor,
-};
-
 const edgeTypes = {
-    floating: FloatingEdge,
+    'editable-edge': EditableEdgeComponent,
 };
 const panOnDrag = [1, 2];
 
 const defaultEdgeOptions = {
-    style: { strokeWidth: 1, stroke: arrowColor },
-    type: 'floating',
+    type: 'editable-edge',
     markerEnd: {
         type: MarkerType.ArrowClosed,
         color: arrowColor,
     },
-    zIndex: 1001,
 };
 
 const DnDFlow = ({ props }) => {
@@ -93,7 +89,34 @@ const DnDFlow = ({ props }) => {
     const setCurrentLayer = useNodeDataStore((state) => state.setCurrentLayer);
     const layers = useNodeDataStore((state) => state.layers);
 
-    const onConnect = useCallback((params) => setEdges((eds) => addEdge(params, eds)), []);
+    const onConnect = useCallback(
+        (connection) => {
+            const { connectionLinePath } = useNodeDataStore.getState();
+            // We add a new edge based on the selected DEFAULT_ALGORITHM
+            // and transfer all the control points from the connectionLinePath
+            // in case the user has added any while creating the connection
+            const edge = {
+                ...connection,
+                id: `${Date.now()}-${connection.source}-${connection.target}`,
+                type: 'editable-edge',
+                selected: true,
+                data: {
+                    algorithm: DEFAULT_ALGORITHM,
+                    points: connectionLinePath.map(
+                        (point, i) =>
+                        ({
+                            ...point,
+                            id: getId('edge'),
+                            prev: i === 0 ? undefined : connectionLinePath[i - 1],
+                            active: true,
+                        })
+                    ),
+                },
+            };
+            setEdges((edges) => addEdge(edge, edges));
+        },
+        [setEdges]
+    );
 
     const customApplyNodeChanges = useCallback(
         (changes, nodes) => {
@@ -496,9 +519,9 @@ const DnDFlow = ({ props }) => {
                     panOnDrag={panOnDrag}
                     nodeTypes={nodeTypes}
                     edgeTypes={edgeTypes}
+                    connectionMode={ConnectionMode.Loose}
                     defaultEdgeOptions={defaultEdgeOptions}
-                    connectionLineComponent={CustomConnectionLine}
-                    connectionLineStyle={connectionLineStyle}
+                    connectionLineComponent={ConnectionLine}
                     zoomOnDoubleClick={false}
                     nodesDraggable={!spacebarActive}
                     nodesFocusable={!spacebarActive}
@@ -516,6 +539,7 @@ const DnDFlow = ({ props }) => {
 
             <PropertyPanel
                 nodes={nodes}
+                edges={edges}
                 selectedNodes={selectedNodes}
                 selectedEdges={selectedEdges}
                 setNodes={setNodes}

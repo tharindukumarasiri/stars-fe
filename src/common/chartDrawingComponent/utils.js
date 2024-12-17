@@ -116,6 +116,7 @@ export const colorPickerTypes = {
     HEADER_BORDER: 'HEADER_BORDER',
     COLUMN_BG: 'COLUMN_BG',
     ROW_BG: 'ROW_BG',
+    CONNECTOR: 'CONNECTOR',
 }
 
 export const defaultNewLayerRestData = {

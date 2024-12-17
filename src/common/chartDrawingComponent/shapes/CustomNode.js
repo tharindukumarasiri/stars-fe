@@ -1,5 +1,5 @@
 import React, { memo, useCallback, useEffect, useRef, useState } from 'react';
-import { useUpdateNodeInternals, NodeResizer, useStore } from 'reactflow';
+import { useUpdateNodeInternals, NodeResizer } from 'reactflow';
 import { Tooltip, Input } from "antd";
 import { drag } from 'd3-drag';
 import { select } from 'd3-selection';
@@ -16,8 +16,6 @@ import { ReferenceTypes } from "../../../utils/constants";
 
 const { TextArea } = Input;
 
-const connectionNodeIdSelector = (state) => state.connectionNodeId;
-
 const resizerHandleStyle = { width: 6, height: 6 }
 
 function CustomNode({ id, selected, type, data }) {
@@ -30,12 +28,6 @@ function CustomNode({ id, selected, type, data }) {
     const initialHeight = shapeData?.size?.height ?? 50;
     const initialWidth = shapeData?.size?.width ?? 50;
     const isTable = type === 'Table';
-
-    const connectionNodeId = useStore(connectionNodeIdSelector);
-    const isConnecting = !!connectionNodeId;
-    const isTarget = connectionNodeId && connectionNodeId !== id;
-
-    const handleContainerStyle = (!((selected || isTarget) && !isTable) || data?.hideHandle) ? style.handleHidden : '';
 
     const sizes = useNodeDataStore((state) => state?.size);
     const onSizeCahnge = useNodeDataStore((state) => state.setSize);
@@ -220,9 +212,8 @@ function CustomNode({ id, selected, type, data }) {
                 <CustomShape fill={backgroundColor} />
             }
 
-            <div className={handleContainerStyle}>
-                <ConnectionDot isConnecting={isConnecting} isTarget={isTarget} />
-            </div>
+            <ConnectionDot />
+
             {!shapeData?.hideTextInput ?
                 <TextArea
                     autoSize

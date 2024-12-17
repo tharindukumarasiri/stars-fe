@@ -62,7 +62,7 @@
     "react-router-dom": "^6.3.0",
     "react-share": "^4.4.1",
     "react-simple-wysiwyg": "^2.2.5",
-    "reactflow": "^11.7.0",
+    "reactflow": "^11.11.4",
     "recharts": "^2.12.7",
     "resolve": "^1.20.0",
     "resolve-url-loader": "^4.0.0",

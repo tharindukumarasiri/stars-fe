@@ -1,5 +1,5 @@
 import React, { memo, useEffect, useRef } from 'react';
-import { NodeResizer, useStore, useUpdateNodeInternals } from 'reactflow';
+import { NodeResizer, useUpdateNodeInternals } from 'reactflow';
 import { drag } from 'd3-drag';
 import { select } from 'd3-selection';
 
@@ -9,20 +9,12 @@ import style from '../DndStyles.module.scss'
 import { getImageDimensions } from '../utils';
 import ConnectionDot from '../customElements/ConnectionDot';
 
-const connectionNodeIdSelector = (state) => state.connectionNodeId;
-
 const initialHeight = 80;
 const initialWidth = 80;
 
 function UploadNode({ id, selected, data }) {
     const rotateControlRef = useRef(null);
     const updateNodeInternals = useUpdateNodeInternals();
-
-    const connectionNodeId = useStore(connectionNodeIdSelector);
-    const isConnecting = !!connectionNodeId;
-    const isTarget = connectionNodeId && connectionNodeId !== id;
-
-    const handleContainerStyle = selected || isTarget ? '' : style.handleHidden;
 
     const sizes = useNodeDataStore((state) => state.size);
     const onSizeCahnge = useNodeDataStore((state) => state.setSize);
@@ -82,9 +74,8 @@ function UploadNode({ id, selected, data }) {
                 }}
                 className={`nodrag ${style.textBtnRotate} icon-rotate1`}
             />
-            <div className={handleContainerStyle}>
-                <ConnectionDot isConnecting={isConnecting} isTarget={isTarget} />
-            </div>
+
+            <ConnectionDot />
 
             <NodeResizer
                 isVisible={selected}

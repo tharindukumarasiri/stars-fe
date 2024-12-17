@@ -1,5 +1,5 @@
 import React, { memo, useEffect, useRef, useState } from "react";
-import { useUpdateNodeInternals, NodeResizer, useStore } from "reactflow";
+import { useUpdateNodeInternals, NodeResizer } from "reactflow";
 import { drag } from "d3-drag";
 import { select } from "d3-selection";
 import { BarChart, Bar, Rectangle, XAxis, YAxis, CartesianGrid, Tooltip, Legend, } from 'recharts';
@@ -11,10 +11,8 @@ import style from "../DndStyles.module.scss";
 import ConnectionDot from "../customElements/ConnectionDot";
 import DeleteBtn from "../customElements/DeleteBtn";
 
-const connectionNodeIdSelector = (state) => state.connectionNodeId;
 
 const resizerHandleStyle = { width: 6, height: 6 };
-const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042"];
 const RADIAN = Math.PI / 180;
 
 function BarChartComponent({ id, selected, type, data }) {
@@ -37,12 +35,6 @@ function BarChartComponent({ id, selected, type, data }) {
     const shapeData = Shapes[type];
     const initialHeight = shapeData?.size?.height ?? 50;
     const initialWidth = shapeData?.size?.width ?? 50;
-
-    const connectionNodeId = useStore(connectionNodeIdSelector);
-    const isConnecting = !!connectionNodeId;
-    const isTarget = connectionNodeId && connectionNodeId !== id;
-
-    const handleContainerStyle = selected || isTarget ? "" : style.handleHidden;
 
     const sizes = useNodeDataStore((state) => state?.size);
     const onSizeCahnge = useNodeDataStore((state) => state.setSize);
@@ -123,9 +115,7 @@ function BarChartComponent({ id, selected, type, data }) {
 
             {selected && <DeleteBtn nodeId={id} />}
 
-            <div className={handleContainerStyle}>
-                <ConnectionDot isConnecting={isConnecting} isTarget={isTarget} />
-            </div>
+            <ConnectionDot />
 
             {apiData?.length > 0 ? (
                 <BarChart

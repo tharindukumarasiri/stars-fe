@@ -17,7 +17,11 @@ export const useNodeDataStore = create((set, get) => ({
         label: 'Layer 1',
         ...defaultNewLayerRestData
     }],
+    connectionLinePath: [],
 
+    setConnectionLinePath: (connectionLinePath) => {
+        set({ connectionLinePath });
+    },
     setCurrentPage: (currentPage) => set({ currentPage }),
     setPagesData: (pagesData) => set({ pagesData }),
     setReferenceModalId: (referenceModalId) => set({ referenceModalId }),

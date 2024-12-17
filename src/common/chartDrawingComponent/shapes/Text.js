@@ -1,5 +1,5 @@
 import React, { memo, useCallback, useEffect, useRef } from 'react';
-import { useUpdateNodeInternals, NodeResizer, useStore } from 'reactflow';
+import { useUpdateNodeInternals, NodeResizer } from 'reactflow';
 import { drag } from 'd3-drag';
 import { select } from 'd3-selection';
 import { Input } from 'antd';
@@ -14,8 +14,6 @@ import DeleteBtn from '../customElements/DeleteBtn';
 
 const { TextArea } = Input;
 
-const connectionNodeIdSelector = (state) => state.connectionNodeId;
-
 const resizerHandleStyle = { width: 6, height: 6 }
 
 function Text({ id, selected, type, data }) {
@@ -25,12 +23,6 @@ function Text({ id, selected, type, data }) {
     const shapeData = Shapes[type]
     const initialHeight = shapeData?.size?.height ?? 50;
     const initialWidth = shapeData?.size?.width ?? 50;
-
-    const connectionNodeId = useStore(connectionNodeIdSelector);
-    const isConnecting = !!connectionNodeId;
-    const isTarget = connectionNodeId && connectionNodeId !== id;
-
-    const handleContainerStyle = selected || isTarget ? '' : style.handleHidden;
 
     const sizes = useNodeDataStore((state) => state?.size);
     const onSizeCahnge = useNodeDataStore((state) => state.setSize);
@@ -121,9 +113,7 @@ function Text({ id, selected, type, data }) {
 
             {selected && <DeleteBtn nodeId={id} />}
 
-            <div className={handleContainerStyle}>
-                <ConnectionDot isConnecting={isConnecting} isTarget={isTarget} />
-            </div>
+            <ConnectionDot />
 
             <TextArea
                 autoSize
