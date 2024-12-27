@@ -1,4 +1,4 @@
-import React, { useState, forwardRef, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     DndContext,
     closestCenter,
@@ -15,6 +15,7 @@ import {
     SortableContext,
     sortableKeyboardCoordinates,
     verticalListSortingStrategy,
+    useSortable
 } from '@dnd-kit/sortable';
 import {
     EyeOutlined,
@@ -29,7 +30,6 @@ import {
     restrictToVerticalAxis,
     restrictToWindowEdges,
 } from '@dnd-kit/modifiers';
-import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import style from '../DndStyles.module.scss'
 

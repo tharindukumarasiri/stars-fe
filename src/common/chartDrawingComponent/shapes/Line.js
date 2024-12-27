@@ -1,12 +1,11 @@
 import React, { memo, useCallback, useEffect, useRef } from 'react';
-import { useUpdateNodeInternals, NodeResizer, NodeToolbar, Position } from 'reactflow';
+import { useUpdateNodeInternals, NodeResizer } from 'reactflow';
 import { drag } from 'd3-drag';
 import { select } from 'd3-selection';
 
 import { useNodeDataStore } from '../store'
 import Shapes from '../ShapesData.js';
 import { getRgbaColor } from '../utils';
-import TextInput from "../../../common/input";
 
 import style from '../DndStyles.module.scss'
 import DeleteBtn from '../customElements/DeleteBtn';
@@ -127,15 +126,6 @@ function Line({ id, selected, type, data }) {
         }
     };
 
-    const onChangeLineWidth = (e) => {
-        e.preventDefault();
-        if (isHorizontalLine) {
-            setSize({ height: Number(e.target.value), width: size?.width })
-        } else {
-            setSize({ height: size?.height, width: Number(e.target.value) })
-        }
-    }
-
     return (
         <div style={mainContainerStyle} className={style.customNodeContainer}>
             <NodeResizer
@@ -161,12 +151,6 @@ function Line({ id, selected, type, data }) {
             {selected &&
                 <DeleteBtn nodeId={id} />
             }
-
-            <NodeToolbar position={isHorizontalLine ? Position.Bottom : Position.Right}>
-                <div style={{ width: 30 }}>
-                    <TextInput value={isHorizontalLine ? size?.height : size?.width} onChange={onChangeLineWidth} />
-                </div>
-            </NodeToolbar>
         </div>
     );
 }

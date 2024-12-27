@@ -1,4 +1,4 @@
-import { Position } from 'reactflow';
+import { Position, getSmoothStepPath, getBezierPath } from 'reactflow';
 
 import { getLinearPath, getLinearControlPoints } from './linear';
 import { getCatmullRomPath, getCatmullRomControlPoints } from './catmull-rom';
@@ -31,9 +31,23 @@ export function getPath(
       return getLinearPath(points);
 
     case Algorithm.CatmullRom:
-      return getCatmullRomPath(points);
+      return getBezierPath({
+        sourceX: points[0].x,
+        sourceY: points[0].y,
+        targetX: points[points.length - 1].x,
+        targetY: points[points.length - 1].y,
+        sourcePosition: sides.fromSide,
+        targetPosition: sides.toSide,
+      })[0];
 
     case Algorithm.BezierCatmullRom:
-      return getCatmullRomPath(points, true, sides);
+      return getSmoothStepPath({
+        sourceX: points[0].x,
+        sourceY: points[0].y,
+        targetX: points[points.length - 1].x,
+        targetY: points[points.length - 1].y,
+        sourcePosition: sides.fromSide,
+        targetPosition: sides.toSide,
+      })[0];
   }
 }

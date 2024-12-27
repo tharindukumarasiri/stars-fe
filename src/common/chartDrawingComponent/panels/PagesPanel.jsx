@@ -40,7 +40,7 @@ export default ({ onChangePage }) => {
                                     onChange={onChangePageName}
                                     className={style.pagesTabInput}
                                     value={pageData?.pageName} />
-                                : <div>{pageData?.pageName}</div>
+                                : <div>{pageData?.pageName ?? 'New Page'}</div>
                             }
                         </div>
                     )

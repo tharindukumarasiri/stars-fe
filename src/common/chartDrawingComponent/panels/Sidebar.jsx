@@ -14,7 +14,6 @@ const { Panel } = Collapse;
 const savedShapesKey = 'SAVED_SHAPES';
 
 const SideBar = () => {
-    const [sidebarVisible, setSidebarVisible] = useState(true);
     const [closedCategories, setClosedCategories] = useState(Object.keys(Categories));
     const [searchText, setSearchText] = useState('');
 
@@ -48,8 +47,6 @@ const SideBar = () => {
         event.dataTransfer.effectAllowed = 'move';
     };
 
-    const onArrowClicked = () => setSidebarVisible(pre => !pre);
-
     const CustomShape = ({ shape }) => {
         return (
             <svg viewBox={shape?.viewBox} fill="#ffffff" stroke="#434343" >
@@ -62,79 +59,37 @@ const SideBar = () => {
         <img src={image} className="" alt="img" />
     )
 
-    const onCategoryClick = (category) => {
-        const index = closedCategories?.findIndex(cat => cat === category)
-        const newClosedCategories = [...closedCategories]
-
-        if (index < 0) {
-            newClosedCategories.push(category)
-        } else {
-            newClosedCategories.splice(index, 1)
-        }
-
-        setClosedCategories(newClosedCategories);
-    }
-
     const onChangeSearchText = (e) => {
         e.preventDefault();
         setSearchText(e.target.value)
     }
 
     return (
-        <aside className={sidebarVisible ? style.aside : ''}>
+        <aside className={style.aside}>
             <div className={style.sidebarColapsBtnContainer}>
-                {sidebarVisible &&
-                    <h3>Drawing Types</h3>
-                }
-                <i className={style.sidebarColapsBtn + (sidebarVisible ? ' icon-circle-arrow-left' : ' icon-circle-arrow-right')}
-                    onClick={onArrowClicked} />
+                <h3>Drawing Types</h3>
             </div>
-            {sidebarVisible &&
-                <div className='m-t-10'>
-                    <Input placeholder="Search" value={searchText} onChange={onChangeSearchText} endImage='icon-search-1' />
-                </div>
-            }
+            <div className='m-t-10'>
+                <Input placeholder="Search" value={searchText} onChange={onChangeSearchText} endImage='icon-search-1' />
+            </div>
             <div className={style.sidebarMainContainer}>
-                {sidebarVisible &&
-                    <>
-                        {searchText.length > 0 ?
-                            <div className={style.sidebarCategoryContainer}>
-                                {
-                                    Object.entries(Shapes)?.map(shape => {
-                                        if (shape[0]?.toLowerCase().includes(searchText.toLocaleLowerCase()))
-                                            return (
-                                                <div className={style.sidebarItemContainer} onDragStart={(event) => onDragStart(event, shape[0])} draggable key={shape[0]}>
-                                                    <CustomShape shape={shape[1]} />
-                                                </div>
-                                            )
-                                    })
-                                }
-                            </div> :
+                {searchText.length > 0 ?
+                    <div className={style.sidebarCategoryContainer}>
+                        {
+                            Object.entries(Shapes)?.map(shape => {
+                                if (shape[0]?.toLowerCase().includes(searchText.toLocaleLowerCase()))
+                                    return (
+                                        <div className={style.sidebarItemContainer} onDragStart={(event) => onDragStart(event, shape[0])} draggable key={shape[0]}>
+                                            <CustomShape shape={shape[1]} />
+                                        </div>
+                                    )
+                            })
+                        }
+                    </div> :
+                    <Collapse accordion>
+                        <Panel header="Shapes" key="1">
                             <Collapse accordion>
-                                <Panel header="Shapes" key="1">
-                                    <Collapse accordion>
-                                        {Object.entries(Categories)?.map(category => {
-                                            return (
-                                                <Panel header={category[1]} key={category[1]}>
-                                                    <div className={style.sidebarCategoryContainer}>
-                                                        {
-                                                            Object.entries(Shapes)?.map(shape => {
-                                                                if (shape[1]?.category?.includes(category[1]))
-                                                                    return (
-                                                                        <div className={style.sidebarItemContainer} onDragStart={(event) => onDragStart(event, shape[0])} draggable key={shape[0]}>
-                                                                            <CustomShape shape={shape[1]} />
-                                                                        </div>
-                                                                    )
-                                                            })
-                                                        }
-                                                    </div>
-                                                </Panel>
-                                            )
-                                        })}
-                                    </Collapse>
-                                </Panel>
-
-                                {Object.entries(OtherCategories)?.map(category => {
+                                {Object.entries(Categories)?.map(category => {
                                     return (
                                         <Panel header={category[1]} key={category[1]}>
                                             <div className={style.sidebarCategoryContainer}>
@@ -152,35 +107,53 @@ const SideBar = () => {
                                         </Panel>
                                     )
                                 })}
-
-                                <Panel header="My saved shapes" key="4">
-                                    {!closedCategories.includes(savedShapesKey) &&
-                                        <div className={style.sidebarCategoryImageUploadContainer}>
-                                            <Dragger {...props}>
-                                                <p className="ant-upload-drag-icon">
-                                                    <InboxOutlined />
-                                                </p>
-                                                {loading ?
-                                                    <p className="ant-upload-text">Uploading...</p>
-                                                    : <p className="ant-upload-text">Click or drag shapes to this area to upload</p>
-                                                }
-                                            </Dragger>
-                                            <div className={style.sidebarCategoryImageUploadedContainer}>
-                                                {uploadedImages.map((imageData, index) => (
-                                                    <div className={style.sidebarItemContainer}
-                                                        onDragStart={(event) => onDragStart(event, uploadNodeId, imageData.ImageString)}
-                                                        draggable key={index}>
-                                                        <UploadedShape image={imageData.ImageString} />
-                                                    </div>
-                                                ))}
-                                            </div>
-                                        </div>
-                                    }
-                                </Panel>
                             </Collapse>
-                        }
+                        </Panel>
 
-                    </>
+                        {Object.entries(OtherCategories)?.map(category => {
+                            return (
+                                <Panel header={category[1]} key={category[1]}>
+                                    <div className={style.sidebarCategoryContainer}>
+                                        {
+                                            Object.entries(Shapes)?.map(shape => {
+                                                if (shape[1]?.category?.includes(category[1]))
+                                                    return (
+                                                        <div className={style.sidebarItemContainer} onDragStart={(event) => onDragStart(event, shape[0])} draggable key={shape[0]}>
+                                                            <CustomShape shape={shape[1]} />
+                                                        </div>
+                                                    )
+                                            })
+                                        }
+                                    </div>
+                                </Panel>
+                            )
+                        })}
+
+                        <Panel header="My saved shapes" key="4">
+                            {!closedCategories.includes(savedShapesKey) &&
+                                <div className={style.sidebarCategoryImageUploadContainer}>
+                                    <Dragger {...props}>
+                                        <p className="ant-upload-drag-icon">
+                                            <InboxOutlined />
+                                        </p>
+                                        {loading ?
+                                            <p className="ant-upload-text">Uploading...</p>
+                                            : <p className="ant-upload-text">Click or drag shapes to this area to upload</p>
+                                        }
+                                    </Dragger>
+                                    <div className={style.sidebarCategoryImageUploadedContainer}>
+                                        {uploadedImages.map((imageData, index) => (
+                                            <div className={style.sidebarItemContainer}
+                                                onDragStart={(event) => onDragStart(event, uploadNodeId, imageData.ImageString)}
+                                                draggable key={index}>
+                                                <UploadedShape image={imageData.ImageString} />
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            }
+                        </Panel>
+                    </Collapse>
                 }
             </div>
         </aside>

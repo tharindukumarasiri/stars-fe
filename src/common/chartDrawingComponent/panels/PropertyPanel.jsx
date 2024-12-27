@@ -3,43 +3,27 @@ import { AutoComplete } from "antd";
 import {
     SettingOutlined,
     EyeOutlined,
-    ExpandAltOutlined,
     EyeInvisibleOutlined,
 } from '@ant-design/icons';
-import {
-    MarkerType,
-} from 'reactflow';
 
 import ColorPicker from '../../colorPicker';
 import {
     getRgbaColor,
     colorPickerTypes,
-    arrowStartTypes,
-    arrowEndTypes,
     rgbToHex,
-    fontTypes,
-    markerTypes,
-    arrowColor,
     getId,
     defaultNewLayerRestData
 } from '../utils';
 import { useNodeDataStore } from '../store'
 import Dropdown from '../../dropdown';
-import CustomDropdown from '../../customDropdown';
 import { useDiagramStore } from '../../../Views/ChartDrawing/chartDrawingStore'
 import { TabContext } from '../../../utils/contextStore';
 import { NAVIGATION_PAGES } from "../../../utils/enums";
 import FormModal from './FormModal';
 
-import { ReactComponent as AlignLeft } from '../../../assets/images/align-icons/align-left.svg'
-import { ReactComponent as AlignRight } from '../../../assets/images/align-icons/align-right.svg'
-import { ReactComponent as AlignTop } from '../../../assets/images/align-icons/align-top.svg'
-import { ReactComponent as AlignBottom } from '../../../assets/images/align-icons/align-bottom.svg'
-
 import style from '../DndStyles.module.scss'
 import 'react-nestable/dist/styles/index.css';
 import SortableLayer from "../customElements/SortableLayer";
-import { Algorithm } from '../edges/EditableEdge/constants';
 
 const propertyCategories = {
     GRID: 'Grid',
@@ -60,19 +44,10 @@ const LinkTypes = {
 }
 
 const colorPickerStyles = { right: 0, top: 80 };
-const transparentColorObj = {
-    "rgb": {
-        "r": 255,
-        "g": 255,
-        "b": 255,
-        "a": 0
-    },
-}
 
 const PropertyPanel = ({ nodes, edges, selectedNodes = [], selectedEdges = [], setNodes, setEdges, onChangePage }) => {
     const { changeActiveTab } = useContext(TabContext);
 
-    const [sidebarVisible, setSidebarVisible] = useState(true);
     const [colorPickerVisible, setColorPickerVisible] = useState('')
     const [closedCategories, setClosedCategories] = useState([]);
     const [urlInput, setUrlInput] = useState('');
@@ -95,12 +70,6 @@ const PropertyPanel = ({ nodes, edges, selectedNodes = [], selectedEdges = [], s
     const selectedNodeId = useNodeDataStore((state) => state.selectedNodeId);
     const textdata = useNodeDataStore((state) => state.textdata).find(item => item.id === selectedNodeId);
 
-    const sizes = useNodeDataStore((state) => state.size);
-    const onSizeCahnge = useNodeDataStore((state) => state.setSize);
-
-    const size = sizes.find(item => item.id === selectedNodeId) || { height: 0, width: 0 };
-    const setSize = (value) => onSizeCahnge(selectedNodeId, value)
-
     const onTextChange = (value) => changeTextData(selectedNodeId, value)
 
     const chartData = useNodeDataStore((state) => state.chartData).find(item => item.id === selectedNodeId);
@@ -118,21 +87,6 @@ const PropertyPanel = ({ nodes, edges, selectedNodes = [], selectedEdges = [], s
 
     const removeHeader = chartData?.removeHeader || false
     const setRemoveHeader = (value) => onChangeChartData({ removeHeader: value })
-
-    const textType = textdata?.textType || { label: 'Poppins', type: 'Poppins' }
-    const setTextType = (value) => onTextChange({ textType: value })
-
-    const fontSize = textdata?.fonstSize || 8
-    const setFontSize = (value) => onTextChange({ fonstSize: value })
-
-    const textBold = textdata?.textBold || false
-    const setBold = (value) => onTextChange({ textBold: value })
-
-    const textColor = textdata?.textColor || 'black'
-    const setTextColor = (value) => onTextChange({ textColor: value })
-
-    const markerType = textdata?.markerType
-    const setMarkerType = (value) => onTextChange({ markerType: value })
 
     const sectionsCount = chartData?.sectionsCount || 1
     const setSectionsCount = (value) => onChangeChartData({ sectionsCount: value })
@@ -175,38 +129,6 @@ const PropertyPanel = ({ nodes, edges, selectedNodes = [], selectedEdges = [], s
     const layers = useNodeDataStore((state) => state.layers);
     const setLayers = useNodeDataStore((state) => state.setLayers);
 
-    const selectedEdgeData = selectedEdges[0]?.data
-
-    const getSelectedEdgeStart = useMemo(() => {
-        //using the first item in the selected edges
-        let selectedEdge = selectedEdges[0]
-
-        if (typeof selectedEdge?.markerStart == 'object') {
-            return arrowStartTypes?.find(type => type?.markerId === selectedEdge?.markerStart?.type)
-        } else {
-            return arrowStartTypes?.find(type => type?.markerId === selectedEdge?.markerStart)
-        }
-    }, [selectedEdges])
-
-    const getSelectedEdgeEnd = useMemo(() => {
-        //using the first item in the selected edges
-        let selectedEdge = selectedEdges[0]
-
-        if (typeof selectedEdge?.markerEnd == 'object') {
-            return arrowEndTypes?.find(type => type?.markerId === selectedEdge?.markerEnd?.type)
-        } else {
-            return arrowEndTypes?.find(type => type?.markerId === selectedEdge?.markerEnd)
-        }
-    }, [selectedEdges])
-
-    const selectedEdgeType = useMemo(() => {
-        //using the first item in the selected edges
-        let selectedEdge = selectedEdges[0]
-
-        return selectedEdge?.data?.algorithm
-    }, [selectedEdges])
-
-    const onArrowClicked = () => setSidebarVisible(pre => !pre)
     const showColorPicker = (picker) => setColorPickerVisible(picker)
     const onChangeBackgroundColor = (color) => setBackgroundColor(color?.rgb)
     const onMouseLeave = () => setColorPickerVisible('')
@@ -214,9 +136,6 @@ const PropertyPanel = ({ nodes, edges, selectedNodes = [], selectedEdges = [], s
     const onChangeBorderColor = (color) => setBorderColor(color?.rgb)
     const onChangeSectionColor = (color) => setSectionBackgroundColor(color?.rgb)
     const onChangeSectionBorderColor = (color) => setSectionBorderColor(color?.rgb)
-    const onChangeTextBold = () => setBold(!textBold)
-    const onChangeTextColor = (color) => setTextColor(color?.rgb)
-    const onChangeMarker = (value) => setMarkerType(value)
     const onSectionsCountIncrese = () => setSectionsCount(sectionsCount + 1);
     const onSectionsCountDecrease = () => setSectionsCount(sectionsCount - 1 > 0 ? sectionsCount - 1 : 0);
     const toggleFormModal = () => setFormsModalVisible(true);
@@ -251,8 +170,6 @@ const PropertyPanel = ({ nodes, edges, selectedNodes = [], selectedEdges = [], s
             setColumnsCount(Number(number))
         }
     };
-
-
 
     const onPaddingIncrease = () => setMatrixPadding(matrixPadding + 1);
     const onPaddingDecrease = () => setMatrixPadding(matrixPadding - 1 > 0 ? matrixPadding - 1 : 0);
@@ -347,7 +264,7 @@ const PropertyPanel = ({ nodes, edges, selectedNodes = [], selectedEdges = [], s
         const formattedList = pagesData?.map((page, index) => {
             return {
                 pageIndex: index,
-                pageName: page.pageName
+                pageName: page?.pageName
             }
         })
         return formattedList
@@ -357,7 +274,7 @@ const PropertyPanel = ({ nodes, edges, selectedNodes = [], selectedEdges = [], s
         const formattedList = selectedDrawingPagesData?.map((page, index) => {
             return {
                 pageIndex: index,
-                pageName: page.pageName
+                pageName: page?.pageName
             }
         })
         return formattedList
@@ -622,228 +539,6 @@ const PropertyPanel = ({ nodes, edges, selectedNodes = [], selectedEdges = [], s
         setClosedCategories(newClosedCategories);
     }
 
-    const onChangeTextType = (e) => {
-        e.preventDefault();
-        setTextType(JSON.parse(e.target.value));
-    }
-
-    const onFontSizeChange = (e) => {
-        e.preventDefault();
-        const number = e.target.value
-
-        if (!isNaN(number) && Number(number) < 33) {
-            setFontSize(number)
-        }
-    }
-
-    const onShapeWidthChange = (e) => {
-        e.preventDefault();
-        const number = e.target.value
-
-        if (!isNaN(number)) {
-            setSize({ height: size.height, width: number })
-        }
-    }
-
-    const onShapeHeightChange = (e) => {
-        e.preventDefault();
-        const number = e.target.value
-
-        if (!isNaN(number)) {
-            setSize({ height: number, width: size.width })
-        }
-    }
-
-    const increaseFontSize = () => {
-        const newSize = Number(fontSize) + 1
-
-        if (newSize < 33)
-            setFontSize(newSize.toString())
-    }
-
-    const decreesFontSize = () => {
-        const newSize = Number(fontSize) - 1
-
-        if (newSize > 1)
-            setFontSize(newSize.toString())
-    }
-
-    const onChangeEdgeColor = (color) => {
-        setEdges((edges) =>
-            edges.map((e) => {
-                const isSelected = selectedEdges?.some(selectedEdge => selectedEdge?.id === e?.id);
-
-                if (isSelected) {
-                    const newEdge = { ...e }
-
-                    newEdge.data.color = color?.hex
-                    if (newEdge?.markerStart) {
-                        newEdge.markerStart = {
-                            ...newEdge.markerStart,
-                            color: color?.hex
-                        }
-                    }
-                    if (newEdge?.markerEnd) {
-                        newEdge.markerEnd = {
-                            ...newEdge.markerEnd,
-                            color: color?.hex
-                        }
-                    }
-
-                    return newEdge;
-                } else return e
-            })
-        );
-    }
-
-    const onChangeEdgeType = (type) => {
-        setEdges((edges) =>
-            edges.map((e) => {
-                const isSelected = selectedEdges?.some(selectedEdge => selectedEdge?.id === e?.id);
-
-                if (isSelected) {
-                    const newEdge = { ...e }
-
-                    newEdge.data = {
-                        ...newEdge.data,
-                        algorithm: type,
-                    }
-
-                    return newEdge;
-                } else return e
-            })
-        );
-    };
-
-    const onChangeEdgeWidth = (e) => {
-        e.preventDefault();
-        const number = e.target.value
-
-        if (!isNaN(number) && Number(number) < 33) {
-            setEdges((edges) =>
-                edges.map((e) => {
-                    const isSelected = selectedEdges?.some(selectedEdge => selectedEdge?.id === e?.id);
-
-                    if (isSelected) {
-                        const newEdge = { ...e }
-
-                        newEdge.data = {
-                            ...newEdge.data,
-                            width: number,
-                        }
-
-                        return newEdge;
-                    } else return e
-                })
-            );
-        }
-    }
-
-    const decreesEdgeWidth = () => {
-        const newSize = Number(selectedEdgeData?.width ?? '2') - 1
-
-        if (newSize > 0)
-            setEdges((edges) =>
-                edges.map((e) => {
-                    const isSelected = selectedEdges?.some(selectedEdge => selectedEdge?.id === e?.id);
-
-                    if (isSelected) {
-                        const newEdge = { ...e }
-
-                        newEdge.data = {
-                            ...newEdge.data,
-                            width: newSize.toString(),
-                        }
-
-                        return newEdge;
-                    } else return e
-                })
-            );
-    }
-
-    const increaseEdgeWidth = () => {
-        const newSize = Number(selectedEdgeData?.width ?? '2') + 1
-
-        setEdges((edges) =>
-            edges.map((e) => {
-                const isSelected = selectedEdges?.some(selectedEdge => selectedEdge?.id === e?.id);
-
-                if (isSelected) {
-                    const newEdge = { ...e }
-
-                    newEdge.data = {
-                        ...newEdge.data,
-                        width: newSize.toString(),
-                    }
-
-                    return newEdge;
-                } else return e
-            })
-        );
-    }
-
-    const onChangeEdgeStart = (value) => {
-        setEdges((edges) =>
-            edges.map((e) => {
-                const isSelected = selectedEdges?.some(selectedEdge => selectedEdge?.id === e?.id);
-
-                if (isSelected) {
-                    const newEdge = { ...e }
-
-                    switch (value?.markerId) {
-                        case 'arrow':
-                            newEdge.markerStart = {
-                                type: MarkerType.Arrow,
-                                color: newEdge?.data?.color ?? arrowColor,
-                            };
-                            break;
-                        case 'arrowclosed':
-                            newEdge.markerStart = {
-                                type: MarkerType.ArrowClosed,
-                                color: newEdge?.data?.color ?? arrowColor,
-                            };
-                            break;
-                        default:
-                            newEdge.markerStart = value?.markerId;
-                            break;
-                    }
-                    return newEdge;
-                } else return e
-            })
-        );
-    }
-
-    const onChangeEdgeEnd = (value) => {
-        setEdges((edges) =>
-            edges.map((e) => {
-                const isSelected = selectedEdges?.some(selectedEdge => selectedEdge?.id === e?.id);
-
-                if (isSelected) {
-                    const newEdge = { ...e }
-
-                    switch (value?.markerId) {
-                        case 'arrow':
-                            newEdge.markerEnd = {
-                                type: MarkerType.Arrow,
-                                color: newEdge?.data?.color ?? arrowColor,
-                            };
-                            break;
-                        case 'arrowclosed':
-                            newEdge.markerEnd = {
-                                type: MarkerType.ArrowClosed,
-                                color: newEdge?.data?.color ?? arrowColor,
-                            };
-                            break;
-                        default:
-                            newEdge.markerEnd = value?.markerId;
-                            break;
-                    }
-                    return newEdge;
-                } else return e
-            })
-        );
-    }
-
     const addNewLayer = () => {
         const copyOfLayers = [...layers]
         const newLayerId = getId('layer')
@@ -969,339 +664,6 @@ const PropertyPanel = ({ nodes, edges, selectedNodes = [], selectedEdges = [], s
         return newNodes;
     }
 
-    const alignLeft = () => {
-        const minXPosition = Math.min(...selectedNodes.map(item => item.position.x))
-
-        setNodes((nodes) =>
-            nodes.map((node) => {
-                if (selectedNodes.some(selectedNode => selectedNode.id === node.id)) {
-                    const newNode = JSON.parse(JSON.stringify(node))
-
-                    newNode.position.x = minXPosition
-                    return newNode
-                } else return node
-            })
-        )
-    }
-
-    const alignRight = () => {
-        const maxXPosition = Math.max(...selectedNodes.map(item => item.position.x))
-
-        setNodes((nodes) =>
-            nodes.map((node) => {
-                if (selectedNodes.some(selectedNode => selectedNode.id === node.id)) {
-                    const newNode = JSON.parse(JSON.stringify(node))
-
-                    newNode.position.x = maxXPosition
-                    return newNode
-                } else return node
-            })
-        )
-    }
-
-    const alignTop = () => {
-        const maxYPosition = Math.min(...selectedNodes.map(item => item.position.y))
-
-        setNodes((nodes) =>
-            nodes.map((node) => {
-                if (selectedNodes.some(selectedNode => selectedNode.id === node.id)) {
-                    const newNode = JSON.parse(JSON.stringify(node))
-
-                    newNode.position.y = maxYPosition
-                    return newNode
-                } else return node
-            })
-        )
-    }
-
-    const alignBottom = () => {
-        const minYPosition = Math.max(...selectedNodes.map(item => item.position.y))
-
-        setNodes((nodes) =>
-            nodes.map((node) => {
-                if (selectedNodes.some(selectedNode => selectedNode.id === node.id)) {
-                    const newNode = JSON.parse(JSON.stringify(node))
-
-                    newNode.position.y = minYPosition
-                    return newNode
-                } else return node
-            })
-        )
-    }
-
-    const resize = (width = true, height = true) => {
-        const maxWidth = Math.max(...selectedNodes.map(item => item.width))
-        const maxHeight = Math.max(...selectedNodes.map(item => item.height))
-
-        setNodes((nodes) =>
-            nodes.map((node) => {
-                if (selectedNodes.some(selectedNode => selectedNode.id === node.id)) {
-                    const newNode = JSON.parse(JSON.stringify(node))
-                    const newSize = {
-                        width: newNode.width,
-                        height: newNode.height
-                    }
-
-                    if (width) {
-                        newNode.width = maxWidth
-                        newSize.width = maxWidth
-                    }
-                    if (height) {
-                        newNode.height = maxHeight
-                        newSize.height = maxHeight
-                    }
-
-                    onSizeCahnge(node.id, newSize)
-                    return newNode
-                } else return node
-            })
-        )
-    }
-
-    const appearanceContent = () => {
-        return (
-            <div className={style.propertyPanelContainer}>
-                {selectedNodes.length > 0 &&
-                    <>
-                        <Dropdown
-                            values={fontTypes}
-                            onChange={onChangeTextType}
-                            dataName='label'
-                            selected={JSON.stringify(textType)}
-                        />
-                        <div className={style.appearanceRow}>
-                            <div className={style.fontSizeContainer}>
-                                <div
-                                    className='hover-hand m-r-10 m-t-10 bold'
-                                    onClick={decreesFontSize}>-</div>
-                                <input value={fontSize} onChange={onFontSizeChange} type="text" />
-                                <div className={style.sizeInputEndText}>pt</div>
-                                <div
-                                    className='hover-hand m-l-10 m-t-10 bold'
-                                    onClick={increaseFontSize}
-                                >+</div>
-                            </div>
-                            <div className={style.fontBoldContainer} style={{ backgroundColor: textBold ? '#D3D3D3' : '' }} onClick={onChangeTextBold}>B</div>
-                            <div className={style.colorPickerContainer} onClick={() => showColorPicker(colorPickerTypes.TEXT)}>
-                                <div className='bold' style={{ color: getRgbaColor(textColor) }}>A</div>
-                                <div className={style.fontColorFooter} style={{ backgroundColor: getRgbaColor(textColor) }} />
-                                {colorPickerVisible === colorPickerTypes.TEXT ?
-                                    <div className={style.sketchPickerContainer}>
-                                        <ColorPicker
-                                            color={textColor}
-                                            onChange={onChangeTextColor}
-                                            onMouseLeave={onMouseLeave}
-                                            styles={{ right: -60, top: -20 }}
-                                        />
-                                    </div> : null
-                                }
-                            </div>
-                        </div>
-                        <div className={style.appearanceRow}>
-                            <div className={style.widthHeightSizeContainer}>
-                                <input value={size.width} onChange={onShapeWidthChange} type="text" />
-                                <div className={style.sizeInputEndText}>W</div>
-                            </div>
-                            <div className={style.widthHeightSizeContainer}>
-                                <input value={size.height} onChange={onShapeHeightChange} type="text" />
-                                <div className={style.sizeInputEndText}>H</div>
-                            </div>
-                        </div>
-
-                        <div className={style.appearanceRow}>
-                            <div className={style.flex4}>
-                                Fill
-                            </div>
-                            <div className={style.flex2} onClick={() => showColorPicker(colorPickerTypes.BACKGROUND)}>
-                                <div className={style.colorIcon} style={{ backgroundColor: getRgbaColor(backgroundColor) }} />
-                                {colorPickerVisible === colorPickerTypes.BACKGROUND ?
-                                    <div className={style.sketchPickerContainer}>
-                                        <ColorPicker
-                                            color={backgroundColor}
-                                            onChange={onChangeBackgroundColor}
-                                            onMouseLeave={onMouseLeave}
-                                            styles={colorPickerStyles}
-                                        />
-                                    </div> : null
-                                }
-                            </div>
-                            <div className={style.flex4}>
-                                <div className={style.hexCodeInput} >
-                                    {rgbToHex(backgroundColor)}
-                                </div>
-                            </div>
-                            <div onClick={() => onChangeBackgroundColor(transparentColorObj)} className={style.flex2} >
-                                <i className={`icon-minus ${style.toolBarIcon}`} />
-                            </div>
-                        </div>
-                        <div className={style.appearanceRow}>
-                            <div className={style.flex4}>
-                                Stroke
-                            </div>
-                            <div className={style.flex2} onClick={() => showColorPicker(colorPickerTypes.LINE)}>
-                                <div className={style.colorIcon} style={{ backgroundColor: getRgbaColor(borderColor) }} />
-                                {colorPickerVisible === colorPickerTypes.LINE ?
-                                    <div className={style.sketchPickerContainer}>
-                                        <ColorPicker
-                                            color={borderColor}
-                                            onChange={onChangeBorderColor}
-                                            onMouseLeave={onMouseLeave}
-                                            styles={colorPickerStyles}
-                                        />
-                                    </div> : null
-                                }
-                            </div>
-                            <div className={style.flex4}>
-                                <div className={style.hexCodeInput}>
-                                    {rgbToHex(borderColor)}
-                                </div>
-                            </div>
-                            <div onClick={() => onChangeBorderColor(transparentColorObj)} className={style.flex2} >
-                                <i className={`icon-minus ${style.toolBarIcon}`} />
-                            </div>
-                        </div>
-                        {selectedNodes?.length > 1 &&
-                            <>
-                                <div className={style.appearanceRow}>
-                                    <div className={style.flex4}>
-                                        Align selected
-                                    </div>
-                                    <div className={'hover-hand ' + style.flex2} onClick={alignLeft} >
-                                        <AlignLeft width={15} height={15} />
-                                    </div>
-                                    <div className={'hover-hand ' + style.flex2} onClick={alignRight} >
-                                        <AlignRight width={15} height={15} />
-                                    </div>
-                                    <div className={'hover-hand ' + style.flex2} onClick={alignTop} >
-                                        <AlignTop width={15} height={15} />
-                                    </div>
-                                    <div className={'hover-hand ' + style.flex2} onClick={alignBottom} >
-                                        <AlignBottom width={15} height={15} />
-                                    </div>
-                                </div>
-                                <div className={style.appearanceRow}>
-                                    <div className={style.flex4}>
-                                        Resize
-                                    </div>
-                                    <div className={'hover-hand ' + style.flex2} onClick={resize} >
-                                        <ExpandAltOutlined />
-                                    </div>
-                                    <div className={'hover-hand ' + style.flex2} onClick={() => resize(true, false)} >
-                                        <ExpandAltOutlined rotate={45} />
-                                    </div>
-                                    <div className={'hover-hand ' + style.flex2} onClick={() => resize(false, true)} >
-                                        <ExpandAltOutlined rotate={135} />
-                                    </div>
-                                </div>
-                            </>
-                        }
-                        <div className={style.appearanceRow}>
-                            <div className={style.flex4}>
-                                Activity
-                            </div>
-                            <div className={style.flex8}>
-                                <div className={style.activityContainer}>
-                                    <CustomDropdown
-                                        values={markerTypes}
-                                        onChange={onChangeMarker}
-                                        dataName='label'
-                                        iconName='icon'
-                                        selected={markerType}
-                                        hideHintText
-                                    />
-                                </div>
-                            </div>
-                        </div>
-                    </>
-                }
-                {(selectedNodes.length > 0 && selectedEdges?.length > 0) &&
-                    <div className={style.separator} />
-                }
-                {selectedEdges?.length > 0 &&
-                    <>
-                        <div className={style.appearanceRow}>
-                            <div className={style.flex2}>
-                                Stroke Color
-                            </div>
-
-                            <div className={style.flex1} onClick={() => showColorPicker(colorPickerTypes.CONNECTOR)}>
-                                <div className={style.colorIcon} style={{ backgroundColor: selectedEdgeData?.color ?? arrowColor }} />
-                                {colorPickerVisible === colorPickerTypes.CONNECTOR ?
-                                    <div className={style.sketchPickerContainer}>
-                                        <ColorPicker
-                                            color={selectedEdgeData?.color ?? arrowColor}
-                                            onChange={onChangeEdgeColor}
-                                            onMouseLeave={onMouseLeave}
-                                            styles={colorPickerStyles}
-                                        />
-                                    </div> : null
-                                }
-                            </div>
-                        </div>
-
-                        <div className={style.appearanceRow}>
-                            <div className={style.appearanceRow}>
-                                <div className={style.fontSizeContainer}>
-                                    <div
-                                        className='hover-hand m-r-10 m-t-10 bold'
-                                        onClick={decreesEdgeWidth}>-</div>
-                                    <input value={selectedEdgeData?.width ?? '2'} onChange={onChangeEdgeWidth} type="text" />
-                                    <div className={style.sizeInputEndText}>W</div>
-                                    <div
-                                        className='hover-hand m-l-10 m-t-10 bold'
-                                        onClick={increaseEdgeWidth}
-                                    >+</div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div className={style.appearanceRow}>
-                            <div className={style.arrowTypeContainer}>
-                                <div className={style.arrowTypeItem}
-                                    style={{ backgroundColor: selectedEdgeType === Algorithm.Linear ? '#9bbae7' : 'white' }}
-                                    onClick={() => onChangeEdgeType(Algorithm.Linear)}
-                                >
-                                    <i className='icon-straight-arrow' />
-                                </div>
-                                <div className={style.arrowTypeItem}
-                                    style={{ backgroundColor: selectedEdgeType === Algorithm.CatmullRom ? '#9bbae7' : 'white' }}
-                                    onClick={() => onChangeEdgeType(Algorithm.CatmullRom)}
-                                >
-                                    <i className='icon-curved-arrow' />
-                                </div>
-                                <div className={style.arrowTypeItem}
-                                    style={{ backgroundColor: selectedEdgeType === Algorithm.BezierCatmullRom ? '#9bbae7' : 'white' }}
-                                    onClick={() => onChangeEdgeType(Algorithm.BezierCatmullRom)}
-                                >
-                                    <i className='icon-bend-arrow' />
-                                </div>
-                            </div>
-                        </div>
-
-                        <div>Start</div>
-                        <CustomDropdown
-                            values={arrowStartTypes}
-                            onChange={onChangeEdgeStart}
-                            dataName='label'
-                            iconName='icon'
-                            selected={getSelectedEdgeStart}
-                            hideHintText
-                        />
-
-                        <div className='m-t-10'>End</div>
-                        <CustomDropdown
-                            values={arrowEndTypes}
-                            onChange={onChangeEdgeEnd}
-                            dataName='label'
-                            iconName='icon'
-                            selected={getSelectedEdgeEnd}
-                            hideHintText
-                        />
-                    </>
-                }
-            </div>
-        )
-    }
 
     const matrixContent = () => {
         return (
@@ -1654,10 +1016,15 @@ const PropertyPanel = ({ nodes, edges, selectedNodes = [], selectedEdges = [], s
             edges.map((edge) => {
                 if (edge.id === id) {
                     const newEdge = { ...edge }
-                    newEdge.selected = !edge.selected
+                    newEdge.selected = true
 
                     return newEdge
-                } else return edge
+                } else {
+                    const newEdge = { ...edge }
+                    newEdge.selected = false
+
+                    return newEdge
+                }
             })
         )
     }
@@ -1981,132 +1348,108 @@ const PropertyPanel = ({ nodes, edges, selectedNodes = [], selectedEdges = [], s
     }
 
     return (
-        <aside className={sidebarVisible ? style.aside : ''}>
-            <div className={style.preventSelect}>
+        <aside className={style.aside}>
+            <div className={style.preventSelect + ' ' + style.propertyPanelMainContainer}>
                 <div className={style.sidebarColapsBtnContainer}>
-                    {sidebarVisible &&
-                        <>
-                            <SettingOutlined className={style.settingsIcon} />
-                            <h3>Property</h3>
-                        </>
-                    }
-                    <i className={style.sidebarColapsBtn + (sidebarVisible ? ' icon-circle-arrow-right ' : ' icon-circle-arrow-left ') + style.propertyPanelCollapseBtn}
-                        onClick={onArrowClicked} />
+                    <SettingOutlined className={style.settingsIcon} />
+                    <h3>Property</h3>
                 </div>
                 <div className={style.sidebarMainContainer}>
-                    {sidebarVisible &&
+
+                    {selectedNodes?.[0]?.type === 'MatrixTable' &&
                         <>
-                            {selectedNodes?.[0]?.type === 'MatrixTable' &&
-                                <>
-                                    <div className='m-b-10' >
-                                        <div className={style.sidebarCategoryheader} onClick={() => { onCategoryClick(propertyCategories.GRID) }} >
-                                            <div>{propertyCategories.GRID}</div>
-                                            <i className={(!closedCategories.includes(propertyCategories.GRID) ? ' icon-arrow-down' : ' icon-arrow-up')} />
-                                        </div>
-
-                                        {!closedCategories.includes(propertyCategories.GRID) &&
-                                            gridContent()
-                                        }
-                                    </div>
-                                    <div className='m-b-10' >
-                                        <div className={style.sidebarCategoryheader} onClick={() => { onCategoryClick(propertyCategories.SECTIONS) }} >
-                                            <div>{propertyCategories.SECTIONS}</div>
-                                            <i className={(!closedCategories.includes(propertyCategories.SECTIONS) ? ' icon-arrow-down' : ' icon-arrow-up')} />
-                                        </div>
-
-                                        {!closedCategories.includes(propertyCategories.SECTIONS) &&
-                                            sectionsContent()
-                                        }
-                                    </div>
-                                </>
-                            }
-
-
-                            {selectedNodes?.[0]?.type === 'MatrixChart' &&
-                                <div className='m-b-10' >
-                                    <div className={style.sidebarCategoryheader} onClick={() => { onCategoryClick(propertyCategories.MATRIX) }} >
-                                        <div>{propertyCategories.MATRIX}</div>
-                                        <i className={(!closedCategories.includes(propertyCategories.MATRIX) ? ' icon-arrow-down' : ' icon-arrow-up')} />
-                                    </div>
-
-                                    {!closedCategories.includes(propertyCategories.MATRIX) &&
-                                        matrixContent()
-                                    }
-                                </div>
-                            }
-
-
-                            {selectedNodes?.length > 0 || selectedEdges?.length > 0 ?
-                                <div className='m-b-10' >
-                                    <div className={style.sidebarCategoryheader} onClick={() => { onCategoryClick(propertyCategories.APPEARANCE) }} >
-                                        <div>{propertyCategories.APPEARANCE}</div>
-                                        <i className={(!closedCategories.includes(propertyCategories.APPEARANCE) ? ' icon-arrow-down' : ' icon-arrow-up')} />
-                                    </div>
-
-                                    {!closedCategories.includes(propertyCategories.APPEARANCE) &&
-                                        appearanceContent()
-                                    }
-                                </div> : null
-                            }
-
                             <div className='m-b-10' >
-                                <div className={style.sidebarCategoryheader} onClick={() => { onCategoryClick(propertyCategories.LAYERS) }} >
-                                    <div>{propertyCategories.LAYERS}</div>
-                                    <i className={(!closedCategories.includes(propertyCategories.LAYERS) ? ' icon-arrow-down' : ' icon-arrow-up')} />
+                                <div className={style.sidebarCategoryheader} onClick={() => { onCategoryClick(propertyCategories.GRID) }} >
+                                    <div>{propertyCategories.GRID}</div>
+                                    <i className={(!closedCategories.includes(propertyCategories.GRID) ? ' icon-arrow-down' : ' icon-arrow-up')} />
                                 </div>
 
-                                {!closedCategories.includes(propertyCategories.LAYERS) &&
+                                {!closedCategories.includes(propertyCategories.GRID) &&
+                                    gridContent()
+                                }
+                            </div>
+                            <div className='m-b-10' >
+                                <div className={style.sidebarCategoryheader} onClick={() => { onCategoryClick(propertyCategories.SECTIONS) }} >
+                                    <div>{propertyCategories.SECTIONS}</div>
+                                    <i className={(!closedCategories.includes(propertyCategories.SECTIONS) ? ' icon-arrow-down' : ' icon-arrow-up')} />
+                                </div>
+
+                                {!closedCategories.includes(propertyCategories.SECTIONS) &&
+                                    sectionsContent()
+                                }
+                            </div>
+                        </>
+                    }
+
+
+                    {selectedNodes?.[0]?.type === 'MatrixChart' &&
+                        <div className='m-b-10' >
+                            <div className={style.sidebarCategoryheader} onClick={() => { onCategoryClick(propertyCategories.MATRIX) }} >
+                                <div>{propertyCategories.MATRIX}</div>
+                                <i className={(!closedCategories.includes(propertyCategories.MATRIX) ? ' icon-arrow-down' : ' icon-arrow-up')} />
+                            </div>
+
+                            {!closedCategories.includes(propertyCategories.MATRIX) &&
+                                matrixContent()
+                            }
+                        </div>
+                    }
+
+                    <div className='m-b-10' >
+                        <div className={style.sidebarCategoryheader} onClick={() => { onCategoryClick(propertyCategories.LAYERS) }} >
+                            <div>{propertyCategories.LAYERS}</div>
+                            <i className={(!closedCategories.includes(propertyCategories.LAYERS) ? ' icon-arrow-down' : ' icon-arrow-up')} />
+                        </div>
+
+                        {!closedCategories.includes(propertyCategories.LAYERS) &&
+                            <div className={style.propertyPanelContainer}>
+                                {layersContent()}
+                            </div>
+                        }
+                    </div>
+
+                    {edges?.length > 0 ?
+                        <div className='m-b-10' >
+                            <div className={style.sidebarCategoryheader} onClick={() => { onCategoryClick(propertyCategories.CONNECTORS) }} >
+                                <div>{propertyCategories.CONNECTORS}</div>
+                                <i className={(!closedCategories.includes(propertyCategories.CONNECTORS) ? ' icon-arrow-down' : ' icon-arrow-up')} />
+                            </div>
+
+                            {!closedCategories.includes(propertyCategories.CONNECTORS) &&
+                                <div className={style.propertyPanelContainer}>
+                                    {connectorsContent()}
+                                </div>
+                            }
+                        </div> : null
+                    }
+
+                    {selectedNodes?.length === 1 &&
+                        <div>
+                            <div className='m-b-10' >
+                                <div className={style.sidebarCategoryheader} onClick={() => { onCategoryClick(propertyCategories.LINK) }} >
+                                    <div>{propertyCategories.LINK}</div>
+                                    <i className={(!closedCategories.includes(propertyCategories.LINK) ? ' icon-arrow-down' : ' icon-arrow-up')} />
+                                </div>
+
+                                {!closedCategories.includes(propertyCategories.LINK) &&
                                     <div className={style.propertyPanelContainer}>
-                                        {layersContent()}
+                                        {linkContent()}
                                     </div>
                                 }
                             </div>
-
-                            {edges?.length > 0 ?
-                                <div className='m-b-10' >
-                                    <div className={style.sidebarCategoryheader} onClick={() => { onCategoryClick(propertyCategories.CONNECTORS) }} >
-                                        <div>{propertyCategories.CONNECTORS}</div>
-                                        <i className={(!closedCategories.includes(propertyCategories.CONNECTORS) ? ' icon-arrow-down' : ' icon-arrow-up')} />
-                                    </div>
-
-                                    {!closedCategories.includes(propertyCategories.CONNECTORS) &&
-                                        <div className={style.propertyPanelContainer}>
-                                            {connectorsContent()}
-                                        </div>
-                                    }
-                                </div> : null
-                            }
-
-                            {selectedNodes?.length === 1 &&
-                                <div>
-                                    <div className='m-b-10' >
-                                        <div className={style.sidebarCategoryheader} onClick={() => { onCategoryClick(propertyCategories.LINK) }} >
-                                            <div>{propertyCategories.LINK}</div>
-                                            <i className={(!closedCategories.includes(propertyCategories.LINK) ? ' icon-arrow-down' : ' icon-arrow-up')} />
-                                        </div>
-
-                                        {!closedCategories.includes(propertyCategories.LINK) &&
-                                            <div className={style.propertyPanelContainer}>
-                                                {linkContent()}
-                                            </div>
-                                        }
-                                    </div>
-                                    <div className='m-b-10' >
-                                        <div className={style.sidebarCategoryheader} onClick={() => { onCategoryClick(propertyCategories.FORMS) }} >
-                                            <div>{propertyCategories.FORMS}</div>
-                                            <i className={(!closedCategories.includes(propertyCategories.FORMS) ? ' icon-arrow-down' : ' icon-arrow-up')} />
-                                        </div>
-
-                                        {!closedCategories.includes(propertyCategories.FORMS) &&
-                                            <div className={style.propertyPanelContainer}>
-                                                {formsContent()}
-                                            </div>
-                                        }
-                                    </div>
+                            <div className='m-b-10' >
+                                <div className={style.sidebarCategoryheader} onClick={() => { onCategoryClick(propertyCategories.FORMS) }} >
+                                    <div>{propertyCategories.FORMS}</div>
+                                    <i className={(!closedCategories.includes(propertyCategories.FORMS) ? ' icon-arrow-down' : ' icon-arrow-up')} />
                                 </div>
-                            }
 
-                        </>
+                                {!closedCategories.includes(propertyCategories.FORMS) &&
+                                    <div className={style.propertyPanelContainer}>
+                                        {formsContent()}
+                                    </div>
+                                }
+                            </div>
+                        </div>
                     }
                 </div>
             </div>

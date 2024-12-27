@@ -28,6 +28,16 @@ export default {
         hideShape: true,
         category: [Categories.COMMON]
     },
+    // CustomShape: {
+    //     image: <>
+    //         <rect x="0.8" y="0.8" className="st0" width="58.4" height="58.4" vectorEffect="non-scaling-stroke" />
+    //     </>
+    //     ,
+    //     viewBox: "0 0 59.9 59.9",
+    //     keepAspectRatio: false,
+    //     category: [Categories.COMMON],
+    //     size: { width: 100, height: 100 },
+    // },
     Circle: {
         image: <>
             <circle className="st0" cx="33.6" cy="33.6" r="32.9" vectorEffect="non-scaling-stroke" />

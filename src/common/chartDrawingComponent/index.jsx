@@ -6,7 +6,6 @@ import ReactFlow, {
     useEdgesState,
     SelectionMode,
     Background,
-    Panel,
     MarkerType,
     applyNodeChanges,
     useReactFlow,
@@ -22,9 +21,11 @@ import Line from './shapes/Line.js';
 import Text from './shapes/Text.js';
 import PieChart from './shapes/PieChart.js';
 import BarChart from './shapes/BarChart.js';
+import CustomShape from './shapes/CustomizableShape.js'
 import UploadNode from './shapes/UploadNode.js';
 import Shapes, { parentNodes, uploadNodeId } from './ShapesData.js';
 import { ConnectionLine } from './edges/ConnectionLine';
+import { useUndoRedo } from './customElements/useUndoRedo.js';
 
 import Sidebar from './panels/Sidebar.jsx';
 import PropertyPanel from './panels/PropertyPanel.jsx';
@@ -65,6 +66,8 @@ const DnDFlow = ({ props }) => {
     const { getIntersectingNodes } = useReactFlow();
     const [nodes, setNodes] = useNodesState(formatOldNodesData(data?.nodes));
     const [edges, setEdges, onEdgesChange] = useEdgesState(data?.edges || []);
+    const { undo, redo, canUndo, canRedo, takeSnapshot } = useUndoRedo();
+
     const [helperLineHorizontal, setHelperLineHorizontal] = useState(undefined);
     const [helperLineVertical, setHelperLineVertical] = useState(undefined);
 
@@ -72,6 +75,7 @@ const DnDFlow = ({ props }) => {
     const [menu, setMenu] = useState(null);
     const [reactFlowInstance, setReactFlowInstance] = useState(null);
     const [spacebarActive, setSpacebarActive] = useState(false)
+    const [openPanels, setOpenPanels] = useState({ sideBar: true, propertyPanel: true })
 
     const currentPage = useNodeDataStore((state) => state.currentPage);
     const setCurrentPage = useNodeDataStore((state) => state.setCurrentPage);
@@ -91,6 +95,9 @@ const DnDFlow = ({ props }) => {
 
     const onConnect = useCallback(
         (connection) => {
+            // make adding edges undoable
+            takeSnapshot();
+
             const { connectionLinePath } = useNodeDataStore.getState();
             // We add a new edge based on the selected DEFAULT_ALGORITHM
             // and transfer all the control points from the connectionLinePath
@@ -194,6 +201,7 @@ const DnDFlow = ({ props }) => {
         types['Text'] = Text
         types['PieChart'] = PieChart
         types['BarChart'] = BarChart
+        types['CustomShape'] = CustomShape
         types[uploadNodeId] = UploadNode
         return types;
     }, []);
@@ -216,6 +224,9 @@ const DnDFlow = ({ props }) => {
     const onDrop = useCallback(
         (event) => {
             event.preventDefault();
+
+            // make adding edges undoable
+            takeSnapshot();
 
             const reactFlowBounds = reactFlowWrapper.current.getBoundingClientRect();
             const type = event.dataTransfer.getData('application/reactflow');
@@ -343,6 +354,8 @@ const DnDFlow = ({ props }) => {
     }, [nodes, edges, textdata, size, chartData, layers, currentLayer]);
 
     const onNodeDragStart = (evt, node) => {
+        // make adding edges undoable
+        takeSnapshot();
         dragRef.current = node;
     };
 
@@ -451,8 +464,7 @@ const DnDFlow = ({ props }) => {
         clearSelectedNodes();
 
         const newNodes = copiedNodes?.map((node, index) => {
-            const newNodeData = { ...node }
-            const newNodeId = getId(newNodeData.id.split('_')[0]) + index
+            const newNodeId = getId(node.id.split('_')[0]) + index
 
             const txtData = textdata?.find(item => item.id === node?.id)
             if (txtData) {
@@ -475,85 +487,121 @@ const DnDFlow = ({ props }) => {
                 setSize(newNodeId, newSize)
             }
 
-            newNodeData.id = newNodeId
+            const newNodeData = {
+                ...node,
+                id: newNodeId,
+                position: {
+                    x: node.position.x + 10,
+                    y: node.position.y + 10
+                },
+                selected: true
+            }
+
             return newNodeData
         })
 
         setNodes((nds) => nds.concat(newNodes));
     }
 
+    const onSelectionDragStart = useCallback(() => {
+        // make dragging a selection undoable
+        takeSnapshot();
+    }, [takeSnapshot]);
+
+    const onNodesDelete = useCallback(() => {
+        // make deleting nodes undoable
+        takeSnapshot();
+    }, [takeSnapshot]);
+
+    const onEdgesDelete = useCallback(() => {
+        // make deleting edges undoable
+        takeSnapshot();
+    }, [takeSnapshot]);
+
     return (
         <div className={style.dndflow}>
-            <Sidebar />
-            <Panel position="top-center">
-                <ToolBar
-                    onSave={onSave}
-                    pasteNodes={pasteCopiedNodes}
-                    clearSelectedNodes={clearSelectedNodes}
-                    getAllData={getAllData}
-                    edges={edges}
-                    setEdges={setEdges}
-                    setNodes={setNodes}
-                    spacebarActive={spacebarActive}
-                    setSpacebarActive={setSpacebarActive}
-                />
-            </Panel>
-            <div className={style.reactflowrapper} ref={reactFlowWrapper}>
-                <ReactFlow
-                    nodes={nodes}
-                    edges={edges}
-                    onNodesChange={onNodesChange}
-                    onEdgesChange={onEdgesChange}
-                    onConnect={onConnect}
-                    onInit={setReactFlowInstance}
-                    onDrop={onDrop}
-                    onDragOver={onDragOver}
-                    onNodeDragStart={onNodeDragStart}
-                    onNodeDrag={onNodeDrag}
-                    onNodeDragStop={onNodeDragStop}
-                    onNodeContextMenu={onNodeContextMenu}
-                    onPaneClick={onPaneClick}
-                    onNodeClick={onPaneClick}
-                    panOnScroll={true}
-                    selectionOnDrag={true}
-                    panOnDrag={panOnDrag}
-                    nodeTypes={nodeTypes}
-                    edgeTypes={edgeTypes}
-                    connectionMode={ConnectionMode.Loose}
-                    defaultEdgeOptions={defaultEdgeOptions}
-                    connectionLineComponent={ConnectionLine}
-                    zoomOnDoubleClick={false}
-                    nodesDraggable={!spacebarActive}
-                    nodesFocusable={!spacebarActive}
-                    selectionMode={SelectionMode.Partial}
-                >
-                    <Background variant="dots" gap={8} size={0.5} id={props?.CollectionId} />
-                    <Panel />
-                    <HelperLines
-                        horizontal={helperLineHorizontal}
-                        vertical={helperLineVertical}
-                    />
-                </ReactFlow>
-            </div>
-            {menu && <ContextMenu onClick={onPaneClick} {...menu} />}
-
-            <PropertyPanel
-                nodes={nodes}
+            <ToolBar
+                onSave={onSave}
+                pasteNodes={pasteCopiedNodes}
+                clearSelectedNodes={clearSelectedNodes}
+                getAllData={getAllData}
                 edges={edges}
+                setEdges={setEdges}
+                setNodes={setNodes}
+                spacebarActive={spacebarActive}
+                setSpacebarActive={setSpacebarActive}
+                undo={undo}
+                redo={redo}
+                canUndo={canUndo}
+                canRedo={canRedo}
+                setOpenPanels={setOpenPanels}
                 selectedNodes={selectedNodes}
                 selectedEdges={selectedEdges}
-                setNodes={setNodes}
-                setEdges={setEdges}
-                onChangePage={onChangePage}
             />
+            <div className={style.dndflowContent}>
+                {openPanels.sideBar && <Sidebar />}
 
-            <PagesPanel onChangePage={onChangePage} />
+                <div className={style.reactflowrapper} ref={reactFlowWrapper}>
+                    <ReactFlow
+                        nodes={nodes}
+                        edges={edges}
+                        onNodesChange={onNodesChange}
+                        onEdgesChange={onEdgesChange}
+                        onConnect={onConnect}
+                        onInit={setReactFlowInstance}
+                        onDrop={onDrop}
+                        onDragOver={onDragOver}
+                        onNodeDragStart={onNodeDragStart}
+                        onNodeDrag={onNodeDrag}
+                        onNodeDragStop={onNodeDragStop}
+                        onNodeContextMenu={onNodeContextMenu}
+                        onPaneClick={onPaneClick}
+                        onNodeClick={onPaneClick}
+                        onSelectionDragStart={onSelectionDragStart}
+                        onNodesDelete={onNodesDelete}
+                        onEdgesDelete={onEdgesDelete}
+                        panOnScroll={true}
+                        selectionOnDrag={true}
+                        panOnDrag={panOnDrag}
+                        nodeTypes={nodeTypes}
+                        edgeTypes={edgeTypes}
+                        connectionMode={ConnectionMode.Loose}
+                        defaultEdgeOptions={defaultEdgeOptions}
+                        connectionLineComponent={ConnectionLine}
+                        zoomOnDoubleClick={false}
+                        nodesDraggable={!spacebarActive}
+                        nodesFocusable={!spacebarActive}
+                        selectionMode={SelectionMode.Partial}
+                        multiSelectionKeyCode="Shift"
+                        deleteKeyCode="Delete"
+                    >
+                        <Background variant="dots" gap={8} size={0.5} id={props?.CollectionId} />
+                        <HelperLines
+                            horizontal={helperLineHorizontal}
+                            vertical={helperLineVertical}
+                        />
+                    </ReactFlow>
+                </div>
+                {menu && <ContextMenu onClick={onPaneClick} {...menu} />}
 
-            <ReferenceModal
-                nodes={nodes}
-                setNodes={setNodes}
-                onSave={onSave}
-            />
+                {openPanels.propertyPanel && <PropertyPanel
+                    nodes={nodes}
+                    edges={edges}
+                    selectedNodes={selectedNodes}
+                    selectedEdges={selectedEdges}
+                    setNodes={setNodes}
+                    setEdges={setEdges}
+                    onChangePage={onChangePage}
+                />}
+
+                <PagesPanel onChangePage={onChangePage} />
+
+                <ReferenceModal
+                    nodes={nodes}
+                    setNodes={setNodes}
+                    onSave={onSave}
+                />
+            </div>
         </div>
     );
 };

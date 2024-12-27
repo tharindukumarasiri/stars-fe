@@ -9,6 +9,7 @@ import { ControlPoint } from './ControlPoint';
 import { getPath, getControlPoints } from './path';
 import EdgeMarkers from '../../customElements/EdgeMarkers.js';
 import { arrowColor, getId } from '../../utils';
+import { Algorithm } from './constants';
 
 const useIdsForInactiveControlPoints = (points) => {
   const ids = useRef([])
@@ -58,7 +59,7 @@ export function EditableEdgeComponent({
     const sourceNode = store.nodeInternals.get(source);
     const targetNode = store.nodeInternals.get(target);
 
-    return selected || sourceNode.selected || targetNode.selected;
+    return (selected || sourceNode.selected || targetNode.selected) && data.algorithm === Algorithm.Linear;
   });
 
   const setControlPoints = useCallback(
@@ -105,7 +106,7 @@ export function EditableEdgeComponent({
         style={{
           ...style,
           strokeWidth: strokeWidth,
-          stroke: strokeColor,
+          stroke: selected ? 'black' : strokeColor,
         }}
       />
 

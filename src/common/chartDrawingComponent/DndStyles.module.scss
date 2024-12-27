@@ -38,14 +38,26 @@
 .dndflow {
     flex-direction: column;
     display: flex;
-    flex-grow: 1;
     height: 100%;
+    width: calc(100vw - 5.5rem);
+    overflow-y: hidden;
+    overflow-x: visible;
+}
+
+.dndflowContent {
+    flex-direction: row;
+    display: flex;
+    flex-grow: 1;
+    overflow-y: hidden;
+    overflow-x: visible;
 }
 
 .aside {
     width: 16%;
     max-width: 250px;
-    border: 1px solid #eee;
+    border-style: solid;
+    border-color: #eee;
+    border-width: 0 1px;
 }
 
 .sidebarColapsBtnContainer {
@@ -55,6 +67,7 @@
     justify-content: center;
     align-items: center;
     height: 20px;
+    padding-top: 5px;
 }
 
 .sidebarColapsBtn {
@@ -87,8 +100,6 @@
 
 .dndflow .reactflowrapper {
     flex-grow: 1;
-    width: calc(100vw - 500px);
-    height: 90vh;
 }
 
 .dndflow .selectall {
@@ -106,19 +117,6 @@
     -ms-overflow-style: none;
     scrollbar-width: none;
     box-shadow: none;
-}
-
-@media screen and (min-width: 768px) {
-    .dndflow {
-        flex-direction: row;
-    }
-
-    .dndflow aside {
-
-        padding: 5px 2px;
-        font-size: 12px;
-        background: #fcfcfc;
-    }
 }
 
 .handle {
@@ -150,15 +148,22 @@
     }
 }
 
-.toolBarContainer {
-    width: 45vw;
-    margin-left: 50px;
+.toolBarMainContainer {
     height: 40px;
     background-color: white;
     border: 1px solid rgba(223, 212, 212, 0.573);
-    border-radius: 5px;
     display: flex;
     flex-direction: row;
+    align-items: center;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.toolBarContainer {
+    height: 100%;
+    display: flex;
+    flex-direction: row;
+    flex-grow: 1;
     justify-content: space-evenly;
     align-items: center;
 }
@@ -364,6 +369,11 @@
     position: relative;
 }
 
+.disabledStyle {
+    pointer-events: none;
+    opacity: 0.5;
+}
+
 .widthHeightSizeContainer {
     width: 85px;
     display: flex;
@@ -383,8 +393,8 @@
     position: relative;
     display: flex;
     flex-direction: row;
-    width: 40px;
     overflow: visible;
+    padding-bottom: 5px;
 
     &:hover {
         cursor: pointer;
@@ -392,9 +402,10 @@
 }
 
 .sidebarMainContainer {
-    height: 77vh;
+    max-height: 100%;
+    padding-bottom: 100px;
     overflow-y: scroll;
-    overflow-x: hidden;
+    overflow-x: visible;
     padding-right: 0;
     margin-top: 10px;
 }
@@ -433,6 +444,11 @@
     border-bottom-left-radius: 8px;
 }
 
+.propertyPanelMainContainer {
+    position: relative;
+    height: 100%;
+}
+
 .propertyPanelContainer {
     background-color: #EAEAEA;
     padding: 10px;
@@ -469,6 +485,14 @@
     border: 1px solid rgba(223, 212, 212, 0.573);
     height: 27px;
     width: 27px;
+}
+
+.toolbarColorIcon {
+    position: relative;
+    border: 1px solid rgba(223, 212, 212, 0.573);
+    height: 20px;
+    width: 20px;
+    border-radius: 2px;
 }
 
 .appearanceRow {
@@ -520,7 +544,6 @@
     left: -5px;
     height: 5px;
     width: 20px;
-    bottom: -5px;
 }
 
 .fontBoldContainer {
@@ -528,6 +551,7 @@
     width: 20px;
     border-radius: 3px;
     text-align: center;
+    font-size: 1rem;
 
     &:hover {
         cursor: pointer;
@@ -549,6 +573,11 @@
 .sketchPickerContainer {
     position: absolute;
     top: 40px;
+}
+
+.toolbarSketchPickerContainer {
+    position: absolute;
+    top: 20px;
 }
 
 .textBtnRotate {
@@ -603,6 +632,12 @@
     &:hover {
         cursor: pointer;
     }
+}
+
+.toolBarIconDisabled {
+    font-size: 20px;
+    cursor: not-allowed;
+    color: #a5a5a5;
 }
 
 .canvasContextMenu {
@@ -679,16 +714,6 @@
     position: relative;
 }
 
-.copyPasteContainer {
-    border: solid 1px;
-    border-radius: 8px;
-    padding: 5px;
-    border-color: #434343;
-
-    &:hover {
-        cursor: pointer;
-    }
-}
 
 .helpIconContainer {
     margin-right: 100px;
