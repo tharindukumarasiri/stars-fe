@@ -244,6 +244,7 @@ div.rsw-ce li {
     transform: rotate(45deg);
     -webkit-transform: rotate(45deg);
 }
+
 /*
 .st-0,
 .st-1,
@@ -267,7 +268,8 @@ div.rsw-ce li {
     stroke-miterlimit: 10;
     stroke-dasharray: 5;
 }
-.dashed-thick{
+
+.dashed-thick {
     fill: none;
     stroke: #020203;
     stroke-width: 3;
@@ -276,9 +278,21 @@ div.rsw-ce li {
     stroke-miterlimit: 10;
     stroke-dasharray: 5;
 }
+
 .thick-border {
     stroke-width: 5
 }
-.thick-border3{
+
+.thick-border3 {
     stroke-width: 3
+}
+
+@keyframes dash-animation {
+    from {
+        stroke-dashoffset: 0;
+    }
+
+    to {
+        stroke-dashoffset: -10;
+    }
 }

@@ -9,7 +9,8 @@ import ReactFlow, {
     MarkerType,
     applyNodeChanges,
     useReactFlow,
-    ConnectionMode
+    ConnectionMode,
+    reconnectEdge
 } from 'reactflow';
 import 'reactflow/dist/style.css';
 
@@ -54,6 +55,7 @@ const defaultEdgeOptions = {
         type: MarkerType.ArrowClosed,
         color: arrowColor,
     },
+    zIndex: 10
 };
 
 const DnDFlow = ({ props }) => {
@@ -123,6 +125,12 @@ const DnDFlow = ({ props }) => {
             setEdges((edges) => addEdge(edge, edges));
         },
         [setEdges]
+    );
+
+    const onReconnect = useCallback(
+        (oldEdge, newConnection) =>
+            setEdges((els) => reconnectEdge(oldEdge, newConnection, els)),
+        [],
     );
 
     const customApplyNodeChanges = useCallback(
@@ -346,9 +354,27 @@ const DnDFlow = ({ props }) => {
         };
     }, [spacebarPress, spacebarRelease]);
 
+    const getFormattedNodes = () => {
+        const formattedNodes = nodes.map(node => {
+            const newNode = { ...node }
+            newNode.selected = true;
+            return newNode
+        })
+
+        return formattedNodes
+    }
+
     const getAllData = useCallback(() => {
         const newPagesData = JSON.parse(JSON.stringify(pagesData))
-        newPagesData[currentPage] = { ...newPagesData[currentPage], nodes: nodes, edges: edges, nodesData: textdata, nodeSizes: size, chartData: chartData, layersData: { layers: layers, currentLayer: currentLayer } }
+        newPagesData[currentPage] = {
+            ...newPagesData[currentPage],
+            nodes: getFormattedNodes(),
+            edges: edges,
+            nodesData: textdata,
+            nodeSizes: size,
+            chartData: chartData,
+            layersData: { layers: layers, currentLayer: currentLayer },
+        }
         setPagesData(newPagesData)
         return newPagesData
     }, [nodes, edges, textdata, size, chartData, layers, currentLayer]);
@@ -548,6 +574,7 @@ const DnDFlow = ({ props }) => {
                         onNodesChange={onNodesChange}
                         onEdgesChange={onEdgesChange}
                         onConnect={onConnect}
+                        onReconnect={onReconnect}
                         onInit={setReactFlowInstance}
                         onDrop={onDrop}
                         onDragOver={onDragOver}

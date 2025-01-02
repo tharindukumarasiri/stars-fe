@@ -113,7 +113,7 @@ function Text({ id, selected, type, data }) {
 
             {selected && <DeleteBtn nodeId={id} />}
 
-            <ConnectionDot />
+            <ConnectionDot selected={selected} />
 
             <TextArea
                 autoSize

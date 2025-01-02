@@ -106,7 +106,9 @@ export function EditableEdgeComponent({
         style={{
           ...style,
           strokeWidth: strokeWidth,
-          stroke: selected ? 'black' : strokeColor,
+          stroke: strokeColor,
+          strokeDasharray: selected ? `${strokeWidth} ${strokeWidth}` : "", // Dashed pattern: 5px line, 5px gap
+          animation: "dash-animation 0.5s linear infinite", // Reference to the animation
         }}
       />
 

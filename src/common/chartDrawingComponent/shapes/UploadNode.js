@@ -75,7 +75,7 @@ function UploadNode({ id, selected, data }) {
                 className={`nodrag ${style.textBtnRotate} icon-rotate1`}
             />
 
-            <ConnectionDot />
+            <ConnectionDot selected={selected} />
 
             <NodeResizer
                 isVisible={selected}

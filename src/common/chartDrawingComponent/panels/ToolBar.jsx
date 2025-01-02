@@ -113,6 +113,7 @@ export default ({
     const textBold = textdata?.textBold || false
     const setBold = (value) => onTextChange({ textBold: value })
 
+    const lineBackgroundColor = textdata?.backgroundColor || '#000000'
     const backgroundColor = textdata?.backgroundColor || '#ffffff'
     const setBackgroundColor = (value) => onTextChange({ backgroundColor: value })
 
@@ -626,14 +627,14 @@ export default ({
 
                     <Tooltip title='Background color'>
                         <div
-                            className={style.toolbarColorIcon + ' ' + ((selectedNodes?.length > 0 && selectedNodes?.[0]?.type !== 'Text') ? '' : style.disabledStyle)}
-                            style={{ backgroundColor: getRgbaColor(backgroundColor) }}
+                            className={style.toolbarColorIcon + ' ' + ((selectedNodes?.length > 0 && selectedNodes?.[0]?.type !== 'Text' && !isLineSelected) ? '' : style.disabledStyle)}
+                            style={{ backgroundColor: isLineSelected ? 'white' : getRgbaColor(backgroundColor) }}
                             onClick={() => showColorPicker(colorPickerTypes.BACKGROUND)}
                         >
                             {colorPickerVisible === colorPickerTypes.BACKGROUND ?
                                 <div className={style.toolbarSketchPickerContainer}>
                                     <ColorPicker
-                                        color={backgroundColor}
+                                        color={isLineSelected ? 'white' : backgroundColor}
                                         onChange={onChangeBackgroundColor}
                                         onMouseLeave={onMouseLeave}
                                     />
@@ -704,23 +705,42 @@ export default ({
                     </Tooltip>
 
                     <div className={style.toolBarSeparator} />
-                    <Tooltip title='Connector Color'>
-                        <div
-                            className={style.toolbarColorIcon + ' ' + (selectedEdges?.length > 0 ? '' : style.disabledStyle)}
-                            style={{ backgroundColor: selectedEdgeData?.color ?? arrowColor }}
-                            onClick={() => showColorPicker(colorPickerTypes.CONNECTOR)}
-                        >
-                            {colorPickerVisible === colorPickerTypes.CONNECTOR ?
-                                <div className={style.toolbarSketchPickerContainer}>
-                                    <ColorPicker
-                                        color={selectedEdgeData?.color ?? arrowColor}
-                                        onChange={onChangeEdgeColor}
-                                        onMouseLeave={onMouseLeave}
-                                    />
-                                </div> : null
-                            }
-                        </div>
-                    </Tooltip>
+                    {isLineSelected ?
+                        <Tooltip title='Line color'>
+                            <div
+                                className={style.toolbarColorIcon + ' ' + ((selectedNodes?.length > 0 && selectedNodes?.[0]?.type !== 'Text') ? '' : style.disabledStyle)}
+                                style={{ backgroundColor: getRgbaColor(lineBackgroundColor) }}
+                                onClick={() => showColorPicker(colorPickerTypes.CONNECTOR)}
+                            >
+                                {colorPickerVisible === colorPickerTypes.CONNECTOR ?
+                                    <div className={style.toolbarSketchPickerContainer}>
+                                        <ColorPicker
+                                            color={lineBackgroundColor}
+                                            onChange={onChangeBackgroundColor}
+                                            onMouseLeave={onMouseLeave}
+                                        />
+                                    </div> : null
+                                }
+                            </div>
+                        </Tooltip> :
+                        <Tooltip title='Connector Color'>
+                            <div
+                                className={style.toolbarColorIcon + ' ' + (selectedEdges?.length > 0 ? '' : style.disabledStyle)}
+                                style={{ backgroundColor: selectedEdgeData?.color ?? arrowColor }}
+                                onClick={() => showColorPicker(colorPickerTypes.CONNECTOR)}
+                            >
+                                {colorPickerVisible === colorPickerTypes.CONNECTOR ?
+                                    <div className={style.toolbarSketchPickerContainer}>
+                                        <ColorPicker
+                                            color={selectedEdgeData?.color ?? arrowColor}
+                                            onChange={onChangeEdgeColor}
+                                            onMouseLeave={onMouseLeave}
+                                        />
+                                    </div> : null
+                                }
+                            </div>
+                        </Tooltip>
+                    }
 
                     <div className='m-t-10'>
                         {isLineSelected ?

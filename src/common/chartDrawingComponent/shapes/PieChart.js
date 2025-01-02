@@ -110,7 +110,7 @@ function PieChartComponent({ id, selected, type, data }) {
                 <DeleteBtn nodeId={id} />
             }
 
-            <ConnectionDot />
+            <ConnectionDot selected={selected} />
 
             {apiData?.length > 0 ?
                 <PieChart width={200} height={200} >

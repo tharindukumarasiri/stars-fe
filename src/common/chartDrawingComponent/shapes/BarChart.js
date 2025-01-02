@@ -115,7 +115,7 @@ function BarChartComponent({ id, selected, type, data }) {
 
             {selected && <DeleteBtn nodeId={id} />}
 
-            <ConnectionDot />
+            <ConnectionDot selected={selected} />
 
             {apiData?.length > 0 ? (
                 <BarChart

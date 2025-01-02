@@ -212,7 +212,7 @@ function CustomNode({ id, selected, type, data }) {
                 <CustomShape fill={backgroundColor} />
             }
 
-            <ConnectionDot />
+            <ConnectionDot selected={selected} />
 
             {!shapeData?.hideTextInput ?
                 <TextArea

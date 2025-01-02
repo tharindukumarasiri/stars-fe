@@ -296,6 +296,52 @@ export default {
         hideTextInput: true,
         size: { width: 28.3, height: 67 },
     },
+    LeftTriangle: {
+        image: <>
+            <polygon class="st0" points="21,41.7 1.1,21.7 21,1.8 " />
+        </>
+        ,
+        viewBox: "0 0 21.7 43.5",
+        keepAspectRatio: false,
+        category: [Categories.COMMON],
+        hideTextInput: true,
+        size: { width: 21.7, height: 43.5 },
+    },
+    TwoSidesWaveBox: {
+        image: <>
+            <path class="st0" d="M22.5,11.6c-11.4,0-18.7-8-21-10.8H0.8v44.7c0,0,7.9,11.8,21.8,11.8c16,0,24-10.7,36.3-10.7
+	c10.5,0,20.2,7.3,20.2,7.3V8.1c0,0-9.8-7.3-20.2-7.3C46.5,0.9,38.5,11.6,22.5,11.6z"/>
+        </>
+        ,
+        viewBox: "0 0 79.7 58",
+        keepAspectRatio: false,
+        category: [Categories.COMMON],
+        hideTextInput: true,
+        size: { width: 79.7, height: 58 },
+    },
+    WaveBox: {
+        image: <>
+            <path class="st0" d="M0.8,45.4c0,0,7.9,11.8,21.8,11.8c16,0,24-10.7,36.3-10.7c10.5,0,20.2,7.3,20.2,7.3V0.8H0.8V45.4z" />
+        </>
+        ,
+        viewBox: "0 0 79.7 58",
+        keepAspectRatio: false,
+        category: [Categories.COMMON],
+        hideTextInput: true,
+        size: { width: 79.7, height: 58 },
+    },
+        TwoSidesCurved: {
+        image: <>
+                <path class="st0" d="M5.7,24.2C5.7,32.3,4.2,40,1.3,47h82.4c2.8-7.1,4.4-14.8,4.4-22.9c0-8.3-1.6-16.2-4.6-23.4H1.1
+	C4.1,8,5.7,15.9,5.7,24.2z"/>
+        </>
+        ,
+            viewBox: "0 0 88.9 47.8",
+        keepAspectRatio: false,
+        category: [Categories.COMMON],
+        hideTextInput: true,
+        size: { width: 788.9, height: 47.8 },
+    },
     HorizontalLine: {
         image: <rect x="0.5" width="134" height="2" rx="2" strokeWidth="0" fill='black' vectorEffect="non-scaling-stroke" vectorEffect="non-scaling-stroke" />,
         viewBox: "0 0 135 2",

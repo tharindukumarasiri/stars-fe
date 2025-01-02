@@ -1,9 +1,17 @@
 import React from "react"
-import { Handle, Position } from 'reactflow';
+import { Handle, Position, useStore } from 'reactflow';
 
 import style from '../DndStyles.module.scss'
 
-const ConnectionDot = () => {
+const ConnectionDot = ({ selected }) => {
+    const connectionNodeIdSelector = (state) => state.connectionNodeId;
+
+    const connectionNodeId = useStore(connectionNodeIdSelector);
+    const isConnecting = !!connectionNodeId;
+
+    if (!(selected || isConnecting))
+        return null;
+
     return (
         <>
             <Handle
