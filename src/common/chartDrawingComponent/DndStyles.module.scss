@@ -369,6 +369,16 @@
     position: relative;
 }
 
+.rotateInputContainer {
+    width: 50px;
+    display: flex;
+    flex-direction: row;
+}
+
+.sizeInputContainer {
+    width: 40px;
+}
+
 .disabledStyle {
     pointer-events: none;
     opacity: 0.5;

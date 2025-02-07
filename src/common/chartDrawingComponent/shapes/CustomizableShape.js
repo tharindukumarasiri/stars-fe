@@ -10,8 +10,6 @@ import { getRgbaColor } from '../utils';
 const resizerHandleStyle = { width: 6, height: 6 }
 
 function CustomizableShape({ id, selected, type, data }) {
-    const rotateControlRef = useRef(null);
-
     const shapeData = Shapes[type]
     const initialHeight = shapeData?.size?.height ?? 100;
     const initialWidth = shapeData?.size?.width ?? 100;
@@ -27,7 +25,6 @@ function CustomizableShape({ id, selected, type, data }) {
     const setSelectedNodeId = useNodeDataStore((state) => state.setSelectedNodeId);
 
     const rotate = textdata?.rotate || '0'
-    const setRotate = (value) => onTextChange(id, { rotate: value })
 
     const backgroundColor = getRgbaColor(textdata?.backgroundColor) || '#ffffff'
     const borderColor = getRgbaColor(textdata?.borderColor) || 'black'
@@ -72,13 +69,6 @@ function CustomizableShape({ id, selected, type, data }) {
                 onResize={onResize}
                 keepAspectRatio={shapeData?.keepAspectRatio ?? true}
                 handleStyle={resizerHandleStyle}
-            />
-
-            <i ref={rotateControlRef}
-                style={{
-                    display: selected ? 'block' : 'none',
-                }}
-                className={`nodrag ${style.textBtnRotate} icon-rotate1`}
             />
 
             <svg width={size.width} height={size.height}>

@@ -57,9 +57,11 @@ const CustomDropdown = ({ values, selected = '', onChange, hideHintText = false,
                     return (
                         <div className={style.dropdownListItem} key={index}
                             onClick={() => onClickItem(item)}>
-                            {iconName && item[iconName] ?
+                            {iconName ? (item[iconName] ?
                                 <i className={`${item[iconName]} ${style.dropdownIcon}`} />
-                                : dataName ? t(item[dataName]) : t(item)}
+                                : dataName ? t(item[dataName]) : t(item))
+                                : item[dataName]
+                            }
                         </div>
                     )
                 })

@@ -117,7 +117,7 @@ export const useDiagramStore = create((set, get) => ({
         set({ loading: false })
 
         return result
-    }, 
+    },
     addDiagram: async (data) => {
         try {
             set({ loading: true })
@@ -182,7 +182,7 @@ export const useDiagramStore = create((set, get) => ({
             set({ referenceTypes: result })
         });
 
-        set({ referenceData: { ...get().referenceData, [ReferenceTypes.contactPersons]: mapValues(get().filterdContacts, 'GovernmentIdNo', 'label') } })
+        set({ referenceData: { ...get().referenceData, [ReferenceTypes.contactPersons]: mapValues(get().filterdContacts, 'key', 'label') } })
 
         getWorkInstructions().then(result => {
             set({ referenceData: { ...get().referenceData, [ReferenceTypes.workInstructions]: result } })

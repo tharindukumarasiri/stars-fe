@@ -1,5 +1,10 @@
 import { Position, MarkerType } from 'reactflow';
 import { Algorithm } from './edges/EditableEdge/constants';
+import {
+    AlignLeftOutlined,
+    AlignCenterOutlined,
+    AlignRightOutlined,
+} from '@ant-design/icons';
 
 //Constants
 export const arrowColor = '#8f8f8f'
@@ -27,6 +32,8 @@ export const fontTypes = [
 export const fontSizes = [
     6, 7, 8, 9, 10, 11, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 36, 40, 44, 48, 52, 56, 60, 64, 68, 72, 96
 ]
+
+export const arrowKeyMovePositions = 5
 
 export const connectorTypes = [
     {
@@ -92,26 +99,18 @@ export const arrowStartTypes = [
     },
 ]
 
-export const arrowEndTypes = [
+export const textAlignTypes = [
     {
-        label: 'Arrow closed',
-        icon: 'icon-point-arrow-right',
-        markerId: 'arrowclosed'
+        icon: <AlignCenterOutlined />,
+        alignType: 'center'
     },
     {
-        label: 'Arrow',
-        icon: 'icon-circle-arrow-r2',
-        markerId: 'arrow'
+        icon: <AlignLeftOutlined />,
+        alignType: 'left'
     },
     {
-        label: 'Relation',
-        icon: 'icon-minus-1',
-        markerId: 'lineend'
-    },
-    {
-        label: 'Circle',
-        icon: 'icon-inst-circle-solid',
-        markerId: 'circleend'
+        icon: <AlignRightOutlined />,
+        alignType: 'right'
     },
 ]
 

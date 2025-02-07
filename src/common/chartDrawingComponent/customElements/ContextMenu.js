@@ -70,7 +70,7 @@ export default function ContextMenu({ id, top, left, ...props }) {
             ...node,
             id: newNodeId,
             position,
-            selected: false
+            selected: true
         };
 
         setNodes((nds) => nds.concat(newNode));

@@ -330,17 +330,17 @@ export default {
         hideTextInput: true,
         size: { width: 79.7, height: 58 },
     },
-        TwoSidesCurved: {
+    TwoSidesCurved: {
         image: <>
-                <path class="st0" d="M5.7,24.2C5.7,32.3,4.2,40,1.3,47h82.4c2.8-7.1,4.4-14.8,4.4-22.9c0-8.3-1.6-16.2-4.6-23.4H1.1
+            <path class="st0" d="M5.7,24.2C5.7,32.3,4.2,40,1.3,47h82.4c2.8-7.1,4.4-14.8,4.4-22.9c0-8.3-1.6-16.2-4.6-23.4H1.1
 	C4.1,8,5.7,15.9,5.7,24.2z"/>
         </>
         ,
-            viewBox: "0 0 88.9 47.8",
+        viewBox: "0 0 88.9 47.8",
         keepAspectRatio: false,
         category: [Categories.COMMON],
         hideTextInput: true,
-        size: { width: 788.9, height: 47.8 },
+        size: { width: 78.9, height: 47.8 },
     },
     HorizontalLine: {
         image: <rect x="0.5" width="134" height="2" rx="2" strokeWidth="0" fill='black' vectorEffect="non-scaling-stroke" vectorEffect="non-scaling-stroke" />,

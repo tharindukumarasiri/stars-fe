@@ -49,12 +49,14 @@ function CustomNode({ id, selected, type, data }) {
     const textColor = getRgbaColor(textdata?.textColor) || 'black'
     const textBold = textdata?.textBold || false
     const markerType = textdata?.markerType || { label: '', icon: '' }
+    const textAlign = textdata?.textAlign || 'center'
 
     const textAreaStyle = {
         fontFamily: textType.type,
         fontSize: fonstSize,
         color: textColor,
         fontWeight: textBold ? 'bolder' : 'normal',
+        textAlign: textAlign,
     }
 
     const mainContainerStyle = {

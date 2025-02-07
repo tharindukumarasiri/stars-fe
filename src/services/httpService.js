@@ -3,9 +3,14 @@ import { message } from 'antd';
 
 import config from './config.json'
 
-axios.interceptors.response.use(null, error => {
+let apiFailedCount = 0;
+
+axios.interceptors.response.use(success => {
+    apiFailedCount = 0;
+}, error => {
     const expectedError = error.response && error.response.status >= 400 && error.response.status < 500;
     const sessionExpired = error.response.status === 302
+    apiFailedCount++;
 
     if (error.config?.url?.includes(config.UPDATE_DRAWING_ITEM)) {
         message.error('Failed to save drawing');
@@ -14,8 +19,9 @@ axios.interceptors.response.use(null, error => {
         message.error('An unexpected network error occurred.');
     }
 
-    if (sessionExpired) {
+    if (sessionExpired || apiFailedCount > 3) {
         window.location.replace('/');
+        alert('Session timed out. Please login again.');
     }
 
     return Promise.reject(error);

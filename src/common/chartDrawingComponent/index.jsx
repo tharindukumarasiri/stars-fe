@@ -39,7 +39,14 @@ import { DEFAULT_ALGORITHM } from './edges/EditableEdge/constants.js';
 import { EditableEdgeComponent } from './edges/EditableEdge';
 
 import { useDiagramStore } from '../../Views/ChartDrawing/chartDrawingStore'
-import { getId, arrowColor, getHelperLines, formatOldNodesData, getNodePositionInsideParent } from './utils'
+import {
+    getId,
+    arrowColor,
+    getHelperLines,
+    formatOldNodesData,
+    getNodePositionInsideParent,
+    arrowKeyMovePositions
+} from './utils'
 
 import style from './DndStyles.module.scss'
 import PagesPanel from './panels/PagesPanel.jsx';
@@ -56,6 +63,10 @@ const defaultEdgeOptions = {
         color: arrowColor,
     },
     zIndex: 10
+};
+
+const proOptions = {
+    hideAttribution: true,
 };
 
 const DnDFlow = ({ props }) => {
@@ -94,6 +105,7 @@ const DnDFlow = ({ props }) => {
     const currentLayer = useNodeDataStore((state) => state.currentLayer);
     const setCurrentLayer = useNodeDataStore((state) => state.setCurrentLayer);
     const layers = useNodeDataStore((state) => state.layers);
+    const setCopiedNodes = useNodeDataStore((state) => state.setCopiedNodes);
 
     const onConnect = useCallback(
         (connection) => {
@@ -332,11 +344,58 @@ const DnDFlow = ({ props }) => {
         setCurrentPage(index)
     }
 
-    const spacebarPress = useCallback((event) => {
-        if (event.key === " " && !spacebarActive) {
-            setSpacebarActive(true)
-        }
-    }, []);
+    // Handle keydown events
+    const handleKeyDown = useCallback(
+        (event) => {
+            // Space bar keydown event
+            if (event.key === " " && !spacebarActive) {
+                setSpacebarActive(true)
+            }
+
+            // Copy event
+            if ((event.ctrlKey || event.metaKey) && event.key?.toLowerCase() === "c") {
+                event.preventDefault();
+                setCopiedNodes(selectedNodes);
+            }
+
+            // Cut event
+            if ((event.ctrlKey || event.metaKey) && event.key?.toLowerCase() === "x") {
+                event.preventDefault();
+                setNodes((nodes) => nodes.filter((node) => node?.selected !== true));
+                setEdges((edges) => edges.filter((edge) => !selectedNodes?.some(selectedNode => selectedNode?.id === edge?.source || selectedNode?.id === edge?.target)));
+                setCopiedNodes(selectedNodes);
+            }
+
+            // Paste event
+            if ((event.ctrlKey || event.metaKey) && event.key?.toLowerCase() === "v") {
+                event.preventDefault();
+                pasteCopiedNodes();
+            }
+
+            // Arrow keys event
+            if (selectedNodes?.length > 0)
+                setNodes((prevNodes) =>
+                    prevNodes.map((node) => {
+                        if (!selectedNodes?.some(selectedNode => selectedNode?.id === node.id)) return node;
+
+                        const { x, y } = node.position;
+                        switch (event.key) {
+                            case 'ArrowUp':
+                                return { ...node, position: { x, y: y - arrowKeyMovePositions } };
+                            case 'ArrowDown':
+                                return { ...node, position: { x, y: y + arrowKeyMovePositions } };
+                            case 'ArrowLeft':
+                                return { ...node, position: { x: x - arrowKeyMovePositions, y } };
+                            case 'ArrowRight':
+                                return { ...node, position: { x: x + arrowKeyMovePositions, y } };
+                            default:
+                                return node;
+                        }
+                    })
+                );
+        },
+        [selectedNodes, spacebarActive]
+    );
 
     const spacebarRelease = useCallback((event) => {
         if (event.key === " ") {
@@ -345,14 +404,14 @@ const DnDFlow = ({ props }) => {
     }, []);
 
     useEffect(() => {
-        document.addEventListener("keydown", spacebarPress, false);
+        document.addEventListener("keydown", handleKeyDown, false);
         document.addEventListener("keyup", spacebarRelease, false);
 
         return () => {
-            document.removeEventListener("keydown", spacebarPress, false);
+            document.removeEventListener("keydown", handleKeyDown, false);
             document.removeEventListener("keyup", spacebarRelease, false);
         };
-    }, [spacebarPress, spacebarRelease]);
+    }, [handleKeyDown, spacebarRelease]);
 
     const getFormattedNodes = () => {
         const formattedNodes = nodes.map(node => {
@@ -569,6 +628,7 @@ const DnDFlow = ({ props }) => {
 
                 <div className={style.reactflowrapper} ref={reactFlowWrapper}>
                     <ReactFlow
+                        proOptions={proOptions}
                         nodes={nodes}
                         edges={edges}
                         onNodesChange={onNodesChange}

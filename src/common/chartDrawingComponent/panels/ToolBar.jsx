@@ -1,4 +1,4 @@
-import React, { useState, useRef, useCallback, useEffect, useMemo } from 'react';
+import React, { useState, useRef, useMemo } from 'react';
 import { Modal, Tooltip, message } from 'antd';
 import {
     useReactFlow,
@@ -42,7 +42,7 @@ import {
     arrowColor,
     connectorTypes,
     arrowStartTypes,
-    arrowEndTypes
+    textAlignTypes
 } from '../utils';
 import { useNodeDataStore } from '../store'
 import CustomDropdown from '../../customDropdown';
@@ -51,6 +51,8 @@ import { ReactComponent as AlignLeft } from '../../../assets/images/align-icons/
 import { ReactComponent as AlignRight } from '../../../assets/images/align-icons/align-right.svg'
 import { ReactComponent as AlignTop } from '../../../assets/images/align-icons/align-top.svg'
 import { ReactComponent as AlignBottom } from '../../../assets/images/align-icons/align-bottom.svg'
+import { ReactComponent as AlignCenter } from '../../../assets/images/align-icons/align-center.svg'
+import { ReactComponent as AlignMiddle } from '../../../assets/images/align-icons/align-middle.svg'
 import style from '../DndStyles.module.scss'
 
 const lineTypes = {
@@ -120,6 +122,12 @@ export default ({
     const borderColor = textdata?.borderColor || 'black'
     const setBorderColor = (value) => onTextChange({ borderColor: value })
 
+    const rotate = textdata?.rotate || '0'
+    const setRotate = (value) => onTextChange({ rotate: value })
+
+    const textAlign = textdata?.textAlign || 'center'
+    const setTextAlign = (value) => onTextChange({ textAlign: value })
+
     const handleTransform = () => fitView({ duration: 800 });
     const zoomInCanvas = () => zoomIn({ duration: 500 });
     const zoomOutCanvas = () => zoomOut({ duration: 500 });
@@ -155,34 +163,6 @@ export default ({
         setOpenPanels(pre => ({ ...pre, propertyPanel: !pre.propertyPanel }))
     }
 
-    // Handle keydown events
-    const handleKeyDown = useCallback(
-        (event) => {
-            if ((event.ctrlKey || event.metaKey) && event.key?.toLowerCase() === "c") {
-                event.preventDefault();
-                onCopy();
-            }
-
-            if ((event.ctrlKey || event.metaKey) && event.key?.toLowerCase() === "x") {
-                event.preventDefault();
-                setNodes((nodes) => nodes.filter((node) => node?.selected !== true));
-                setEdges((edges) => edges.filter((edge) => !selectedNodes?.some(selectedNode => selectedNode?.id === edge?.source || selectedNode?.id === edge?.target)));
-                onCopy();
-            }
-
-            if ((event.ctrlKey || event.metaKey) && event.key?.toLowerCase() === "v") {
-                event.preventDefault();
-                pasteNodes();
-            }
-        },
-        [onCopy, pasteNodes]
-    );
-
-    useEffect(() => {
-        window.addEventListener("keydown", handleKeyDown);
-        return () => window.removeEventListener("keydown", handleKeyDown);
-    }, [handleKeyDown]);
-
     const selectedEdgeType = useMemo(() => {
         //using the first item in the selected edges
         let selectedEdge = selectedEdges[0]
@@ -202,14 +182,19 @@ export default ({
         }
     }, [selectedEdges])
 
+    const selectedAlignType = useMemo(() => {
+        const alignType = textAlignTypes?.find(type => type.alignType === textAlign)
+        return alignType || textAlignTypes[0]
+    }, [selectedNodeId, textAlign])
+
     const getSelectedEdgeEnd = useMemo(() => {
         //using the first item in the selected edges
         let selectedEdge = selectedEdges[0]
 
         if (typeof selectedEdge?.markerEnd == 'object') {
-            return arrowEndTypes?.find(type => type?.markerId === selectedEdge?.markerEnd?.type)
+            return arrowStartTypes?.find(type => type?.markerId === selectedEdge?.markerEnd?.type)
         } else {
-            return arrowEndTypes?.find(type => type?.markerId === selectedEdge?.markerEnd)
+            return arrowStartTypes?.find(type => type?.markerId === selectedEdge?.markerEnd)
         }
     }, [selectedEdges])
 
@@ -231,8 +216,6 @@ export default ({
         e.preventDefault();
         setSelectedDownloadType(JSON.parse(e.target.value));
     }
-
-
 
     const onSaveHandler = () => {
         message.success('Saving drawing')
@@ -338,6 +321,49 @@ export default ({
         }
     }
 
+    const handleRotate = (e) => {
+        e.preventDefault();
+        setRotate(e.target.value)
+    }
+
+    const handleWidthChange = (e) => {
+        e.preventDefault();
+        selectedNodes?.map(node => {
+            const currentSize = sizes.find(item => item.id === node?.id) || { height: 0, width: 0 };
+            onSizeCahnge(node?.id, { ...currentSize, width: Number(e.target.value) })
+        })
+
+        setNodes((nodes) =>
+            nodes.map((node) => {
+                if (selectedNodes.some(selectedNode => selectedNode.id === node.id)) {
+                    const newNode = JSON.parse(JSON.stringify(node))
+
+                    newNode.width = Number(e.target.value)
+                    return newNode
+                } else return node
+            })
+        )
+    }
+
+    const handleHeightChange = (e) => {
+        e.preventDefault();
+        selectedNodes?.map(node => {
+            const currentSize = sizes.find(item => item.id === node?.id) || { height: 0, width: 0 };
+            onSizeCahnge(node?.id, { ...currentSize, height: Number(e.target.value) })
+        })
+
+        setNodes((nodes) =>
+            nodes.map((node) => {
+                if (selectedNodes.some(selectedNode => selectedNode.id === node.id)) {
+                    const newNode = JSON.parse(JSON.stringify(node))
+
+                    newNode.height = Number(e.target.value)
+                    return newNode
+                } else return node
+            })
+        )
+    }
+
     const onFontSizeChange = (e) => {
         e.preventDefault();
 
@@ -359,15 +385,33 @@ export default ({
         )
     }
 
-    const alignRight = () => {
+    const alignCenter = () => {
+        const minXPosition = Math.min(...selectedNodes.map(item => item.position.x))
         const maxXPosition = Math.max(...selectedNodes.map(item => item.position.x))
+        const maxWidth = Math.max(...selectedNodes.map(item => item.width))
 
         setNodes((nodes) =>
             nodes.map((node) => {
                 if (selectedNodes.some(selectedNode => selectedNode.id === node.id)) {
                     const newNode = JSON.parse(JSON.stringify(node))
 
-                    newNode.position.x = maxXPosition
+                    newNode.position.x = ((minXPosition + maxXPosition) / 2) + (maxWidth / 2) - (newNode.width / 2)
+                    return newNode
+                } else return node
+            })
+        )
+    }
+
+    const alignRight = () => {
+        const maxXPosition = Math.max(...selectedNodes.map(item => item.position.x))
+        const maxWidth = Math.max(...selectedNodes.map(item => item.width))
+
+        setNodes((nodes) =>
+            nodes.map((node) => {
+                if (selectedNodes.some(selectedNode => selectedNode.id === node.id)) {
+                    const newNode = JSON.parse(JSON.stringify(node))
+
+                    newNode.position.x = maxXPosition + (maxWidth / 2) - node.width
                     return newNode
                 } else return node
             })
@@ -383,6 +427,39 @@ export default ({
                     const newNode = JSON.parse(JSON.stringify(node))
 
                     newNode.position.y = maxYPosition
+                    return newNode
+                } else return node
+            })
+        )
+    }
+
+    const alignMiddle = () => {
+        const minYPosition = Math.max(...selectedNodes.map(item => item.position.y))
+        const maxYPosition = Math.max(...selectedNodes.map(item => item.position.y))
+        const maxHeight = Math.max(...selectedNodes.map(item => item.height))
+
+        setNodes((nodes) =>
+            nodes.map((node) => {
+                if (selectedNodes.some(selectedNode => selectedNode.id === node.id)) {
+                    const newNode = JSON.parse(JSON.stringify(node))
+
+                    newNode.position.y = ((minYPosition + maxYPosition) / 2) + (maxHeight / 2) - (newNode.height / 2)
+                    return newNode
+                } else return node
+            })
+        )
+    }
+
+    const alignBottom = () => {
+        const minYPosition = Math.max(...selectedNodes.map(item => item.position.y))
+        const maxHeight = Math.max(...selectedNodes.map(item => item.height))
+
+        setNodes((nodes) =>
+            nodes.map((node) => {
+                if (selectedNodes.some(selectedNode => selectedNode.id === node.id)) {
+                    const newNode = JSON.parse(JSON.stringify(node))
+
+                    newNode.position.y = minYPosition + (maxHeight / 2) - node.height
                     return newNode
                 } else return node
             })
@@ -412,21 +489,6 @@ export default ({
                     }
 
                     onSizeCahnge(node.id, newSize)
-                    return newNode
-                } else return node
-            })
-        )
-    }
-
-    const alignBottom = () => {
-        const minYPosition = Math.max(...selectedNodes.map(item => item.position.y))
-
-        setNodes((nodes) =>
-            nodes.map((node) => {
-                if (selectedNodes.some(selectedNode => selectedNode.id === node.id)) {
-                    const newNode = JSON.parse(JSON.stringify(node))
-
-                    newNode.position.y = minYPosition
                     return newNode
                 } else return node
             })
@@ -509,6 +571,10 @@ export default ({
                 } else return e
             })
         );
+    }
+
+    const handleTextAlign = (value) => {
+        setTextAlign(value?.alignType)
     }
 
     const onChangeEdgeEnd = (value) => {
@@ -623,6 +689,17 @@ export default ({
                         className={style.fontBoldContainer + ' ' + ((selectedNodes?.length > 0 && !isLineSelected) ? '' : style.disabledStyle)}
                         style={{ backgroundColor: textBold ? '#D3D3D3' : '' }}
                         onClick={onChangeTextBold}>B</div>
+
+                    <div className={style.activityContainer}>
+                        <CustomDropdown
+                            values={textAlignTypes}
+                            onChange={handleTextAlign}
+                            dataName='icon'
+                            selected={selectedAlignType}
+                            hideHintText
+                            disabled={!selectedNodes?.length > 0}
+                        />
+                    </div>
                     <div className={style.toolBarSeparator} />
 
                     <Tooltip title='Background color'>
@@ -667,6 +744,12 @@ export default ({
                             className={'hover-hand' + ' ' + (selectedNodes?.length > 1 ? '' : style.disabledStyle)}
                             onClick={alignLeft} />
                     </Tooltip>
+                    <Tooltip title='Align Center'>
+                        <AlignCenter
+                            width={15} height={15}
+                            className={'hover-hand' + ' ' + (selectedNodes?.length > 1 ? '' : style.disabledStyle)}
+                            onClick={alignCenter} />
+                    </Tooltip>
                     <Tooltip title='Align Right'>
                         <AlignRight
                             width={15} height={15}
@@ -678,6 +761,12 @@ export default ({
                             width={15} height={15}
                             className={'hover-hand' + ' ' + (selectedNodes?.length > 1 ? '' : style.disabledStyle)}
                             onClick={alignTop} />
+                    </Tooltip>
+                    <Tooltip title='Align Middle'>
+                        <AlignMiddle
+                            width={15} height={15}
+                            className={'hover-hand' + ' ' + (selectedNodes?.length > 1 ? '' : style.disabledStyle)}
+                            onClick={alignMiddle} />
                     </Tooltip>
                     <Tooltip title='Align Bottom'>
                         <AlignBottom
@@ -702,6 +791,36 @@ export default ({
                             className={'hover-hand' + ' ' + (selectedNodes?.length > 1 ? '' : style.disabledStyle)}
                             rotate={135}
                             onClick={() => resize(false, true)} />
+                    </Tooltip>
+
+                    <Tooltip title='Rotate'>
+                        <div className={style.rotateInputContainer + ' ' + (selectedNodes?.length > 0 ? '' : style.disabledStyle)}>
+                            <input
+                                className='m-r-5'
+                                value={rotate}
+                                onChange={handleRotate}
+                                type="text"
+                            />
+                            < >°</>
+                        </div>
+                    </Tooltip>
+                    <Tooltip title='Width'>
+                        <div className={style.sizeInputContainer + ' ' + (selectedNodes?.length > 0 ? '' : style.disabledStyle)}>
+                            <input
+                                value={size?.width}
+                                onChange={handleWidthChange}
+                                type="text"
+                            />
+                        </div>
+                    </Tooltip>
+                    <Tooltip title='Height'>
+                        <div className={style.sizeInputContainer + ' ' + (selectedNodes?.length > 0 ? '' : style.disabledStyle)}>
+                            <input
+                                value={size?.height}
+                                onChange={handleHeightChange}
+                                type="text"
+                            />
+                        </div>
                     </Tooltip>
 
                     <div className={style.toolBarSeparator} />
@@ -783,7 +902,7 @@ export default ({
                     <Tooltip title='Connector End'>
                         <div className={style.activityContainer}>
                             <CustomDropdown
-                                values={arrowEndTypes}
+                                values={arrowStartTypes}
                                 onChange={onChangeEdgeEnd}
                                 dataName='label'
                                 iconName='icon'

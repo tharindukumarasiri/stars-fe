@@ -41,12 +41,14 @@ function Text({ id, selected, type, data }) {
     const textType = textdata?.textType || { label: 'Poppins', type: 'Poppins' }
     const textColor = getRgbaColor(textdata?.textColor) || 'black'
     const textBold = textdata?.textBold || false
+    const textAlign = textdata?.textAlign || 'center'
 
     const textAreaStyle = {
         fontFamily: textType.type,
         fontSize: fonstSize,
         color: textColor,
         fontWeight: textBold ? 'bolder' : 'normal',
+        textAlign: textAlign,
     }
 
     const mainContainerStyle = {
