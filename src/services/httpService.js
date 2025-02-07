@@ -7,6 +7,7 @@ let apiFailedCount = 0;
 
 axios.interceptors.response.use(success => {
     apiFailedCount = 0;
+    return success;
 }, error => {
     const expectedError = error.response && error.response.status >= 400 && error.response.status < 500;
     const sessionExpired = error.response.status === 302
@@ -21,7 +22,7 @@ axios.interceptors.response.use(success => {
 
     if (sessionExpired || apiFailedCount > 3) {
         window.location.replace('/');
-        alert('Session timed out. Please login again.');
+        message.error('Session timed out. Please login again.');
     }
 
     return Promise.reject(error);

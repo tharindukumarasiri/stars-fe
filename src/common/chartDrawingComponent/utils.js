@@ -1,3 +1,4 @@
+import React from 'react';
 import { Position, MarkerType } from 'reactflow';
 import { Algorithm } from './edges/EditableEdge/constants';
 import {

@@ -61,10 +61,10 @@ const ReferenceModal = ({ nodes, setNodes, onSave }) => {
     const stopSpin = () => setSpin(0)
 
     useEffect(() => {
-        if(referenceModalId){
+        if (referenceModalId) {
             getReferanceData()
         }
-    },[referenceModalId])
+    }, [referenceModalId])
 
     const onRefreshReferences = () => {
         setSpin(1);
@@ -137,7 +137,7 @@ const ReferenceModal = ({ nodes, setNodes, onSave }) => {
                         const newNode = { ...node }
                         const newReference = JSON.parse(JSON.stringify(node?.data?.reference || []))
 
-                        if(editRecord) {
+                        if (editRecord) {
                             const index = newReference.findIndex((item) => (item.id === editRecord))
 
                             newReference[index] = {
@@ -379,7 +379,7 @@ const ReferenceModal = ({ nodes, setNodes, onSave }) => {
                 </td>
                 <td>
                     <div className="pos-r">
-                            {/* <AutoComplete
+                        {/* <AutoComplete
                                 value={inputData.number}
                                 options={numberDataSource}
                                 filterOption={(inputValue, option) =>
@@ -395,16 +395,16 @@ const ReferenceModal = ({ nodes, setNodes, onSave }) => {
                                     width: '100%',
                                 }}
                             /> */}
-                            <input type="text"
-                                value={inputData.number}
-                                onChange={onChangeNumber}
-                            />
-                            {lookupVisible === lookupType.ID &&
-                                lookupWindow(numberDataSource, (type) => onSelectNumber(type), true)
-                            }
-                            <div className={style.hamburgerContainer} onClick={() => toggleTypeLookup(lookupType.ID)}>
-                                <MenuOutlined />
-                            </div>
+                        <input type="text"
+                            value={inputData.number}
+                            onChange={onChangeNumber}
+                        />
+                        {lookupVisible === lookupType.ID &&
+                            lookupWindow(numberDataSource, (type) => onSelectNumber(type), true)
+                        }
+                        <div className={style.hamburgerContainer} onClick={() => toggleTypeLookup(lookupType.ID)}>
+                            <MenuOutlined />
+                        </div>
                     </div>
                 </td>
                 <td>
@@ -444,16 +444,16 @@ const ReferenceModal = ({ nodes, setNodes, onSave }) => {
             closeIcon={< i className='icon-close close-icon' />}>
 
             <div className={`m-b-20 ${style.linkTabsContainer}`}>
-            <button
-                onClick={onAddReferenceBtnClick} 
-                disabled={editMode}>Add Reference
-            </button>
-            <Tooltip title='Refresh References'>
-                <i className={`icon-rotate1 close-icon hover-hand ${style.reloadIcon}`} 
-                    onAnimationEnd={stopSpin} 
-                    onClick={onRefreshReferences}
-                    spin={spin} />
-            </Tooltip>
+                <button
+                    onClick={onAddReferenceBtnClick}
+                    disabled={editMode}>Add Reference
+                </button>
+                <Tooltip title='Refresh References'>
+                    <i className={`icon-rotate1 close-icon hover-hand ${style.reloadIcon}`}
+                        onAnimationEnd={stopSpin}
+                        onClick={onRefreshReferences}
+                        spin={spin} />
+                </Tooltip>
             </div>
 
             <table>

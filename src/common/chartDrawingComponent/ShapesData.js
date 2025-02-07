@@ -11,7 +11,7 @@ export const Categories = {
 
 export const OtherCategories = {
     'DATA_VISUALIZATION': 'Data Visualization',
-    'CHARTS': 'Organizational Charts'
+    'CHARTS': 'Business Schemas'
 }
 
 export const parentNodes = ['Table', 'LineChart', 'MatrixTable']
@@ -341,6 +341,50 @@ export default {
         category: [Categories.COMMON],
         hideTextInput: true,
         size: { width: 78.9, height: 47.8 },
+    },
+    Trapezoid: {
+        image: <>
+            <polygon class="st0" points="38.2,52.2 0.8,89.7 0.8,1.8 38.2,38.8 " />
+        </>
+        ,
+        viewBox: "0 0 38.8 91.5",
+        keepAspectRatio: false,
+        category: [Categories.COMMON],
+        hideTextInput: true,
+        size: { width: 38.8, height: 91.5},
+    },
+    TrapezoidLandscape : {
+        image: <>
+            <polygon class="st0" points="84.4,20 21.2,20 1.9,0.8 103.6,0.8 " />
+        </>
+        ,
+        viewBox: "0 0 105.4 20.7",
+        keepAspectRatio: false,
+        category: [Categories.COMMON],
+        hideTextInput: true,
+        size: { width: 105.4, height: 20.7 },
+    },
+    SqureSlantCutOne : {
+        image: <>
+            <polygon class="st0" points="59.3,1.8 59.3,59.3 0.8,59.3 0.8,47.7 " />
+        </>
+        ,
+        viewBox: "0 0 60 60",
+        keepAspectRatio: false,
+        category: [Categories.COMMON],
+        hideTextInput: true,
+        size: { width: 60, height: 60 },
+    },
+    SqureSlantCutTwo: {
+        image: <>
+            <polygon class="st0" points="0.8,1.8 0.8,59.2 59.3,59.2 59.3,47.6 " />
+        </>
+        ,
+        viewBox: "0 0 60 60",
+        keepAspectRatio: false,
+        category: [Categories.COMMON],
+        hideTextInput: true,
+        size: { width: 60, height: 60 },
     },
     HorizontalLine: {
         image: <rect x="0.5" width="134" height="2" rx="2" strokeWidth="0" fill='black' vectorEffect="non-scaling-stroke" vectorEffect="non-scaling-stroke" />,
