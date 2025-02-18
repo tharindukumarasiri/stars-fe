@@ -4,6 +4,8 @@ import {
     SettingOutlined,
     EyeOutlined,
     EyeInvisibleOutlined,
+    CaretUpOutlined,
+    CaretDownOutlined
 } from '@ant-design/icons';
 
 import ColorPicker from '../../colorPicker';
@@ -27,6 +29,7 @@ import SortableLayer from "../customElements/SortableLayer";
 
 const propertyCategories = {
     GRID: 'Grid',
+    LINE_CHART: 'Spider Chart',
     MATRIX: 'Matrix',
     SECTIONS: 'Sections',
     APPEARANCE: 'Appearance',
@@ -124,6 +127,12 @@ const PropertyPanel = ({ nodes, edges, selectedNodes = [], selectedEdges = [], s
     const hideTools = chartData?.hideTools || false
     const setHideTools = (value) => onChangeChartData({ hideTools: value })
 
+    const lineNumber = chartData?.lineNumber || 1
+    const setLineNumber = (value) => onChangeChartData({ lineNumber: value })
+
+    const curveNumber = chartData?.curveNumber || 1
+    const setCurveNumber = (value) => onChangeChartData({ curveNumber: value })
+
     const setCurrentLayer = useNodeDataStore((state) => state.setCurrentLayer);
 
     const layers = useNodeDataStore((state) => state.layers);
@@ -179,6 +188,28 @@ const PropertyPanel = ({ nodes, edges, selectedNodes = [], selectedEdges = [], s
 
         if (!isNaN(number) && Number(number) > 0) {
             setMatrixPadding(Number(number))
+        }
+    };
+
+    const onLineNumberIncrese = () => setLineNumber(lineNumber + 1);
+    const onLineNumberDecrease = () => setLineNumber(lineNumber - 1 > 0 ? lineNumber - 1 : 0);
+    const onLineNumberChange = (e) => {
+        e.preventDefault();
+        const number = e.target.value
+
+        if (!isNaN(number) && Number(number) > 0) {
+            setLineNumber(Number(number))
+        }
+    };
+
+    const onCurveNumberIncrese = () => setCurveNumber(curveNumber + 1);
+    const onCurveNumberDecrease = () => setCurveNumber(curveNumber - 1 > 0 ? curveNumber - 1 : 0);
+    const onCurveNumberChange = (e) => {
+        e.preventDefault();
+        const number = e.target.value
+
+        if (!isNaN(number) && Number(number) > 0) {
+            setCurveNumber(Number(number))
         }
     };
 
@@ -958,6 +989,87 @@ const PropertyPanel = ({ nodes, edges, selectedNodes = [], selectedEdges = [], s
         )
     }
 
+    const lineChartContent = () => {
+        return (
+            <div className={style.propertyPanelContainer}>
+                <div className={style.appearanceRow}>
+                    <div className={style.flex5}>
+                        Background Color
+                    </div>
+                    <div className={style.flex3} onClick={() => showColorPicker(colorPickerTypes.BACKGROUND)}>
+                        <div className={style.colorIcon} style={{ backgroundColor: getRgbaColor(backgroundColor) }} />
+                        {colorPickerVisible === colorPickerTypes.BACKGROUND ?
+                            <div className={style.sketchPickerContainer}>
+                                <ColorPicker
+                                    color={backgroundColor}
+                                    onChange={onChangeBackgroundColor}
+                                    onMouseLeave={onMouseLeave}
+                                    styles={colorPickerStyles}
+                                />
+                            </div> : null
+                        }
+                    </div>
+                </div>
+
+                <div className={style.appearanceRow}>
+                    <div className={style.flex5}>
+                        Lanes
+                    </div>
+                    <div className={style.flex6}>
+                        <div className={style.fontSizeContainer}>
+                            <input value={lineNumber} onChange={onLineNumberChange} type="text" />
+                            <div className='hover-hand m-l-10'>
+                                <CaretUpOutlined onClick={onLineNumberIncrese} />
+                                <CaretDownOutlined onClick={onLineNumberDecrease} />
+                            </div>
+                        </div>
+                    </div>
+                    <div className={style.flex2} onClick={() => showColorPicker(colorPickerTypes.LINE)}>
+                        <div className={style.colorIcon} style={{ backgroundColor: getRgbaColor(borderColor) }} />
+                        {colorPickerVisible === colorPickerTypes.LINE ?
+                            <div className={style.sketchPickerContainer}>
+                                <ColorPicker
+                                    color={borderColor}
+                                    onChange={onChangeBorderColor}
+                                    onMouseLeave={onMouseLeave}
+                                    styles={colorPickerStyles}
+                                />
+                            </div> : null
+                        }
+                    </div>
+                </div>
+
+                <div className={style.appearanceRow}>
+                    <div className={style.flex5}>
+                        Curves
+                    </div>
+                    <div className={style.flex6}>
+                        <div className={style.fontSizeContainer}>
+                            <input value={curveNumber} onChange={onCurveNumberChange} type="text" />
+                            <div className='hover-hand m-l-10'>
+                                <CaretUpOutlined onClick={onCurveNumberIncrese} />
+                                <CaretDownOutlined onClick={onCurveNumberDecrease} />
+                            </div>
+                        </div>
+                    </div>
+                    <div className={style.flex2} onClick={() => showColorPicker(colorPickerTypes.SECTION_BG)}>
+                        <div className={style.colorIcon} style={{ backgroundColor: getRgbaColor(sectionBorderColor) }} />
+                        {colorPickerVisible === colorPickerTypes.SECTION_BG ?
+                            <div className={style.sketchPickerContainer}>
+                                <ColorPicker
+                                    color={sectionBorderColor}
+                                    onChange={onChangeSectionBorderColor}
+                                    onMouseLeave={onMouseLeave}
+                                    styles={colorPickerStyles}
+                                />
+                            </div> : null
+                        }
+                    </div>
+                </div>
+            </div>
+        )
+    }
+
     const sectionsContent = () => {
         return (
             <div className={style.propertyPanelContainer}>
@@ -1393,6 +1505,21 @@ const PropertyPanel = ({ nodes, edges, selectedNodes = [], selectedEdges = [], s
                                 matrixContent()
                             }
                         </div>
+                    }
+
+                    {selectedNodes?.[0]?.type === 'LineChart' &&
+                        <>
+                            <div className='m-b-10' >
+                                <div className={style.sidebarCategoryheader} onClick={() => { onCategoryClick(propertyCategories.LINE_CHART) }} >
+                                    <div>{propertyCategories.LINE_CHART}</div>
+                                    <i className={(!closedCategories.includes(propertyCategories.LINE_CHART) ? ' icon-arrow-down' : ' icon-arrow-up')} />
+                                </div>
+
+                                {!closedCategories.includes(propertyCategories.LINE_CHART) &&
+                                    lineChartContent()
+                                }
+                            </div>
+                        </>
                     }
 
                     <div className='m-b-10' >

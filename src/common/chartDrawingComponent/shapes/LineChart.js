@@ -1,38 +1,42 @@
 import React, { memo, useEffect, useMemo } from 'react';
-import { NodeResizer, NodeToolbar, Position } from 'reactflow';
+import { NodeResizer } from 'reactflow';
 
-import TextInput from "../../../common/input";
 import { useNodeDataStore } from '../store'
 import Shapes from '../ShapesData.js';
+import { getRgbaColor } from '../utils';
 
 import style from '../DndStyles.module.scss'
 
 const resizerHandleStyle = { width: 12, height: 12 }
 
-function LineChart({ id, selected, type, data }) {
+function LineChart({ id, selected, type }) {
     const shapeData = Shapes[type]
     const initialHeight = shapeData?.size?.height;
     const initialWidth = shapeData?.size?.width;
 
     const sizes = useNodeDataStore((state) => state?.size);
     const onSizeCahnge = useNodeDataStore((state) => state.setSize);
+    const textdata = useNodeDataStore((state) => state.textdata).find(item => item.id === id);
 
     const size = sizes.find(item => item.id === id) || { height: initialHeight, width: initialWidth };
     const setSize = (value) => onSizeCahnge(id, value)
 
     const chartData = useNodeDataStore((state) => state.chartData).find(item => item.id === id);
-    const changeChartData = useNodeDataStore((state) => state.setChartData);
-    const onChangeChartData = (value) => changeChartData(id, value)
+    const setSelectedNodeId = useNodeDataStore((state) => state.setSelectedNodeId);
+
+    const backgroundColor = getRgbaColor(textdata?.backgroundColor) || 'transparent'
+    const borderColor = getRgbaColor(textdata?.borderColor) || 'black'
+    const sectionBorderColor = getRgbaColor(chartData?.sectionBorderColor) || 'black'
 
     const lineNumber = chartData?.lineNumber || 1
-    const setLineNumber = (value) => onChangeChartData({ lineNumber: value })
 
     const curveNumber = chartData?.curveNumber || 1
-    const setCurveNumber = (value) => onChangeChartData({ curveNumber: value })
 
     const mainContainerStyle = {
         height: size?.height,
         width: size?.width,
+        borderTopColor: borderColor,
+        borderRightColor: borderColor,
     }
 
     useEffect(() => {
@@ -41,29 +45,12 @@ function LineChart({ id, selected, type, data }) {
         setSize({ height: initialHeight, width: initialWidth })
     }, []);
 
+    useEffect(() => {
+        if (selected)
+            setSelectedNodeId(id);
+    }, [selected]);
+
     const onResize = (_, size) => setSize(size);
-
-    const onLineNumberIncrese = () => setLineNumber(lineNumber + 1);
-    const onLineNumberDecrease = () => setLineNumber(lineNumber - 1 > 0 ? lineNumber - 1 : 0);
-    const onLineNumberChange = (e) => {
-        e.preventDefault();
-        const number = e.target.value
-
-        if (!isNaN(number) && Number(number) > 0) {
-            setLineNumber(Number(number))
-        }
-    };
-
-    const onCurveNumberIncrese = () => setCurveNumber(curveNumber + 1);
-    const onCurveNumberDecrease = () => setCurveNumber(curveNumber - 1 > 0 ? curveNumber - 1 : 0);
-    const onCurveNumberChange = (e) => {
-        e.preventDefault();
-        const number = e.target.value
-
-        if (!isNaN(number) && Number(number) > 0) {
-            setCurveNumber(Number(number))
-        }
-    };
 
     const getLines = useMemo(() => {
         const linesArray = [];
@@ -75,13 +62,13 @@ function LineChart({ id, selected, type, data }) {
                 <div
                     key={i}
                     className={style.lineChartLine}
-                    style={{ width: size?.width * 2, transform: `rotate(${rotate + 90}deg)` }}
+                    style={{ width: size?.width * 2, transform: `rotate(${rotate + 90}deg)`, backgroundColor: borderColor }}
                 />
             )
         }
 
         return linesArray
-    }, [lineNumber, size])
+    }, [lineNumber, size, borderColor])
 
     const getCurves = useMemo(() => {
         const curvesArray = [];
@@ -97,14 +84,16 @@ function LineChart({ id, selected, type, data }) {
                         width: boxSize,
                         height: boxSize,
                         right: -boxSize / 2,
-                        top: -boxSize / 2
+                        top: -boxSize / 2,
+                        borderColor: sectionBorderColor,
+                        backgroundColor: backgroundColor
                     }}
                 />
             )
         }
-
+        curvesArray.reverse()
         return curvesArray
-    }, [curveNumber, size])
+    }, [curveNumber, size, sectionBorderColor, backgroundColor])
 
 
     return (
@@ -117,35 +106,8 @@ function LineChart({ id, selected, type, data }) {
                 keepAspectRatio={shapeData?.keepAspectRatio ?? true}
                 handleStyle={resizerHandleStyle}
             />
-            <NodeToolbar position={Position.Right}>
-                <div>Number of Lines</div>
-                <div className={style.lineChartLineToolbarItem + ' m-t-10'}>
-                    <div
-                        className='hover-hand m-r-10 m-t-10 bold'
-                        onClick={onLineNumberDecrease}> - </div>
-                    <TextInput value={lineNumber} onChange={onLineNumberChange} />
-                    <div
-                        className='hover-hand m-l-10 m-t-10 bold'
-                        onClick={onLineNumberIncrese}
-                    > + </div>
-                </div>
-
-                <div className='m-t-20'>Number of Curves</div>
-                <div className={style.lineChartLineToolbarItem + ' m-t-10'}>
-                    <div
-                        className='hover-hand m-r-10 m-t-10 bold'
-                        onClick={onCurveNumberDecrease}> - </div>
-                    <TextInput value={curveNumber} onChange={onCurveNumberChange} />
-                    <div
-                        className='hover-hand m-l-10 m-t-10 bold'
-                        onClick={onCurveNumberIncrese}
-                    > + </div>
-                </div>
-            </NodeToolbar>
-
             {getLines}
             {getCurves}
-
         </div>
     );
 }

@@ -706,9 +706,11 @@
     border: solid 1px #000;
     border-radius: 50%;
     border-style: dotted;
+    z-index: 10;
 }
 
 .lineChartLine {
+    z-index: 12;
     position: absolute;
     left: -1.5px;
     top: -3.5px;

@@ -354,22 +354,31 @@ const DnDFlow = ({ props }) => {
 
             // Copy event
             if ((event.ctrlKey || event.metaKey) && event.key?.toLowerCase() === "c") {
-                event.preventDefault();
-                setCopiedNodes(selectedNodes);
+                const activeElement = document.activeElement;
+                if (activeElement.tagName !== "INPUT" && activeElement.tagName !== "TEXTAREA") {
+                    event.preventDefault();
+                    setCopiedNodes(selectedNodes);
+                }
             }
 
             // Cut event
             if ((event.ctrlKey || event.metaKey) && event.key?.toLowerCase() === "x") {
-                event.preventDefault();
-                setNodes((nodes) => nodes.filter((node) => node?.selected !== true));
-                setEdges((edges) => edges.filter((edge) => !selectedNodes?.some(selectedNode => selectedNode?.id === edge?.source || selectedNode?.id === edge?.target)));
-                setCopiedNodes(selectedNodes);
+                const activeElement = document.activeElement;
+                if (activeElement.tagName !== "INPUT" && activeElement.tagName !== "TEXTAREA") {
+                    event.preventDefault();
+                    setNodes((nodes) => nodes.filter((node) => node?.selected !== true));
+                    setEdges((edges) => edges.filter((edge) => !selectedNodes?.some(selectedNode => selectedNode?.id === edge?.source || selectedNode?.id === edge?.target)));
+                    setCopiedNodes(selectedNodes);
+                }
             }
 
             // Paste event
             if ((event.ctrlKey || event.metaKey) && event.key?.toLowerCase() === "v") {
-                event.preventDefault();
-                pasteCopiedNodes();
+                const activeElement = document.activeElement;
+                if (activeElement.tagName !== "INPUT" && activeElement.tagName !== "TEXTAREA") {
+                    event.preventDefault();
+                    pasteCopiedNodes();
+                }
             }
 
             // Arrow keys event

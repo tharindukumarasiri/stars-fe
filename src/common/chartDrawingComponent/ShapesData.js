@@ -28,16 +28,6 @@ export default {
         hideShape: true,
         category: [Categories.COMMON]
     },
-    // CustomShape: {
-    //     image: <>
-    //         <rect x="0.8" y="0.8" className="st0" width="58.4" height="58.4" vectorEffect="non-scaling-stroke" />
-    //     </>
-    //     ,
-    //     viewBox: "0 0 59.9 59.9",
-    //     keepAspectRatio: false,
-    //     category: [Categories.COMMON],
-    //     size: { width: 100, height: 100 },
-    // },
     Circle: {
         image: <>
             <circle className="st0" cx="33.6" cy="33.6" r="32.9" vectorEffect="non-scaling-stroke" />
@@ -50,13 +40,13 @@ export default {
     },
     Squre: {
         image: <>
-            <rect x="0.8" y="0.8" className="st0" width="58.4" height="58.4" vectorEffect="non-scaling-stroke" />
+            <rect x="0" y="0" className="st0" width="58.4" height="58.4" vectorEffect="non-scaling-stroke" />
         </>
         ,
-        viewBox: "0 0 59.9 59.9",
+        viewBox: "0 0 58.4 58.4",
         keepAspectRatio: false,
         category: [Categories.COMMON],
-        size: { width: 59.9, height: 59.9 },
+        size: { width: 58.4, height: 58.4 },
     },
     Pentagon: {
         image: <>
@@ -351,9 +341,9 @@ export default {
         keepAspectRatio: false,
         category: [Categories.COMMON],
         hideTextInput: true,
-        size: { width: 38.8, height: 91.5},
+        size: { width: 38.8, height: 91.5 },
     },
-    TrapezoidLandscape : {
+    TrapezoidLandscape: {
         image: <>
             <polygon class="st0" points="84.4,20 21.2,20 1.9,0.8 103.6,0.8 " />
         </>
@@ -364,7 +354,7 @@ export default {
         hideTextInput: true,
         size: { width: 105.4, height: 20.7 },
     },
-    SqureSlantCutOne : {
+    SqureSlantCutOne: {
         image: <>
             <polygon class="st0" points="59.3,1.8 59.3,59.3 0.8,59.3 0.8,47.7 " />
         </>
@@ -403,6 +393,16 @@ export default {
         hideTextInput: true,
         hideShape: true,
         category: [Categories.COMMON]
+    },
+    CustomShape: {
+        image: <>
+            <rect x="0.8" y="0.8" className="st0" width="58.4" height="58.4" vectorEffect="non-scaling-stroke" />
+        </>
+        ,
+        viewBox: "0 0 59.9 59.9",
+        keepAspectRatio: false,
+        category: [Categories.COMMON],
+        size: { width: 100, height: 100 },
     },
     CircleDashed: {
         image: <>

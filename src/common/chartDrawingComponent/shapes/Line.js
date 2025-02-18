@@ -4,6 +4,7 @@ import { drag } from 'd3-drag';
 import { select } from 'd3-selection';
 
 import { useNodeDataStore } from '../store'
+// import ConnectionDot from '../customElements/ConnectionDot';
 import Shapes from '../ShapesData.js';
 import { getRgbaColor } from '../utils';
 
@@ -151,6 +152,7 @@ function Line({ id, selected, type, data }) {
             {selected &&
                 <DeleteBtn nodeId={id} />
             }
+            {/* <ConnectionDot selected={selected} /> */}
         </div>
     );
 }
