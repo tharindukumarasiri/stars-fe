@@ -12,7 +12,7 @@ import ConnectionDot from "../customElements/ConnectionDot";
 import DeleteBtn from "../customElements/DeleteBtn";
 
 
-const resizerHandleStyle = { width: 6, height: 6 };
+const resizerHandleStyle = { width: 6, height: 6, zIndex: 15 }
 const RADIAN = Math.PI / 180;
 
 function BarChartComponent({ id, selected, type, data }) {
@@ -49,9 +49,6 @@ function BarChartComponent({ id, selected, type, data }) {
         (item) => item.id === id
     );
     const onTextChange = useNodeDataStore((state) => state.onTextChange);
-    const setSelectedNodeId = useNodeDataStore(
-        (state) => state.setSelectedNodeId
-    );
 
     const rotate = textdata?.rotate || "0";
     const setRotate = (value) => onTextChange(id, { rotate: value });
@@ -71,10 +68,6 @@ function BarChartComponent({ id, selected, type, data }) {
             setSize({ height: initialHeight, width: initialWidth });
         }
     }, []);
-
-    useEffect(() => {
-        if (selected) setSelectedNodeId(id);
-    }, [selected]);
 
     useEffect(() => {
         if (!rotateControlRef.current) {

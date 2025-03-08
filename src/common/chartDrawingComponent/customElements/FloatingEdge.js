@@ -6,15 +6,8 @@ import { useNodeDataStore } from '../store'
 import EdgeMarkers from './EdgeMarkers.js';
 
 function FloatingEdge({ id, source, target, markerEnd, markerStart, selected, style }) {
-    const setSelectedNodeId = useNodeDataStore((state) => state.setSelectedNodeId);
-
     const sourceNode = useStore(useCallback((store) => store.nodeInternals.get(source), [source]));
     const targetNode = useStore(useCallback((store) => store.nodeInternals.get(target), [target]));
-
-    useEffect(() => {
-        if (selected)
-            setSelectedNodeId(id);
-    }, [selected]);
 
     if (!sourceNode || !targetNode) {
         return null;

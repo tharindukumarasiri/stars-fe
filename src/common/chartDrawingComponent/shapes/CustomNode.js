@@ -37,7 +37,6 @@ function CustomNode({ id, selected, type, data }) {
 
     const textdata = useNodeDataStore((state) => state.textdata)?.find(item => item.id === id);
     const onTextChange = useNodeDataStore((state) => state.onTextChange);
-    const setSelectedNodeId = useNodeDataStore((state) => state.setSelectedNodeId);
 
     const rotate = textdata?.rotate || '0'
     const setRotate = (value) => onTextChange(id, { rotate: value })
@@ -50,6 +49,7 @@ function CustomNode({ id, selected, type, data }) {
     const textBold = textdata?.textBold || false
     const markerType = textdata?.markerType || { label: '', icon: '' }
     const textAlign = textdata?.textAlign || 'center'
+    const strokeWidth = textdata?.strokeWidth || '1'
 
     const textAreaStyle = {
         fontFamily: textType.type,
@@ -78,11 +78,6 @@ function CustomNode({ id, selected, type, data }) {
     }, []);
 
     useEffect(() => {
-        if (selected)
-            setSelectedNodeId(id);
-    }, [selected]);
-
-    useEffect(() => {
         if (!rotateControlRef.current) {
             return;
         }
@@ -105,6 +100,7 @@ function CustomNode({ id, selected, type, data }) {
             <svg viewBox={shapeData.viewBox}
                 fill={fill}
                 stroke={borderColor}
+                strokeWidth={strokeWidth}
                 width={size?.width}
                 height={size?.height}
                 preserveAspectRatio="none"  >

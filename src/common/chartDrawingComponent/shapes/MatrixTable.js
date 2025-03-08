@@ -19,10 +19,6 @@ function MatrixChart({ id, selected, type }) {
 
     let sectionNumber = 0
 
-    const setSelectedNodeId = useNodeDataStore(
-        (state) => state.setSelectedNodeId
-    );
-
     const [disableInput, setDisableInput] = useState(false);
     const [isDragging, setIsDragging] = useState(false);
 
@@ -138,10 +134,6 @@ function MatrixChart({ id, selected, type }) {
 
         setSize({ height: initialHeight, width: initialWidth });
     }, []);
-
-    useEffect(() => {
-        if (selected) setSelectedNodeId(id);
-    }, [selected]);
 
     const rowsList = useMemo(() => {
         return Array.from(Array(rowsCount));

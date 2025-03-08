@@ -11,7 +11,7 @@ import style from '../DndStyles.module.scss'
 import ConnectionDot from '../customElements/ConnectionDot';
 import DeleteBtn from '../customElements/DeleteBtn';
 
-const resizerHandleStyle = { width: 6, height: 6 }
+const resizerHandleStyle = { width: 6, height: 6, zIndex: 15 }
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
 const RADIAN = Math.PI / 180;
 
@@ -43,7 +43,6 @@ function PieChartComponent({ id, selected, type, data }) {
 
     const textdata = useNodeDataStore((state) => state.textdata)?.find(item => item.id === id);
     const onTextChange = useNodeDataStore((state) => state.onTextChange);
-    const setSelectedNodeId = useNodeDataStore((state) => state.setSelectedNodeId);
 
     const rotate = textdata?.rotate || '0'
     const setRotate = (value) => onTextChange(id, { rotate: value })
@@ -63,11 +62,6 @@ function PieChartComponent({ id, selected, type, data }) {
             setSize({ height: initialHeight, width: initialWidth })
         }
     }, []);
-
-    useEffect(() => {
-        if (selected)
-            setSelectedNodeId(id);
-    }, [selected]);
 
     useEffect(() => {
         if (!rotateControlRef.current) {

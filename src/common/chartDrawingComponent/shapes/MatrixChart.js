@@ -28,7 +28,6 @@ function MatrixChart({ id, selected, type, data }) {
     const initialHeight = shapeData?.size?.height;
     const initialWidth = shapeData?.size?.width;
 
-    const setSelectedNodeId = useNodeDataStore((state) => state.setSelectedNodeId);
 
     const [openColorPicker, setOpenColorPicker] = useState('');
     const [focusedInput, setFocusedInput] = useState('')
@@ -84,11 +83,6 @@ function MatrixChart({ id, selected, type, data }) {
 
         setSize({ height: initialHeight, width: initialWidth })
     }, []);
-
-    useEffect(() => {
-        if (selected)
-            setSelectedNodeId(id);
-    }, [selected]);
 
     const onChangeHeader = useCallback((evt) => {
         onChangeChartData({ header: evt.target.value })

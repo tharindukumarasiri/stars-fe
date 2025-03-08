@@ -14,7 +14,7 @@ import DeleteBtn from '../customElements/DeleteBtn';
 
 const { TextArea } = Input;
 
-const resizerHandleStyle = { width: 6, height: 6 }
+const resizerHandleStyle = { width: 6, height: 6, zIndex: 15 }
 
 function Text({ id, selected, type, data }) {
     const rotateControlRef = useRef(null);
@@ -32,7 +32,6 @@ function Text({ id, selected, type, data }) {
 
     const textdata = useNodeDataStore((state) => state.textdata)?.find(item => item.id === id);
     const onTextChange = useNodeDataStore((state) => state.onTextChange);
-    const setSelectedNodeId = useNodeDataStore((state) => state.setSelectedNodeId);
 
     const rotate = textdata?.rotate || '0'
     const setRotate = (value) => onTextChange(id, { rotate: value })
@@ -66,11 +65,6 @@ function Text({ id, selected, type, data }) {
             setSize({ height: initialHeight, width: initialWidth })
         }
     }, []);
-
-    useEffect(() => {
-        if (selected)
-            setSelectedNodeId(id);
-    }, [selected]);
 
     useEffect(() => {
         if (!rotateControlRef.current) {

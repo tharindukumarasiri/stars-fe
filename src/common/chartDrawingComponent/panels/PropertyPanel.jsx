@@ -82,13 +82,23 @@ const PropertyPanel = ({ nodes, edges, selectedNodes = [], selectedEdges = [], s
     const drawingsData = useDiagramStore((state) => state.drawingsData);
 
     const changeTextData = useNodeDataStore((state) => state.onTextChange);
-    const selectedNodeId = useNodeDataStore((state) => state.selectedNodeId);
-    console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>');
-    console.log(selectedNodeId);
-    console.log(selectedNodes);
+    const selectedNodeId = selectedNodes?.[0]?.id;
+
     const textdata = useNodeDataStore((state) => state.textdata).find(item => item.id === selectedNodeId);
 
-    const onTextChange = (value) => changeTextData(selectedNodeId, value)
+    const onTextChange = (value) => {
+        selectedNodes?.map(node => {
+            if (node?.type === 'group') {
+                nodes?.map(item => {
+                    if (item?.parentId === node?.id && !item?.selected) {
+                        changeTextData(item?.id, value)
+                    }
+                })
+            }
+
+            changeTextData(node?.id, value)
+        })
+    }
 
     const chartData = useNodeDataStore((state) => state.chartData).find(item => item.id === selectedNodeId);
     const changeChartData = useNodeDataStore((state) => state.setChartData);

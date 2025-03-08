@@ -7,7 +7,7 @@ import { getRgbaColor } from '../utils';
 
 import style from '../DndStyles.module.scss'
 
-const resizerHandleStyle = { width: 12, height: 12 }
+const resizerHandleStyle = { width: 12, height: 12, zIndex: 15 }
 
 function LineChart({ id, selected, type }) {
     const shapeData = Shapes[type]
@@ -22,7 +22,6 @@ function LineChart({ id, selected, type }) {
     const setSize = (value) => onSizeCahnge(id, value)
 
     const chartData = useNodeDataStore((state) => state.chartData).find(item => item.id === id);
-    const setSelectedNodeId = useNodeDataStore((state) => state.setSelectedNodeId);
 
     const backgroundColor = getRgbaColor(textdata?.backgroundColor) || 'transparent'
     const borderColor = getRgbaColor(textdata?.borderColor) || 'black'
@@ -44,11 +43,6 @@ function LineChart({ id, selected, type }) {
 
         setSize({ height: initialHeight, width: initialWidth })
     }, []);
-
-    useEffect(() => {
-        if (selected)
-            setSelectedNodeId(id);
-    }, [selected]);
 
     const onResize = (_, size) => setSize(size);
 

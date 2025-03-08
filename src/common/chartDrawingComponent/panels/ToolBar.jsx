@@ -92,7 +92,7 @@ export default ({
     const UPLOAD_BTN_REF = useRef(null);
 
     const changeTextData = useNodeDataStore((state) => state.onTextChange);
-    const selectedNodeId = useNodeDataStore((state) => state.selectedNodeId);
+    const selectedNodeId = selectedNodes?.[0]?.id;
     const textdata = useNodeDataStore((state) => state.textdata).find(item => item.id === selectedNodeId);
 
     const sizes = useNodeDataStore((state) => state.size);
@@ -107,6 +107,16 @@ export default ({
 
     const onTextChange = (value) => {
         selectedNodes?.map(node => {
+
+            if (node?.type === 'group') {
+                const allNodes = getNodes()
+
+                allNodes?.map(item => {
+                    if (item?.parentId === node?.id && !item?.selected) {
+                        changeTextData(item?.id, value)
+                    }
+                })
+            }
             changeTextData(node?.id, value)
         })
     }
@@ -136,6 +146,9 @@ export default ({
     const textAlign = textdata?.textAlign || 'center'
     const setTextAlign = (value) => onTextChange({ textAlign: value })
 
+    const strokeWidth = textdata?.strokeWidth || '1'
+    const setStrokeWidth = (value) => onTextChange({ strokeWidth: value })
+
     const handleTransform = () => fitView({ duration: 800 });
     const zoomInCanvas = () => zoomIn({ duration: 500 });
     const zoomOutCanvas = () => zoomOut({ duration: 500 });
@@ -149,6 +162,10 @@ export default ({
     const onChangeTextBold = () => setBold(!textBold)
     const onChangeBackgroundColor = (color) => setBackgroundColor(color?.rgb)
     const onChangeBorderColor = (color) => setBorderColor(color?.rgb)
+    const onChangeStrokeWidth = (e) => {
+        e.preventDefault();
+        setStrokeWidth(e.target.value)
+    }
 
     const selectedEdgeData = selectedEdges[0]?.data
     const isLineSelected = selectedNodes?.[0]?.type === lineTypes.HORIZONTAL || selectedNodes?.[0]?.type === lineTypes.VERTICAL
@@ -743,6 +760,17 @@ export default ({
                                     />
                                 </div> : null
                             }
+                        </div>
+                    </Tooltip>
+
+                    <Tooltip title='Border Width'>
+                        <div className='m-t-10'>
+                            <Dropdown
+                                values={connectorWidths}
+                                onChange={onChangeStrokeWidth}
+                                selected={strokeWidth ?? '1'}
+                                disabled={!selectedNodes?.length > 0 || isLineSelected}
+                            />
                         </div>
                     </Tooltip>
 

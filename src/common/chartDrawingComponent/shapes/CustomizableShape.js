@@ -6,7 +6,7 @@ import { useNodeDataStore } from '../store'
 import Shapes from '../ShapesData.js';
 import { getRgbaColor } from '../utils';
 
-const resizerHandleStyle = { width: 6, height: 6 }
+const resizerHandleStyle = { width: 6, height: 6, zIndex: 25 }
 
 function CustomizableShape({ id, selected, type, data }) {
   const { setNodes } = useReactFlow();
@@ -40,7 +40,6 @@ function CustomizableShape({ id, selected, type, data }) {
   const setSize = (value) => onSizeCahnge(id, value)
 
   const textdata = useNodeDataStore((state) => state.textdata)?.find(item => item.id === id);
-  const setSelectedNodeId = useNodeDataStore((state) => state.setSelectedNodeId);
 
   const rotate = textdata?.rotate || '0'
 
@@ -65,11 +64,6 @@ function CustomizableShape({ id, selected, type, data }) {
       setSize({ height: initialHeight, width: initialWidth })
     }
   }, []);
-
-  useEffect(() => {
-    if (selected)
-      setSelectedNodeId(id);
-  }, [selected]);
 
   // Update dimensions based on points
   const updateDimensions = useCallback(() => {
@@ -221,6 +215,7 @@ function CustomizableShape({ id, selected, type, data }) {
             left: 0
           }}
           fill={backgroundColor}
+          strokeWidth="5"
         >
           <path
             d={pathData}
