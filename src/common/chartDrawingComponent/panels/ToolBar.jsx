@@ -98,10 +98,18 @@ export default ({
     const sizes = useNodeDataStore((state) => state.size);
     const onSizeCahnge = useNodeDataStore((state) => state.setSize);
 
-    const size = sizes.find(item => item.id === selectedNodeId) || { height: 0, width: 0 };
-    const setSize = (value) => onSizeCahnge(selectedNodeId, value)
+    const size = sizes?.find(item => item.id === selectedNodeId) || { height: 0, width: 0 };
+    const setSize = (value) => {
+        selectedNodes?.map(node => {
+            onSizeCahnge(node?.id, value)
+        })
+    }
 
-    const onTextChange = (value) => changeTextData(selectedNodeId, value)
+    const onTextChange = (value) => {
+        selectedNodes?.map(node => {
+            changeTextData(node?.id, value)
+        })
+    }
 
     const textType = textdata?.textType || { label: 'Poppins', type: 'Poppins' }
     const setTextType = (value) => onTextChange({ textType: value })
@@ -329,7 +337,7 @@ export default ({
     const handleWidthChange = (e) => {
         e.preventDefault();
         selectedNodes?.map(node => {
-            const currentSize = sizes.find(item => item.id === node?.id) || { height: 0, width: 0 };
+            const currentSize = sizes?.find(item => item.id === node?.id) || { height: 0, width: 0 };
             onSizeCahnge(node?.id, { ...currentSize, width: Number(e.target.value) })
         })
 
@@ -348,7 +356,7 @@ export default ({
     const handleHeightChange = (e) => {
         e.preventDefault();
         selectedNodes?.map(node => {
-            const currentSize = sizes.find(item => item.id === node?.id) || { height: 0, width: 0 };
+            const currentSize = sizes?.find(item => item.id === node?.id) || { height: 0, width: 0 };
             onSizeCahnge(node?.id, { ...currentSize, height: Number(e.target.value) })
         })
 

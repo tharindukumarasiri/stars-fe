@@ -36,7 +36,14 @@ export const fontSizes = [
 
 export const arrowKeyMovePositions = 1
 
+export const ChartOrientations = {
+    BOTH: 'both',
+    VERTICAL: 'vertical',
+    HORIZONTAL: 'horizontal'
+}
+
 export const connectorTypes = [
+
     {
         label: Algorithm.Linear,
         icon: 'icon-straight-arrow'

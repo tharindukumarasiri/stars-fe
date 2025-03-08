@@ -33,17 +33,18 @@ export const useNodeDataStore = create((set, get) => ({
         }], currentLayer: layersData?.currentLayer || 'layer_1'
     }),
     setSize: (id, size) => {
-        const index = get().size.findIndex(item => item.id === id)
+        const index = get().size?.findIndex(item => item.id === id)
 
         if (index < 0) {
             set({ size: [...get().size, { id, ...size }] })
         } else {
-            const newSize = [...get().size];
+            const newSize = [...get()?.size];
             newSize[index] = size
             newSize[index].id = id
             set({ size: newSize })
         }
     },
+    setSizes: (sizes) => set({ size: sizes }),
     onTextChange: (id, value) => {
         const index = get().textdata.findIndex(item => item.id === id)
         const inputKey = [Object.keys(value)[0]];

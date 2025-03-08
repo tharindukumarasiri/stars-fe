@@ -20,7 +20,7 @@ const DeleteBtn = ({ nodeId }) => {
             cancelText: 'No',
 
             onOk() {
-                setNodes((nodes) => nodes.filter((node) => node?.id !== nodeId && node?.parentNode !== nodeId));
+                setNodes((nodes) => nodes.filter((node) => node?.id !== nodeId && node?.parentId !== nodeId));
                 setEdges((edges) => edges.filter((edge) => edge?.source !== nodeId));
             },
         });

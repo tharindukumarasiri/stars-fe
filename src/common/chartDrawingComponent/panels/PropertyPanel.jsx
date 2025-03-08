@@ -5,7 +5,10 @@ import {
     EyeOutlined,
     EyeInvisibleOutlined,
     CaretUpOutlined,
-    CaretDownOutlined
+    CaretDownOutlined,
+    AlignLeftOutlined,
+    AlignCenterOutlined,
+    AlignRightOutlined,
 } from '@ant-design/icons';
 
 import ColorPicker from '../../colorPicker';
@@ -14,7 +17,10 @@ import {
     colorPickerTypes,
     rgbToHex,
     getId,
-    defaultNewLayerRestData
+    defaultNewLayerRestData,
+    ChartOrientations,
+    fontTypes,
+    textAlignTypes
 } from '../utils';
 import { useNodeDataStore } from '../store'
 import Dropdown from '../../dropdown';
@@ -26,6 +32,12 @@ import FormModal from './FormModal';
 import style from '../DndStyles.module.scss'
 import 'react-nestable/dist/styles/index.css';
 import SortableLayer from "../customElements/SortableLayer";
+import Input from '../../input';
+
+import swim_lane from '../../../assets/images/swim-lane/swim_lane.png'
+import swim_lane_vertical from '../../../assets/images/swim-lane/swim_lane_vertical.png'
+import swim_lane_horizontal from '../../../assets/images/swim-lane/swim_lane_horizontal.png'
+
 
 const propertyCategories = {
     GRID: 'Grid',
@@ -71,6 +83,9 @@ const PropertyPanel = ({ nodes, edges, selectedNodes = [], selectedEdges = [], s
 
     const changeTextData = useNodeDataStore((state) => state.onTextChange);
     const selectedNodeId = useNodeDataStore((state) => state.selectedNodeId);
+    console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>');
+    console.log(selectedNodeId);
+    console.log(selectedNodes);
     const textdata = useNodeDataStore((state) => state.textdata).find(item => item.id === selectedNodeId);
 
     const onTextChange = (value) => changeTextData(selectedNodeId, value)
@@ -88,8 +103,22 @@ const PropertyPanel = ({ nodes, edges, selectedNodes = [], selectedEdges = [], s
     const headerBackgroundColor = textdata?.headerBackgroundColor || '#a2a2a2'
     const setHeaderBackgroundColor = (value) => onTextChange({ headerBackgroundColor: value })
 
+    const textType = textdata?.textType || { label: 'Poppins', type: 'Poppins' }
+    const setTextType = (value) => onTextChange({ textType: value })
+
+    const textBold = textdata?.textBold || false
+    const setBold = (value) => onTextChange({ textBold: value })
+
+    const textAlign = textdata?.textAlign || 'center'
+    const setTextAlign = (value) => onTextChange({ textAlign: value })
+
     const removeHeader = chartData?.removeHeader || false
     const setRemoveHeader = (value) => onChangeChartData({ removeHeader: value })
+
+    const chartName = chartData?.chartName || ''
+    const setSetChartName = (value) => onChangeChartData({ chartName: value })
+
+    const setSetChartOrientation = (value) => onChangeChartData({ chartOrientation: value })
 
     const sectionsCount = chartData?.sectionsCount || 1
     const setSectionsCount = (value) => onChangeChartData({ sectionsCount: value })
@@ -106,7 +135,7 @@ const PropertyPanel = ({ nodes, edges, selectedNodes = [], selectedEdges = [], s
     const selectedColumn = chartData?.selectedColumn ?? null;
     const selectedRow = chartData?.selectedRow ?? null;
 
-    const matrixPadding = chartData?.matrixPadding || 2
+    const matrixPadding = chartData?.matrixPadding || 0
     const setMatrixPadding = (value) => onChangeChartData({ matrixPadding: value })
 
     const columnsCount = chartData?.columnsCount || 1
@@ -138,6 +167,11 @@ const PropertyPanel = ({ nodes, edges, selectedNodes = [], selectedEdges = [], s
     const layers = useNodeDataStore((state) => state.layers);
     const setLayers = useNodeDataStore((state) => state.setLayers);
 
+    const selectedAlignType = useMemo(() => {
+        const alignType = textAlignTypes?.find(type => type.alignType === textAlign)
+        return alignType || textAlignTypes[0]
+    }, [selectedNodeId, textAlign])
+
     const showColorPicker = (picker) => setColorPickerVisible(picker)
     const onChangeBackgroundColor = (color) => setBackgroundColor(color?.rgb)
     const onMouseLeave = () => setColorPickerVisible('')
@@ -148,6 +182,13 @@ const PropertyPanel = ({ nodes, edges, selectedNodes = [], selectedEdges = [], s
     const onSectionsCountIncrese = () => setSectionsCount(sectionsCount + 1);
     const onSectionsCountDecrease = () => setSectionsCount(sectionsCount - 1 > 0 ? sectionsCount - 1 : 0);
     const toggleFormModal = () => setFormsModalVisible(true);
+
+    const onChangeTextType = (e) => {
+        e.preventDefault();
+        setTextType(JSON.parse(e.target.value));
+    }
+
+    const onChangeTextBold = () => setBold(!textBold)
 
     const onSectionsCountChange = (e) => {
         e.preventDefault();
@@ -181,12 +222,12 @@ const PropertyPanel = ({ nodes, edges, selectedNodes = [], selectedEdges = [], s
     };
 
     const onPaddingIncrease = () => setMatrixPadding(matrixPadding + 1);
-    const onPaddingDecrease = () => setMatrixPadding(matrixPadding - 1 > 0 ? matrixPadding - 1 : 0);
+    const onPaddingDecrease = () => setMatrixPadding(matrixPadding - 1 > -1 ? (matrixPadding - 1) : 0);
     const onPaddingChange = (e) => {
         e.preventDefault();
         const number = e.target.value
 
-        if (!isNaN(number) && Number(number) > 0) {
+        if (!isNaN(number) && Number(number) > -1) {
             setMatrixPadding(Number(number))
         }
     };
@@ -637,7 +678,7 @@ const PropertyPanel = ({ nodes, edges, selectedNodes = [], selectedEdges = [], s
                     const newNode = { ...node }
 
                     newNode.selected = false
-                    newNode.parentNode = groupId
+                    newNode.parentId = groupId
                     newNode.expandParent = true
                     newNode.position = { x: node?.position.x - positionMin?.x, y: node?.position.y - positionMin?.y }
 
@@ -680,11 +721,11 @@ const PropertyPanel = ({ nodes, edges, selectedNodes = [], selectedEdges = [], s
         })
 
         const newNodes = newNodesWithoutGroups.map((node) => {
-            const selectedGroupNode = selectedGroupNodes.find(groupNode => groupNode.id === node.parentNode);
+            const selectedGroupNode = selectedGroupNodes.find(groupNode => groupNode.id === node.parentId);
             if (selectedGroupNode) {
                 const newNode = { ...node }
 
-                delete newNode.parentNode;
+                delete newNode.parentId;
                 delete newNode.expandParent;
                 newNode.position = { x: node?.position.x + selectedGroupNode?.position?.x, y: node?.position.y + selectedGroupNode?.position?.y }
 
@@ -891,64 +932,63 @@ const PropertyPanel = ({ nodes, edges, selectedNodes = [], selectedEdges = [], s
         return (
             <div className={style.propertyPanelContainer}>
                 <div className={style.appearanceRow}>
-                    <div className={style.flex5}>
-                        Number of Columns
+                    <Input
+                        placeholder="Name"
+                        value={chartName}
+                        onChange={(e) => {
+                            e.preventDefault()
+                            setSetChartName(e.target.value)
+                        }}
+                    />
+                </div>
+                <div className={style.appearanceRow}>
+                    <div className={style.flex6}>
+                        Background color
                     </div>
+                    <div className={style.flex1} onClick={() => showColorPicker(colorPickerTypes.BACKGROUND)}>
+                        <div className={style.colorIcon} style={{ backgroundColor: getRgbaColor(backgroundColor) }} />
+                        {colorPickerVisible === colorPickerTypes.BACKGROUND ?
+                            <div className={style.sketchPickerContainer}>
+                                <ColorPicker
+                                    color={backgroundColor}
+                                    onChange={onChangeBackgroundColor}
+                                    onMouseLeave={onMouseLeave}
+                                    styles={colorPickerStyles}
+                                />
+                            </div> : null
+                        }
+                    </div>
+                </div>
+                <div className={style.appearanceRow}>
+                    <div>
+                        <div>Orientation</div>
+                        <div className={style.orientationRow}>
+                            <img src={swim_lane} className={style.orientationIcon}
+                                onClick={() => setSetChartOrientation(ChartOrientations.BOTH)}
+                            />
+                            <img src={swim_lane_vertical} className={style.orientationIcon}
+                                onClick={() => setSetChartOrientation(ChartOrientations.VERTICAL)}
+                            />
+                            <img src={swim_lane_horizontal} className={style.orientationIcon}
+                                onClick={() => setSetChartOrientation(ChartOrientations.HORIZONTAL)}
+                            />
+                        </div>
+                    </div>
+                </div>
 
-                    <div className={style.flex8}>
+                <div className={style.appearanceRow}>
+                    <div className={style.flex5}>
+                        Columns
+                    </div>
+                    <div className={style.flex6}>
                         <div className={style.fontSizeContainer}>
-                            <div
-                                className='hover-hand m-r-10 m-t-10 bold'
-                                onClick={onColumnsCountDecrease}>-</div>
                             <input value={columnsCount} onChange={onColumnsCountChange} type="text" />
-                            <div
-                                className='hover-hand m-l-10 m-t-10 bold'
-                                onClick={onColumnsCountIncrease}
-                            >+</div>
+                            <div className='hover-hand m-l-10'>
+                                <CaretUpOutlined onClick={onColumnsCountIncrease} />
+                                <CaretDownOutlined onClick={onColumnsCountDecrease} />
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div className={style.appearanceRow}>
-                    <div className={style.flex5}>
-                        Number of Rows
-                    </div>
-
-                    <div className={style.flex8}>
-                        <div className={style.fontSizeContainer}>
-                            <div
-                                className='hover-hand m-r-10 m-t-10 bold'
-                                onClick={onRowsCountDecrease}>-</div>
-                            <input value={rowsCount} onChange={onRowsCountChange} type="text" />
-                            <div
-                                className='hover-hand m-l-10 m-t-10 bold'
-                                onClick={onRowsCountIncrease}
-                            >+</div>
-                        </div>
-                    </div>
-                </div>
-                <div className={style.appearanceRow}>
-                    <div className={style.flex5}>
-                        Padding (px)
-                    </div>
-
-                    <div className={style.flex8}>
-                        <div className={style.fontSizeContainer}>
-                            <div
-                                className='hover-hand m-r-10 m-t-10 bold'
-                                onClick={onPaddingDecrease}>-</div>
-                            <input value={matrixPadding} onChange={onPaddingChange} type="text" />
-                            <div
-                                className='hover-hand m-l-10 m-t-10 bold'
-                                onClick={onPaddingIncrease}
-                            >+</div>
-                        </div>
-                    </div>
-                </div>
-                <div className={style.appearanceRow}>
-                    <div className={style.flex5}>
-                        Column background color
-                    </div>
-
                     <div className={style.flex2} onClick={() => showColorPicker(colorPickerTypes.COLUMN_BG)}>
                         <div className={style.colorIcon} style={{ backgroundColor: selectedColumnColor() }} />
                         {colorPickerVisible === colorPickerTypes.COLUMN_BG ?
@@ -962,13 +1002,21 @@ const PropertyPanel = ({ nodes, edges, selectedNodes = [], selectedEdges = [], s
                             </div> : null
                         }
                     </div>
-
                 </div>
+
                 <div className={style.appearanceRow}>
                     <div className={style.flex5}>
-                        Row background color
+                        Rows
                     </div>
-
+                    <div className={style.flex6}>
+                        <div className={style.fontSizeContainer}>
+                            <input value={rowsCount} onChange={onRowsCountChange} type="text" />
+                            <div className='hover-hand m-l-10'>
+                                <CaretUpOutlined onClick={onRowsCountIncrease} />
+                                <CaretDownOutlined onClick={onRowsCountDecrease} />
+                            </div>
+                        </div>
+                    </div>
                     <div className={style.flex2} onClick={() => showColorPicker(colorPickerTypes.ROW_BG)}>
                         <div className={style.colorIcon} style={{ backgroundColor: selectedRowColor() }} />
                         {colorPickerVisible === colorPickerTypes.ROW_BG ?
@@ -982,9 +1030,61 @@ const PropertyPanel = ({ nodes, edges, selectedNodes = [], selectedEdges = [], s
                             </div> : null
                         }
                     </div>
-
                 </div>
 
+                <div className={style.appearanceRow}>
+                    Header
+                </div>
+                <div className={style.appearanceRow}>
+                    <div className={style.flex8}>
+                        <Dropdown
+                            values={fontTypes}
+                            onChange={onChangeTextType}
+                            dataName='label'
+                            selected={JSON.stringify(textType)}
+                        />
+                    </div>
+                </div>
+                <div className={style.appearanceRow} style={{ justifyContent: 'flex-start', gap: 10 }}>
+                    <div
+                        className={style.fontBoldContainer + " " + style.chartTextStyleContainer}
+                        style={{ backgroundColor: textBold ? '#D3D3D3' : '' }}
+                        onClick={onChangeTextBold}>
+                        B
+                    </div>
+
+                    <div className={style.chartTextStyleContainer}
+                        style={{ backgroundColor: textAlign === 'center' ? '#D3D3D3' : '' }}
+                        onClick={() => setTextAlign('center')}>
+                        <AlignCenterOutlined />
+                    </div>
+                    <div className={style.chartTextStyleContainer}
+                        style={{ backgroundColor: textAlign === 'left' ? '#D3D3D3' : '' }}
+                        onClick={() => setTextAlign('left')}>
+                        <AlignLeftOutlined />
+                    </div>
+                    <div className={style.chartTextStyleContainer}
+                        style={{ backgroundColor: textAlign === 'right' ? '#D3D3D3' : '' }}
+                        onClick={() => setTextAlign('right')}>
+                        <AlignRightOutlined />
+                    </div>
+                </div>
+
+                <div className={style.appearanceRow}>
+                    <div className={style.flex5}>
+                        Padding (px)
+                    </div>
+
+                    <div className={style.flex6}>
+                        <div className={style.fontSizeContainer}>
+                            <input value={matrixPadding} onChange={onPaddingChange} type="text" />
+                            <div className='hover-hand m-l-10'>
+                                <CaretUpOutlined onClick={onPaddingIncrease} />
+                                <CaretDownOutlined onClick={onPaddingDecrease} />
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         )
     }
@@ -1480,7 +1580,7 @@ const PropertyPanel = ({ nodes, edges, selectedNodes = [], selectedEdges = [], s
                                     gridContent()
                                 }
                             </div>
-                            <div className='m-b-10' >
+                            {/* <div className='m-b-10' >
                                 <div className={style.sidebarCategoryheader} onClick={() => { onCategoryClick(propertyCategories.SECTIONS) }} >
                                     <div>{propertyCategories.SECTIONS}</div>
                                     <i className={(!closedCategories.includes(propertyCategories.SECTIONS) ? ' icon-arrow-down' : ' icon-arrow-up')} />
@@ -1489,7 +1589,7 @@ const PropertyPanel = ({ nodes, edges, selectedNodes = [], selectedEdges = [], s
                                 {!closedCategories.includes(propertyCategories.SECTIONS) &&
                                     sectionsContent()
                                 }
-                            </div>
+                            </div> */}
                         </>
                     }
 

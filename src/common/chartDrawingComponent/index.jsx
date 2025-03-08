@@ -276,6 +276,7 @@ const DnDFlow = ({ props }) => {
                 selected: true,
                 data: {
                     layer: currentLayer,
+                    takeSnapshot: takeSnapshot,
                 },
             };
 
@@ -291,7 +292,7 @@ const DnDFlow = ({ props }) => {
                 )
 
                 newNode.position = pos;
-                newNode.parentNode = groupNode?.id;
+                newNode.parentId = groupNode?.id;
                 newNode.extent = 'parent';
             }
 
@@ -475,13 +476,13 @@ const DnDFlow = ({ props }) => {
         setNodes((nodes) =>
             nodes.map((n) => {
                 const isParentNode = parentNodes.some(parent => target?.id?.includes(parent));
-                if (target && isParentNode && node?.id === n?.id && !n?.parentNode) {
+                if (target && isParentNode && node?.id === n?.id && !n?.parentId) {
                     const pos = getNodePositionInsideParent(
                         n,
                         target
                     )
 
-                    n.parentNode = target?.id;
+                    n.parentId = target?.id;
                     n.extent = 'parent';
                     n.position = pos
                 }
@@ -522,7 +523,7 @@ const DnDFlow = ({ props }) => {
             id: getId(type),
             type: type,
             position,
-            parentNode: parentId,
+            parentId: parentId,
             extent: 'parent',
             data: {
                 hideHandle: true,
@@ -602,8 +603,13 @@ const DnDFlow = ({ props }) => {
         takeSnapshot();
     }, [takeSnapshot]);
 
-    const onNodesDelete = useCallback(() => {
-        // make deleting nodes undoable
+    const onNodesDelete = useCallback((deleteNodes) => {
+        // make deleting nodes undoable\
+        setNodes((nodes) => nodes.filter((node) => {
+            const isDeleteNode = deleteNodes?.some(deleteNode => deleteNode?.id === node?.id || deleteNode?.id === node?.parentId);
+            return !isDeleteNode;
+        }));
+
         takeSnapshot();
     }, [takeSnapshot]);
 

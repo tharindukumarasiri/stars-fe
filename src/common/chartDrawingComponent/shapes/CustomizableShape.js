@@ -245,7 +245,7 @@ function CustomizableShape({ id, selected, type, data }) {
         </svg>
       </div>
 
-      <ConnectionDot selected={selected} />
+      <ConnectionDot selected={selected} width={size?.width} height={size?.height} />
 
     </>
   );

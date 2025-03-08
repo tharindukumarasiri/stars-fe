@@ -162,7 +162,7 @@ const SortableItem = ({ item, nodes, setNodes, setEdges }) => {
     const onDeleteNode = (e, id) => {
         e.stopPropagation();
 
-        setNodes((nodes) => nodes.filter((node) => node?.id !== id && node?.parentNode !== id));
+        setNodes((nodes) => nodes.filter((node) => node?.id !== id && node?.parentId !== id));
         setEdges((edges) => edges.filter((edge) => edge?.source !== id));
     }
 

@@ -90,7 +90,7 @@ export default function ContextMenu({ id, top, left, ...props }) {
             cancelText: 'No',
 
             onOk() {
-                setNodes((nodes) => nodes.filter((node) => node?.id !== id && node?.parentNode !== id));
+                setNodes((nodes) => nodes.filter((node) => node?.id !== id && node?.parentId !== id));
                 setEdges((edges) => edges.filter((edge) => edge?.source !== id));
             },
         });

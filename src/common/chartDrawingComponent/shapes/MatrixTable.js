@@ -4,7 +4,7 @@ import { Input } from "antd";
 
 import { useNodeDataStore } from "../store";
 import Shapes from "../ShapesData.js";
-import { getRgbaColor } from "../utils";
+import { ChartOrientations, getRgbaColor } from "../utils";
 
 import style from "../DndStyles.module.scss";
 
@@ -44,6 +44,8 @@ function MatrixChart({ id, selected, type }) {
     // const nodeData = chartData?.nodeData || [];
     // const setNodeData = (value) => onChangeChartData({ nodeData: value });
 
+    const chartName = chartData?.chartName || ''
+    const chartOrientation = chartData?.chartOrientation || ChartOrientations.BOTH
     const rowsCount = chartData?.rowsCount || 1;
 
     const rowsData = chartData?.rowsData || [];
@@ -79,7 +81,7 @@ function MatrixChart({ id, selected, type }) {
         onChangeChartData({ selectedRow: value })
     }
 
-    const matrixPadding = chartData?.matrixPadding || 2;
+    const matrixPadding = chartData?.matrixPadding || 0;
     const hideTools = chartData?.hideTools || false;
 
     const columnsCount = chartData?.columnsCount || 1;
@@ -111,11 +113,12 @@ function MatrixChart({ id, selected, type }) {
         setRowsData(copyOfRowsData)
     }
 
-
+    const backgroundColor = textdata?.backgroundColor || 'transparent';
     const fonstSize = Number(textdata?.fonstSize) || 8;
     const textType = textdata?.textType || { label: "Poppins", type: "Poppins" };
     const textColor = getRgbaColor(textdata?.textColor) || "black";
     const textBold = textdata?.textBold || false;
+    const textAlign = textdata?.textAlign || 'center'
 
     const mainContainerStyle = {
         height: size?.height,
@@ -127,6 +130,7 @@ function MatrixChart({ id, selected, type }) {
         fontSize: fonstSize,
         color: textColor,
         fontWeight: textBold ? "bolder" : "normal",
+        textAlign: textAlign,
     };
 
     useEffect(() => {
@@ -248,42 +252,47 @@ function MatrixChart({ id, selected, type }) {
             if (selectedRow !== null && !isDragging)
                 setSelectedRow(null)
         }}>
+            <div>{chartName}</div>
             {rowsList.map((_, rowIndex) => {
                 return (
                     <div className={style.matrixTableMainRow} key={rowIndex + 'main'}>
-                        <div
-                            className={style.matrixTableRowHeader}
-                            key={rowIndex + 'title'}
-                            style={{
-                                paddingTop: matrixPadding,
-                                paddingBottom: matrixPadding,
-                            }}
-                        >
-                            <div className={style.matrixTableRowHeaderTextContainer}
+                        {chartOrientation !== ChartOrientations.VERTICAL && (
+                            <div
+                                className={style.matrixTableRowHeader}
+                                key={rowIndex + 'title'}
                                 style={{
-                                    backgroundColor: rowsData[rowIndex]?.color ?? rowsColor
-                                }}
-                                onClick={(e) => {
-                                    e.stopPropagation();
-                                    setSelectedRow(rowIndex)
+                                    paddingTop: matrixPadding,
+                                    paddingBottom: matrixPadding,
                                 }}
                             >
-                                {/* {rowsData[rowIndex]} */}
-                                <TextArea
-                                    autoSize
+                                <div className={style.matrixTableRowHeaderTextContainer}
                                     style={{
-                                        ...textAreaStyle, ...{
-                                            transform: 'rotate(270deg)'
-                                        }
+                                        backgroundColor: rowsData[rowIndex]?.color ?? rowsColor
                                     }}
-                                    placeholder={`Row ${rowIndex + 1}`}
-                                    className={style.drawingTextArea}
-                                    value={rowsData[rowIndex]?.title}
-                                    onChange={(e) => onRowsDataChange(e, rowIndex)}
-                                    onKeyDown={onKeyDown}
-                                />
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        setSelectedRow(rowIndex)
+                                    }}
+                                >
+                                    {/* {rowsData[rowIndex]} */}
+                                    <TextArea
+                                        autoSize
+                                        style={{
+                                            ...textAreaStyle, ...{
+                                                transform: 'rotate(270deg)'
+                                            },
+                                            minWidth: rowsData[rowIndex]?.height ?? 400,
+                                        }}
+                                        placeholder={`Row ${rowIndex + 1}`}
+                                        className={style.drawingTextArea}
+                                        value={rowsData[rowIndex]?.title}
+                                        onChange={(e) => onRowsDataChange(e, rowIndex)}
+                                        onKeyDown={onKeyDown}
+                                    />
+                                </div>
                             </div>
-                        </div>
+                        )}
+
                         {columnList.map((_, columnIndex) => {
                             // const sectionData = nodeData[sectionNumber] || {};
                             // const elementList = Array.from(Array(sectionData?.columnsCount ?? 0))
@@ -294,6 +303,7 @@ function MatrixChart({ id, selected, type }) {
                                     key={sectionNumber}
                                     className={style.matrixTableSection}
                                     style={{
+                                        backgroundColor: getRgbaColor(backgroundColor),
                                         marginRight: matrixPadding, marginBottom: matrixPadding, marginTop: matrixPadding,
                                         minWidth: columnsData[columnIndex]?.width ?? 400, maxWidth: columnsData[columnIndex]?.width ?? 400,
                                         minHeight: rowsData[rowIndex]?.height ?? 400, maxHeight: rowsData[rowIndex]?.height ?? 400,
@@ -327,7 +337,7 @@ function MatrixChart({ id, selected, type }) {
                                         />
                                     }
 
-                                    {rowIndex === 0 && (
+                                    {(rowIndex === 0 && chartOrientation !== ChartOrientations.HORIZONTAL) && (
                                         <div className={style.matrixTableColumnHeaderTextContainer}
                                             style={{
                                                 backgroundColor: columnsData[columnIndex]?.color ?? columnsColor
@@ -347,33 +357,6 @@ function MatrixChart({ id, selected, type }) {
                                             />
                                         </div>
                                     )}
-
-                                    {/* <div className={style.matrixTableSectionContainer}>
-                                        {elementList?.map((_, elementColIndex) => {
-                                            return (
-                                                <div className={style.matrixElementColumnContainer} key={`${sectionNumber} ${elementColIndex}`} >
-                                                    {sectionData?.elementData?.[elementColIndex] ?
-                                                        sectionData?.elementData?.[elementColIndex]?.map((element, elementIndex) => {
-                                                            return (
-                                                                <div key={elementIndex} className={style.matrixTableItem}>{element?.text}</div>
-                                                            )
-                                                        })
-                                                        : null
-                                                    }
-                                                    {!hideTools && (
-                                                        <div className={style.matrixAddNewItemContainer}>
-                                                            <div
-                                                                className={style.matrixAddNewItem}
-                                                                onClick={() => addNewItem(sectionData.sectionNumber, elementColIndex)}
-                                                            >
-                                                                +
-                                                            </div>
-                                                        </div>
-                                                    )}
-                                                </div>
-                                            )
-                                        })}
-                                    </div> */}
                                 </div>
                             );
                         })}

@@ -16,7 +16,7 @@ import { ReferenceTypes } from "../../../utils/constants";
 
 const { TextArea } = Input;
 
-const resizerHandleStyle = { width: 6, height: 6 }
+const resizerHandleStyle = { width: 6, height: 6, zIndex: 15 };
 
 function CustomNode({ id, selected, type, data }) {
     const rotateControlRef = useRef(null);
@@ -32,7 +32,7 @@ function CustomNode({ id, selected, type, data }) {
     const sizes = useNodeDataStore((state) => state?.size);
     const onSizeCahnge = useNodeDataStore((state) => state.setSize);
 
-    const size = sizes.find(item => item.id === id) || { height: initialHeight, width: initialWidth };
+    const size = sizes?.find(item => item?.id === id) || { height: initialHeight, width: initialWidth };
     const setSize = (value) => onSizeCahnge(id, value)
 
     const textdata = useNodeDataStore((state) => state.textdata)?.find(item => item.id === id);
@@ -68,7 +68,7 @@ function CustomNode({ id, selected, type, data }) {
     }
 
     useEffect(() => {
-        if (sizes.find(item => item.id === id)) return;
+        if (sizes?.find(item => item.id === id)) return;
 
         if (data?.size) {
             setSize(data?.size)
@@ -156,6 +156,7 @@ function CustomNode({ id, selected, type, data }) {
     }
 
     const onResize = (_, size) => setSize(size);
+    const onResizeStart = () => data?.takeSnapshot();
 
     const addVerticalLine = () => {
         data.addTableLine('VerticalLine', id, { height: size?.height }, { x: 20, y: 0 })
@@ -174,6 +175,7 @@ function CustomNode({ id, selected, type, data }) {
                 minWidth={initialWidth * 0.5}
                 minHeight={initialHeight * 0.5}
                 onResize={onResize}
+                onResizeStart={onResizeStart}
                 keepAspectRatio={shapeData?.keepAspectRatio ?? true}
                 handleStyle={resizerHandleStyle}
             />
@@ -214,7 +216,7 @@ function CustomNode({ id, selected, type, data }) {
                 <CustomShape fill={backgroundColor} />
             }
 
-            <ConnectionDot selected={selected} />
+            <ConnectionDot selected={selected} width={size?.width} height={size?.height} />
 
             {!shapeData?.hideTextInput ?
                 <TextArea
