@@ -99,6 +99,7 @@ const DnDFlow = ({ props }) => {
     const onTextChange = useNodeDataStore((state) => state.onTextChange);
     const size = useNodeDataStore((state) => state.size);
     const setSize = useNodeDataStore((state) => state.setSize);
+    const setSizes = useNodeDataStore((state) => state.setSizes);
     const chartData = useNodeDataStore((state) => state.chartData);
     const changeChartData = useNodeDataStore((state) => state.setChartData);
     const copiedNodes = useNodeDataStore((state) => state.copiedNodes);
@@ -216,6 +217,7 @@ const DnDFlow = ({ props }) => {
         types['LineChart'] = LineChart
         types['MatrixChart'] = MatrixChart
         types['MatrixTable'] = MatrixTable
+        types['Table2'] = MatrixTable
         types['HorizontalLine'] = Line
         types['VerticalLine'] = Line
         types['Text'] = Text
@@ -610,8 +612,15 @@ const DnDFlow = ({ props }) => {
             return !isDeleteNode;
         }));
 
+        const newSizes = size.filter((node) => {
+            const isDeleteNode = deleteNodes?.some(deleteNode => deleteNode?.id === node?.id);
+            return !isDeleteNode;
+        })
+
+        setSizes(newSizes)
+
         takeSnapshot();
-    }, [takeSnapshot]);
+    }, [takeSnapshot, size]);
 
     const onEdgesDelete = useCallback(() => {
         // make deleting edges undoable

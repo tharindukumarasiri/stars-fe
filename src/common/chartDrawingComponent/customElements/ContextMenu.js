@@ -131,6 +131,15 @@ export default function ContextMenu({ id, top, left, ...props }) {
         newColumnData.splice(selectedColumn + 1, 0, { title: "" })
         setColumnsCount(columnsCount + 1)
         setColumnsData(newColumnData)
+        setNodes((nodes) =>
+            nodes.map((node) => {
+                if (node.id === id) {
+                    const newNode = { ...node }
+                    newNode.width = newNode.width + 400
+                    return newNode
+                } else return node
+            })
+        )
     }
 
     const addColumnToLeft = () => {
@@ -139,6 +148,15 @@ export default function ContextMenu({ id, top, left, ...props }) {
         setColumnsCount(columnsCount + 1)
         setColumnsData(newColumnData)
         setSelectedColumn(selectedColumn + 1)
+        setNodes((nodes) =>
+            nodes.map((node) => {
+                if (node.id === id) {
+                    const newNode = { ...node }
+                    newNode.width = newNode.width + 400
+                    return newNode
+                } else return node
+            })
+        )
     }
 
     const addRowToTop = () => {
@@ -147,6 +165,15 @@ export default function ContextMenu({ id, top, left, ...props }) {
         setRowsCount(rowsCount + 1)
         setRowsData(newRowsData)
         setSelectedRow(selectedRow + 1)
+        setNodes((nodes) =>
+            nodes.map((node) => {
+                if (node.id === id) {
+                    const newNode = { ...node }
+                    newNode.height = newNode.height + 400
+                    return newNode
+                } else return node
+            })
+        )
     }
 
     const addRowToBottom = () => {
@@ -154,17 +181,26 @@ export default function ContextMenu({ id, top, left, ...props }) {
         newRowsData.splice(selectedRow + 1, 0, { title: "" })
         setRowsCount(rowsCount + 1)
         setRowsData(newRowsData)
+        setNodes((nodes) =>
+            nodes.map((node) => {
+                if (node.id === id) {
+                    const newNode = { ...node }
+                    newNode.height = newNode.height + 400
+                    return newNode
+                } else return node
+            })
+        )
     }
 
     return (
         <div style={{ top, left }} className={style.canvasContextMenu} {...props}>
-            {node?.type === "MatrixTable" && selectedColumn !== null &&
+            {node?.type === "MatrixTable" || node?.type === "Table2" && selectedColumn !== null &&
                 <>
                     <button onClick={addColumnToRight}>Add column to right</button>
                     <button onClick={addColumnToLeft}>Add column to left</button>
                 </>
             }
-            {node?.type === "MatrixTable" && selectedRow !== null &&
+            {node?.type === "MatrixTable" || node?.type === "Table2" && selectedRow !== null &&
                 <>
                     <button onClick={addRowToTop}>Add row to Top</button>
                     <button onClick={addRowToBottom}>Add row to Bottom</button>

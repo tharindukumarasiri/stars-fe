@@ -14,7 +14,7 @@ export const OtherCategories = {
     'CHARTS': 'Business Schemas'
 }
 
-export const parentNodes = ['Table', 'LineChart', 'MatrixTable']
+export const parentNodes = ['Table', 'LineChart', 'MatrixTable', 'Table2']
 
 export const uploadNodeId = 'UploadedNode';
 
@@ -615,7 +615,7 @@ export default {
         viewBox: "0 0 29.7 46.6",
         keepAspectRatio: false,
         category: [Categories.BPMN],
-        size: { width: 29.7, height: 46.6 },
+        size: { width: 450, height: 400 },
     },
     Table: {
         image: <>
@@ -704,7 +704,7 @@ export default {
         hideTextInput: true,
         keepAspectRatio: false,
         category: [OtherCategories.CHARTS],
-        size: { width: 400, height: 400 },
+        size: { width: 450, height: 400 },
     },
     ThickArrow: {
         image: <>

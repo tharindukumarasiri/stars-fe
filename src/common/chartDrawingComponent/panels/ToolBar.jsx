@@ -243,7 +243,7 @@ export default ({
     }
 
     const onSaveHandler = () => {
-        message.success('Saving drawing')
+        // message.success('Saving drawing')
         onSave()
     }
 

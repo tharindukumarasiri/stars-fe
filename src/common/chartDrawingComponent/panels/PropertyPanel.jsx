@@ -177,10 +177,7 @@ const PropertyPanel = ({ nodes, edges, selectedNodes = [], selectedEdges = [], s
     const layers = useNodeDataStore((state) => state.layers);
     const setLayers = useNodeDataStore((state) => state.setLayers);
 
-    const selectedAlignType = useMemo(() => {
-        const alignType = textAlignTypes?.find(type => type.alignType === textAlign)
-        return alignType || textAlignTypes[0]
-    }, [selectedNodeId, textAlign])
+    const isMatrixTable = selectedNodes?.[0]?.type === 'MatrixTable' || selectedNodes?.[0]?.type === "Table2";
 
     const showColorPicker = (picker) => setColorPickerVisible(picker)
     const onChangeBackgroundColor = (color) => setBackgroundColor(color?.rgb)
@@ -209,25 +206,131 @@ const PropertyPanel = ({ nodes, edges, selectedNodes = [], selectedEdges = [], s
         }
     };
 
-    const onRowsCountIncrease = () => setRowsCount(rowsCount + 1);
-    const onRowsCountDecrease = () => setRowsCount(rowsCount - 1 > 0 ? rowsCount - 1 : 0);
+    const onRowsCountIncrease = () => {
+        setRowsCount(rowsCount + 1)
+        if (isMatrixTable) {
+            setNodes((nodes) =>
+                nodes.map((node) => {
+                    if (node.id === selectedNodes[0].id) {
+                        const newNode = { ...node }
+                        newNode.height = newNode.height + 400
+                        return newNode
+                    } else return node
+                })
+            )
+        }
+    };
+    const onRowsCountDecrease = () => {
+        const rowCount = rowsCount - 1
+        if (rowCount > 0) {
+            setRowsCount(rowCount)
+
+            if (isMatrixTable) {
+                setNodes((nodes) =>
+                    nodes.map((node) => {
+                        if (node.id === selectedNodes[0].id) {
+                            const newNode = { ...node }
+                            newNode.height = newNode.height - 400
+                            return newNode
+                        } else return node
+                    })
+                )
+            }
+        }
+    };
     const onRowsCountChange = (e) => {
         e.preventDefault();
         const number = e.target.value
 
         if (!isNaN(number) && Number(number) > 0) {
             setRowsCount(Number(number))
+
+            if (isMatrixTable) {
+                let calculatedHeight = 0
+
+                Array.from(Array(Number(number)).keys()).map((_, i) => {
+
+                    if (rowsData?.[i]?.height) {
+                        calculatedHeight += rowsData?.[i]?.height
+                    } else {
+                        calculatedHeight += 400
+                    }
+                })
+
+                setNodes((nodes) =>
+                    nodes.map((node) => {
+                        if (node.id === selectedNodes[0].id) {
+                            const newNode = { ...node }
+                            newNode.height = calculatedHeight
+                            return newNode
+                        } else return node
+                    })
+                )
+            }
         }
     };
 
-    const onColumnsCountIncrease = () => setColumnsCount(columnsCount + 1);
-    const onColumnsCountDecrease = () => setColumnsCount(columnsCount - 1 > 0 ? columnsCount - 1 : 0);
+    const onColumnsCountIncrease = () => {
+        setColumnsCount(columnsCount + 1)
+        if (isMatrixTable) {
+            setNodes((nodes) =>
+                nodes.map((node) => {
+                    if (node.id === selectedNodes[0].id) {
+                        const newNode = { ...node }
+                        newNode.width = newNode.width + 400
+                        return newNode
+                    } else return node
+                })
+            )
+        }
+    };
+    const onColumnsCountDecrease = () => {
+        const colCount = columnsCount - 1
+        if (colCount > 0) {
+            setColumnsCount(colCount)
+
+            if (isMatrixTable) {
+                setNodes((nodes) =>
+                    nodes.map((node) => {
+                        if (node.id === selectedNodes[0].id) {
+                            const newNode = { ...node }
+                            newNode.width = newNode.width - 400
+                            return newNode
+                        } else return node
+                    })
+                )
+            }
+        }
+    };
     const onColumnsCountChange = (e) => {
         e.preventDefault();
         const number = e.target.value
 
         if (!isNaN(number) && Number(number) > 0) {
             setColumnsCount(Number(number))
+
+            if (isMatrixTable) {
+                let calculatedWidth = 50
+
+                Array.from(Array(Number(number)).keys()).map((_, i) => {
+
+                    if (columnsData?.[i]?.width) {
+                        calculatedWidth += columnsData?.[i]?.width
+                    } else {
+                        calculatedWidth += 400
+                    }
+                })
+
+                setNodes((nodes) =>
+                    nodes.map((node) => {
+                        if (node.id === selectedNodes[0].id) {
+                            const newNode = { ...node }
+                            newNode.width = calculatedWidth
+                            return newNode
+                        } else return node
+                    })
+                )
+            }
         }
     };
 
@@ -1578,7 +1681,7 @@ const PropertyPanel = ({ nodes, edges, selectedNodes = [], selectedEdges = [], s
                 </div>
                 <div className={style.sidebarMainContainer}>
 
-                    {selectedNodes?.[0]?.type === 'MatrixTable' &&
+                    {isMatrixTable &&
                         <>
                             <div className='m-b-10' >
                                 <div className={style.sidebarCategoryheader} onClick={() => { onCategoryClick(propertyCategories.GRID) }} >

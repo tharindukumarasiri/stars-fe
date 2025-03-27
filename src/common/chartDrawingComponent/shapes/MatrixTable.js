@@ -182,7 +182,30 @@ function MatrixChart({ id, selected, type }) {
                     width: (copyOfColumnsData[index]?.width ?? 400) + increasedAmount
                 }
                 setColumnsData(copyOfColumnsData)
+
+                let calculatedWidth = 50
+
+                Array.from(Array(columnsCount).keys()).map((_, i) => {
+
+                    if (copyOfColumnsData?.[i]?.width) {
+                        calculatedWidth += copyOfColumnsData?.[i]?.width
+                    } else {
+                        calculatedWidth += 400
+                    }
+                })
+
+                setNodes((nodes) =>
+                    nodes.map((node) => {
+                        if (node.id === id) {
+                            const newNode = { ...node }
+                            newNode.width = calculatedWidth
+                            return newNode
+                        } else return node
+                    })
+                )
+
             }
+
         };
 
         const handleMouseUp = () => {
@@ -216,6 +239,27 @@ function MatrixChart({ id, selected, type }) {
                     height: (copyOfRowsData[index]?.height ?? 400) + increasedAmount
                 }
                 setRowsData(copyOfRowsData)
+
+                let calculatedHeight = 50
+
+                Array.from(Array(columnsCount).keys()).map((_, i) => {
+
+                    if (copyOfRowsData?.[i]?.height) {
+                        calculatedHeight += copyOfRowsData?.[i]?.height
+                    } else {
+                        calculatedHeight += 400
+                    }
+                })
+
+                setNodes((nodes) =>
+                    nodes.map((node) => {
+                        if (node.id === id) {
+                            const newNode = { ...node }
+                            newNode.height = calculatedHeight
+                            return newNode
+                        } else return node
+                    })
+                )
             }
         };
 
