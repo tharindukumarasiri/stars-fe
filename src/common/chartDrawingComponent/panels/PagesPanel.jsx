@@ -6,9 +6,11 @@ import { useNodeDataStore } from '../store';
 
 export default ({ onChangePage }) => {
     const [isFocused, setIsFocused] = useState(false)
-    const currentPage = useNodeDataStore((state) => state.currentPage);
-    const pagesData = useNodeDataStore((state) => state.pagesData);
-    const setPagesData = useNodeDataStore((state) => state.setPagesData);
+    const {
+        currentPage,
+        pagesData,
+        setPagesData,
+    } = useNodeDataStore()
 
     const addNewPage = () => onChangePage(pagesData?.length, true);
     const onBlur = () => setIsFocused(false)

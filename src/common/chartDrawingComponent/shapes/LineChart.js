@@ -14,14 +14,19 @@ function LineChart({ id, selected, type }) {
     const initialHeight = shapeData?.size?.height;
     const initialWidth = shapeData?.size?.width;
 
-    const sizes = useNodeDataStore((state) => state?.size);
-    const onSizeCahnge = useNodeDataStore((state) => state.setSize);
-    const textdata = useNodeDataStore((state) => state.textdata).find(item => item.id === id);
+    const {
+        size: sizes,
+        setSize: onSizeCahnge,
+        textdata: textDataState,
+        chartData: chartDataState,
+    } = useNodeDataStore()
+
+    const textdata = textDataState?.find(item => item.id === id);
 
     const size = sizes.find(item => item.id === id) || { height: initialHeight, width: initialWidth };
     const setSize = (value) => onSizeCahnge(id, value)
 
-    const chartData = useNodeDataStore((state) => state.chartData).find(item => item.id === id);
+    const chartData = chartDataState?.find(item => item.id === id);
 
     const backgroundColor = getRgbaColor(textdata?.backgroundColor) || 'transparent'
     const borderColor = getRgbaColor(textdata?.borderColor) || 'black'

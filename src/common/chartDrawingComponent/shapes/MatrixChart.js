@@ -33,14 +33,18 @@ function MatrixChart({ id, selected, type, data }) {
     const [focusedInput, setFocusedInput] = useState('')
     const [disableInput, setDisableInput] = useState(false)
 
-    const sizes = useNodeDataStore((state) => state?.size);
-    const onSizeCahnge = useNodeDataStore((state) => state.setSize);
+    const {
+        size: sizes,
+        setSize: onSizeCahnge,
+        textdata: textDataState,
+        chartData: chartDataState,
+        setChartData: changeChartData,
+    } = useNodeDataStore()
 
     const size = sizes.find(item => item.id === id) || { height: initialHeight, width: initialWidth };
     const setSize = (value) => onSizeCahnge(id, value)
 
-    const chartData = useNodeDataStore((state) => state.chartData).find(item => item.id === id);
-    const changeChartData = useNodeDataStore((state) => state.setChartData);
+    const chartData = chartDataState.find(item => item.id === id);
     const onChangeChartData = (value) => changeChartData(id, value)
 
     const nodeData = chartData?.nodeData || []
@@ -54,7 +58,7 @@ function MatrixChart({ id, selected, type, data }) {
     const columnsCount = chartData?.columnsCount || 1
     const setColumnsCount = (value) => onChangeChartData({ columnsCount: value })
 
-    const textdata = useNodeDataStore((state) => state.textdata)?.find(item => item.id === id);
+    const textdata = textDataState?.find(item => item.id === id);
     const backgroundColor = getRgbaColor(textdata?.backgroundColor) || '#E7E7BF'
     const borderColor = getRgbaColor(textdata?.borderColor) || '#434343'
     const headerBackgroundColor = getRgbaColor(textdata?.headerBackgroundColor) || '#d3d3d3'

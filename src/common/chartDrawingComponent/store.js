@@ -1,7 +1,17 @@
+import { createContext, useContext } from "react";
 import { create } from 'zustand'
 import { defaultNewLayerRestData } from "./utils"
 
-export const useNodeDataStore = create((set, get) => ({
+// Create a Context for the store
+export const StoreContext = createContext(null);
+
+export const useNodeDataStore = () => {
+    const store = useContext(StoreContext);
+    if (!store) throw new Error("useCounterStore must be used within a CounterProvider");
+    return store();
+};
+
+export const useDataStore = () => create((set, get) => ({
     currentPage: 0,
     pagesData: [],
     size: [],

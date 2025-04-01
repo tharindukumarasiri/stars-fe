@@ -33,7 +33,7 @@ import PropertyPanel from './panels/PropertyPanel.jsx';
 import ToolBar from './panels/ToolBar.jsx';
 import ReferenceModal from './panels/ReferenceModal.jsx';
 import ContextMenu from './customElements/ContextMenu.js';
-import { useNodeDataStore } from './store'
+import { StoreContext, useDataStore, useNodeDataStore } from './store'
 import HelperLines from "./customElements/HelperLines.jsx";
 import { DEFAULT_ALGORITHM } from './edges/EditableEdge/constants.js';
 import { EditableEdgeComponent } from './edges/EditableEdge';
@@ -90,30 +90,33 @@ const DnDFlow = ({ props }) => {
     const [spacebarActive, setSpacebarActive] = useState(false)
     const [openPanels, setOpenPanels] = useState({ sideBar: true, propertyPanel: true })
 
-    const currentPage = useNodeDataStore((state) => state.currentPage);
-    const setCurrentPage = useNodeDataStore((state) => state.setCurrentPage);
-    const pagesData = useNodeDataStore((state) => state.pagesData);
-    const setPagesData = useNodeDataStore((state) => state.setPagesData);
-    const setAllData = useNodeDataStore((state) => state.setAllData);
-    const textdata = useNodeDataStore((state) => state.textdata);
-    const onTextChange = useNodeDataStore((state) => state.onTextChange);
-    const size = useNodeDataStore((state) => state.size);
-    const setSize = useNodeDataStore((state) => state.setSize);
-    const setSizes = useNodeDataStore((state) => state.setSizes);
-    const chartData = useNodeDataStore((state) => state.chartData);
-    const changeChartData = useNodeDataStore((state) => state.setChartData);
-    const copiedNodes = useNodeDataStore((state) => state.copiedNodes);
-    const currentLayer = useNodeDataStore((state) => state.currentLayer);
-    const setCurrentLayer = useNodeDataStore((state) => state.setCurrentLayer);
-    const layers = useNodeDataStore((state) => state.layers);
-    const setCopiedNodes = useNodeDataStore((state) => state.setCopiedNodes);
+    const {
+        currentPage,
+        setCurrentPage,
+        pagesData,
+        setPagesData,
+        setAllData,
+        textdata,
+        onTextChange,
+        size,
+        setSize,
+        setSizes,
+        chartData,
+        setChartData: changeChartData,
+        copiedNodes,
+        currentLayer,
+        setCurrentLayer,
+        layers,
+        setCopiedNodes,
+        connectionLinePath
+    } = useNodeDataStore();
 
     const onConnect = useCallback(
         (connection) => {
             // make adding edges undoable
             takeSnapshot();
 
-            const { connectionLinePath } = useNodeDataStore.getState();
+            // const { connectionLinePath } = useNodeDataStore();
             // We add a new edge based on the selected DEFAULT_ALGORITHM
             // and transfer all the control points from the connectionLinePath
             // in case the user has added any while creating the connection
@@ -137,7 +140,7 @@ const DnDFlow = ({ props }) => {
             };
             setEdges((edges) => addEdge(edge, edges));
         },
-        [setEdges]
+        [setEdges, connectionLinePath]
     );
 
     const onReconnect = useCallback(
@@ -718,9 +721,13 @@ const DnDFlow = ({ props }) => {
 };
 
 export default function Flow({ props }) {
+    const storeRef = useRef(useDataStore());
+
     return (
         <ReactFlowProvider>
-            <DnDFlow props={props} />
+            <StoreContext.Provider value={storeRef.current}>
+                <DnDFlow props={props} />
+            </StoreContext.Provider>
         </ReactFlowProvider>
     );
 }

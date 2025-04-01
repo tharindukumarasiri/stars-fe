@@ -50,8 +50,7 @@ const ReferenceModal = ({ nodes, setNodes, onSave }) => {
     const [currentPage, setCurrentPage] = useState(1)
     const [spin, setSpin] = useState(0)
 
-    const referenceModalId = useNodeDataStore((state) => state.referenceModalId);
-    const setReferenceModalId = useNodeDataStore((state) => state.setReferenceModalId);
+    const { referenceModalId, setReferenceModalId } = useNodeDataStore()
 
     const referenceData = useDiagramStore((state) => state.referenceData);
     const getReferanceData = useDiagramStore((state) => state.getReferanceData);

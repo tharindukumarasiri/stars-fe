@@ -22,8 +22,13 @@ function MatrixChart({ id, selected, type }) {
     const [disableInput, setDisableInput] = useState(false);
     const [isDragging, setIsDragging] = useState(false);
 
-    const sizes = useNodeDataStore((state) => state?.size);
-    const onSizeChange = useNodeDataStore((state) => state.setSize);
+    const {
+        size: sizes,
+        setSize: onSizeChange,
+        textdata: textDataState,
+        chartData: chartDataState,
+        setChartData: changeChartData,
+    } = useNodeDataStore()
 
     const size = sizes.find((item) => item.id === id) || {
         height: initialHeight,
@@ -31,10 +36,9 @@ function MatrixChart({ id, selected, type }) {
     };
     const setSize = (value) => onSizeChange(id, value);
 
-    const chartData = useNodeDataStore((state) => state.chartData).find(
+    const chartData = chartDataState.find(
         (item) => item.id === id
     );
-    const changeChartData = useNodeDataStore((state) => state.setChartData);
     const onChangeChartData = (value) => changeChartData(id, value);
 
     // const nodeData = chartData?.nodeData || [];
@@ -87,7 +91,7 @@ function MatrixChart({ id, selected, type }) {
     const columnsData = chartData?.columnsData || [];
     const setColumnsData = (value) => onChangeChartData({ columnsData: value })
 
-    const textdata = useNodeDataStore((state) => state.textdata)?.find(
+    const textdata = textDataState?.find(
         (item) => item.id === id
     );
 

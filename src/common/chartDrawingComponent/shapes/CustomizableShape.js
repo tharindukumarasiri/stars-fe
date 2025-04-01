@@ -26,20 +26,24 @@ function CustomizableShape({ id, selected, type, data }) {
   const [draggedPointIndex, setDraggedPointIndex] = useState(null);
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
 
-  const chartData = useNodeDataStore((state) => state.chartData).find(item => item.id === id);
-  const changeChartData = useNodeDataStore((state) => state.setChartData);
+  const {
+    chartData: chartDataState,
+    setChartData: changeChartData,
+    size: sizes,
+    setSize: onSizeCahnge,
+    textdata: textDataState,
+  } = useNodeDataStore()
+
+  const chartData = chartDataState.find(item => item.id === id);
   const onChangeChartData = (value) => changeChartData(id, value)
 
   const points = chartData?.points || [...basePoints]
   const setPoints = (value) => onChangeChartData({ points: value })
 
-  const sizes = useNodeDataStore((state) => state?.size);
-  const onSizeCahnge = useNodeDataStore((state) => state.setSize);
-
   const size = sizes.find(item => item.id === id) || { height: initialHeight, width: initialWidth };
   const setSize = (value) => onSizeCahnge(id, value)
 
-  const textdata = useNodeDataStore((state) => state.textdata)?.find(item => item.id === id);
+  const textdata = textDataState?.find(item => item.id === id);
 
   const rotate = textdata?.rotate || '0'
 

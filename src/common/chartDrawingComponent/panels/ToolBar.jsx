@@ -86,17 +86,19 @@ export default ({
     const { getNodes, fitView, zoomIn, zoomOut } = useReactFlow();
     const zoomValue = useStore(zoomSelector);
 
-    const setCopiedNodes = useNodeDataStore((state) => state.setCopiedNodes);
-    const setUploadedData = useNodeDataStore((state) => state.setUploadedData);
+    const {
+        setCopiedNodes,
+        setUploadedData,
+        onTextChange: changeTextData,
+        textdata: textdataState,
+        size: sizes,
+        setSize: onSizeCahnge
+    } = useNodeDataStore()
 
     const UPLOAD_BTN_REF = useRef(null);
 
-    const changeTextData = useNodeDataStore((state) => state.onTextChange);
     const selectedNodeId = selectedNodes?.[0]?.id;
-    const textdata = useNodeDataStore((state) => state.textdata).find(item => item.id === selectedNodeId);
-
-    const sizes = useNodeDataStore((state) => state.size);
-    const onSizeCahnge = useNodeDataStore((state) => state.setSize);
+    const textdata = textdataState.find(item => item.id === selectedNodeId);
 
     const size = sizes?.find(item => item.id === selectedNodeId) || { height: 0, width: 0 };
     const setSize = (value) => {
@@ -243,7 +245,7 @@ export default ({
     }
 
     const onSaveHandler = () => {
-        // message.success('Saving drawing')
+        message.warning('Saving drawing...')
         onSave()
     }
 

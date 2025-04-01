@@ -17,19 +17,19 @@ export const useUndoRedo = ({
     const [future, setFuture] = useState([]);
 
     const { setNodes, setEdges, getNodes, getEdges } = useReactFlow();
-    const sizes = useNodeDataStore((state) => state?.size);
-    const setSizes = useNodeDataStore((state) => state.setSizes);
+
+    const { size, setSizes } = useNodeDataStore();
 
     const takeSnapshot = useCallback(() => {
         // push the current graph to the past state
         setPast((past) => [
             ...past.slice(past.length - maxHistorySize + 1, past.length),
-            { nodes: getNodes(), edges: getEdges(), sizes: useNodeDataStore.getState().size },
+            { nodes: getNodes(), edges: getEdges(), sizes: size },
         ]);
 
         // whenever we take a new snapshot, the redo operations need to be cleared to avoid state mismatches
         setFuture([]);
-    }, [getNodes, getEdges, maxHistorySize]);
+    }, [getNodes, getEdges, maxHistorySize, size]);
 
     const undo = useCallback(() => {
         // get the last state that we want to go back to
@@ -41,26 +41,26 @@ export const useUndoRedo = ({
             // we store the current graph for the redo operation
             setFuture((future) => [
                 ...future,
-                { nodes: getNodes(), edges: getEdges(), sizes: useNodeDataStore.getState().size },
+                { nodes: getNodes(), edges: getEdges(), sizes: size },
             ]);
             // now we can set the graph to the past state
             setNodes(pastState.nodes);
             setEdges(pastState.edges);
             setSizes(pastState.sizes);
         }
-    }, [setNodes, setEdges, getNodes, getEdges, sizes, setSizes, past]);
+    }, [setNodes, setEdges, getNodes, getEdges, size, setSizes, past]);
 
     const redo = useCallback(() => {
         const futureState = future[future.length - 1];
 
         if (futureState) {
             setFuture((future) => future.slice(0, future.length - 1));
-            setPast((past) => [...past, { nodes: getNodes(), edges: getEdges(), sizes: useNodeDataStore.getState().size }]);
+            setPast((past) => [...past, { nodes: getNodes(), edges: getEdges(), sizes: size }]);
             setNodes(futureState.nodes);
             setEdges(futureState.edges);
             setSizes(futureState.sizes);
         }
-    }, [setNodes, setEdges, getNodes, getEdges, sizes, setSizes, future]);
+    }, [setNodes, setEdges, getNodes, getEdges, size, setSizes, future]);
 
     useEffect(() => {
         // this effect is used to attach the global event handlers

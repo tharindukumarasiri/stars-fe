@@ -29,14 +29,17 @@ function CustomNode({ id, selected, type, data }) {
     const initialWidth = shapeData?.size?.width ?? 50;
     const isTable = type === 'Table';
 
-    const sizes = useNodeDataStore((state) => state?.size);
-    const onSizeCahnge = useNodeDataStore((state) => state.setSize);
+    const {
+        size: sizes,
+        setSize: onSizeCahnge,
+        textdata: textDataState,
+        onTextChange
+    } = useNodeDataStore()
 
     const size = sizes?.find(item => item?.id === id) || { height: initialHeight, width: initialWidth };
     const setSize = (value) => onSizeCahnge(id, value)
 
-    const textdata = useNodeDataStore((state) => state.textdata)?.find(item => item.id === id);
-    const onTextChange = useNodeDataStore((state) => state.onTextChange);
+    const textdata = textDataState?.find(item => item.id === id);
 
     const rotate = textdata?.rotate || '0'
     const setRotate = (value) => onTextChange(id, { rotate: value })

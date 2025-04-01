@@ -145,11 +145,12 @@ const SortableItem = ({ item, nodes, setNodes, setEdges }) => {
         id: item?.id,
     });
 
-    const currentLayer = useNodeDataStore((state) => state.currentLayer);
-    const setCurrentLayer = useNodeDataStore((state) => state.setCurrentLayer);
-
-    const layers = useNodeDataStore((state) => state.layers);
-    const setLayers = useNodeDataStore((state) => state.setLayers);
+    const {
+        currentLayer,
+        setCurrentLayer,
+        layers,
+        setLayers,
+    } = useNodeDataStore()
 
     const onBlur = () => setIsFocusedLayersInput(pre => !pre)
     const reversedNodes = [...nodes].reverse();

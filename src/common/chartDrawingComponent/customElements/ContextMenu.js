@@ -13,17 +13,20 @@ const { confirm } = Modal;
 export default function ContextMenu({ id, top, left, ...props }) {
     const { getNode, setNodes, setEdges, getNodes } = useReactFlow();
 
-    const allTextData = useNodeDataStore((state) => state.textdata);
+    const {
+        textdata: allTextData,
+        onTextChange,
+        size: allSize,
+        setSize,
+        chartData: allChartData,
+        setChartData: changeChartData,
+        setReferenceModalId,
+    } = useNodeDataStore()
+
     const textdata = allTextData?.find(item => item.id === id);
-    const onTextChange = useNodeDataStore((state) => state.onTextChange);
-    const allSize = useNodeDataStore((state) => state.size);
     const size = allSize?.find(item => item.id === id);
-    const setSize = useNodeDataStore((state) => state.setSize);
-    const allChartData = useNodeDataStore((state) => state.chartData);
     const chartData = allChartData.find(item => item.id === id);
-    const changeChartData = useNodeDataStore((state) => state.setChartData);
     const onChangeChartData = (value) => changeChartData(id, value);
-    const setReferenceModalId = useNodeDataStore((state) => state.setReferenceModalId);
     const setFormsModalVisible = useDiagramStore((state) => state.setFormsModalVisible);
     const setFormFillData = useDiagramStore((state) => state.setFormFillData);
 
@@ -194,13 +197,13 @@ export default function ContextMenu({ id, top, left, ...props }) {
 
     return (
         <div style={{ top, left }} className={style.canvasContextMenu} {...props}>
-            {node?.type === "MatrixTable" || node?.type === "Table2" && selectedColumn !== null &&
+            {(node?.type === "MatrixTable" || node?.type === "Table2") && selectedColumn !== null &&
                 <>
                     <button onClick={addColumnToRight}>Add column to right</button>
                     <button onClick={addColumnToLeft}>Add column to left</button>
                 </>
             }
-            {node?.type === "MatrixTable" || node?.type === "Table2" && selectedRow !== null &&
+            {(node?.type === "MatrixTable" || node?.type === "Table2") && selectedRow !== null &&
                 <>
                     <button onClick={addRowToTop}>Add row to Top</button>
                     <button onClick={addRowToBottom}>Add row to Bottom</button>

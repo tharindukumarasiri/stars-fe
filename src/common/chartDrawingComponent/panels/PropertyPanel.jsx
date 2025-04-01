@@ -74,17 +74,26 @@ const PropertyPanel = ({ nodes, edges, selectedNodes = [], selectedEdges = [], s
     const [selectedDrawingPagesData, setSelectedDrawingPagesData] = useState([])
     const [selectedPage, setSelectedPage] = useState({});
 
-    const pagesData = useNodeDataStore((state) => state.pagesData);
+    const {
+        pagesData,
+        onTextChange: changeTextData,
+        textdata: textdataState,
+        chartData: chartDataState,
+        setChartData: changeChartData,
+        setCurrentLayer,
+        layers,
+        setLayers
+    } = useNodeDataStore()
+
     const formsData = useDiagramStore((state) => state.formsData);
     const setFormsModalVisible = useDiagramStore((state) => state.setFormsModalVisible);
     const collectionData = useDiagramStore((state) => state.collectionData);
     const getDrawingsForCollection = useDiagramStore((state) => state.getDrawingsForCollection);
     const drawingsData = useDiagramStore((state) => state.drawingsData);
 
-    const changeTextData = useNodeDataStore((state) => state.onTextChange);
     const selectedNodeId = selectedNodes?.[0]?.id;
 
-    const textdata = useNodeDataStore((state) => state.textdata).find(item => item.id === selectedNodeId);
+    const textdata = textdataState.find(item => item.id === selectedNodeId);
 
     const onTextChange = (value) => {
         selectedNodes?.map(node => {
@@ -100,8 +109,7 @@ const PropertyPanel = ({ nodes, edges, selectedNodes = [], selectedEdges = [], s
         })
     }
 
-    const chartData = useNodeDataStore((state) => state.chartData).find(item => item.id === selectedNodeId);
-    const changeChartData = useNodeDataStore((state) => state.setChartData);
+    const chartData = chartDataState.find(item => item.id === selectedNodeId);
     const onChangeChartData = (value) => changeChartData(selectedNodeId, value)
 
     const backgroundColor = textdata?.backgroundColor || '#ffffff'
@@ -171,11 +179,6 @@ const PropertyPanel = ({ nodes, edges, selectedNodes = [], selectedEdges = [], s
 
     const curveNumber = chartData?.curveNumber || 1
     const setCurveNumber = (value) => onChangeChartData({ curveNumber: value })
-
-    const setCurrentLayer = useNodeDataStore((state) => state.setCurrentLayer);
-
-    const layers = useNodeDataStore((state) => state.layers);
-    const setLayers = useNodeDataStore((state) => state.setLayers);
 
     const isMatrixTable = selectedNodes?.[0]?.type === 'MatrixTable' || selectedNodes?.[0]?.type === "Table2";
 
