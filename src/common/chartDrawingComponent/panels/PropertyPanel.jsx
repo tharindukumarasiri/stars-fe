@@ -772,6 +772,10 @@ const PropertyPanel = ({ nodes, edges, selectedNodes = [], selectedEdges = [], s
             const positionMax = { x: positionMin.x + selectedNodesWithoutGroups[0].width, y: positionMin.y + selectedNodesWithoutGroups[0].height }
             const groupId = getId('Group')
 
+            // If the nodes are already inside of the matrix or a table
+            const isMatrixTable = selectedNodesWithoutGroups?.find(node => node.parentId.includes('MatrixTable'))
+            const isTable2 = selectedNodesWithoutGroups?.find(node => node.parentId.includes('Table2'))
+
             selectedNodesWithoutGroups.forEach(node => {
                 if (node.position.x <= positionMin.x) {
                     positionMin.x = node.position.x
@@ -815,6 +819,15 @@ const PropertyPanel = ({ nodes, edges, selectedNodes = [], selectedEdges = [], s
                 }
             };
 
+            if (isMatrixTable?.parentId) {
+                newGroup.extent = "parent"
+                newGroup.parentId = isMatrixTable.parentId
+            }
+            if (isTable2?.parentId) {
+                newGroup.extent = "parent"
+                newGroup.parentId = isTable2.parentId
+            }
+
             newNodes.push(newGroup);
             return newNodes;
         })
@@ -827,9 +840,14 @@ const PropertyPanel = ({ nodes, edges, selectedNodes = [], selectedEdges = [], s
     const removeSelectedGroups = () => {
         const selectedGroupNodes = selectedNodes.filter(node => node.type === 'group')
 
+        let grandParentId = null
+
         const newNodesWithoutGroups = nodes.filter(node => {
             const isSelected = selectedNodes.some(selectedNode => selectedNode.id === node.id)
             if (isSelected && node.type === 'group') {
+                if (node?.parentId) {
+                    grandParentId = node.parentId
+                }
                 return false
             } else {
                 return true
@@ -841,8 +859,13 @@ const PropertyPanel = ({ nodes, edges, selectedNodes = [], selectedEdges = [], s
             if (selectedGroupNode) {
                 const newNode = { ...node }
 
-                delete newNode.parentId;
-                delete newNode.expandParent;
+                if (grandParentId) {
+                    newNode.parentId = grandParentId
+                } else {
+                    delete newNode.parentId;
+                    delete newNode.expandParent;
+                }
+
                 newNode.position = { x: node?.position.x + selectedGroupNode?.position?.x, y: node?.position.y + selectedGroupNode?.position?.y }
 
                 return newNode
