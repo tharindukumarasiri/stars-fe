@@ -281,7 +281,6 @@ const DnDFlow = ({ props }) => {
                 selected: true,
                 data: {
                     layer: currentLayer,
-                    takeSnapshot: takeSnapshot,
                 },
             };
 
@@ -683,6 +682,7 @@ const DnDFlow = ({ props }) => {
                         defaultEdgeOptions={defaultEdgeOptions}
                         connectionLineComponent={ConnectionLine}
                         zoomOnDoubleClick={false}
+                        minZoom={0.1}
                         nodesDraggable={!spacebarActive}
                         nodesFocusable={!spacebarActive}
                         selectionMode={SelectionMode.Partial}

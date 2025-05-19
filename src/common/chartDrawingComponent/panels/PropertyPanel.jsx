@@ -773,8 +773,8 @@ const PropertyPanel = ({ nodes, edges, selectedNodes = [], selectedEdges = [], s
             const groupId = getId('Group')
 
             // If the nodes are already inside of the matrix or a table
-            const isMatrixTable = selectedNodesWithoutGroups?.find(node => node.parentId.includes('MatrixTable'))
-            const isTable2 = selectedNodesWithoutGroups?.find(node => node.parentId.includes('Table2'))
+            const isMatrixTable = selectedNodesWithoutGroups?.find(node => node.parentId?.includes('MatrixTable'))
+            const isTable2 = selectedNodesWithoutGroups?.find(node => node.parentId?.includes('Table2'))
 
             selectedNodesWithoutGroups.forEach(node => {
                 if (node.position.x <= positionMin.x) {

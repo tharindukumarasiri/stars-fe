@@ -354,7 +354,7 @@ const SortableItem = ({ item, nodes, setNodes, setEdges }) => {
 
 const SortableLayer = ({ items, nodes, setItems, setNodes, setEdges }) => {
     // const [activeId, setActiveId] = useState(null);
-    const setCurrentLayer = useNodeDataStore((state) => state.setCurrentLayer);
+    const { setCurrentLayer } = useNodeDataStore();
 
     const sensors = useSensors(
         useSensor(PointerSensor),
@@ -417,6 +417,9 @@ const SortableLayer = ({ items, nodes, setItems, setNodes, setEdges }) => {
                     return newNode
                 } else return node
             })
+            console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>');
+            console.log(nodes);
+            console.log(updatedNodes);
             const reversedItems = [...items].reverse();
 
             // sorting the nodes array according to the layers order bellow

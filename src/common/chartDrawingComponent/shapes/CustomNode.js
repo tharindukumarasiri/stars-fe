@@ -13,6 +13,7 @@ import DeleteBtn from '../customElements/DeleteBtn'
 import style from '../DndStyles.module.scss'
 import ConnectionDot from '../customElements/ConnectionDot';
 import { ReferenceTypes } from "../../../utils/constants";
+import { useUndoRedo } from '../customElements/useUndoRedo.js';
 
 const { TextArea } = Input;
 
@@ -38,6 +39,7 @@ function CustomNode({ id, selected, type, data }) {
 
     const size = sizes?.find(item => item?.id === id) || { height: initialHeight, width: initialWidth };
     const setSize = (value) => onSizeCahnge(id, value)
+    const { takeSnapshot } = useUndoRedo();
 
     const textdata = textDataState?.find(item => item.id === id);
 
@@ -155,7 +157,7 @@ function CustomNode({ id, selected, type, data }) {
     }
 
     const onResize = (_, size) => setSize(size);
-    const onResizeStart = () => data?.takeSnapshot();
+    const onResizeStart = () => takeSnapshot();
 
     const addVerticalLine = () => {
         data.addTableLine('VerticalLine', id, { height: size?.height }, { x: 20, y: 0 })

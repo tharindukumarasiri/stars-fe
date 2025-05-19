@@ -76,7 +76,16 @@ export default function ContextMenu({ id, top, left, ...props }) {
             selected: true
         };
 
-        setNodes((nds) => nds.concat(newNode));
+        setNodes((nodes) => {
+            const clearSelectedNodes = nodes.map((n) => {
+                const newNodeData = { ...n }
+                newNodeData.selected = false;
+                return newNodeData;
+            })
+
+            const updatedNodes = [...clearSelectedNodes, newNode];
+            return updatedNodes;
+        });
 
         onTextChange(newNodeId, newNodeTextData)
         changeChartData(newNodeId, newChartData)
@@ -103,20 +112,53 @@ export default function ContextMenu({ id, top, left, ...props }) {
         const nodes = getNodes();
         const node = getNode(id);
 
-        const newNodes = nodes.filter((node) => node?.id !== id);
-        newNodes.unshift(node);
+        if (node?.type === 'group') {
+            const itemsToShift = [];
+            nodes?.map(item => {
+                if (item?.parentId === node?.id) {
+                    itemsToShift.push(item);
+                }
+            })
 
-        setNodes(newNodes)
+            const filteredNodes = nodes.filter((node) => {
+                return !itemsToShift.some((item) => item.id === node.id || node?.id === id)
+            });
+            const newNodes = [...itemsToShift, node, ...filteredNodes];
+
+            setNodes(newNodes)
+        } else {
+            const newNodes = nodes.filter((node) => node?.id !== id);
+            newNodes.unshift(node);
+
+            setNodes(newNodes)
+        }
+
     }, [id, setNodes, getNode, getNodes]);
 
     const moveToFront = useCallback(() => {
         const nodes = getNodes();
         const node = getNode(id);
 
-        const newNodes = nodes.filter((node) => node?.id !== id);
-        newNodes.push(node);
+        if (node?.type === 'group') {
+            const itemsToShift = [];
+            nodes?.map(item => {
+                if (item?.parentId === node?.id) {
+                    itemsToShift.push(item);
+                }
+            })
 
-        setNodes(newNodes)
+            const filteredNodes = nodes.filter((node) => {
+                return !itemsToShift.some((item) => item.id === node.id || node?.id === id)
+            });
+            const newNodes = [...filteredNodes, ...itemsToShift, node,];
+
+            setNodes(newNodes)
+        } else {
+            const newNodes = nodes.filter((node) => node?.id !== id);
+            newNodes.push(node);
+
+            setNodes(newNodes)
+        }
     }, [id, setNodes, getNode, getNodes]);
 
     const openReferenceModal = () => {

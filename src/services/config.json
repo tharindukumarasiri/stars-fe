@@ -150,6 +150,8 @@
     "ADD_FORM": "actionapi/SurveyForms/Post?userId=",
     "ADD_FORM_RESPONSE": "actionapi/SurveyFormResponses/Post?userId=",
     "UPDATE_FORM_RESPONSE": "actionapi/SurveyFormResponses?userId=",
-    "GET_FORM_RESPONSE": "actionapi/SurveyFormResponses/GetSurveyFormResponseByFormId?elementId="
+    "GET_FORM_RESPONSE": "actionapi/SurveyFormResponses/GetSurveyFormResponseByFormId?elementId=",
+
+    "GET_LANGUAGE_BY_CULTURE": "api/resources/getresourceforculture?culture="
 
 }

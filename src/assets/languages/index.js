@@ -6,6 +6,7 @@ import deTranslation from "./de.json";
 import svTranslation from "./sv-SE.json";
 import cnTranslation from "./zh.json";
 import enGBTranslation from "./en-GB.json";
+import { getLanguageFile } from "../../services/applicationService";
 
 const resources = {
   'en-US': {
@@ -34,4 +35,37 @@ const resources = {
   }
 }
 
-export default resources;
+const transformArrayToObject = async (arr) => {
+  try{
+    const result = {};
+
+    arr.forEach(item => {
+      const finalValue = item.Value && item.Value.trim() !== "" ? item.Value : item.DefaultValue;
+      result[item.Key] = finalValue;
+    });
+  
+    return result;
+  } catch {
+    console.log('Language file convert failed')
+  }
+}
+
+const fetchLanguage = async () => {
+  try{
+    const cultureCode = localStorage.getItem('i18nextLng');
+
+    const response = await getLanguageFile(cultureCode)
+    const data = await response.data
+    const languageObj = await transformArrayToObject(data);
+  
+    return {
+      [cultureCode]: {
+         translation: languageObj 
+        }
+    };
+  } catch {
+    console.log('Language file fetch failed')
+  }
+}
+
+export default fetchLanguage;

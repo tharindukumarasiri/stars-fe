@@ -2867,13 +2867,13 @@ input#openSidebarMenu {
   overflow: hidden !important;
 }
 
-.k-grid {
-  height: calc(100vh - 135px) !important;
-}
+/*.k-grid {
+  height: unset !important;
+}*/
 
 .k-grid-content {
   overflow-y: auto !important;
-  height: calc(100vh - 272px) !important;
+  /*height: unset !important;*/
 }
 
 * {
