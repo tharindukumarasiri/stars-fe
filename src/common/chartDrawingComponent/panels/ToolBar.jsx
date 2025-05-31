@@ -89,6 +89,7 @@ export default ({
     const {
         setCopiedNodes,
         setUploadedData,
+        setPagesData,
         onTextChange: changeTextData,
         textdata: textdataState,
         size: sizes,
@@ -300,11 +301,13 @@ export default ({
             let fileDataUrl = await readFile(file, true)
 
             try {
-                const uploadedJson = JSON.parse(fileDataUrl)[0]
+                const allData = JSON.parse(fileDataUrl)
+                const uploadedJson = allData[0]
 
                 setNodes(formatOldNodesData(uploadedJson?.nodes));
                 setEdges(uploadedJson?.edges || []);
                 setUploadedData(uploadedJson?.nodeSizes, uploadedJson?.nodesData, uploadedJson?.chartData, uploadedJson?.layersData)
+                setPagesData(allData)
 
             } catch (e) {
                 console.log("unsuported format")
