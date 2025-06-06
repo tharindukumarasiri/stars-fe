@@ -3,12 +3,7 @@ export const Algorithm = {
   Linear: 'linear',
   CatmullRom: 'catmull-rom',
   BezierCatmullRom: 'bezier-catmull-rom',
+  BezierCatmullRomRounded: 'bezier-catmull-rom-rounded',
 }
-
-export const COLORS = {
-  [Algorithm.Linear]: '#0375ff',
-  [Algorithm.BezierCatmullRom]: '#68D391',
-  [Algorithm.CatmullRom]: '#FF0072',
-};
 
 export const DEFAULT_ALGORITHM = Algorithm.Linear;

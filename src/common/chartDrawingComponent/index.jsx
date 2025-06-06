@@ -59,7 +59,7 @@ const panOnDrag = [1, 2];
 const defaultEdgeOptions = {
     type: 'editable-edge',
     markerEnd: {
-        type: MarkerType.ArrowClosed,
+        type: MarkerType.Arrow,
         color: arrowColor,
     },
     zIndex: 10
@@ -427,21 +427,11 @@ const DnDFlow = ({ props }) => {
         };
     }, [handleKeyDown, spacebarRelease]);
 
-    const getFormattedNodes = () => {
-        const formattedNodes = nodes.map(node => {
-            const newNode = { ...node }
-            newNode.selected = true;
-            return newNode
-        })
-
-        return formattedNodes
-    }
-
     const getAllData = useCallback(() => {
         const newPagesData = JSON.parse(JSON.stringify(pagesData))
         newPagesData[currentPage] = {
             ...newPagesData[currentPage],
-            nodes: getFormattedNodes(),
+            nodes: nodes,
             edges: edges,
             nodesData: textdata,
             nodeSizes: size,

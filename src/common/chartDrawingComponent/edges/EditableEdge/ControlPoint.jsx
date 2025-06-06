@@ -143,7 +143,7 @@ export function ControlPoint({
       className={'nopan nodrag' + (active ? ' active' : '')}
       cx={x}
       cy={y}
-      r={active ? 4 : 3}
+      r={active ? 2 : 1.5}
       strokeOpacity={active ? 1 : 0.3}
       stroke={color}
       fill={active ? color : 'white'}

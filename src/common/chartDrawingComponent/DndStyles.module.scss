@@ -119,18 +119,36 @@
     box-shadow: none;
 }
 
+.edgeTextArea {
+    border: transparent !important;
+    text-align: center;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+    box-shadow: none;
+    font-size: 10px;
+    font-weight: 600;
+    pointer-events: all;
+}
+
 .handle {
     background: white;
     border: 1px solid #c8c8c8;
-    width: 10px;
-    height: 10px;
+    width: 8px;
+    height: 8px;
     z-index: 10;
 
     &:hover {
-        width: 15px;
-        height: 15px;
         background: black;
     }
+}
+
+.edgeLabel {
+    position: absolute;
+    background-color: white;
+    border-radius: 5px;
+    font-size: 10px;
+    font-weight: 600;
+    z-index: 10;
 }
 
 .groupLayersBtn {

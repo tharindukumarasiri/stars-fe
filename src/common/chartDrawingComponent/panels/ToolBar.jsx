@@ -911,7 +911,7 @@ export default ({
                             /> : <Dropdown
                                 values={connectorWidths}
                                 onChange={onChangeEdgeWidth}
-                                selected={selectedEdgeData?.width ?? '2'}
+                                selected={selectedEdgeData?.width ?? '1'}
                                 disabled={!selectedEdges?.length > 0}
                             />
                         }

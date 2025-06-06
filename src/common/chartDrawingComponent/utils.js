@@ -56,6 +56,10 @@ export const connectorTypes = [
         label: Algorithm.BezierCatmullRom,
         icon: 'icon-bend-arrow'
     },
+    {
+        label: Algorithm.BezierCatmullRomRounded,
+        icon: 'icon-bend-arrow'
+    },
 ]
 
 export const markerTypes = [

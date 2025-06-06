@@ -18,6 +18,9 @@ export function getControlPoints(
 
     case Algorithm.BezierCatmullRom:
       return getCatmullRomControlPoints(points, true, sides);
+
+    case Algorithm.BezierCatmullRomRounded:
+      return getCatmullRomControlPoints(points, true, sides);
   }
 }
 
@@ -48,6 +51,19 @@ export function getPath(
         targetY: points[points.length - 1].y,
         sourcePosition: sides.fromSide,
         targetPosition: sides.toSide,
+        borderRadius: 0,
+        offset: 1,
+      })[0];
+    case Algorithm.BezierCatmullRomRounded:
+      return getSmoothStepPath({
+        sourceX: points[0].x,
+        sourceY: points[0].y,
+        targetX: points[points.length - 1].x,
+        targetY: points[points.length - 1].y,
+        sourcePosition: sides.fromSide,
+        targetPosition: sides.toSide,
+        borderRadius: 5,
+        offset: 1,
       })[0];
   }
 }
